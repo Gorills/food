@@ -946,7 +946,8 @@ a {
 
 .product-list__top {
   position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   width: 235px;
   height: fit-content;
 }
@@ -2520,6 +2521,79 @@ td.product-thumbnail img {
   color: var(--color-primary);
 }
 
+.popup {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.popup--active {
+  display: flex;
+}
+
+.popup__overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 100000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup__inner {
+  width: 100%;
+  max-width: 550px;
+  position: relative;
+  z-index: 100001;
+  padding: 40px 80px;
+  background: #fff;
+}
+
+.popup__title {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.popup__closer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.popup__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup__input {
+  width: 100%;
+  border: 2px solid #eaedff;
+  color: #6f7172;
+  padding: 0 20px;
+  margin-bottom: 20px;
+  outline: none;
+  resize: none;
+}
+
+.popup__input::placeholder {
+  font-family: "Circe", sans-serif;
+}
+
+.popup input {
+  height: 60px;
+}
+
+.popup textarea {
+  padding: 20px;
+}
+
 @media screen and (max-width: 1426px) {
   .sl .owl-prev {
     left: 30px;
@@ -2744,6 +2818,7 @@ td.product-thumbnail img {
     width: 100%;
     max-width: 320px;
     justify-content: center;
+    box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
     transition: all 0.5s ease;
   }
 

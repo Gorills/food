@@ -68,7 +68,8 @@
 
     &__top {
         position: relative;
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
         width: 235px;
         height: fit-content;
         

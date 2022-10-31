@@ -16,7 +16,20 @@ $(document).on('click','.header__cat',function(e){
 $(document).on('click','.content',function(){
     
     $(".menu-btn").removeClass('menu-btn_active');
+    $('.header-bottom__list').removeClass('header-bottom__list--active')
+
 })
+
+// .header__contacts-btn
+$(document).on('click','.header__contacts-btn',function(e){
+    e.preventDefault();
+    $(".popup").toggleClass('popup--active');
+})
+$(document).on('click','.popup__overlay, .popup__closer',function(e){
+    e.preventDefault();
+    $(".popup").removeClass('popup--active');
+})
+
 
 jQuery(document).ready(function ($) {
     var url = document.location.href;
