@@ -68,9 +68,9 @@ class Cart(object):
     def plus(self, product, quantity, update_quantity=False):
         
         product_id = str(product.id)
-        if product.product_subtract == True:
-            if product.product_stock < self.cart[product_id]['quantity'] + quantity:
-                quantity = product.product_stock     
+        if product.subtract == True:
+            if product.stock < self.cart[product_id]['quantity'] + quantity:
+                quantity = product.stock     
                 self.cart[product_id]['quantity'] = quantity
             else:
                 self.cart[product_id]['quantity'] += 1

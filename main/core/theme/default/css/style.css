@@ -2896,7 +2896,11 @@ td.product-thumbnail img {
 
 @media screen and (max-width: 480px) {
   .content {
-    margin-top: 200px;
+    margin-top: 185px;
+  }
+
+  .header__logo-wrap {
+    max-height: fit-content;
   }
 
   .header__right {
