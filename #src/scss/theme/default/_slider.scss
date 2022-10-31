@@ -65,6 +65,9 @@
         @media screen and (max-width:1426px) {
             left: 30px;
         }
+        @media screen and (max-width:480px) {
+            display: none;
+        }
     }
 
     .owl-next {
@@ -79,6 +82,9 @@
         transform: translateY(-50%);
         @media screen and (max-width:1426px) {
             right: 30px;
+        }
+        @media screen and (max-width:480px) {
+            display: none;
         }
     }
 

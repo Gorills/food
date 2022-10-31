@@ -33,6 +33,10 @@
         z-index: 100001;
         padding: 40px 80px;
         background: #fff;
+
+        @media screen and (max-width: 480px) {
+            padding: 20px;
+        }
     }
 
     // .popup__title
