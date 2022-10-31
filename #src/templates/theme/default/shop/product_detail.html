@@ -25,7 +25,7 @@
 
 
 <div class="breadcrumbs breadcrumbs--gray">
-    <div class="container-fluid">
+    <div class="container">
         <div class="breadcrumbs__inner">
             <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
                 <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -59,27 +59,27 @@
 </div>
 
 <div class="product-detail">
-    <div class="container-fluid">
+    <div class="container">
         <div class="product-detail__inner">
             <div class="product-detail__right">
                 <div class="product-detail__nav">
-                    {% thumbnail product.thumb "80x102" crop="center" as im %}
+                    {% thumbnail product.thumb "80x80" crop="center" as im %}
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
                     {% endthumbnail %}
-                    {% thumbnail product.thumb "621x778" crop="center" as im %}
+                    {% thumbnail product.thumb "600x600" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% for image in product.images.all %}
-                        {% thumbnail image.src "80x102" crop="center" as im %}
+                        {% thumbnail image.src "80x80" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
-                        {% thumbnail image.src "621x778" crop="center" as im %}
+                        {% thumbnail image.src "600x600" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% endfor %}
                 </div>
               
-                {% thumbnail product.thumb "621x778" crop="center" as im %}
+                {% thumbnail product.thumb "600x600" crop="center" as im %}
                     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
                 {% endthumbnail %}
             </div>
