@@ -1,0 +1,4 @@
+PassengerEnabled On
+PassengerAppRoot /home/s/shopds7k/trueman/public_html/main/main
+PassengerPython /home/s/shopds7k/trueman/public_html/venv/bin/python
+

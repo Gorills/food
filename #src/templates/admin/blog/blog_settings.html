@@ -1,0 +1,39 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Настройки блога</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+
+            <li class="breadcrumb__item">Настройки блога</li>
+           
+        </ol>
+
+
+        
+    </div>
+</div>
+
+<div class="page">
+   
+
+        <form action="" class="form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ form.media }}
+            <button class="btn btn--primary">Сохранить</button>
+
+        </form>
+
+    
+</div>
+
+
+
+{% endblock %}

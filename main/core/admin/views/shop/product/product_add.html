@@ -1,0 +1,364 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Добавить товар</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin_product' %}">Товары</a></li>
+
+            <li class="breadcrumb__item">Добавить товар</li>
+          
+        </ol>
+
+
+        
+    </div>
+</div>
+
+
+
+
+
+<form action="" class="form" method="post" enctype="multipart/form-data" id="addCat">
+    {% csrf_token %}
+    
+    <div class="form__title">Добавить товар 
+        <div>
+            <a href="" id="save" class="save-product">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h42v104c0 13.255 10.745 24 24 24h176c13.255 0 24-10.745 24-24V83.882l78.243 78.243a6 6 0 0 1 1.757 4.243V426a6 6 0 0 1-6 6zM224 232c-48.523 0-88 39.477-88 88s39.477 88 88 88 88-39.477 88-88-39.477-88-88-88zm0 128c-22.056 0-40-17.944-40-40s17.944-40 40-40 40 17.944 40 40-17.944 40-40 40z"/></svg>
+            </a>
+            <a href="{% url 'admin_product' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="product-tabs">
+        <input type="radio" name="tab-btn" id="product-tab-btn-1" value="" checked>
+        <label for="product-tab-btn-1">Основное</label>
+        <input type="radio" name="tab-btn" id="product-tab-btn-2" value="">
+        <label for="product-tab-btn-2">Данные</label>
+        <input type="radio" name="tab-btn" id="product-tab-btn-3" value="">
+        <label for="product-tab-btn-3">Связи</label>
+        <input type="radio" name="tab-btn" id="product-tab-btn-4" value="">
+        <label for="product-tab-btn-4">Опции</label>
+        <input type="radio" name="tab-btn" id="product-tab-btn-5" value="">
+        <label for="product-tab-btn-5">Характеристики</label>
+        {% comment %} <input type="radio" name="tab-btn" id="product-tab-btn-6" value="">
+        <label for="product-tab-btn-6">SEO</label> {% endcomment %}
+        <input type="radio" name="tab-btn" id="product-tab-btn-7" value="">
+        <label for="product-tab-btn-7">Изображения</label>
+
+
+        <div id="product-content-1">
+
+            
+            <p>
+                <span class="required">*</span> {{ form.name.label_tag }} 
+                {{ form.name }}
+                {{ form.name.errors }}
+            </p>
+            <p>
+                {{ form.short_description.label_tag }}
+                {{ form.short_description }}
+                {{ form.short_description.errors }}
+            </p>
+            <p>
+                <span class="required">*</span> {{ form.description.label_tag }}
+                {{ form.description }}
+                {{ form.description.errors }}
+            </p>
+            <p>
+                {{ form.meta_h1.label_tag }}
+                {{ form.meta_h1 }}
+                {{ form.meta_h1.errors }}
+            </p>
+            <p>
+                {{ form.meta_title.label_tag }}
+                {{ form.meta_title }}
+                {{ form.meta_title.errors }}
+            </p>
+            <p>
+                {{ form.meta_description.label_tag }}
+                {{ form.meta_description }}
+                {{ form.meta_description.errors }}
+            </p>
+            <p>
+                {{ form.meta_keywords.label_tag }}
+                {{ form.meta_keywords }}
+                {{ form.meta_keywords.errors }}
+            </p>
+            <p>
+                {{ form.tags.label_tag }}
+                {{ form.tags }}
+                {{ form.tags.errors }}
+            </p>
+            <p>
+                <span class="required">*</span> {{ form.slug.label_tag }}
+                {{ form.slug }}
+                {{ form.slug.errors }}
+            </p>
+            <input type="text" id="data-slug" hidden>
+            <input type="text" id="data-color" hidden>
+            {{ form.media }}
+        </div>
+        <div id="product-content-2">
+            {% comment %} <p>
+                <span class="required">*</span>{{ form.color.label_tag }}
+                {{ form.color }}
+                {{ form.color.errors }}
+            </p>
+            <p>
+                <span class="required">*</span>{{ form.color_name.label_tag }}
+                {{ form.color_name }}
+                {{ form.color_name.errors }}
+            </p> {% endcomment %}
+            <p>
+                {{ form.sku.label_tag }}
+                {{ form.sku }}
+                {{ form.sku.errors }}
+            </p>
+            <p>
+                <span class="required">*</span> {{ form.price.label_tag }}
+                {{ form.price }}
+                {{ form.price.errors }}
+            </p>
+            <p>
+                {{ form.old_price.label_tag }}
+                {{ form.old_price }}
+                {{ form.old_price.errors }}
+            </p>
+            <p>
+                <span class="required">*</span> {{ form.stock.label_tag }}
+                {{ form.stock }}
+                {{ form.stock.errors }}
+            </p>
+            <p>
+                {{ form.minimum.label_tag }}
+                {{ form.minimum }}
+                {{ form.minimum.errors }}
+            </p>
+            <p>
+                {{ form.subtract.label_tag }}
+                {{ form.subtract }}
+                {{ form.subtract.errors }}
+            </p>
+            <p>
+                {{ form.shipping.label_tag }}
+                {{ form.shipping }}
+                {{ form.shipping.errors }}
+            </p>
+            <p>
+                {{ form.new.label_tag }}
+                {{ form.new }}
+                {{ form.new.errors }}
+            </p>
+            
+            <div class="form__row">
+                <p>
+                    {{ form.length.label_tag }}
+                    {{ form.length }}
+                    {{ form.length.errors }}
+                </p>
+                <p>
+                    {{ form.width.label_tag }}
+                    {{ form.width }}
+                    {{ form.width.errors }}
+                </p>
+                <p>
+                    {{ form.height.label_tag }}
+                    {{ form.height }}
+                    {{ form.height.errors }}
+                </p>
+            </div>
+            <p>
+                {{ form.length_class.label_tag }}
+                {{ form.length_class }}
+                {{ form.length_class.errors }}
+            </p>
+            <p>
+                {{ form.weight.label_tag }}
+                {{ form.weight }}
+                {{ form.weight.errors }}
+            </p>
+            <p>
+                {{ form.weight_class.label_tag }}
+                {{ form.weight_class }}
+                {{ form.weight_class.errors }}
+            </p>
+            <p>
+                {{ form.status.label_tag }}
+                {{ form.status }}
+                {{ form.status.errors }}
+            </p>
+            <p>
+                {{ form.sort_order.label_tag }}
+                {{ form.sort_order }}
+                {{ form.sort_order.errors }}
+            </p>
+
+        </div>
+        <div id="product-content-3">
+            <p>
+                <span class="required">*</span> {{ form.parent.label_tag }}
+                {{ form.parent }}
+                {{ form.parent.errors }}
+            </p>
+            <p>
+                <span class="required">*</span> {{ form.product_connect.label_tag }}
+                {{ form.product_connect }}
+                {{ form.product_connect.errors }}
+            </p>
+            <p>
+                {{ form.product_manufacturer.label_tag }}
+                {{ form.product_manufacturer }}
+                {{ form.product_manufacturer.errors }}
+            </p>
+        </div>
+        <div id="product-content-4">
+
+            {% comment %}<div class="option">
+                 <div class="option__row">
+                    <p>
+                        {{ option_form.type.label_tag }}
+                        {{ option_form.type }}
+                        {{ option_form.type.errors }}
+                    </p>
+                    
+                    <p>
+                        {{ option_form.option_value.label_tag }}
+                        {{ option_form.option_value }}
+                        {{ option_form.option_value.errors }}
+                    </p>
+                    <p>
+                        {{ option_form.option_stock.label_tag }}
+                        {{ option_form.option_stock }}
+                        {{ option_form.option_stock.errors }}
+                    </p>
+                    <p>
+                        {{ option_form.option_price.label_tag }}
+                        {{ option_form.option_price }}
+                        {{ option_form.option_price.errors }}
+                    </p>
+                    <p>
+                        {{ option_form.option_subtract.label_tag }}
+                        {{ option_form.option_subtract }}
+                        {{ option_form.option_subtract.errors }}
+                    </p>
+                    <p>
+                        {{ option_form.image_status.label_tag }}
+                        {{ option_form.image_status }}
+                        {{ option_form.image_status.errors }}
+                    </p>
+                    <div class="option__null"></div>
+                    
+                </div> 
+                
+            </div>{% endcomment %}
+            <div class="option__paste">
+
+                
+            </div>
+            <div class="option__wrap">
+                <div class="option__add">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
+                </div>
+            </div>
+
+        </div>
+        <div id="product-content-5">
+            <div class="char">
+                {% comment %} <div class="char__row">
+                    <p>
+                        {{ product_char_form.char_name.label_tag }}
+                        {{ product_char_form.char_name }}
+                        {{ product_char_form.char_name.errors }}
+                    </p>
+                    <p>
+                        {{ product_char_form.char_value.label_tag }}
+                        {{ product_char_form.char_value }}
+                        {{ product_char_form.char_value.errors }}
+                    </p>
+                   
+                </div> {% endcomment %}
+            </div>
+            <div class="char__paste">
+
+            </div>
+            
+
+            <div class="product-block__wrapper">
+                <div class="char__plus">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
+                </div>
+            </div>
+            
+        </div>
+
+        
+        {% comment %} <div id="product-content-6">
+           
+
+        </div> {% endcomment %}
+        <div id="product-content-7">
+            <p>
+                <span class="required">*</span> {{ form.thumb.label_tag }}
+                {{ form.thumb }}
+                {{ form.thumb.errors }}
+            </p>
+
+            <p class="form__title">Дополнительные изображения</p>
+            <div class="product-block__paste">
+
+            </div>
+
+            <div class="product-block__wrapper">
+                <div class="product-block__plus">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
+                </div>
+            </div>
+            <div class="product-block">
+                <div class="product-block__inner">
+                    <p>
+                        {{ image_form.src.label_tag }}
+                        {{ image_form.src }}
+                        {{ image_form.src.errors }}
+                    </p>
+
+                    <div class="product-block__minus">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+     
+    </div>
+
+
+
+    
+
+    {% comment %} <div class="form__wrap">
+        <button class="btn btn--success">Добавить</button>
+        <a href="{% url 'admin_manufacturer' %}" class="btn btn--danger">Отменить</a>
+
+    </div> {% endcomment %}
+</form>
+
+<div class="select-hide">
+{{ option_form.type }}
+{{ product_char_form.char_name }}
+</div>
+
+
+
+
+{% endblock %}

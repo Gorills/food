@@ -1,0 +1,27 @@
+.cart-top {
+    padding: 80px 0;
+
+    &--empty {
+        min-height: calc(100vh - 150px);
+        display: flex;
+        align-items: center;
+        color: rgb(187, 187, 187);
+        text-transform: uppercase;
+    }
+    // .cart-top__inner
+
+    &__inner {
+    }
+
+    // .cart-top__title
+    &__title {
+        font-size: 80px;
+        font-weight: 400;
+        margin-bottom: 15px;
+        text-align: center;
+
+        @media screen and (max-width:768px) {
+            font-size: 50px;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+
+Django==3.2.10
+django-recaptcha3
+Pillow
+requests
+sorl-thumbnail
+lxml
+django-ckeditor
+django-cleanup
+django-allauth
+whitenoise
+mysqlclient

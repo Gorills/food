@@ -1,0 +1,120 @@
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_GET
+from django.http import HttpResponse
+from shop.models import Manufacturer, ShopSetup, Product
+from setup.models import BaseSettings
+from .models import SliderSetup, Slider, Page
+from blog.models import Post
+from setup.models import ThemeSettings
+try:
+    theme_address = ThemeSettings.objects.get().name
+except:
+    theme_address = 'default'
+
+from django.views.generic import TemplateView, ListView
+
+
+
+
+@require_GET
+def robots_txt(request):
+    try:
+        setup = BaseSettings.objects.get()
+        if setup.active == True:
+            lines = [
+                "User-Agent: *",
+                "Disallow: /admin/",
+                "Disallow: /order/",
+                
+                "Disallow: *utm=",
+                "Allow: /static/*.css",
+                "Allow: /static/*.js",
+                "Allow: /static/*.png",
+                "Allow: /static/*.jpg",
+                "Allow: /static/*.gif",
+
+                "User-Agent: Yandex",
+                "Disallow: /admin/",
+                "Disallow: /order/",
+            
+                "Disallow: *utm=",
+                "Allow: /static/*.css",
+                "Allow: /static/*.js",
+                "Allow: /static/*.png",
+                "Allow: /static/*.jpg",
+                "Allow: /static/*.gif",
+
+                "Clean-Param: utm_source&utm_medium&utm_campaign",
+                "Host: example.com",
+                "Sitemap: example.com/sitemap.xml",
+            ]
+        else:
+            lines = [
+                "User-Agent: *",
+                "Disallow: /",
+                
+            ]
+
+    except:
+        lines = [
+            "User-Agent: *",
+            "Disallow: /",
+            
+        ]
+        
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+
+
+def page_not_found_view(request, exception):
+    return render(request, '404.html', status=404)
+
+from cart.cart import Cart
+
+def home(request):
+    
+    # cart = Cart(request)
+    # cart.clear()
+    manufacturers = Manufacturer.objects.all()[:12]
+    slider_setup = SliderSetup.objects.get()
+    shop_setup = ShopSetup.objects.get()
+    sliders = Slider.objects.all()
+    new_products = Product.objects.filter(new=True).order_by('-id')[:8]
+    sale_products = Product.objects.all().exclude(old_price=None)[:8]
+    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0)[:8]
+    news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
+
+    context = {
+        'manufacturers':manufacturers,
+        'slider_setup': slider_setup,
+        'sliders': sliders,
+        'shop_setup': shop_setup,
+        'new_products': new_products,
+        'sale_products': sale_products,
+        'news': news,
+        'hit_products': hit_products,
+    }
+    
+    return render(request, 'home/home.html', context)
+
+
+
+def page_detail(request, slug):
+    page = get_object_or_404(Page, type=slug)
+    context = {
+        'page': page
+    }
+    return render(request, 'home/page_detail.html', context)
+
+
+from django.db.models import Q
+class SearchResultsView(ListView):
+    model = Product
+    template_name = 'home/search.html'
+
+    def get_queryset(self): # новый
+        query = self.request.GET.get('q')
+        return Product.objects.filter(
+            Q(name__icontains=query)
+        )

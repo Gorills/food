@@ -1,0 +1,94 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Заказы</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+
+            <li class="breadcrumb__item">Заказы</li>
+            {% if q %}
+            <li class="breadcrumb__item">Поиск: <b>{{q}}</b> <a id="refresh" href="#">(сбросить)</a></li>
+            {% endif %}
+        </ol>
+
+       
+    </div>
+</div>
+
+
+
+
+<div class="page search">
+    <div class="page__inner search__inner">
+
+        <ul class="responsive-table">
+            <li class="table-header">
+                
+
+                <div class="col col-1">
+                    № 
+                   
+                </div>
+                <div class="col col-7">
+                    ФИО
+                   
+                </div>
+                <div class="col col-2">
+                    Статус 
+                   
+                </div>
+                <div class="col col-2">
+                    Сумма 
+                </div>
+                <div class="col col-2">
+                    Скидка 
+                </div>
+                <a href="" class="col col-4 sort" data-sort="{% if sort == 'name' %}-name{% else %}name{% endif %}">
+                  Дата 
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"/></svg>
+                </a>
+               
+                <div class="col ">Действие</div>
+            </li>
+
+            {% for order in orders %}
+                <li class="table-row {% if category.parent %}children{% endif %}">
+                    <div class="col col-1" data-label="">{{ order.id }}</div>
+                    <div class="col col-7" data-label="">{{ order.first_name }} {{ order.last_name }}</div>
+
+                    <div class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
+                        {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
+                    </div>
+
+                    <div class="col col-2" data-label="">{{ order.get_total_cost | floatformat:2}}</div>
+                    <div class="col col-2" data-label="">
+                        {% if order.discount %}
+                            {{ order.discount }} (купон: {{ order.coupon.code }})
+                        {% endif %}
+                    </div>
+                    <div class="col col-4" data-label="">{{ order.created }}</div>
+
+                    <div class="col col-5" data-label="">
+                        <a target="_blank" href="" class="info">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M288 144a110.94 110.94 0 0 0-31.24 5 55.4 55.4 0 0 1 7.24 27 56 56 0 0 1-56 56 55.4 55.4 0 0 1-27-7.24A111.71 111.71 0 1 0 288 144zm284.52 97.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400c-98.65 0-189.09-55-237.93-144C98.91 167 189.34 112 288 112s189.09 55 237.93 144C477.1 345 386.66 400 288 400z"/></svg>                    
+                        </a>
+                        
+                        
+                    </div>
+                </li>
+            {% endfor %}
+          </ul>
+    
+    </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+
+<div class="page__title">Коды счетчиков</div>
+
+<div class="breadcrumb">
+
+    <ol class="breadcrumb__list">
+        <li class="breadcrumb__item"><a class="breadcrumb__link" href="#">Главная</a></li>
+        <li class="breadcrumb__item">Коды счетчиков</li>
+    </ol>
+
+</div>
+
+<div class="page">
+    <div class="page__inner">
+
+        {% for code in codes %}
+        <form action="{% url 'codes_settings_edit' code.id %}" class="form" method="post">
+            {% csrf_token %}
+            <label for="">Название скрипта</label>
+            <p class="form__static">{{ code.name }}</p>
+            <label for="">Код скрипта</label>
+            <p class="form__static">{{ code.code }}</p>
+            <p class="form__static">Размещение: {% if code.h_f == True %}<b>в шапке сайта</b>{% else %}<b>в подвале сайта</b>{% endif %}</p>
+            
+            
+            
+            <a href="{% url 'codes_settings_edit' code.id %}" class="btn btn--danger">Удалить</a>
+            
+
+        </form>
+        {% endfor %}
+        <form action="." class="form" method="post">
+            {% csrf_token %}
+            <label for="">Название скрипта</label>
+            <input type="text" class="input" name="name" value="{{ code.name }}">
+            <label for="">Код скрипта</label>
+            <textarea name="code" id="" cols="30" rows="10" class="input"></textarea>
+
+            <div class="form__wrap">
+                <label for="">Размещение в шапке сайта, если выбрано. В подвале, если нет.</label>
+                <input type="checkbox" name="h_f" value="True">
+            </div>
+
+            <button class="btn btn--primary">Добавить</button>
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}
