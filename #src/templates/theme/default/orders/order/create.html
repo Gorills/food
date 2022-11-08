@@ -5,9 +5,6 @@
 
 {% block body %}
 
-<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=62a06163-4729-4810-91c7-f242ebcdd007" type="text/javascript"></script>
-<script src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
-
 
 <div class="cart-top">
     <div class="container">
@@ -31,7 +28,7 @@
                     
                     {% csrf_token %}
                 </div>
-                <div id="map"></div>
+                
             </div>
             
             <div class="order-detail__data">
@@ -81,7 +78,7 @@
 
 
 <script type="text/javascript">
-    {% comment %} ymaps.ready(init);
+  ymaps.ready(init);
     function init(){
         var suggestView=new ymaps.SuggestView('id_address');
         suggestView.events.add('select',function(event){
@@ -111,31 +108,7 @@
     document.getElementsByTagName('ymaps')[0].style.top = document.getElementsByTagName('ymaps')[0].style.top.match(/d+/)*1 + 5 + 'px';
     //установка смещения блока подсказок по горизонтали
     document.getElementsByTagName('ymaps')[0].style.left = document.getElementsByTagName('ymaps')[0].style.left.match(/d+/)*1 - 1 + 'px';
-    } {% endcomment %}
-
-    ymaps.ready(function () {
-        var map;
-        ymaps.geolocation.get().then(function (res) {
-            var mapContainer = $('#map'),
-                bounds = res.geoObjects.get(0).properties.get('boundedBy'),
-                // Рассчитываем видимую область для текущей положения пользователя.
-                mapState = ymaps.util.bounds.getCenterAndZoom(
-                    bounds,
-                    [mapContainer.width(), mapContainer.height()]
-                );
-            createMap(mapState);
-        }, function (e) {
-            // Если местоположение невозможно получить, то просто создаем карту.
-            createMap({
-                center: [55.751574, 37.573856],
-                zoom: 2
-            });
-        });
-        
-        function createMap (state) {
-            map = new ymaps.Map('map', state);
-        }
-    });
+    } 
 </script>
     
 {% endblock %}
