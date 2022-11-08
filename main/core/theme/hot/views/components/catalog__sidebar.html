@@ -1,0 +1,61 @@
+<div class="catalog__sidebar">
+    <div class="catalog__sidefresh">
+        <div class="catalog__row">
+            <div class="catalog__title">Каталог товаров</div>
+            {% for cat in categorys %}
+            <div class="catalog__item">
+                <a href="{{ cat.get_absolute_url }}" class="catalog__link">{{ cat.name }}</a>
+            </div>
+            {% endfor %}
+
+
+        </div>
+        <div class="catalog__row">
+            <div class="catalog__title">Фильтр цены</div>
+
+            
+            <form action="" class="filter__price">
+                <div class="filter__price-item ref-min">
+                    <div class="filter__price-item-ref ref-min-ref">
+                        <p class="filter__text">От:</p>
+                        <input type="number" class="filter__input" data-key="min_price" data-get="{% for key,value in request.GET.items %}{% ifnotequal key 'min_price' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}" data-filter="{{ min_filter | floatformat:0 }}" value="{{ min_price | floatformat:0 }}">
+                    </div>
+                </div>
+                <div class="filter__price-item ref-max">
+                    <div class="filter__price-item-ref ref-max-ref">
+                        <p class="filter__text">До:</p>
+                        <input type="number" class="filter__input" data-key="max_price" data-get="{% for key,value in request.GET.items %}{% ifnotequal key 'max_price' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}" data-filter="{{ max_filter | floatformat:0 }}" value="{{ max_price | floatformat:0}}">
+                    </div>
+                </div>
+                    
+            </form>
+            
+        
+
+        </div>
+        
+        {% comment %} {% for char in char_filtres %} 
+            {{ char.char_value }} <br>
+        
+        {% endfor %} {% endcomment %}
+        {% comment %} <div class="catalog__row">
+            <div class="catalog__title">Фильтр цены</div>
+            
+        
+
+        </div>
+        <div class="catalog__row">
+            <div class="catalog__title">Фильтр цены</div>
+            
+        
+
+        </div>
+        <div class="catalog__row">
+            <div class="catalog__title">Фильтр цены</div>
+            
+        
+
+        </div> {% endcomment %}
+
+    </div>
+</div>

@@ -11,3 +11,11 @@ gulp.task("gzip", () => {
             "title": "GZIP config"
         }));
 });
+
+gulp.task("hotgzip", () => {
+    return gulp.src(paths.hotgzip.src)
+        .pipe(gulp.dest(paths.hotgzip.dist))
+        .pipe(debug({
+            "title": "GZIP config"
+        }));
+});

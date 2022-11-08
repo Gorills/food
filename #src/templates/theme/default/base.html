@@ -78,7 +78,8 @@
             {{ code.code | safe }}
         {% endif %}
     {% endfor %}
-    
+    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+
     {% comment %} {% recaptcha_init %}
     {% recaptcha_ready action_name='homepage' %} {% endcomment %}
 </head>

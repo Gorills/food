@@ -1,4 +1,5 @@
 # account/views.py
+import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from allauth.account.forms import SignupForm
@@ -13,6 +14,9 @@ try:
     theme_address = ThemeSettings.objects.get().name
 except:
     theme_address = 'default'
+
+
+
 
 
 from django.shortcuts import render, get_object_or_404
@@ -92,6 +96,9 @@ class Login(LoginView):
 
 class Logout(LogoutView):
     template_name = 'account/logged_out.html'
+
+
+
 
 
 

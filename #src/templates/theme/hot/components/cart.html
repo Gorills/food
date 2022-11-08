@@ -1,0 +1,64 @@
+
+{% load thumbnail %}
+
+<div class="cart">
+    <div class="cart__closer"></div>
+
+    <div class="cart__inner">
+        <div class="cart__refresh">
+            <div class="cart__top">
+                <p class="cart__title">Корзина</p>
+                <div class="cart__close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></div>
+            </div>
+            {% if cart|length > 0 %}
+                <div class="cart__list">
+                
+                    {% for item in cart %}
+                        {% with product=item.product %}
+                        <div class="cart__item">
+                            <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
+
+                                {% if product.images.first %}
+                                
+                                    {% thumbnail product.images.first.src "80x80" crop="center" as im %}
+                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                    {% endthumbnail %}
+
+                                {% else %}
+                                
+                                    {% thumbnail product.thumb "80x80" crop="center" as im %}
+                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                    {% endthumbnail %}
+
+                                {% endif %}
+                            </a>
+                            <div class="cart__wrap">
+                                <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
+                                <p class="cart__price">{{ item.quantity }} x {{ item.price }}₽</p>
+                            </div>
+
+                            <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                            </a>
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+
+                <div class="cart__total">
+                    <p class="cart__total-text">Итого</p>
+                    <p class="cart__total-summ">{{ cart.get_total_price }}₽</p>
+                </div>
+                <div class="cart__block">
+                    <a href="{% url 'cart:cart_detail' %}" class="btn btn--empty">В корзину</a>
+                    <a href="{% url "orders:order_create" %}" class="btn btn--full">Оформить</a>
+
+                </div>
+            {% else %}
+            <div class="cart__empty">
+                <p class="cart__empty-text">Корзина пуста</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -8,9 +8,10 @@ except:
 
 @register.simple_tag()
 def get_static(file):
+    
     return '/core/theme/'+theme_address+'/' + file
 
 
 @register.simple_tag()
 def get_libs(file):
-    return '/core/libs/' + file
+    return '/core/libs/' + file 

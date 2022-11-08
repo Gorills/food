@@ -12,6 +12,14 @@ gulp.task("fonts", () => {
         }));
 });
 
+gulp.task("hotfonts", () => {
+    return gulp.src(paths.hotfonts.src)
+        .pipe(gulp.dest(paths.hotfonts.dist))
+        .pipe(debug({
+            "title": "Fonts"
+        }));
+});
+
 gulp.task("adminfonts", () => {
     return gulp.src(paths.adminfonts.src)
         .pipe(gulp.dest(paths.adminfonts.dist))

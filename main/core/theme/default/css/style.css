@@ -181,6 +181,12 @@ a {
   display: none !important;
 }
 
+.ymaps-2-1-79-search__suggest {
+  top: 151px !important;
+  left: 15px !important;
+  width: 100% !important;
+}
+
 .header {
   box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
   align-items: center;

@@ -11,6 +11,8 @@ class UserProfile(models.Model):
 
     telephone = models.CharField(
         'Telephone', max_length=50, blank=True, null=True)
+    
+    use_sms = models.BooleanField(default=True)
  
     apartment = models.CharField(max_length=20, blank=True, null=True)
     address = models.CharField(max_length=50, blank=True, null=True)
@@ -32,3 +34,6 @@ class UserProfile(models.Model):
             if len(result):
                 return result[0].verified
         return False
+
+
+

@@ -5,6 +5,9 @@
 
 {% block body %}
 
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e" type="text/javascript"></script>
+<script src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
+
 
 <div class="cart-top">
     <div class="container">
@@ -24,12 +27,13 @@
             <div class="order-detail__form">
                 <div class="order-form">
                     {{ form.as_p }}
-                    
+                   
                     
                     {% csrf_token %}
                 </div>
-               
+                <div id="map"></div>
             </div>
+            
             <div class="order-detail__data">
                 <ul>
                     {% for item in cart %}
@@ -72,7 +76,66 @@
         </div>
     </div>
 </form>
-    
-   
+
+
+
+
+<script type="text/javascript">
+    {% comment %} ymaps.ready(init);
+    function init(){
+        var suggestView=new ymaps.SuggestView('id_address');
+        suggestView.events.add('select',function(event){
+            var selected=event.get('item').value;
+            ymaps.geocode(selected,{
+                results:1
+            }).then(function(res){
+                return ymaps.geocode(res.geoObjects.get(0).geometry.getCoordinates(),{
+                    kind:'district',
+                    results:10
+                }).then(function(res){
+                    var founded=res['metaData']['geocoder']['found'];
+                    $('label.suggest .description').html("");
+                    for(i=0;i<=founded-1;i++){
+                        var info=res.geoObjects.get(i).properties.getAll();
+                        console.log(info);
+                        var name=info['name'];
+                        if(name.search('район')!=-1){
+                            name=name.replace(' район','');
+                            console.log(name);
+                        }
+                    }
+                });
+            });
+        });
+    //установка смещения блока подсказок по вертикали
+    document.getElementsByTagName('ymaps')[0].style.top = document.getElementsByTagName('ymaps')[0].style.top.match(/d+/)*1 + 5 + 'px';
+    //установка смещения блока подсказок по горизонтали
+    document.getElementsByTagName('ymaps')[0].style.left = document.getElementsByTagName('ymaps')[0].style.left.match(/d+/)*1 - 1 + 'px';
+    } {% endcomment %}
+
+    ymaps.ready(function () {
+        var map;
+        ymaps.geolocation.get().then(function (res) {
+            var mapContainer = $('#map'),
+                bounds = res.geoObjects.get(0).properties.get('boundedBy'),
+                // Рассчитываем видимую область для текущей положения пользователя.
+                mapState = ymaps.util.bounds.getCenterAndZoom(
+                    bounds,
+                    [mapContainer.width(), mapContainer.height()]
+                );
+            createMap(mapState);
+        }, function (e) {
+            // Если местоположение невозможно получить, то просто создаем карту.
+            createMap({
+                center: [55.751574, 37.573856],
+                zoom: 2
+            });
+        });
+        
+        function createMap (state) {
+            map = new ymaps.Map('map', state);
+        }
+    });
+</script>
     
 {% endblock %}

@@ -1,0 +1,224 @@
+.cart {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    bottom: 0;
+    width: 100%;
+    z-index: 9999;
+    display: flex;
+    justify-content: flex-end;
+    transition: all 0.3s ease-out;
+    opacity: 0;
+    // display: none;
+    &--active {
+        opacity: 100%;
+        right: 0;
+        .cart__closer {
+            right: 0;
+        }
+    }
+    // .cart__closer
+
+    &__closer {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+    }
+
+    // .cart__inner
+
+    &__inner {
+        background-color: #fff;
+        position: relative;
+        z-index: 10001;
+        padding: 65px;
+        overflow-y: scroll;
+        width: 450px;
+        @media screen and (max-width:768px) {
+            width: 100%;
+            min-width: 100%;
+            height: 100%;
+            height: 100vh;
+        }
+        @media screen and (max-width:480px) {
+            padding: 20px;
+        }
+    }
+
+    // .cart__top
+
+    &__top {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    // .cart__title
+
+    &__title {
+        font-size: 20px;
+        font-weight: 600;
+        
+    }
+
+    // .cart__close
+
+    &__close {
+        cursor: pointer;
+         svg {
+            width: 15px;
+         }
+    }
+
+    // .cart__list
+
+    &__list {
+        min-height: 575px;
+        border-bottom: 1px solid #e1e1e1;
+
+        @media screen and (max-width:768px) {
+            min-height: fit-content;
+        }
+    }
+
+    // .cart__item
+
+    &__item {
+        display: flex;
+        position: relative;
+        width: 320px;
+        padding: 20px 30px 20px 0;
+        border-bottom: 1px solid #e1e1e1;
+        &:last-child {
+            border-bottom: none;
+        }
+
+        @media screen and (max-width:480px) {
+            width: 100%;
+        }
+    }
+
+    // .cart__img-wrap
+
+    &__img-wrap {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    // .cart__img
+
+    &__img {
+    }
+
+    // .cart__wrap
+
+    &__wrap {
+    }
+
+    // .cart__name
+
+    &__name {
+        color: var(--color-font);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    // .cart__price
+
+    &__price {
+        font-size: 13px;
+    }
+
+    // .cart__remove
+
+    &__remove {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid rgb(117, 117, 117);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover {
+            svg{
+                
+                path {
+                    fill: var(--color-font);
+                }
+            }
+        }
+        svg{
+            width: 6px;
+            transition: all .5s ease;
+            path {
+                transition: all .5s ease;
+                fill: rgb(117, 117, 117);
+            }
+        }
+        
+    }
+    // .cart__total
+
+    &__total {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+
+    // .cart__total-text
+
+    &__total-text {
+    }
+
+    // .cart__total-summ
+
+    &__total-summ {
+    }
+
+    // .cart__block
+
+    &__block {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        a + a {
+            margin-top: 20px;
+        }
+    }
+    // .cart__empty
+
+    &__empty {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 203px);
+    }
+
+    // .cart__empty-text
+
+    &__empty-text {
+        color: #e1e1e1;
+        font-weight: 700;
+        font-size: 30px;
+        text-transform: uppercase;
+    }
+}
+
+
+
+

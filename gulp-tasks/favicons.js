@@ -26,6 +26,27 @@ gulp.task("favicons", () => {
         }));
 });
 
+gulp.task("hotfavicons", () => {
+    return gulp.src(paths.hotfavicons.src)
+        .pipe(favicons({
+            icons: {
+                appleIcon: true,
+                favicons: true,
+                online: false,
+                appleStartup: false,
+                android: false,
+                firefox: false,
+                yandex: false,
+                windows: false,
+                coast: false
+            }
+        }))
+        .pipe(gulp.dest(paths.hotfavicons.dist))
+        .pipe(debug({
+            "title": "Favicons"
+        }));
+});
+
 gulp.task("adminfavicons", () => {
     return gulp.src(paths.adminfavicons.src)
         .pipe(favicons({

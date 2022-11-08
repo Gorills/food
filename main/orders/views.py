@@ -36,28 +36,28 @@ def order_create(request):
             for item in cart:
                 OrderItem.objects.create(
                     order=order,
-                    option=item['option'],
+                    option=item['product'],
                     price=item['price'],
                     quantity=item['quantity']
                     )
                 
-                pr = ProductOption.objects.get(id=item['option'].id)
+                pr = Product.objects.get(id=item['product'].id)
 
                 # Добавляем продажу для учета хитов продаж
-                sales_old = pr.parent.sales
+                sales_old = pr.sales
                 sales_new = int(sales_old)+int(item['quantity'])
-                prod = pr.parent
-                prod.sales = sales_new
+                
+                pr.sales = sales_new
 
                 # Отнимаем количество, если указано в настройках
-                if prod.subtract == True:
-                    prod.stock = prod.stock - item['quantity']
-                    if prod.stock < 0:
-                        prod.stock = 0
+                if pr.subtract == True:
+                    pr.stock = pr.stock - item['quantity']
+                    if pr.stock < 0:
+                        pr.stock = 0
 
                     
 
-                prod.save()
+                pr.save()
 
                 
 

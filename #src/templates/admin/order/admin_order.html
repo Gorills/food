@@ -43,10 +43,10 @@
                     Статус 
                    
                 </div>
-                <div class="col col-2">
+                {% comment %} <div class="col col-2">
                     Оплата 
                    
-                </div>
+                </div> {% endcomment %}
                 <div class="col col-2">
                     Сумма 
                 </div>
@@ -67,10 +67,10 @@
                     <div class="col col-8" data-label="">{{ order.first_name }} {{ order.last_name }}</div>
                     <div class="col col-2" data-label="">{{ order.status }}</div>
 
-                    <div class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
+                    {% comment %} <div class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
 
                         {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
-                    </div>
+                    </div> {% endcomment %}
 
                     <div class="col col-2" data-label="">{{ order.get_total_cost | floatformat:2}}</div>
                     <div class="col col-2" data-label="">

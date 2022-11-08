@@ -30,19 +30,11 @@
         {% if  order.email%}
         
         {% endif %}
-        {% if  order.email%}
-        <p class="page-order__info">E-mail: {{ order.email }}</p>
-        {% endif %}
+      
         {% if  order.address%}
         <p class="page-order__info">Адрес: {{ order.address }}</p>
         {% endif %}
-        {% if  order.postal_code%}
-        <p class="page-order__info">Индекс: {{ order.postal_code }}</p>
-        {% endif %}
-        {% if  order.city%}
-        <p class="page-order__info">Город: {{ order.city }}</p>
-        
-        {% endif %}
+       
         {% if  order.coupon%}
         <p class="page-order__info">Промокод: {{ order.coupon }}</p>
         {% endif %}
@@ -101,10 +93,10 @@
             {% for product in order.items.all %}
                 <li class="table-row">
                     <div class="col col-2" data-label="">
-                        <img src="{{ product.product.thumb.url }}" alt="">
+                        <img src="{{ product.option.thumb.url }}" alt="">
                     </div>
                     <div class="col col-6" data-label="">
-                        {{ product.product.name }}
+                        {{ product.option.name }}
                     </div>
                     <div class="col col-2" data-label="">
                       

@@ -8,13 +8,8 @@ from django.conf import settings
 from shop.models import Product, ProductOption
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
-    first_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='Имя')
-    last_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='Фамилия')
     phone = models.CharField(max_length=50, null=True, blank=True, verbose_name='Телефон')
-    email = models.EmailField(null=True, blank=True, verbose_name='E-mail')
     address = models.CharField(max_length=250, null=True, blank=True, verbose_name='Адрес')
-    postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name='Индекс')
-    city = models.CharField(max_length=100, null=True, blank=True, verbose_name='Город')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
@@ -50,7 +45,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    option = models.ForeignKey(ProductOption, related_name='order_items', on_delete=models.CASCADE)
+    option = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 
