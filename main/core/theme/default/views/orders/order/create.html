@@ -34,9 +34,9 @@
             <div class="order-detail__data">
                 <ul>
                     {% for item in cart %}
-                        {% with option=item.option %}
+                        {% with product=item.product %}
                             <li>
-                                <p>{{ option.parent.name }}{% if option.parent.name != option.option_value  %}, {{ option.option_value }}{% endif %} x {{ item.quantity }}</p>
+                                <p>{{ product.name }} x {{ item.quantity }}</p>
                                 
                                 <span>{{ item.total_price }}₽</span>
                             </li>

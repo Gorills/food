@@ -875,6 +875,8 @@ class ColorsForm(forms.ModelForm):
             'danger',
             'warning',
             'info',
+            'header_bg',
+            'header_font',
         ]
         widgets = {
             'primary': forms.TextInput(attrs={
@@ -907,6 +909,16 @@ class ColorsForm(forms.ModelForm):
                 'placeholder': 'Цвет инфо',
                 'type': 'color'
             }),
+            'header_bg': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет header',
+                'type': 'color'
+            }),
+            'header_font': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет шрифтов в header',
+                'type': 'color'
+            }),
         }
         labels = {
             'primary': 'Основной цвет',
@@ -915,6 +927,8 @@ class ColorsForm(forms.ModelForm):
             'danger': 'Цвет ошибки',
             'warning': 'Цвет предупреждения',
             'info': 'Цвет инфо',
+            'header_bg': 'Цвет header',
+            'header_font': 'Цвет шрифтов в header',
         }
 
 class RecaptchaSettingsForm(forms.ModelForm):
