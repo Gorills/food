@@ -169,6 +169,7 @@ $(function() {
         data: $form.serialize()
       }).done(function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
         $(".header__cart-wrap").load(location.href + " .header__cart");
         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         
@@ -209,6 +210,8 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $(".cart__inner").load(location.href + " .cart__refresh");
         $(".header__cart-wrap").load(location.href + " .header__cart");
         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+
         
     });
 

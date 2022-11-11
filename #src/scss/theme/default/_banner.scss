@@ -4,8 +4,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 40px 0;
-    margin-bottom: 40px;
+    padding: 20px 0;
+    // margin-bottom: 40px;
     @media screen and (max-width:768px) {
         height: fit-content;
         padding: 40px 0;
@@ -21,9 +21,9 @@
     // .banner__title
 
     &__title {
-        font-size: 80px;
+        font-size: 40px;
         @media screen and (max-width:768px) {
-            font-size: 50px;
+            font-size: 30px;
         }
     }
 

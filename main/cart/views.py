@@ -7,7 +7,7 @@ from shop.models import Product
 from .cart import Cart
 from .forms import CartAddProductForm
 from coupons.forms import CouponApplyForm
-
+from orders.forms import OrderCreateForm
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
@@ -85,7 +85,10 @@ def cart_detail(request):
         coupon_apply_form = CouponApplyForm(data)
     else:
         coupon_apply_form = CouponApplyForm()
-    return render(request,
-                  'cart/detail.html',
-                  {'cart': cart,
-                   'coupon_apply_form': coupon_apply_form})
+
+    context = {
+        'form': OrderCreateForm(request.POST),
+        'cart': cart,
+        'coupon_apply_form': coupon_apply_form
+    }
+    return render(request, 'cart/detail.html', context)

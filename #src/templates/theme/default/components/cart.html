@@ -7,53 +7,92 @@
     <div class="cart__inner">
         <div class="cart__refresh">
             <div class="cart__top">
-                <p class="cart__title">Корзина</p>
-                <div class="cart__close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></div>
+                <div class="cart__top-wrap">
+                    <p class="cart__title">{{ cart.get_total_price }} ₽</p>
+                    
+                    <div class="cart__close">
+                        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="cart__top-row">
+                    <a href="#" class="cart__order">Заказать</a>
+                </div>
+                
             </div>
+            
             {% if cart|length > 0 %}
                 <div class="cart__list">
                 
                     {% for item in cart %}
                         {% with product=item.product %}
                         <div class="cart__item">
-                            <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
+                            <div class="cart__item-inner">
+                                <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
 
-                                {% if product.images.first %}
+                                    {% if product.images.first %}
+                                    
+                                        {% thumbnail product.images.first.src "55x55" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                                    {% else %}
+                                    
+                                        {% thumbnail product.thumb "55x55" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                                    {% endif %}
+                                </a>
+
+                                <div class="cart__wrap">
+                                    <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
+                                    
+                                    
+                                </div>
                                 
-                                    {% thumbnail product.images.first.src "80x80" crop="center" as im %}
-                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                    {% endthumbnail %}
-
-                                {% else %}
-                                
-                                    {% thumbnail product.thumb "80x80" crop="center" as im %}
-                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                    {% endthumbnail %}
-
-                                {% endif %}
-                            </a>
-                            <div class="cart__wrap">
-                                <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
-                                <p class="cart__price">{{ item.quantity }} x {{ item.price }}₽</p>
+                                <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                                </a>
                             </div>
+                            <div class="cart__bottom">
+                                <p class="cart__total-price">{{ item.total_price }} ₽</p>
 
-                            <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
-                            </a>
+                                <div class="cart-plus-minus">
+                                                        
+                                    
+
+
+                                    <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
+                                        {% csrf_token %}
+                                    
+                                        <input type="number" name="quantity" value="1" hidden required="">
+                                        <input type="hidden" name="update" value="False" hidden>
+                                        <button class="basket__minus">-</button>
+
+                                    </form>
+                                    <input type="text" value="{{ item.quantity }}" class="cart-input">
+                                    <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
+                                        {% csrf_token %}
+                                    
+                                        <input type="number" name="quantity" value="1" hidden required="">
+                                        <input type="hidden" name="update" value="False" hidden>
+                                        <button class="basket__minus">+</button>
+
+                                    </form>
+
+                                
+                                </div>
+    
+                            </div>
                         </div>
+                       
                         {% endwith %}
                     {% endfor %}
                 </div>
 
-                <div class="cart__total">
-                    <p class="cart__total-text">Итого</p>
-                    <p class="cart__total-summ">{{ cart.get_total_price }}₽</p>
-                </div>
-                <div class="cart__block">
-                    <a href="{% url 'cart:cart_detail' %}" class="btn btn--empty">В корзину</a>
-                    <a href="{% url "orders:order_create" %}" class="btn btn--full">Оформить</a>
-
-                </div>
+               
             {% else %}
             <div class="cart__empty">
                 <p class="cart__empty-text">Корзина пуста</p>
@@ -61,4 +100,88 @@
             {% endif %}
         </div>
     </div>
+    {% if cart|length > 0 %}
+    <div class="cart__form">
+        <div class="cart__form-wrap">
+            <a href="#" class="cart__form-btn cart__form-btn--active">Доставка</a>
+            <a href="#" class="cart__form-btn">Самовывоз</a>
+
+        </div>
+        
+        <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post">
+            {% csrf_token %}
+
+            <input name="phone" type="text" class="cart__input" placeholder="+7 999 999 99 99" required>
+            <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
+            <input name="address" type="text" class="cart__input" placeholder="Улица, дом*" id="id_address" required>
+            <div class="cart__input-wrap">
+                <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+
+            </div>
+
+            <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+
+            <div class="cart__select" id="time">
+                <div class="cart__select-active">
+                
+                    
+                    <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24c5.523 0 10-4.477 10-10S19.523 4 14 4 4 8.477 4 14s4.477 10 10 10z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8v6l4 2" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    
+                    Время
+                
+                </div>
+
+                
+                <div class="cart__select-drop">
+                    
+                    <div class="cart__select-item">Картой при получении</div>
+                    <div class="cart__select-item">Наличными курьеру</div>
+                </div>
+
+            </div>
+
+
+            <div class="cart__select" id="pay_method">
+                <div class="cart__select-active">
+                
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26.2859 6.85718H5.71443C4.45206 6.85718 3.42871 7.88053 3.42871 9.14289V22.8572C3.42871 24.1195 4.45206 25.1429 5.71443 25.1429H26.2859C27.5482 25.1429 28.5716 24.1195 28.5716 22.8572V9.14289C28.5716 7.88053 27.5482 6.85718 26.2859 6.85718Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3.42871 13.7144H28.5716" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+    
+                    Способ оплаты
+                
+                </div>
+
+                
+                <div class="cart__select-drop">
+                    
+                    <div class="cart__select-item">Картой при получении</div>
+                    <div class="cart__select-item">Наличными курьеру</div>
+                </div>
+
+            </div>
+
+            <input name="pay_method" type="text" hidden>
+            <textarea class="cart__input" name="" id="" cols="30" rows="5" placeholder="Комментарий к заказу"></textarea>
+
+           
+            <div class="cart__order-create-wrapper">
+                <div class="cart__order-create-wrapper-inner">
+                    <div class="cart__order-line">
+                        <p class="cart__order-line-text">Сумма заказа</p>
+                        <p class="cart__order-line-summ">{{ cart.get_total_price }} ₽</p>
+
+                    </div>
+                    
+                    <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price }} ₽</button>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+    
+    {% endif %}
 </div>

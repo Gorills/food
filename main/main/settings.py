@@ -209,7 +209,7 @@ TEMPLATES = [
                 'setup.context_processors.theme',
                 'shop.context_processors.categorys',
                 'home.context_processors.pages',
-
+                'home.context_processors.odrer_form',
                 'cart.context_processors.cart',
             ],
         },

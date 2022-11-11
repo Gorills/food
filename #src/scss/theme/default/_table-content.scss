@@ -176,7 +176,8 @@
   }
 
 .cart-plus-minus{
-    width: 180px;
+    // width: 180px;
+    display: flex;
   }
   .cart-plus-minus .cart-input {
       border: 0px;
@@ -186,11 +187,11 @@
       color: var(--color-font);
       font-size: 14px;
       display: inline-block;
-      height: 45px;
+      // height: 45px;
       list-style: 45px;
-      padding: 0 50px;
-      width: 100%;
-      border: 1px solid #ebebeb;
+      // padding: 0 50px;
+      // width: 100%;
+      width: 50px;
       text-align: center;
       border-radius: 30px;
   }
@@ -200,16 +201,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: absolute;
+      // position: absolute;
       top: 50%;
       height: 22px;
+      border: 1px solid rgb(124, 124, 124);
       width: 22px;
       background: transparent;
-      border-radius: 30px;
+      
       line-height: 1;
       cursor: pointer;
       text-align: center;
-      transform: translateY(-50%);
+      
       
 
       button {

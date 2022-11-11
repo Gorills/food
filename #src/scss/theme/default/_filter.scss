@@ -19,14 +19,18 @@
 
     &__input {
         margin-right: 10px;
-        width: 100px;
+        width: 50px;
         border: none;
         font-size: 16px;
-        border-bottom: 1px solid #222;
+        border-bottom: 1px solid #ebebeb;
         outline: 0;
         text-align: center;
         -webkit-appearance: none;
         -moz-appearance: textfield;
+        text-align: center;
+        &::placeholder {
+            text-align: center;
+        }
     }
 
     // .filter__price-item-ref

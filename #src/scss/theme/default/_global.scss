@@ -17,6 +17,7 @@ body {
 }
 .body {
     overflow: hidden;
+    height: 100vh;
 }
 
 
@@ -24,7 +25,20 @@ body {
 ::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
 ::-webkit-scrollbar{width:6px;background-color:#fff}
 
+textarea {
 
+    font-family: 'Circe', sans-serif;
+    &::placeholder {
+        font-family: 'Circe', sans-serif;
+    }
+
+}
+input {
+    font-family: 'Circe', sans-serif;
+    &::placeholder {
+        font-family: 'Circe', sans-serif;
+    }
+}
 
 
 *,
@@ -145,8 +159,8 @@ a   {
 }
 
 .ymaps-2-1-79-search__suggest {
-    top: 151px!important;
-    left: 15px!important;
+    // top: 220px !important;
+    // left: 21px !important;
     width: 100%!important;
 
 }

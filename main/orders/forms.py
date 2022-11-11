@@ -5,7 +5,20 @@ from .models import Order
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['phone', 'address']
+        fields = [
+
+            'phone',
+            'address',
+            'address_comment',
+            'entrance',
+            'floor',
+            'flat',
+            'time',
+            'order_conmment',
+           
+            'address',
+            
+            ]
 
         widgets = {
            
@@ -22,5 +35,6 @@ class OrderCreateForm(forms.ModelForm):
                 'placeholder': 'Адрес',
                 'required': 'required'
             })
+            
            
         }

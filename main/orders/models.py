@@ -6,10 +6,22 @@ from django.conf import settings
 
 # Create your models here.
 from shop.models import Product, ProductOption
+
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
     phone = models.CharField(max_length=50, null=True, blank=True, verbose_name='Телефон')
     address = models.CharField(max_length=250, null=True, blank=True, verbose_name='Адрес')
+    address_comment = models.TextField(null=True, blank=True, verbose_name='Комментарий к адресу')
+
+    entrance = models.CharField(max_length=250, null=True, blank=True, verbose_name='Подъезд')
+    floor = models.CharField(max_length=250, null=True, blank=True, verbose_name='Этаж')
+    flat = models.CharField(max_length=250, null=True, blank=True, verbose_name='Квартира')
+
+    time = models.TimeField(null=True, blank=True, verbose_name='Время')
+    
+    pay_method = models.CharField(max_length=250, verbose_name="Способ оплаты", null=True, blank=True)
+
+    order_conmment = models.TextField(null=True, blank=True, verbose_name='Комментарий к заказу')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
