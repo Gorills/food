@@ -69,7 +69,7 @@
                             {% endif %}
                         </div>
                         
-                        {% thumbnail slider.image "1280x374" crop="center" as im %}
+                        {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
                     </div>
