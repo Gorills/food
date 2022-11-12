@@ -503,7 +503,7 @@
         z-index: 99;
 
         @media screen and (max-width: 768px) {
-            position: fixed;
+            position: relative;
         }
     }
 
@@ -572,6 +572,16 @@
         @media screen and (max-width: 768px) {
             display: inline-block;
         }
+    }
+    // .cart__select-drop-two-hidden
+    &__select-drop-two-hidden {
+        display: none;
+    }
+
+    // .cart__select-drop-one-hidden
+    &__select-drop-one-hidden {
+        display: none;
+
     }
 }
 

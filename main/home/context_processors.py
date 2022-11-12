@@ -12,20 +12,38 @@ from datetime import datetime, timedelta
 
 
 def get_hours(request):
+    start = 10
+    end = 20
+    delay = 2
     # Определяем задержку времени до доставки
-    get_hour = int((datetime.now()+timedelta(hours=2)).time().hour)
+    get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
     hour_list = []
     count = 0
     for i in range(11):
         item = str(get_hour+count) + ':00-' + str(get_hour+count) + ':30'
         item_two = str(get_hour+count) + ':30-' + str(get_hour+count+1) + ':00'
         # До какого времени + 30 минут возможна доставка
-        if get_hour+count < 20:
+        if get_hour+count < end and get_hour-delay >= start:
             hour_list.append(item)
             hour_list.append(item_two)
         count += 1
+
+    hour_list_two = []
+    count_two = 0
+    for i in range(end):
+        item = str(count_two+delay) + ':00-' + str(count_two+delay) + ':30'
+        item_two = str(count_two+delay) + ':30-' + str(count_two+delay+1) + ':00'
+
+        if count_two >= start and count_two + delay +1 <= end:
+            hour_list_two.append(item)
+            hour_list_two.append(item_two)
+        count_two += 1
+
     
-    return {'get_hours': hour_list}
+    return {
+        'get_hours': hour_list,
+        'get_hours2': hour_list_two,
+    }
 
 
 def get_days(request):

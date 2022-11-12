@@ -1761,6 +1761,14 @@ a {
   display: none;
 }
 
+.cart__select-drop-two-hidden {
+  display: none;
+}
+
+.cart__select-drop-one-hidden {
+  display: none;
+}
+
 .sort {
   display: flex;
   justify-content: space-between;
@@ -3118,7 +3126,7 @@ td.product-thumbnail img {
   }
 
   .cart__order-create-wrapper {
-    position: fixed;
+    position: relative;
   }
 
   .cart__order-pickup-inner-html-wrapper {

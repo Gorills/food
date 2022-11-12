@@ -510,6 +510,13 @@ $(document).ready(function(){
         $('.cart__select-item--data').removeClass('cart__select-item--active')
         $(this).addClass('cart__select-item--active')
 
+        if ($(this).hasClass('cart__select-item-first')) {
+            $('.cart__select-drop-wrap-hours').html($('.cart__select-drop-one-hidden').html())
+        }
+        if ($(this).hasClass('cart__select-item-second')) {
+            $('.cart__select-drop-wrap-hours').html($('.cart__select-drop-two-hidden').html())
+        }
+
         var getDay = $(this).html()
         $('#data').html(getDay)
         $('#data').attr('data-value', '1')
