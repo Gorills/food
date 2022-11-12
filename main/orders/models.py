@@ -20,6 +20,7 @@ class Order(models.Model):
     time = models.CharField(max_length=250, null=True, blank=True, verbose_name='Время')
     
     pay_method = models.CharField(max_length=250, verbose_name="Способ оплаты", null=True, blank=True)
+    delivery_method = models.CharField(max_length=250, verbose_name="Способ доставка", null=True, blank=True)
 
     order_conmment = models.TextField(null=True, blank=True, verbose_name='Комментарий к заказу')
     created = models.DateTimeField(auto_now_add=True)

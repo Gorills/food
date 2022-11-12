@@ -93,15 +93,17 @@
     {% include 'components/cart.html' %}
 
     <div class="content">
+        <div class="content__inner">
 
-        {% block body %}
+            {% block body %}
 
 
-            {% block content %}
+                {% block content %}
+                {% endblock %}
+                
             {% endblock %}
             
-        {% endblock %}
-
+        </div>
 
 
     </div>
@@ -111,6 +113,7 @@
 
     {% include 'components/footer.html' %}
     {% include 'components/popup.html' %}
+    {% include 'components/order-done.html' %}
 
     <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
     <script src="{% get_libs 'owl/owl.carousel.min.js' %}?v1.0.0"></script>

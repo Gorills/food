@@ -147,6 +147,11 @@
         }
     }
 
+    // .cart__input-address-wrap
+    &__input-address-wrap {
+        position: relative;
+    }
+
     // .cart__item-inner
     &__item-inner {
         display: flex;

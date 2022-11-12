@@ -152,7 +152,7 @@ $(document).on('click','.search__closer',function(e){
 
 // Добавление в корзину product-list__form
 $(function() {
-    $(document).on('submit','.product-list__form, .product-detail__form, .qtybutton',function(e){
+    $(document).on('submit','.product-list__form, .product-detail__form',function(e){
       var $form = $(this);
       $.ajax({
         type: $form.attr('method'),
@@ -189,7 +189,44 @@ $(function() {
       e.preventDefault();
     });
 });
+$(function() {
+    $(document).on('submit','.qtybutton',function(e){
+      var $form = $(this);
+      $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        data: $form.serialize()
+      }).done(function() {
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        
 
+        $form.children('button').removeClass('btn--primary')
+        $form.children('button').addClass('btn--success')
+        $form.children('button').html('Добавлен')
+        
+        function explode(){
+
+            $form.children('button').addClass('btn--primary')
+            $form.children('button').removeClass('btn--success')
+            $form.children('button').html('Еще')
+        }
+        setTimeout(explode, 1000);
+
+        function uxplode(){
+            $form.children('button').html('В корзину')
+        }
+        setTimeout(uxplode, 5000);
+        
+      }).fail(function() {
+        console.log('fail');
+      });
+      e.preventDefault();
+    });
+});
 
 
 
@@ -450,6 +487,11 @@ $(document).ready(function(){
         $('.cart').removeClass('cart--active')
         $('.cart__form').hide()
         $('body').removeClass('body')
+        $('#id_address').css('border-color', '#eaedff')
+        $('#id_phone').css('border-color', '#eaedff')
+        $('.cart__select-error').hide()
+        
+
     })
 
     
@@ -490,11 +532,14 @@ $(document).ready(function(){
         var getTime = $(this).html()
         $('#time').html(getTime)
         $('#time').attr('data-value', '1')
+
         var dataExit = 0
+
         $(".cart__select-item--data").each(function() {
             
             if ($(this).hasClass('cart__select-item--active')) {
                 $('#data').html($(this).html())
+                $('#data').attr('data-value', '1')
                 $('#id_datetime').val(getTime + '/' + $(this).html())
                 dataExit = 1
             }
@@ -532,16 +577,13 @@ $(document).on('click','#id_phone, #id_address',function(){
 })
 
 $(function() {
-
     $(document).on('submit','.cart__form-form',function(e){
-
         var getOrderTime = $('#order_time').attr('data-value')
         var getTime = $('#time').attr('data-value')
         var getData = $('#data').attr('data-value')
         var payMethod = $('#pay_method').attr('data-value')
         var getPhone = $('#id_phone').val()
         var getAddress = $('#id_address').val()
-
         if (getPhone == '') {
             $('#id_phone').css('border-color', 'red')
         } else {
@@ -552,23 +594,14 @@ $(function() {
         } else {
             $('#id_address').css('border-color', '#eaedff')
         }
-
         if(getOrderTime=='0') {
             $('#order_time').children().children('.cart__select-error').show()
-        } else {
-            
-        }
-
+        } 
         if(getTime=='0') {
             $('#order_time').children().children('.cart__select-error').show()
-        } else {
-            
-        }
-
+        } 
         if(getData=='0') {
             $('#order_time').children().children('.cart__select-error').show()
-        } else {
-            
         }
         if(payMethod=='0') {
             $('#pay_method').children().children('.cart__select-error').show()
@@ -576,36 +609,44 @@ $(function() {
             $('#pay_method').children().children('.cart__select-error').hide()
         }
 
+
+
         if(getOrderTime != '0' && getTime != '0' && getData != '0' && payMethod != '0' && getPhone != '' && getAddress != '') {
             var $form = $(this);
-
             $.ajax({
                 type: $form.attr('method'),
                 url: $form.attr('action'),
                 data: $form.serialize()
-
             }).done(function() {
+
+                $(".cart__inner").load(location.href + " .cart__refresh");
+                $(".cart__form-refresh").load(location.href + " .cart__form");
+                $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+                $(".header__cart-wrap").load(location.href + " .header__cart");
+                $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");   
+
+                $('.cart').removeClass('cart--active')
+                $('.cart__form').hide()
+                $('body').removeClass('body')
+
+                $('.odred-done').show()
                 
-                console.log('!!!')
-                
+                        
             }).fail(function() {
                 console.log('fail');
             });
         }
-
-        
-
-
-
         e.preventDefault();
     });
 });
 
-
+$(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
+    e.preventDefault()
+    $('.odred-done').hide()
+})
 
 var count_id_address = 0
-$(document).on('click','#id_address',function(){
-
+$(document).on('focus','#id_address',function(){
     if (count_id_address == 0) {
         ymaps.ready(init);
         function init(){

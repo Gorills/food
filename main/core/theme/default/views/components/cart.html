@@ -110,19 +110,22 @@
 
             </div>
             
-            <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post">
+            <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
                 {% csrf_token %}
 
                 <input id="id_phone" name="phone" type="text" class="cart__input" placeholder="+7 999 999 99 99">
                 <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
-                <input name="address" type="text" class="cart__input" placeholder="Улица, дом" id="id_address">
+                
+                <div class="cart__input-address-wrap">
+                    <input name="address" type="text" class="cart__input" placeholder="Улица, дом" id="id_address">
+                </div>
                 <div class="cart__input-wrap">
                     <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
                     <input name="floor" type="text" class="cart__input" placeholder="Этаж">
                     <input name="flat" type="text" class="cart__input" placeholder="Квартира">
 
                 </div>
-
+                <input type="text" name="delivery_method" value="Доставка" hidden>
                 <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
 
                 <div class="cart__select" id="order_time" data-value="0">

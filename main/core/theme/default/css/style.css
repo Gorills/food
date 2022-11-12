@@ -199,8 +199,8 @@ a {
 }
 
 .ymaps-2-1-79-search__suggest {
-  top: 220px !important;
-  left: 21px !important;
+  top: 40px !important;
+  left: 0 !important;
   width: 100% !important;
 }
 
@@ -1467,6 +1467,10 @@ a {
 
 .cart__item:last-child {
   border-bottom: none;
+}
+
+.cart__input-address-wrap {
+  position: relative;
 }
 
 .cart__item-inner {
@@ -2848,6 +2852,77 @@ td.product-thumbnail img {
 
 .popup textarea {
   padding: 20px;
+}
+
+.odred-done {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: none;
+  z-index: 10001;
+}
+
+.odred-done__row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.odred-done__layout {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10002;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.odred-done__inner {
+  position: relative;
+  z-index: 10003;
+  background-color: #fff;
+  padding: 40px;
+}
+
+.odred-done__icon {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.odred-done__icon svg {
+  width: 50px;
+  fill: var(--color-success);
+}
+
+.odred-done__title {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.odred-done__text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.odred-done__wrap {
+  text-align: center;
+}
+
+.odred-done__ok {
+  display: inline-block;
+  padding: 3px 20px;
+  color: var(--color-font);
+  border: 1px solid var(--color-font);
+}
+
+.odred-done__ok:hover {
+  color: #fff;
+  background-color: var(--color-font);
 }
 
 @media screen and (max-width: 1426px) {
