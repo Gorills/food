@@ -147,16 +147,7 @@ $(document).on('click','.search__closer',function(e){
     $('.search').removeClass('search--active')
 })
 
-// Корзина
 
-$(document).on('click','.header__cart',function(e){
-    e.preventDefault()
-    $('.cart').addClass('cart--active')
-})
-$(document).on('click','.cart__close, .cart__closer',function(e){
-    e.preventDefault()
-    $('.cart').removeClass('cart--active')
-})
 
 
 // Добавление в корзину product-list__form
@@ -169,6 +160,7 @@ $(function() {
         data: $form.serialize()
       }).done(function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
+        $(".cart__form-refresh").load(location.href + " .cart__form");
         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
         $(".header__cart-wrap").load(location.href + " .header__cart");
         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
@@ -425,4 +417,228 @@ $(document).on('click','.product-detail__option-value',function(){
     $('.product-detail__option-value-reset').show()
     
 });
+
+
+
+// cart
+// Корзина
+
+$(document).on('click','.cart__select-active',function(){
+    $(this).next('.cart__select-drop').toggleClass('cart__select-drop--active')
+    $('.cart__order-layout').show()
+    $(this).children('.cart__select-error').hide()
+})
+
+
+$(document).on('click','.cart__order-layout',function(){
+    $('.cart__select-drop').removeClass('cart__select-drop--active')
+
+    $('.cart__order-layout').hide()
+})
+
+
+
+$(document).ready(function(){
+
+    $(document).on('click','.header__cart',function(e){
+        e.preventDefault()
+        $('.cart').addClass('cart--active')
+        $('body').addClass('body')
+    })
+    $(document).on('click','.cart__close, .cart__closer',function(e){
+        e.preventDefault()
+        $('.cart').removeClass('cart--active')
+        $('.cart__form').hide()
+        $('body').removeClass('body')
+    })
+
+    
+    $(document).on('click','.cart__order',function(e){
+        e.preventDefault()
+        $('.cart__form').show()
+    })
+    
+
+    $(document).on('click','.cart__select-item--data',function(){
+        $('.cart__select-item--data').removeClass('cart__select-item--active')
+        $(this).addClass('cart__select-item--active')
+
+        var getDay = $(this).html()
+        $('#data').html(getDay)
+        $('#data').attr('data-value', '1')
+        var dataExit = 0
+
+        $(".cart__select-item--time").each(function() {
+            if ($(this).hasClass('cart__select-item--active')) {
+                $('#time').html($(this).html())
+                $('#id_datetime').val($(this).html() + '/' + getDay)
+                dataExit = 1
+            }
+        });
+        if (dataExit == 1) {
+            $(this).parent().parent().parent('.cart__select-drop').removeClass('cart__select-drop--active')
+            $(this).parent().parent().parent('.cart__select-drop').attr('data-value', '1')
+            $('.cart__order-layout').hide()
+        }
+    })
+
+    $(document).on('click','.cart__select-item--time',function(){
+        
+
+        $('.cart__select-item--time').removeClass('cart__select-item--active')
+        $(this).addClass('cart__select-item--active')
+        var getTime = $(this).html()
+        $('#time').html(getTime)
+        $('#time').attr('data-value', '1')
+        var dataExit = 0
+        $(".cart__select-item--data").each(function() {
+            
+            if ($(this).hasClass('cart__select-item--active')) {
+                $('#data').html($(this).html())
+                $('#id_datetime').val(getTime + '/' + $(this).html())
+                dataExit = 1
+            }
+        });
+        if (dataExit == 1) {
+            $(this).parent().parent().parent('.cart__select-drop').removeClass('cart__select-drop--active')
+            $(this).parent().parent().parent().parent().attr('data-value', '1')
+            $('.cart__order-layout').hide()
+        }
+
+        
+    })
+
+    $(document).on('click','.cart__select-item--card',function(){
+        $('.cart__select-item--card').removeClass('cart__select-item--active')
+        $(this).addClass('cart__select-item--active')
+        
+        var getPay = $(this).text()
+
+        $('#pay').text(getPay)
+
+        $('#get_pay').val(getPay)
+
+        $('#pay_method').attr('data-value', '1')
+
+        $(this).parent('.cart__select-drop').removeClass('cart__select-drop--active')
+        $('.cart__order-layout').hide()
+
+    })
+
+})
+
+$(document).on('click','#id_phone, #id_address',function(){
+    $(this).css('border-color', '#eaedff')
+})
+
+$(function() {
+
+    $(document).on('submit','.cart__form-form',function(e){
+
+        var getOrderTime = $('#order_time').attr('data-value')
+        var getTime = $('#time').attr('data-value')
+        var getData = $('#data').attr('data-value')
+        var payMethod = $('#pay_method').attr('data-value')
+        var getPhone = $('#id_phone').val()
+        var getAddress = $('#id_address').val()
+
+        if (getPhone == '') {
+            $('#id_phone').css('border-color', 'red')
+        } else {
+            $('#id_phone').css('border-color', '#eaedff')
+        }
+        if (getAddress == '') {
+            $('#id_address').css('border-color', 'red')
+        } else {
+            $('#id_address').css('border-color', '#eaedff')
+        }
+
+        if(getOrderTime=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        } else {
+            
+        }
+
+        if(getTime=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        } else {
+            
+        }
+
+        if(getData=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        } else {
+            
+        }
+        if(payMethod=='0') {
+            $('#pay_method').children().children('.cart__select-error').show()
+        } else {
+            $('#pay_method').children().children('.cart__select-error').hide()
+        }
+
+        if(getOrderTime != '0' && getTime != '0' && getData != '0' && payMethod != '0' && getPhone != '' && getAddress != '') {
+            var $form = $(this);
+
+            $.ajax({
+                type: $form.attr('method'),
+                url: $form.attr('action'),
+                data: $form.serialize()
+
+            }).done(function() {
+                
+                console.log('!!!')
+                
+            }).fail(function() {
+                console.log('fail');
+            });
+        }
+
+        
+
+
+
+        e.preventDefault();
+    });
+});
+
+
+
+var count_id_address = 0
+$(document).on('click','#id_address',function(){
+
+    if (count_id_address == 0) {
+        ymaps.ready(init);
+        function init(){
+            var suggestView=new ymaps.SuggestView('id_address');
+            suggestView.events.add('select',function(event){
+                var selected=event.get('item').value;
+                ymaps.geocode(selected,{
+                    results:1
+                }).then(function(res){
+                    return ymaps.geocode(res.geoObjects.get(0).geometry.getCoordinates(),{
+                        kind:'district',
+                        results:10
+                    }).then(function(res){
+                        var founded=res['metaData']['geocoder']['found'];
+                        $('label.suggest .description').html("");
+                        for(i=0;i<=founded-1;i++){
+                            var info=res.geoObjects.get(i).properties.getAll();
+                            console.log(info);
+                            var name=info['name'];
+                            if(name.search('район')!=-1){
+                                name=name.replace(' район','');
+                                console.log(name);
+                            }
+                        }
+                    });
+                });
+            });
+        //установка смещения блока подсказок по вертикали
+        document.getElementsByTagName('ymaps')[0].style.top = document.getElementsByTagName('ymaps')[0].style.top.match(/d+/)*1 + 5 + 'px';
+        //установка смещения блока подсказок по горизонтали
+        document.getElementsByTagName('ymaps')[0].style.left = document.getElementsByTagName('ymaps')[0].style.left.match(/d+/)*1 - 1 + 'px';
+        } 
+    }
+    count_id_address +=1 
+})
 

@@ -8,3 +8,64 @@ def odrer_form(request):
     return {'odrer_form': OrderCreateForm()}
 
 
+from datetime import datetime, timedelta
+
+
+def get_hours(request):
+    # Определяем задержку времени до доставки
+    get_hour = int((datetime.now()+timedelta(hours=2)).time().hour)
+    hour_list = []
+    count = 0
+    for i in range(11):
+        item = str(get_hour+count) + ':00-' + str(get_hour+count) + ':30'
+        item_two = str(get_hour+count) + ':30-' + str(get_hour+count+1) + ':00'
+        # До какого времени + 30 минут возможна доставка
+        if get_hour+count < 20:
+            hour_list.append(item)
+            hour_list.append(item_two)
+        count += 1
+    
+    return {'get_hours': hour_list}
+
+
+def get_days(request):
+    day_list = []
+    count = 1
+    get_day = datetime.now()
+    for i in range(10):
+        get_day = datetime.now() + timedelta(days=count)
+        get_month = get_day.strftime("%b")
+        if get_month == 'Nov':
+            month = 'ноября'
+        if get_month == 'Dec':
+            month = 'декабря'
+        if get_month == 'Jan':
+            month = 'января'
+        if get_month == 'Feb':
+            month = 'февраля'
+        if get_month == 'Mar':
+            month = 'марта'
+        if get_month == 'Apr':
+            month = 'апреля'
+        if get_month == 'May':
+            month = 'мая'
+        if get_month == 'Jun':
+            month = 'июня'
+        if get_month == 'Jul':
+            month = 'июля'
+        if get_month == 'Aug':
+            month = 'августа'
+        if get_month == 'Sep':
+            month = 'сентября'
+        if get_month == 'Oct':
+            month = 'октября'
+        if count == 1:
+            day_str = 'Завтра, ' + str(get_day.day) + ' ' + month
+        else:
+            day_str = str(get_day.day) + ' ' + month
+        
+        day_list.append(day_str)
+
+        count += 1
+    
+    return {'get_days': day_list}

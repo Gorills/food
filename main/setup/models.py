@@ -23,6 +23,7 @@ class BaseSettings(SingletonModel):
     icon_png = models.FileField(upload_to="fav", blank=True, null=True)
     icon_svg = models.FileField(upload_to="fav", blank=True, null=True)
     theme_color = models.CharField(max_length=250, blank=True, null=True)
+    time_zone = models.CharField(max_length=250, blank=True, null=True, default='UTC')
     active = models.BooleanField(default=False)
     debugging_mode = models.BooleanField(default=True)
     create_at = models.DateField(auto_now_add=True)

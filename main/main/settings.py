@@ -128,7 +128,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+
+
+   
+from .local_settings import TIME_ZONE
 
 USE_I18N = True
 
@@ -210,6 +213,8 @@ TEMPLATES = [
                 'shop.context_processors.categorys',
                 'home.context_processors.pages',
                 'home.context_processors.odrer_form',
+                'home.context_processors.get_hours',
+                'home.context_processors.get_days',
                 'cart.context_processors.cart',
             ],
         },

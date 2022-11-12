@@ -17,7 +17,7 @@ class Order(models.Model):
     floor = models.CharField(max_length=250, null=True, blank=True, verbose_name='Этаж')
     flat = models.CharField(max_length=250, null=True, blank=True, verbose_name='Квартира')
 
-    time = models.TimeField(null=True, blank=True, verbose_name='Время')
+    time = models.CharField(max_length=250, null=True, blank=True, verbose_name='Время')
     
     pay_method = models.CharField(max_length=250, verbose_name="Способ оплаты", null=True, blank=True)
 

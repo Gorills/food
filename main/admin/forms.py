@@ -1027,6 +1027,7 @@ class SetupForm(forms.ModelForm):
             'icon_ico',
             'icon_png',
             'icon_svg',
+            
             'theme_color',
             'active',
             'debugging_mode'
@@ -1090,6 +1091,7 @@ class SetupForm(forms.ModelForm):
             }),
            
            
+           
         }
         labels = {
             'name': 'Название сайта',
@@ -1110,6 +1112,7 @@ class SetupForm(forms.ModelForm):
             'icon_png': 'Иконка .png',
             'icon_svg': 'Иконка .svg',
             'theme_color': 'Основной цвет',
+            
             'active': 'Разрешить индексацию',
             'debugging_mode': 'Режим разработки (вывод текстовой информации об ошибках)',
            
