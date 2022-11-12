@@ -1,3 +1,4 @@
+{% load thumbnail %}
 <header class="header">
     <div class="header__wrapper">
         <div class="container">
@@ -6,7 +7,11 @@
                     <div class="header__left">
                         {% if request.path == '/' %}
                             {% if setup.logo_dark %}
-                            <img src="{{ setup.logo_dark.url }}" alt="{{ setup.name }}" class="header__logo">
+
+                                {% thumbnail setup.logo_dark  "200" format="WEBP" as im %}
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                {% endthumbnail %}
+                           
 
                             {% else %}
                             <div class="header__logo">{{ setup.name }}</div>
@@ -14,7 +19,9 @@
                         {% else %}
                             {% if setup.logo_dark %}
                             <a href="{% url 'home' %}" class="header__logo-wrap">
-                                <img src="{{ setup.logo_dark.url }}" alt="{{ setup.name }}" class="header__logo">
+                                {% thumbnail setup.logo_dark  "60" format="PNG" crop="center" as im %}
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                {% endthumbnail %}
                             </a>
                             {% else %}
                             <a href="{% url 'home' %}" class="header__logo">{{ setup.name }}</a>
