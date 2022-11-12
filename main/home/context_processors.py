@@ -1,5 +1,7 @@
 from .models import Page
 from orders.forms import OrderCreateForm
+from shop.models import ShopSetup
+
 
 def pages(request):
     return {'pages': Page.objects.filter(status=True)}
@@ -12,9 +14,11 @@ from datetime import datetime, timedelta
 
 
 def get_hours(request):
-    start = 10
-    end = 20
-    delay = 2
+
+    start = ShopSetup.objects.get().start_delivery
+    end = ShopSetup.objects.get().end_delivery
+    delay = ShopSetup.objects.get().delay
+    
     # Определяем задержку времени до доставки
     get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
     hour_list = []
