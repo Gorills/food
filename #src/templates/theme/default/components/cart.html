@@ -105,8 +105,9 @@
         {% if cart|length > 0 %}
         <div class="cart__form">
             <div class="cart__form-wrap">
-                <a href="#" class="cart__form-btn cart__form-btn--active">Доставка</a>
-                <a href="#" class="cart__form-btn">Самовывоз</a>
+                <a href="#" class="cart__form-btn cart__form-btn--active" id="delivery">Доставка</a>
+                <a href="#" class="cart__form-btn" id="pickup">Самовывоз</a>
+                <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
 
             </div>
             
@@ -116,17 +117,28 @@
                 <input id="id_phone" name="phone" type="text" class="cart__input" placeholder="+7 999 999 99 99">
                 <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
                 
-                <div class="cart__input-address-wrap">
-                    <input name="address" type="text" class="cart__input" placeholder="Улица, дом" id="id_address">
-                </div>
-                <div class="cart__input-wrap">
-                    <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
-                    <input name="floor" type="text" class="cart__input" placeholder="Этаж">
-                    <input name="flat" type="text" class="cart__input" placeholder="Квартира">
 
+                <div class="cart__form-refresh-delivery">
+
+                    <div class="cart__form-refresh-delivery-inner">
+                        
+                        <div class="cart__input-address-wrap">
+                            <input name="address" type="text" class="cart__input" placeholder="Улица, дом" id="id_address">
+                        </div>
+                        <div class="cart__input-wrap">
+                            <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                            <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                            <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+
+                        </div>
+                        <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+
+                    </div>
                 </div>
-                <input type="text" name="delivery_method" value="Доставка" hidden>
-                <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+
+
+
+                <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
 
                 <div class="cart__select" id="order_time" data-value="0">
                     
@@ -217,4 +229,12 @@
         
         {% endif %}
     </div>
+    <div class="cart__order-pickup-inner-html">
+        <div class="cart__order-pickup-inner-html-wrapper">
+            <p class="cart__order-text-address-text">Самовывоз:</p>
+            <p class="cart__order-text-address">{{ setup.address }}</p>
+        
+        </div>
+    </div>
 </div>
+

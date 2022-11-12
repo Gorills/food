@@ -15,7 +15,9 @@ class OrderCreateForm(forms.ModelForm):
             'flat',
             'time',
             'order_conmment',
-           
+            
+            'delivery_method',
+            'pay_method',
             'address',
             
             ]

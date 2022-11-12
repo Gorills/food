@@ -237,6 +237,7 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
     var url = $(this).attr('href')
     $.get(url, function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
+        
         $(".header__cart-wrap").load(location.href + " .header__cart");
         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
@@ -251,6 +252,9 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
     if (count==0) {
         function remove(){
             $('.cart').removeClass('cart--active')
+            $('.cart__form').hide()
+            $('body').removeClass('body')
+
         }
         setTimeout(remove, 1000);
     }
@@ -482,7 +486,7 @@ $(document).ready(function(){
         $('.cart').addClass('cart--active')
         $('body').addClass('body')
     })
-    $(document).on('click','.cart__close, .cart__closer',function(e){
+    $(document).on('click','.cart__close, .cart__closer, #cancel',function(e){
         e.preventDefault()
         $('.cart').removeClass('cart--active')
         $('.cart__form').hide()
@@ -490,6 +494,7 @@ $(document).ready(function(){
         $('#id_address').css('border-color', '#eaedff')
         $('#id_phone').css('border-color', '#eaedff')
         $('.cart__select-error').hide()
+        $(".cart__form-refresh").load(location.href + " .cart__form");
         
 
     })
@@ -513,7 +518,7 @@ $(document).ready(function(){
         $(".cart__select-item--time").each(function() {
             if ($(this).hasClass('cart__select-item--active')) {
                 $('#time').html($(this).html())
-                $('#id_datetime').val($(this).html() + '/' + getDay)
+                $('#id_datetime').val($(this).html() + ' / ' + getDay)
                 dataExit = 1
             }
         });
@@ -540,7 +545,7 @@ $(document).ready(function(){
             if ($(this).hasClass('cart__select-item--active')) {
                 $('#data').html($(this).html())
                 $('#data').attr('data-value', '1')
-                $('#id_datetime').val(getTime + '/' + $(this).html())
+                $('#id_datetime').val(getTime + ' / ' + $(this).html())
                 dataExit = 1
             }
         });
@@ -644,6 +649,33 @@ $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
     e.preventDefault()
     $('.odred-done').hide()
 })
+
+
+$(document).on('click','.cart__form-btn',function(e){
+    e.preventDefault()
+    $('.cart__form-btn').removeClass('cart__form-btn--active')
+    $(this).addClass('cart__form-btn--active')
+})
+
+$(document).on('click','#pickup',function(e){
+
+    
+    $('#delivery_method').val('Самовывоз')
+    var htmlReplace = $('.cart__order-pickup-inner-html').html()
+
+    console.log(htmlReplace)
+
+    $('.cart__form-refresh-delivery').html(htmlReplace)
+
+})
+
+$(document).on('click','#delivery',function(e){
+
+    $(".cart__form-refresh-delivery").load(location.href + " .cart__form-refresh-delivery-inner");   
+    $('#delivery_method').val('Доставка')
+
+})
+
 
 var count_id_address = 0
 $(document).on('focus','#id_address',function(){

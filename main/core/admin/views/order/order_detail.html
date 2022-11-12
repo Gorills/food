@@ -27,8 +27,8 @@
     </a>
     <div class="page-order__inner">
         {% comment %} <p class="page-order__info">ФИО: {{ order.first_name }} {{ order.first_name }}</p> {% endcomment %}
-        {% if  order.email%}
-        
+        {% if  order.delivery_method %}
+        <p class="page-order__info">Способ доставки: {{ order.delivery_method }}</p>
         {% endif %}
       
         {% if  order.address%}
