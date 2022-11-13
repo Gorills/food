@@ -81,12 +81,16 @@
             {{ code.code | safe }}
         {% endif %}
     {% endfor %}
-    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    
 
     {% comment %} {% recaptcha_init %}
     {% recaptcha_ready action_name='homepage' %} {% endcomment %}
 </head>
 
+
+    
+    
+    
 <body>
 
     {% include 'components/header.html' %}
@@ -115,6 +119,7 @@
     {% include 'components/popup.html' %}
     {% include 'components/order-done.html' %}
 
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e&lang=ru_RU" type="text/javascript"></script>
     <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
     <script src="{% get_libs 'owl/owl.carousel.min.js' %}?v1.0.0"></script>
     <script async src="{% get_static 'js/app.js' %}?v{% now "H:i:s" %}"></script>

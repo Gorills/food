@@ -19,7 +19,7 @@
                         {% else %}
                             {% if setup.logo_dark %}
                             <a href="{% url 'home' %}" class="header__logo-wrap">
-                                {% thumbnail setup.logo_dark  "60" format="WEBP" crop="center" as im %}
+                                {% thumbnail setup.logo_dark  "200" format="WEBP" crop="center" as im %}
                                     <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
                                 {% endthumbnail %}
                             </a>
