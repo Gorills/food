@@ -285,7 +285,7 @@ $(function() {
 $(window).scroll(function() {
     var height = $(window).scrollTop();
     /*Если сделали скролл на 100px задаём новый класс для header*/
-    if(height > 350){
+    if(height > 200){
         $('.header').addClass('header--hide');
         
         
@@ -294,7 +294,7 @@ $(window).scroll(function() {
         $('.header').removeClass('header--hide');
               
     }
-    if(height > 450){
+    if(height > 200){
         $('.header').addClass('header--fixed');
         
         
