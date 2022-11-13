@@ -3125,6 +3125,14 @@ td.product-thumbnail img {
     margin-top: 10px;
   }
 
+  .cart__select-drop {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 95%;
+  }
+
   .cart__order-create-wrapper {
     position: relative;
   }

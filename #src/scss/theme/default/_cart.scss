@@ -450,6 +450,14 @@
         &--active {
             display: block;
         }
+        @media screen and (max-width: 768px) {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95%;
+            
+        }
     }
 
     // .cart__select-drop-time
