@@ -15,9 +15,14 @@ from datetime import datetime, timedelta
 
 def get_hours(request):
 
-    start = ShopSetup.objects.get().start_delivery
-    end = ShopSetup.objects.get().end_delivery
-    delay = ShopSetup.objects.get().delay
+    try:
+        start = ShopSetup.objects.get().start_delivery
+        end = ShopSetup.objects.get().end_delivery
+        delay = ShopSetup.objects.get().delay
+    except:
+        start = 10
+        end = 22
+        delay = 2
     
     # Определяем задержку времени до доставки
     get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
