@@ -2992,6 +2992,7 @@ td.product-thumbnail img {
   .header__logo {
     margin-right: 0;
     margin-bottom: 20px;
+    max-height: 90px;
   }
 
   .header__nav {
@@ -3296,7 +3297,7 @@ td.product-thumbnail img {
 
 @media screen and (max-width: 480px) {
   .content {
-    margin-top: 205px;
+    margin-top: 230px;
   }
 
   .header__logo-wrap {

@@ -22,6 +22,7 @@
 {% load thumbnail %}
 {% load theme_static %}
 
+{% if sliders.count > 0 %}
 <div class="start">
     
     <div class="sl owl-carousel" data-speed="{{ slider_setup.speed }}" data-nav="{{ slider_setup.nav }}" data-dots="{{ slider_setup.dots }}" data-autoplay="{{ slider_setup.autoplay }}" >
@@ -78,7 +79,7 @@
         {% endfor %}
     </div>
 </div>
-
+{% endif %}
 {% if shop_setup.new_products == True %}
 <div class="block">
     <div class="container">
