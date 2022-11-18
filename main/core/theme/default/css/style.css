@@ -1766,8 +1766,9 @@ a {
   display: none;
 }
 
-.cart__delivery {
-  padding: 20px 0;
+.cart__delivery--top {
+  font-size: 18px;
+  margin-top: 15px;
 }
 
 .cart__delivery span {

@@ -594,8 +594,12 @@
     }
     // .cart__delivery
     &__delivery {
-        padding: 20px 0;
+        
 
+        &--top {
+            font-size: 18px;
+            margin-top: 15px;
+        }
         span {
             font-size: 12px;
         }

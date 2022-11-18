@@ -91,7 +91,13 @@
                        
                         {% endwith %}
                     {% endfor %}
+
                     {% if cart.get_free != 0 %}
+                    <div class="cart__delivery cart__delivery--top">
+                        Сумма заказа: {{ cart.get_total_price }} ₽
+                        <br>
+                        
+                    </div>
                     <div class="cart__delivery">
                         Доставка: {{ cart.get_delivery }} ₽
                         <br>
