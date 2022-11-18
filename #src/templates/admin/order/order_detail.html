@@ -27,6 +27,9 @@
     </a>
     <div class="page-order__inner">
         {% comment %} <p class="page-order__info">ФИО: {{ order.first_name }} {{ order.first_name }}</p> {% endcomment %}
+        {% if  order.phone%}
+        <p class="page-order__info">Телефон: {{ order.phone }}</p>
+        {% endif %}
         {% if  order.delivery_method %}
         <p class="page-order__info">Способ доставки: {{ order.delivery_method }}</p>
         {% endif %}
@@ -34,6 +37,7 @@
         {% if  order.address%}
         <p class="page-order__info">Адрес: {{ order.address }}</p>
         {% endif %}
+        
         {% if  order.entrance%}
         <p class="page-order__info">Подъезд: {{ order.entrance }}</p>
         {% endif %}

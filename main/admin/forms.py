@@ -295,11 +295,20 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
+            
             'end_delivery': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
             'delay': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'price_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'free_delivery': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
             }),

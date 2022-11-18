@@ -1766,6 +1766,14 @@ a {
   display: none;
 }
 
+.cart__delivery {
+  padding: 20px 0;
+}
+
+.cart__delivery span {
+  font-size: 12px;
+}
+
 .sort {
   display: flex;
   justify-content: space-between;

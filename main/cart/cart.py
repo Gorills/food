@@ -1,8 +1,10 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Product, Product
+from shop.models import Product, Product, ShopSetup
 from coupons.models import Coupon
 
+price_delivery = ShopSetup.objects.get().price_delivery
+free_delivery = ShopSetup.objects.get().free_delivery
 
 class Cart(object):
 
@@ -124,8 +126,7 @@ class Cart(object):
         """
         Подсчет стоимости товаров в корзине.
         """
-        return sum(Decimal(item['price']) * item['quantity'] for item in
-                self.cart.values())
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
 
 
     def clear(self):
@@ -133,7 +134,16 @@ class Cart(object):
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
 
+    def get_delivery(self):
+        if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+            summ = Decimal(0)
+            return summ
+        else:
+            return price_delivery
 
+    def get_free(self):
+        
+        return free_delivery
 
     @property
     def coupon(self):
@@ -147,4 +157,4 @@ class Cart(object):
         return Decimal('0')
 
     def get_total_price_after_discount(self):
-        return self.get_total_price() - self.get_discount()
+        return self.get_total_price() - self.get_discount() + self.get_delivery()

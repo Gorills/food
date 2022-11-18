@@ -15,6 +15,11 @@ class ShopSetup(SingletonModel):
     start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
     end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
     delay = models.PositiveIntegerField(default=2, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
+
+    price_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость доставки', default=0)
+    free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)
+
+    show_descrioption = models.BooleanField(default=False, verbose_name='Показать короткое описание товара под карточкой')
     
     status = models.CharField(max_length=250, verbose_name='Товар при 0 остатке', choices=STATUS_CLASS, default='out_of_stock')
     description = models.TextField(null=True, blank=True, verbose_name='Описание каталога')

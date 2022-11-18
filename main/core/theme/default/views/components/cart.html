@@ -8,7 +8,7 @@
         <div class="cart__refresh">
             <div class="cart__top">
                 <div class="cart__top-wrap">
-                    <p class="cart__title">{{ cart.get_total_price }} ₽</p>
+                    <p class="cart__title">{{ cart.get_total_price_after_discount }} ₽</p>
                     
                     <div class="cart__close">
                         <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,8 +91,16 @@
                        
                         {% endwith %}
                     {% endfor %}
+                    {% if cart.get_free != 0 %}
+                    <div class="cart__delivery">
+                        Доставка: {{ cart.get_delivery }} ₽
+                        <br>
+                        {% if cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free }} ₽</span>){% endif %}
+                    </div>
+                    {% endif %}
                 </div>
 
+                
                
             {% else %}
             <div class="cart__empty">
@@ -240,11 +248,11 @@
                     <div class="cart__order-create-wrapper-inner">
                         <div class="cart__order-line">
                             <p class="cart__order-line-text">Сумма заказа</p>
-                            <p class="cart__order-line-summ">{{ cart.get_total_price }} ₽</p>
+                            <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount }} ₽</p>
 
                         </div>
                         
-                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price }} ₽</button>
+                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount }} ₽</button>
                     </div>
                 </div>
                 
