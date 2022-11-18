@@ -7,9 +7,9 @@ gulp.task("clean", () => {
     return del(["./main/core/theme/default/*"]);
 });
 
-gulp.task("clean", () => {
-    return del(["./main/core/theme/hot/*"]);
-});
+// gulp.task("clean", () => {
+//     return del(["./main/core/theme/hot/*"]);
+// });
 
 gulp.task("adminclean", () => {
     return del(["./main/core/admin/*"]);

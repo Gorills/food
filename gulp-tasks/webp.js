@@ -28,20 +28,20 @@ gulp.task("webp", () => {
         .on("end", browsersync.reload);
 });
 
-gulp.task("hotwebp", () => {
-    return gulp.src(paths.hotimages.src)
-        .pipe(newer(paths.hotimages.dist))
-        .pipe(webp(gulpif(production, imageminWebp({
-            lossless: true,
-            quality: 100,
-            alphaQuality: 100
-        }))))
-        .pipe(gulp.dest(paths.hotimages.dist))
-        .pipe(debug({
-            "title": "Images"
-        }))
-        .on("end", browsersync.reload);
-});
+// gulp.task("hotwebp", () => {
+//     return gulp.src(paths.hotimages.src)
+//         .pipe(newer(paths.hotimages.dist))
+//         .pipe(webp(gulpif(production, imageminWebp({
+//             lossless: true,
+//             quality: 100,
+//             alphaQuality: 100
+//         }))))
+//         .pipe(gulp.dest(paths.hotimages.dist))
+//         .pipe(debug({
+//             "title": "Images"
+//         }))
+//         .on("end", browsersync.reload);
+// });
 
 gulp.task("adminwebp", () => {
     return gulp.src(paths.adminimages.src)

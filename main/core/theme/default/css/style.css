@@ -1758,10 +1758,6 @@ a {
   min-width: 400px;
 }
 
-.cart #cancel {
-  display: none;
-}
-
 .cart__select-drop-two-hidden {
   display: none;
 }

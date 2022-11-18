@@ -23,17 +23,17 @@ gulp.task("views", () => {
         .pipe(browsersync.stream());
 });
 
-gulp.task("hotviews", () => {
-    return gulp.src(paths.hotviews.src)
-        .pipe(include({
-            prefix: "@@",
-            basepath: "@file"
-        }))
-        .pipe(gulpif(production, replace(".css", ".min.css")))
-        .pipe(gulpif(production, replace(".js", ".min.js")))
-        .pipe(gulp.dest(paths.hotviews.dist))
-        .pipe(browsersync.stream());
-});
+// gulp.task("hotviews", () => {
+//     return gulp.src(paths.hotviews.src)
+//         .pipe(include({
+//             prefix: "@@",
+//             basepath: "@file"
+//         }))
+//         .pipe(gulpif(production, replace(".css", ".min.css")))
+//         .pipe(gulpif(production, replace(".js", ".min.js")))
+//         .pipe(gulp.dest(paths.hotviews.dist))
+//         .pipe(browsersync.stream());
+// });
 
 gulp.task("adminviews", () => {
     return gulp.src(paths.adminviews.src)

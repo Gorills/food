@@ -58,59 +58,59 @@ const requireDir = require("require-dir"),
             dist: "./main/core/"
         },
         // theme hot
-        hotviews: {
-            src: [
-                "./#src/templates/theme/hot/**/*.html",
-                "./#src/templates/theme/hot/pages/*.html"
-            ],
-            dist: "./main/core/theme/hot/views/",
-            watch: [
-                "./#src/templates/theme/hot/**/*.html",
-                "./#src/templates/theme/hot/pages/*.html"
-            ]
-        },
-        hotstyles: {
-            src: "./#src/scss/theme/hot/style.{scss,sass}",
-            dist: "./main/core/theme/hot/css/",
-            watch: [
-                "./#src/scss/theme/hot/**/*.{scss,sass}",
-                "./#src/scss/theme/hot/**/*.{scss,sass}"
-            ]
-        },
-        hotscripts: {
-            src: "./#src/js/theme/hot/app.js",
-            dist: "./main/core/theme/hot/js/",
-            watch: [
-                "./#src/js/theme/hot/**/*.js",
-                "./#src/js/theme/hot/**/*.js"
-            ]
-        },
-        hotimages: {
-            src: [
-                "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,tiff,svg}",
-                "!./#src/images/theme/hot/fav/*.{jpg,jpeg,png,gif,tiff}"
-            ],
-            dist: "./main/core/theme/hot/images/",
-            watch: "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,svg,tiff}"
-        },
-        hotsprites: {
-            src: "./#src/images/theme/hot/sprites/*.svg",
-            dist: "./main/core/theme/hot/images/sprites/",
-            watch: "./#src/images/theme/hot/sprites/*.svg"
-        },
-        hotfonts: {
-            src: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}",
-            dist: "./main/core/theme/hot/fonts/",
-            watch: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}"
-        },
-        hotfavicons: {
-            src: "./#src/img/theme/hot/fav/*.{jpg,jpeg,png,gif}",
-            dist: "./main/core/img/fav/",
-        },
-        hotgzip: {
-            src: "./#src/.htaccess",
-            dist: "./main/core/"
-        },
+        // hotviews: {
+        //     src: [
+        //         "./#src/templates/theme/hot/**/*.html",
+        //         "./#src/templates/theme/hot/pages/*.html"
+        //     ],
+        //     dist: "./main/core/theme/hot/views/",
+        //     watch: [
+        //         "./#src/templates/theme/hot/**/*.html",
+        //         "./#src/templates/theme/hot/pages/*.html"
+        //     ]
+        // },
+        // hotstyles: {
+        //     src: "./#src/scss/theme/hot/style.{scss,sass}",
+        //     dist: "./main/core/theme/hot/css/",
+        //     watch: [
+        //         "./#src/scss/theme/hot/**/*.{scss,sass}",
+        //         "./#src/scss/theme/hot/**/*.{scss,sass}"
+        //     ]
+        // },
+        // hotscripts: {
+        //     src: "./#src/js/theme/hot/app.js",
+        //     dist: "./main/core/theme/hot/js/",
+        //     watch: [
+        //         "./#src/js/theme/hot/**/*.js",
+        //         "./#src/js/theme/hot/**/*.js"
+        //     ]
+        // },
+        // hotimages: {
+        //     src: [
+        //         "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,tiff,svg}",
+        //         "!./#src/images/theme/hot/fav/*.{jpg,jpeg,png,gif,tiff}"
+        //     ],
+        //     dist: "./main/core/theme/hot/images/",
+        //     watch: "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,svg,tiff}"
+        // },
+        // hotsprites: {
+        //     src: "./#src/images/theme/hot/sprites/*.svg",
+        //     dist: "./main/core/theme/hot/images/sprites/",
+        //     watch: "./#src/images/theme/hot/sprites/*.svg"
+        // },
+        // hotfonts: {
+        //     src: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}",
+        //     dist: "./main/core/theme/hot/fonts/",
+        //     watch: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}"
+        // },
+        // hotfavicons: {
+        //     src: "./#src/img/theme/hot/fav/*.{jpg,jpeg,png,gif}",
+        //     dist: "./main/core/img/fav/",
+        // },
+        // hotgzip: {
+        //     src: "./#src/.htaccess",
+        //     dist: "./main/core/"
+        // },
         // admin
         adminviews: {
             src: [
@@ -177,14 +177,14 @@ export const development = gulp.series("clean", "adminclean",
         "sprites", 
         "fonts", 
         "favicons",
-        "hotviews", 
-        "hotstyles", 
-        "hotscripts", 
-        "hotimages", 
-        "hotwebp", 
-        "hotsprites", 
-        "hotfonts", 
-        "hotfavicons",
+        // "hotviews", 
+        // "hotstyles", 
+        // "hotscripts", 
+        // "hotimages", 
+        // "hotwebp", 
+        // "hotsprites", 
+        // "hotfonts", 
+        // "hotfavicons",
         "adminviews", 
         "adminstyles", 
         "adminscripts", 
@@ -208,15 +208,15 @@ export const prod = gulp.series("clean", "adminclean",
         "fonts", 
         "favicons", 
         "gzip",
-        "hotviews", 
-        "hotstyles", 
-        "hotscripts", 
-        "hotimages", 
-        "hotwebp", 
-        "hotsprites", 
-        "hotfonts", 
-        "hotfavicons", 
-        "hotgzip",
+        // "hotviews", 
+        // "hotstyles", 
+        // "hotscripts", 
+        // "hotimages", 
+        // "hotwebp", 
+        // "hotsprites", 
+        // "hotfonts", 
+        // "hotfavicons", 
+        // "hotgzip",
         "adminviews", 
         "adminstyles", 
         "adminscripts", 
