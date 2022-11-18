@@ -3,8 +3,12 @@ from django.conf import settings
 from shop.models import Product, Product, ShopSetup
 from coupons.models import Coupon
 
-price_delivery = ShopSetup.objects.get().price_delivery
-free_delivery = ShopSetup.objects.get().free_delivery
+try:
+    price_delivery = ShopSetup.objects.get().price_delivery
+    free_delivery = ShopSetup.objects.get().free_delivery
+except:
+    price_delivery = 0
+    free_delivery = 0
 
 class Cart(object):
 
