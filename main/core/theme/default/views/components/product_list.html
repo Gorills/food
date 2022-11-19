@@ -49,17 +49,25 @@
                 <button class="btn btn--primary">В Корзину</button>
             </form>
 
+            
+
         </a>
 
         <div class="product-list__bottom">
             <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+            {% if view_desc == True %}
+            <div class="product-list__desc">
+               {{ product.short_description }}
+
+            </div>
+            {% endif %}
             <div class="product-list__prices">
                 <p class="product-list__price">{{ product.price }}₽</p>
                 {% if product.old_price %}
                     <p class="product-list__old">{{ product.old_price }}₽</p>
                 {% endif %}
             </div>
-
+            
         </div>
 
 

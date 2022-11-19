@@ -1124,17 +1124,24 @@ a {
 }
 
 .product-list__title {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .product-list__title a {
   color: var(--color-font);
 }
 
+.product-list__desc {
+  font-size: 14px;
+}
+
 .product-list__prices {
   display: flex;
   color: #666666;
+  font-size: 18px;
+  margin-top: 15px;
 }
 
 .product-list__old {
