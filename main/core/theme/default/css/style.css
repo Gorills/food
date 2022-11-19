@@ -1135,6 +1135,7 @@ a {
 
 .product-list__desc {
   font-size: 14px;
+  min-height: 90px;
 }
 
 .product-list__prices {
