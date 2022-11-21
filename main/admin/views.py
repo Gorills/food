@@ -384,6 +384,7 @@ def shop_settings(request):
         form_new = ShopSetupForm(request.POST, request.FILES, instance=shop_setup)
         if form_new.is_valid():
             form_new.save()
+            subprocess.call(["touch", RESET_FILE])
 
             return redirect('shop_settings')
 
