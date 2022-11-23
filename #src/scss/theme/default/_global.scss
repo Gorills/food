@@ -7,7 +7,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background-color: #fff;
+    background-color: var(--color-body);
     color: var(--color-font);
     line-height: 1.6;
     font-family: 'Circe', sans-serif;
@@ -28,7 +28,7 @@ body {
 
 
 ::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
-::-webkit-scrollbar{width:6px;background-color:#fff}
+::-webkit-scrollbar{width:6px;background-color:var(--color-body)}
 
 textarea {
 
@@ -40,6 +40,7 @@ textarea {
 }
 input {
     font-family: 'Circe', sans-serif;
+    color: var(--color-font);
     &::placeholder {
         font-family: 'Circe', sans-serif;
     }
@@ -100,19 +101,21 @@ a   {
     text-transform: uppercase;
 }
 
-
+.basket__minus {
+    color: var(--color-font);
+}
 .btn {
 
     font-weight: 600;
-    border: 2px solid var(--color-font);
+    border: 2px solid var(--color-btn-border);
     display: inline-block;
     transition: all 0.3s linear 0s;
     padding: 16px 75px;
     text-transform: uppercase;
     font-size: 14px;
     &--primary {
-        background-color: var(--color-font);
-        color: #fff;
+        background-color: var(--color-btn-bg);
+        color: var(--color-btn-font-light);
 
         &:hover {
             background-color: var(--color-primary);
@@ -121,16 +124,16 @@ a   {
     }
     &--empty {
         background: none;
-        color: var(--color-font);
+        color: var(--color-btn-font);
         &:hover {
             background-color: var(--color-font);
             border-color: var(--color-font);
-            color: #fff;
+            color: var(--color-btn-font);
         }
     }
     &--full {
-        background-color: var(--color-font);
-        color: #fff;
+        background-color: var(--color-btn-bg);
+        color: var(--color-btn-font-light);
 
         &:hover {
             background: none;

@@ -5,4 +5,7 @@ def categorys(request):
 
 
 def view_desc(request):
-    return {'view_desc': ShopSetup.objects.get().show_descrioption}
+    try:
+        return {'view_desc': ShopSetup.objects.get().show_descrioption}
+    except:
+        return {'view_desc': ''}

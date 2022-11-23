@@ -31,9 +31,10 @@
     &__options {
         position: absolute;
         z-index: 999;
-        background-color: #fff;
+        background-color: var(--color-body);
         border-radius: 5px;
         box-shadow: 0 0 0 1px rgba(68, 68, 68, 0.11);
+        border: 1px solid rgb(131, 131, 131);
         display: none;
         top: 40px;
     }

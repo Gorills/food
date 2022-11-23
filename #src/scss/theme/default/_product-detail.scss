@@ -2,7 +2,7 @@
     width: 100%;
     margin: 0 auto;
     padding: 40px 0;
-    background-color: var(--color-bg-lightest);
+    background-color: var(--color-body);
     // .product-detail__inner
 
     &__inner {
@@ -236,6 +236,9 @@
 
     &__minus {
         cursor: pointer;
+        svg line {
+            stroke: var(--color-font)
+        }
     }
 
     // .product-detail__count-inp
@@ -247,6 +250,10 @@
 
     &__plus {
         cursor: pointer;
+
+        svg path {
+            fill: var(--color-font)
+        }
 
     }
 

@@ -898,6 +898,11 @@ class ColorsForm(forms.ModelForm):
             'info',
             'header_bg',
             'header_font',
+            'body_bg',
+            'body_font',
+            'bg_btn',
+            'border_btn',
+            'color_btn',
         ]
         widgets = {
             'primary': forms.TextInput(attrs={
@@ -940,6 +945,31 @@ class ColorsForm(forms.ModelForm):
                 'placeholder': 'Цвет шрифтов в header',
                 'type': 'color'
             }),
+            'body_bg': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет фона сайта',
+                'type': 'color'
+            }),
+            'body_font': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет шрифтов сайта',
+                'type': 'color'
+            }),
+            'bg_btn': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет кнопок',
+                'type': 'color'
+            }),
+            'border_btn': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет обводки кнопок',
+                'type': 'color'
+            }),
+            'color_btn': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет шрифтов в кнопках',
+                'type': 'color'
+            }),
         }
         labels = {
             'primary': 'Основной цвет',
@@ -950,6 +980,12 @@ class ColorsForm(forms.ModelForm):
             'info': 'Цвет инфо',
             'header_bg': 'Цвет header',
             'header_font': 'Цвет шрифтов в header',
+
+            'body_bg': 'Цвет фона сайта',
+            'body_font': 'Цвет шрифтов сайта',
+            'bg_btn': 'Цвет кнопок',
+            'border_btn': 'Цвет обводки кнопок',
+            'color_btn': 'Цвет шрифтов в кнопках',
         }
 
 class RecaptchaSettingsForm(forms.ModelForm):

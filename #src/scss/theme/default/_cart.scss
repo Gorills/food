@@ -50,7 +50,7 @@
     &__inner {
         max-width: 300px;
         min-width: 300px;
-        background-color: #fff;
+        background-color: var(--color-body);
         position: relative;
         z-index: 10001;
         padding: 20px;
@@ -291,7 +291,7 @@
         max-width: 550px;
         // min-width: 550px;
         padding: 20px;
-        background-color: #fff;
+        background-color: var(--color-body);
         display: none;
 
         @media screen and (max-width: 768px) {
@@ -327,14 +327,14 @@
         width: 100%;
         display: inline-block;
         text-align: center;
-        background-color: #f7f7fa;
+        background-color: var(--color-body-light);
         padding: 8px 20px;
         
         height: 100%;
-        color: var(--color-font);
+        color: var(--color-font-light);
         &--active {
-            background-color: var(--color-font);
-            color: #fff;
+            background-color: var(--color-body-light);
+            color: var(--color-primary);
         }
     }
     &__form-btn + &__form-btn {
@@ -352,9 +352,9 @@
     &__form-politic {
         font-size: 12px;
         margin-bottom: 20px;
-        color: rgba(33,33,38,0.64);
+        color: var(--color-font);
         a {
-            color: rgba(33,33,38,0.45);
+            color: var(--color-font);
             text-decoration: underline;
         }
     }
@@ -371,7 +371,7 @@
     // .cart__input
 
     &__input {
-        background: #ffffff;
+        background: var(--color-body);
         border: 1px solid #eaedff;
         border-radius: 0;
         padding: 12px 20px;
@@ -404,7 +404,7 @@
     &__select {
         position: relative;
         padding: 8px 20px;
-        background-color: #f7f7fa;
+        background-color: var(--color-body);
         margin-bottom: 20px;
         cursor: pointer;
         
@@ -423,6 +423,10 @@
 
         svg {
             margin-right: 10px;
+            
+            path {
+                stroke: var(--color-font);
+            }
         }
     }
 
@@ -441,7 +445,7 @@
         display: none;
         position: absolute;
         box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-        background-color: #fff;
+        background-color: var(--color-body);
         z-index: 501;
         top: 44px;
         left: 0;
@@ -508,7 +512,7 @@
         width: 100%;
         left: 0;
         right: 0;
-        background-color: #fff;
+        background-color: var(--color-body);
         z-index: 99;
 
         @media screen and (max-width: 768px) {
@@ -540,10 +544,11 @@
         padding: 8px 13px;
         font-family: 'Circe', sans-serif;
         color: #fff;
+        background: none;
         font-size: 16px;
         border: 1px solid var(--color-font);
         width: 100%;
-        background-color: var(--color-font);
+        // background-color: var(--color-font);
     }
     // .cart__order-layout
     &__order-layout {
@@ -566,7 +571,7 @@
     // .cart__order-pickup-inner-html-wrapper
     &__order-pickup-inner-html-wrapper {
         margin-bottom: 20px;
-        background-color: #f7f7fa;
+        background-color: var(--color-body);
         padding: 20px;
         min-width: 400px;
 

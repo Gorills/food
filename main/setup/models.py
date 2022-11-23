@@ -31,7 +31,10 @@ class BaseSettings(SingletonModel):
 
     def get_phone(self):
 
-        res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+        try:
+            res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+        except:
+            res = '899999999'
 
         return res
 
@@ -101,3 +104,15 @@ class Colors(SingletonModel):
 
     header_bg = models.CharField(max_length=50, default='#ffffff')
     header_font = models.CharField(max_length=50, default='#222222')
+
+    body_bg = models.CharField(max_length=50, default='#ffffff')
+    body_font = models.CharField(max_length=50, default='#222222')
+
+    body_bg_light = models.CharField(max_length=50, default='#f7f7fa')
+    body_font_light = models.CharField(max_length=50, default='#f7f7fa')
+
+
+    bg_btn = models.CharField(max_length=50, default='#222222')
+    border_btn = models.CharField(max_length=50, default='#222222')
+    color_btn = models.CharField(max_length=50, default='#222222')
+    color_btn_light = models.CharField(max_length=50, default='#fff')
