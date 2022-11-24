@@ -31,7 +31,7 @@
         @media screen and (max-width: 768px) {
             position: fixed;
             flex-direction: column;
-            background-color: #fff;
+            background-color: var(--color-body);
             z-index: 99;
             padding: 40px;
             left: -550px;
