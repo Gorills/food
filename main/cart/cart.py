@@ -102,6 +102,10 @@ class Cart(object):
         product_ids = self.cart.keys()
         # получение объектов product и добавление их в корзину
         products = Product.objects.filter(id__in=product_ids)
+
+        if not products:
+            self.clear()
+
         for product in products:
             self.cart[str(product.id)]['product'] = product
         

@@ -4,6 +4,7 @@ def categorys(request):
     return {'categorys': Category.objects.filter(parent=None, status=True).order_by('sort_order')}
 
 
+# Показывать описания под товарами
 def view_desc(request):
     try:
         return {'view_desc': ShopSetup.objects.get().show_descrioption}

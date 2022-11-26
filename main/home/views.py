@@ -36,6 +36,8 @@ def robots_txt(request):
                 "User-Agent: Yandex",
                 "Disallow: /admin/",
                 "Disallow: /order/",
+                "Disallow: /cart/",
+                "Disallow: /coupons/",
             
                 "Disallow: *utm=",
                 "Allow: /static/*.css",

@@ -261,7 +261,7 @@
               
           </a>
         </div>
-        <div class="sidebar__item">
+        {% comment %} <div class="sidebar__item">
           <a href="{% url 'admin_option_type' %}" class="sidebar__link">
     
               
@@ -292,7 +292,7 @@
     
               
           </a>
-        </div>
+        </div> {% endcomment %}
         <div class="sidebar__item">
           <a href="{% url 'admin_char' %}" class="sidebar__link">
     
@@ -325,7 +325,7 @@
               
           </a>
         </div>
-        <div class="sidebar__item">
+        {% comment %} <div class="sidebar__item">
           <a href="{% url 'admin_manufacturer' %}" class="sidebar__link">
     
               
@@ -356,7 +356,7 @@
     
               
           </a>
-        </div>
+        </div> {% endcomment %}
         {% comment %} <div class="sidebar__item">
           <a href="#" class="sidebar__link">
     
@@ -819,7 +819,10 @@
       
       </p>
 
+
+      
       <div class="sidebar__drop {% if request.session.sidebar == 'False' %}sidebar__drop--max{% endif %}">
+        {% if request.user.username == 'gorills' %}
         <div class="sidebar__item">
           <a href="{% url 'theme_settings' %}" class="sidebar__link">
 
@@ -851,6 +854,7 @@
 
           </a>
         </div>
+        {% endif %}
         <div class="sidebar__item">
           <a href="{% url 'color_settings' %}" class="sidebar__link">
 

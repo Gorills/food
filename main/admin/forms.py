@@ -790,7 +790,7 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = [
-            # 'parent',
+            
             'name',
             'description',
             'meta_title',
@@ -805,7 +805,7 @@ class CategoryForm(forms.ModelForm):
             
         ]
         labels = {
-            # 'parent': 'Родительская категория',
+            
 
             'name': 'Название категории',
             'meta_title': 'Мета заголовок',
@@ -823,10 +823,7 @@ class CategoryForm(forms.ModelForm):
         }
         widgets = {
            
-            # 'parent': forms.Select(attrs={
-            #     'class': 'input',
-            #     'placeholder': 'Родительская категория',
-            # }),
+           
             'name': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Название категории',
@@ -1079,8 +1076,9 @@ class SetupForm(forms.ModelForm):
             'meta_description',
             'meta_keywords',
             'social_image',
-            'logo_light',
             'logo_dark',
+            'logo_light',
+            
             'icon_ico',
             'icon_png',
             'icon_svg',
@@ -1163,8 +1161,9 @@ class SetupForm(forms.ModelForm):
             'meta_description': 'Мета описание',
             'meta_keywords': 'Ключевые слова',
             'social_image': 'Изображение для соц.сетей',
-            'logo_light': 'Логотип светлый',
-            'logo_dark': 'Логотип темный',
+            'logo_dark': 'Логотип в шапке',
+            'logo_light': 'Логотип в подвале',
+            
             'icon_ico': 'Иконка .ico',
             'icon_png': 'Иконка .png',
             'icon_svg': 'Иконка .svg',
