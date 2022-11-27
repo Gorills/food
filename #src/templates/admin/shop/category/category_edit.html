@@ -33,25 +33,7 @@
                 </a>
             </div>
         </div>
-        {% comment %} Именно такое решение потому что ограничено количество вложений на один уровень {% endcomment %}
-        <p><label for="id_parent">Родительская категория:</label> <select name="parent" class="input" placeholder="Родительская категория" id="id_parent">
-            
-            {% if category.parent %}
-            <option value="" selected>---------</option>
-            <option value="{{ category.parent.id }}" selected>{{ category.parent.name }}</option>
-            {% else %}
-            <option value="" selected>---------</option>
-
-            {% endif %}
-
-            {% for category in categorys %}
-            
-            <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-            
-          
-          </select>
-        </p>
+        
 
         
 

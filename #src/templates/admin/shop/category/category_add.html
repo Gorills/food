@@ -34,16 +34,7 @@
             </div>
         </div>
 
-       <p><label for="id_parent">Родительская категория:</label> <select name="parent" class="input" placeholder="Родительская категория" id="id_parent">
-            <option value="" selected="">---------</option>
-            
-            {% for category in categorys %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-            
-          
-          </select>
-        </p> 
+       
         {{ form.as_p }}
         {{ form.media }}
 
