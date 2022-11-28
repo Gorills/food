@@ -34,13 +34,13 @@
 
                                     {% if product.images.first %}
                                     
-                                        {% thumbnail product.images.first.src "55x55" crop="center" as im %}
+                                        {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
                                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
                                         {% endthumbnail %}
 
                                     {% else %}
                                     
-                                        {% thumbnail product.thumb "55x55" crop="center" as im %}
+                                        {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
                                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
                                         {% endthumbnail %}
 
