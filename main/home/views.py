@@ -20,6 +20,7 @@ from django.views.generic import TemplateView, ListView
 def robots_txt(request):
     try:
         setup = BaseSettings.objects.get()
+        sitemap_txt = 'Sitemap: https://' + str(request.META['HTTP_HOST'])+'/sitemap.xml'
         if setup.active == True:
             lines = [
                 "User-Agent: *",
@@ -39,9 +40,8 @@ def robots_txt(request):
                 "Disallow: /accounts/",
                 "Disallow: *utm=",
                 "Clean-Param: utm_source&utm_medium&utm_campaign",
-                
-                
-                "Sitemap: /sitemap.xml",
+
+                sitemap_txt
             ]
         else:
             lines = [
@@ -68,6 +68,7 @@ def page_not_found_view(request, exception):
 from cart.cart import Cart
 
 def home(request):
+    
     
     # cart = Cart(request)
     # cart.clear()
