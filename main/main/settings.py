@@ -280,3 +280,6 @@ from .local_settings import RESET_FILE
 CART_SESSION_ID = 'cart'
 
 
+
+
+from .local_settings import LOGGING
