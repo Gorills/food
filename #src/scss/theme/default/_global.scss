@@ -157,9 +157,9 @@ a   {
         border-color: #e1e1e1;
         
         &:hover {
-            background-color: var(--color-font);
+            background-color: var(--color-body);
             border-color: var(--color-font);
-            color: #fff;
+            color: var(--color-font);
         }
     }
 }

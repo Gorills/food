@@ -3,7 +3,7 @@ from accounts.models import UserProfile
 
 from shop.models import Product, ProductOption
 from .models import OrderItem
-from .forms import OrderCreateForm
+from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
 from setup.models import ThemeSettings
 try:
@@ -12,7 +12,7 @@ except:
     theme_address = 'default'
 
 
-from .telegram import order_telegram
+from .telegram import order_telegram, send_message
 
 
 def order_create(request):
@@ -93,6 +93,25 @@ def order_create(request):
     return render(request, 'orders/order/create.html',
                   {'cart': cart, 'form': form})
 
+
+
+
+
+def order_callback(request):
+    if request.method == 'POST':
+
+        form = CallbackForm(request.POST)
+        name = request.POST['name']
+        tel = request.POST['phone']
+        messages = request.POST['messages']
+
+        message = "Заказ обратного звонка:" + "\n" + "*ИМЯ*: " +str(name) + "\n" + "*ТЕЛЕФОН*: " + str(tel) + "\n" + "*СООБЩЕНИЕ*: " +str(messages)
+        
+        if form.is_valid():
+            send_message(message)
+
+            
+            return redirect('orders:thank')
 
 def thank(request):
 

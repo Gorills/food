@@ -197,9 +197,9 @@ a {
 }
 
 .btn--gray:hover {
-  background-color: var(--color-font);
+  background-color: var(--color-body);
   border-color: var(--color-font);
-  color: #fff;
+  color: var(--color-font);
 }
 
 .grecaptcha-badge {
@@ -2565,8 +2565,12 @@ td.product-thumbnail img {
 }
 
 .thank__title {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 76px;
+}
+
+.thank__text {
+  margin-bottom: 40px;
 }
 
 .account {
@@ -2888,7 +2892,7 @@ td.product-thumbnail img {
   position: relative;
   z-index: 100001;
   padding: 40px 80px;
-  background: #fff;
+  background: var(--color-body);
 }
 
 .popup__title {
@@ -2902,6 +2906,10 @@ td.product-thumbnail img {
   right: 20px;
 }
 
+.popup__closer svg path {
+  stroke: var(--color-font);
+}
+
 .popup__form {
   display: flex;
   flex-direction: column;
@@ -2910,7 +2918,8 @@ td.product-thumbnail img {
 .popup__input {
   width: 100%;
   border: 2px solid #eaedff;
-  color: #6f7172;
+  background: var(--color-body);
+  color: var(--color-font);
   padding: 0 20px;
   margin-bottom: 20px;
   outline: none;
