@@ -32,7 +32,7 @@ def order_create(request):
             else:
                 order.user = None
 
-            print(request.POST['pay_method'])
+            
 
             order.summ = cart.get_total_price_after_discount()
             order.save()
