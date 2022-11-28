@@ -33,8 +33,10 @@ body {
 textarea {
 
     font-family: 'Circe', sans-serif;
+    color: var(--color-font);
     &::placeholder {
         font-family: 'Circe', sans-serif;
+        color: var(--color-font)
     }
 
 }
@@ -43,6 +45,7 @@ input {
     color: var(--color-font);
     &::placeholder {
         font-family: 'Circe', sans-serif;
+        color: var(--color-font)
     }
 }
 
@@ -169,8 +172,17 @@ a   {
 .ymaps-2-1-79-search__suggest {
     top: 40px !important;
     left: 0 !important;
+    right: -2px!important;
     width: 100%!important;
+    border: 1px solid var(--color-body)!important;
 
+}
+
+.ymaps-2-1-79-search__suggest {
+    // background-color: var(--color-body)!important;
+    color: #222;
+    border: 1px solid var(--color-body)!important;
+    box-shadow: 0px 5px 10px 2px rgb(34 60 80 / 20%);
 }
 
 // .ymaps-2-1-79-map-copyrights-promo, .ymaps-2-1-79-controls__control_toolbar, .ymaps-2-1-79-copyright, .ymaps-2-1-79-controls__control {

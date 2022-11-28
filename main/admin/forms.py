@@ -1068,6 +1068,8 @@ class SetupForm(forms.ModelForm):
             'phone',
             'email',
             'email_for_order',
+            'telegram_bot',
+            'telegram_group',
             'copy_year',
             'copy',
             'address',
@@ -1103,6 +1105,14 @@ class SetupForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'input',
                 'placeholder': 'Email для клиентов'
+            }),
+            'telegram_bot': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Телеграм бот TOKEN'
+            }),
+             'telegram_group': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Группа в телеграме'
             }),
             'email_for_order': forms.EmailInput(attrs={
                 'class': 'input',
@@ -1153,6 +1163,8 @@ class SetupForm(forms.ModelForm):
             'phone': 'Телефон',
             'email': 'Email для клиентов',
             'email_for_order': 'Email для заявок',
+            'telegram_bot': 'Телеграм бот TOKEN',
+            'telegram_group': 'Группа в телеграм',
             'copy_year': 'Год копирайта',
             'copy': 'Копирайт',
             'address': 'Адрес',

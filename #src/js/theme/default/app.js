@@ -580,6 +580,8 @@ $(document).ready(function(){
         $(this).parent('.cart__select-drop').removeClass('cart__select-drop--active')
         $('.cart__order-layout').hide()
 
+        console.log(getPay)
+
     })
 
 })
@@ -670,7 +672,7 @@ $(document).on('click','#pickup',function(e){
     $('#delivery_method').val('Самовывоз')
     var htmlReplace = $('.cart__order-pickup-inner-html').html()
 
-    console.log(htmlReplace)
+    // console.log(htmlReplace)
 
     $('.cart__form-refresh-delivery').html(htmlReplace)
 
@@ -876,3 +878,16 @@ $(document).on('focus','#id_address',function(){
 
 
 
+$(".phone").mask("+7 (999) 99-99-999");
+
+$(".phone").on("blur", function() {
+    var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
+
+    if( last.length == 3 ) {
+        var move = $(this).val().substr( $(this).val().indexOf("-") - 1, 1 );
+        var lastfour = move + last;
+        var first = $(this).val().substr( 0, 9 );
+
+        $(this).val( first + '-' + lastfour );
+    }
+});

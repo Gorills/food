@@ -33,6 +33,9 @@
         {% if  order.delivery_method %}
         <p class="page-order__info">Способ доставки: {{ order.delivery_method }}</p>
         {% endif %}
+        {% if  order.delivery_method %}
+        <p class="page-order__info">Способ оплаты: {{ order.pay_method }}</p>
+        {% endif %}
       
         {% if  order.address%}
         <p class="page-order__info">Адрес: {{ order.address }}</p>

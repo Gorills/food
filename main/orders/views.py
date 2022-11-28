@@ -12,6 +12,9 @@ except:
     theme_address = 'default'
 
 
+from .telegram import order_telegram
+
+
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
@@ -29,6 +32,8 @@ def order_create(request):
             else:
                 order.user = None
 
+            print(request.POST['pay_method'])
+
             order.summ = cart.get_total_price_after_discount()
             order.save()
 
@@ -36,7 +41,7 @@ def order_create(request):
             for item in cart:
                 OrderItem.objects.create(
                     order=order,
-                    option=item['product'],
+                    product=item['product'],
                     price=item['price'],
                     quantity=item['quantity']
                     )
@@ -61,7 +66,7 @@ def order_create(request):
 
                 
 
-
+            order_telegram(order)
             # очистка корзины
             cart.clear()
             return redirect('orders:thank')

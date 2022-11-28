@@ -168,13 +168,13 @@ class Product(models.Model):
        ('см', 'Сантиметры'),
        ('мм', 'Миллиметры'),
     )
-    length_class = models.CharField(max_length=200, choices=LENGHT_CLASS, default='sm',)
+    length_class = models.CharField(max_length=200, choices=LENGHT_CLASS, default='см', null=True, blank=True)
     weight = models.CharField(max_length=200, null=True, blank=True)
     WEIGHT_CLASS = (
        ('кг', 'Киллограмы'),
        ('гр', 'Граммы'),
     )
-    weight_class = models.CharField(max_length=200, choices=WEIGHT_CLASS, default='kg',)
+    weight_class = models.CharField(max_length=200, choices=WEIGHT_CLASS, default='гр', null=True, blank=True)
 
     # Связи
     product_manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='manufacturer_products', null=True, blank=True)

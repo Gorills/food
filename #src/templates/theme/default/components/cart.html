@@ -128,7 +128,7 @@
             <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
                 {% csrf_token %}
 
-                <input id="id_phone" name="phone" type="text" class="cart__input" placeholder="+7 999 999 99 99">
+                <input id="id_phone" name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
                 <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
                 
 
@@ -231,7 +231,7 @@
                             </svg>
             
                             <span id="pay">Способ оплаты</span>
-                            <input type="text" name="pay_method" id="get_pay" hidden>
+                            <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden>
                         </div>
                         <div class="cart__select-error">Выберите способ оплаты</div>
                         
@@ -246,7 +246,7 @@
 
                 </div>
 
-                <input name="pay_method" type="text" hidden>
+                
                 <textarea class="cart__input" name="" id="" cols="30" rows="5" placeholder="Комментарий к заказу"></textarea>
 
             
@@ -274,6 +274,7 @@
         <div class="cart__order-pickup-inner-html-wrapper">
             <p class="cart__order-text-address-text">Самовывоз:</p>
             <p class="cart__order-text-address">{{ setup.address }}</p>
+            <input type="text" name="address" hidden value="{{ setup.address }}">
         
         </div>
     </div>

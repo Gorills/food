@@ -46,8 +46,8 @@
         <label for="product-tab-btn-2">Данные</label>
         <input type="radio" name="tab-btn" id="product-tab-btn-3" value="">
         <label for="product-tab-btn-3">Связи</label>
-        <input type="radio" name="tab-btn" id="product-tab-btn-4" value="">
-        <label for="product-tab-btn-4">Опции</label>
+        {% comment %} <input type="radio" name="tab-btn" id="product-tab-btn-4" value="">
+        <label for="product-tab-btn-4">Опции</label> {% endcomment %}
         <input type="radio" name="tab-btn" id="product-tab-btn-5" value="">
         <label for="product-tab-btn-5">Характеристики</label>
         {% comment %} <input type="radio" name="tab-btn" id="product-tab-btn-6" value="">
@@ -149,18 +149,18 @@
                 {{ form.subtract }}
                 {{ form.subtract.errors }}
             </p>
-            <p>
+            {% comment %} <p>
                 {{ form.shipping.label_tag }}
                 {{ form.shipping }}
                 {{ form.shipping.errors }}
-            </p>
+            </p> {% endcomment %}
             <p>
                 {{ form.new.label_tag }}
                 {{ form.new }}
                 {{ form.new.errors }}
             </p>
             
-            <div class="form__row">
+            {% comment %} <div class="form__row">
                 <p>
                     {{ form.length.label_tag }}
                     {{ form.length }}
@@ -176,22 +176,22 @@
                     {{ form.height }}
                     {{ form.height.errors }}
                 </p>
-            </div>
-            <p>
+            </div> {% endcomment %}
+            {% comment %} <p>
                 {{ form.length_class.label_tag }}
                 {{ form.length_class }}
                 {{ form.length_class.errors }}
-            </p>
+            </p> {% endcomment %}
             <p>
                 {{ form.weight.label_tag }}
                 {{ form.weight }}
                 {{ form.weight.errors }}
             </p>
-            <p>
+            {% comment %} <p>
                 {{ form.weight_class.label_tag }}
                 {{ form.weight_class }}
                 {{ form.weight_class.errors }}
-            </p>
+            </p> {% endcomment %}
             <p>
                 {{ form.status.label_tag }}
                 {{ form.status }}
@@ -215,11 +215,11 @@
                 {{ form.product_connect }}
                 {{ form.product_connect.errors }}
             </p>
-            <p>
+            {% comment %} <p>
                 {{ form.product_manufacturer.label_tag }}
                 {{ form.product_manufacturer }}
                 {{ form.product_manufacturer.errors }}
-            </p>
+            </p> {% endcomment %}
         </div>
         <div id="product-content-4">
 

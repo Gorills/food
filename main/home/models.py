@@ -38,6 +38,7 @@ class Page(models.Model):
     PAGE_CLASS = (
        ('o-nas', 'О нас'),
        ('oplata', 'Оплата'),
+       ('politic', 'Политика конфиденциальности'),
        ('dostavka', 'Доставка'),
        ('kontakty', 'Контакты'),
        ('kak-zakazat', 'Как заказать'),

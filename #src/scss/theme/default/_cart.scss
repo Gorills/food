@@ -384,7 +384,10 @@
         -moz-appearance: textfield;
         margin-bottom: 10px;
         resize: none;
-
+        color: var(--color-font);
+        &::placeholder {
+            color: var(--color-font)
+        }
         
     }
 
@@ -543,7 +546,7 @@
     &__order-create {
         padding: 8px 13px;
         font-family: 'Circe', sans-serif;
-        color: #fff;
+        color: var(--color-font);
         background: none;
         font-size: 16px;
         border: 1px solid var(--color-font);

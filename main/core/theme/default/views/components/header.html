@@ -85,14 +85,14 @@
                 </ul>
 
                 <div class="header__right">
-                    <div class="header__sign">
+                    {% comment %} <div class="header__sign">
                         {% if user.is_authenticated %}
                         <a href="{% url 'account:account_profile' %}" class="header__login">{{ user.username }}</a> / <a href="{% url 'account_logout' %}" class="header__login">Выйти</a>
                         {% else %}
                         <a href="{% url 'account_login' %}" class="header__login">Вход</a> / <a href="{% url 'account_signup' %}" class="header__signup">Регистрация</a>
                         {% endif %}
                         
-                    </div>
+                    </div> {% endcomment %}
 
                     <a href="#" class="header__search">
                        

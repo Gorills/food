@@ -69,10 +69,12 @@ body {
 
 textarea {
   font-family: "Circe", sans-serif;
+  color: var(--color-font);
 }
 
 textarea::placeholder {
   font-family: "Circe", sans-serif;
+  color: var(--color-font);
 }
 
 input {
@@ -82,6 +84,7 @@ input {
 
 input::placeholder {
   font-family: "Circe", sans-serif;
+  color: var(--color-font);
 }
 
 *,
@@ -206,7 +209,15 @@ a {
 .ymaps-2-1-79-search__suggest {
   top: 40px !important;
   left: 0 !important;
+  right: -2px !important;
   width: 100% !important;
+  border: 1px solid var(--color-body) !important;
+}
+
+.ymaps-2-1-79-search__suggest {
+  color: #222;
+  border: 1px solid var(--color-body) !important;
+  box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
 }
 
 .header {
@@ -1639,6 +1650,11 @@ a {
   -moz-appearance: textfield;
   margin-bottom: 10px;
   resize: none;
+  color: var(--color-font);
+}
+
+.cart__input::placeholder {
+  color: var(--color-font);
 }
 
 .cart__input-wrap {
@@ -1746,7 +1762,7 @@ a {
 .cart__order-create {
   padding: 8px 13px;
   font-family: "Circe", sans-serif;
-  color: #fff;
+  color: var(--color-font);
   background: none;
   font-size: 16px;
   border: 1px solid var(--color-font);
@@ -2944,7 +2960,7 @@ td.product-thumbnail img {
 .odred-done__inner {
   position: relative;
   z-index: 10003;
-  background-color: #fff;
+  background-color: var(--color-body);
   padding: 40px;
 }
 

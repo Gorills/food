@@ -39,6 +39,8 @@
                 </div>
                 {% endif %}
 
+                <a href="{% url 'home' %}" target="_blank" class="btn btn--primary">На сайт</a>
+
                 {% comment %} <div class="header__item">
 
 
@@ -49,8 +51,8 @@
                         </g>
                     </svg>
                     <span class="header__notification">2</span>
-                </div> {% endcomment %}
-                {% comment %} <div class="header__item">
+                </div> 
+                <div class="header__item">
 
                     <svg id="msg" xmlns="http://www.w3.org/2000/svg" width="18.88" height="18.88" viewBox="0 0 18.88 18.88">
                         <g id="Group_2289" data-name="Group 2289">
@@ -65,11 +67,13 @@
                         </g>
                     </svg>
                     <span class="header__notification">2</span>
-                </div> {% endcomment %}
-                {% comment %} <div class="header__account">
+                </div> 
+                <div class="header__account">
                     <img src="{% get_static 'images/avatar.jpg' %}" alt="" class="header__account-image">
 
-                </div> {% endcomment %}
+                </div>  {% endcomment %}
+
+
             </div>
         </div>
     

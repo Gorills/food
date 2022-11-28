@@ -26,7 +26,7 @@ class OrderCreateForm(forms.ModelForm):
            
             
             'phone': forms.NumberInput(attrs={
-                'class': 'order-detail__input',
+                'class': 'order-detail__input phone',
                 'placeholder': 'Телефон',
                 'required': 'required'
 
