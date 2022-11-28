@@ -25,30 +25,23 @@ def robots_txt(request):
                 "User-Agent: *",
                 "Disallow: /admin/",
                 "Disallow: /order/",
-                
+                "Disallow: /cart/",
+                "Disallow: /coupons/",
+                "Disallow: /accounts/",
                 "Disallow: *utm=",
-                "Allow: /static/*.css",
-                "Allow: /static/*.js",
-                "Allow: /static/*.png",
-                "Allow: /static/*.jpg",
-                "Allow: /static/*.gif",
+                
 
                 "User-Agent: Yandex",
                 "Disallow: /admin/",
                 "Disallow: /order/",
                 "Disallow: /cart/",
                 "Disallow: /coupons/",
-            
+                "Disallow: /accounts/",
                 "Disallow: *utm=",
-                "Allow: /static/*.css",
-                "Allow: /static/*.js",
-                "Allow: /static/*.png",
-                "Allow: /static/*.jpg",
-                "Allow: /static/*.gif",
-
                 "Clean-Param: utm_source&utm_medium&utm_campaign",
-                "Host: example.com",
-                "Sitemap: example.com/sitemap.xml",
+                
+                
+                "Sitemap: /sitemap.xml",
             ]
         else:
             lines = [

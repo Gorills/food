@@ -206,13 +206,13 @@ $(function() {
 
         $form.children('button').removeClass('btn--primary')
         $form.children('button').addClass('btn--success')
-        $form.children('button').html('Добавлен')
+        
         
         function explode(){
 
             $form.children('button').addClass('btn--primary')
             $form.children('button').removeClass('btn--success')
-            $form.children('button').html('Еще')
+           
         }
         setTimeout(explode, 1000);
 

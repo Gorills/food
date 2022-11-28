@@ -169,7 +169,7 @@ a {
 }
 
 .btn--empty:hover {
-  background-color: var(--color-font);
+  background-color: var(--color-body);
   border-color: var(--color-font);
   color: var(--color-btn-font);
 }
@@ -415,7 +415,7 @@ a {
 }
 
 .header__contacts-btn:hover {
-  background-color: var(--color-font);
+  background-color: var(--color-body);
   border-color: var(--color-font);
   color: #fff;
 }
@@ -2170,7 +2170,7 @@ a {
 /* 16. Cart */
 
 .table-content table {
-  background: #ffffff;
+  background: var(--color-body);
   border-color: #eaedff;
   border-radius: 0;
   border-style: solid;

@@ -27,7 +27,7 @@ def cart_add(request, product_id):
         cart.add(product=product,
                  quantity=cd['quantity'],
                  update_quantity=cd['update'])
-    return redirect('cart:cart_detail')
+    return redirect('home')
 
 
 
@@ -38,7 +38,7 @@ def cart_remove(request, product_id):
         cart.remove(product)
     except:
         pass
-    return redirect('cart:cart_detail')
+    return redirect('home')
 
 
 def cart_minus(request, product_id):
