@@ -488,6 +488,16 @@ $(document).ready(function(){
     })
     $(document).on('click','.cart__close, .cart__closer, #cancel',function(e){
         e.preventDefault()
+
+        $.get( "/cart/set_delivery/1/", function() { 
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__form-refresh").load(location.href + " .cart__form");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+        });
+
         $('.cart').removeClass('cart--active')
         $('.cart__form').hide()
         $('body').removeClass('body')
@@ -495,6 +505,8 @@ $(document).ready(function(){
         $('#id_phone').css('border-color', '#eaedff')
         $('.cart__select-error').hide()
         $(".cart__form-refresh").load(location.href + " .cart__form");
+
+        
         
 
     })
@@ -664,6 +676,17 @@ $(document).on('click','.cart__form-btn',function(e){
     e.preventDefault()
     $('.cart__form-btn').removeClass('cart__form-btn--active')
     $(this).addClass('cart__form-btn--active')
+
+    var url = $(this).attr('href')
+
+    $.get( url, function() {
+        $(".cart__inner").load(location.href + " .cart__refresh");
+       
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        
+    });
+
+
 })
 
 $(document).on('click','#pickup',function(e){

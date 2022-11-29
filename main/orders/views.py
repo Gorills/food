@@ -35,6 +35,7 @@ def order_create(request):
             
 
             order.summ = cart.get_total_price_after_discount()
+            order.delivery_price = cart.get_delivery()
             order.save()
 
 

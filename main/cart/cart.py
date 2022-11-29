@@ -18,10 +18,17 @@ class Cart(object):
         """
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
-
+        
         # сохранение текущего примененного купона
         self.coupon_id = self.session.get('coupon_id')
 
+
+        get_d = request.session.get('delivery')
+
+        if not get_d:
+            self.get_d = 1
+        self.get_d = get_d
+       
         if not cart:
             # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
@@ -142,12 +149,24 @@ class Cart(object):
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
 
+    
+
+
     def get_delivery(self):
-        if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+
+        if self.get_d == 1:
+       
+            if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+                summ = Decimal(0)
+                return summ
+            else:
+                return price_delivery
+
+        else:
             summ = Decimal(0)
             return summ
-        else:
-            return price_delivery
+            
+      
 
     def get_free(self):
         

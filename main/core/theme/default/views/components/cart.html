@@ -115,12 +115,15 @@
             {% endif %}
         </div>
     </div>
+
+   
     <div class="cart__form-refresh">
         {% if cart|length > 0 %}
         <div class="cart__form">
             <div class="cart__form-wrap">
-                <a href="#" class="cart__form-btn cart__form-btn--active" id="delivery">Доставка</a>
-                <a href="#" class="cart__form-btn" id="pickup">Самовывоз</a>
+               
+                <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
+                <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
                 <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
 
             </div>

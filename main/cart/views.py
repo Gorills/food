@@ -92,3 +92,11 @@ def cart_detail(request):
         'coupon_apply_form': coupon_apply_form
     }
     return render(request, 'cart/detail.html', context)
+
+
+
+
+
+def set_delivery(request, value): 
+    request.session['delivery'] = value
+    return redirect('home')
