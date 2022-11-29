@@ -12,6 +12,17 @@
         top: 20px;
         right: 20px;
     }
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 60px;
+
+        svg path {
+            stroke: #fff;
+        }
+    }
+
     // .page-order__inner
 
     &__inner {

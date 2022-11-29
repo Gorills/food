@@ -1478,6 +1478,16 @@ label span {
   right: 20px;
 }
 
+.page-order__close {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+}
+
+.page-order__close svg path {
+  stroke: #fff;
+}
+
 .page-order__info {
   margin-bottom: 15px;
 }

@@ -22,9 +22,17 @@
 
 
 <div class="page-order">
+    <a href="{% url 'admin_order' %}" class="page-order__close info">
+        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+    </a>
+
     <a href="{% url 'order_delete' order.id %}" class="page-order__delete remove">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M268 416h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12zM432 80h-82.41l-34-56.7A48 48 0 0 0 274.41 0H173.59a48 48 0 0 0-41.16 23.3L98.41 80H16A16 16 0 0 0 0 96v16a16 16 0 0 0 16 16h16v336a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128h16a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16zM171.84 50.91A6 6 0 0 1 177 48h94a6 6 0 0 1 5.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12z"></path></svg>
     </a>
+
+
     <div class="page-order__inner">
         {% comment %} <p class="page-order__info">ФИО: {{ order.first_name }} {{ order.first_name }}</p> {% endcomment %}
         {% if  order.phone%}
@@ -53,6 +61,7 @@
         {% if  order.address_comment%}
         <p class="page-order__info">Комментарий к адресу: {{ order.address_comment }}</p>
         {% endif %}
+        
 
         {% if  order.time%}
         <p class="page-order__info">Время: {{ order.time }}</p>
@@ -68,7 +77,10 @@
         {% comment %} <p class="page-order__info">Статус оплаты: {% if order.paid == True %}Оплачен {% else %}Не оплачен{% endif %}</p> {% endcomment %}
         
         
-        <p class="page-order__info">Сумма заказа: {{ order.get_total_cost | floatformat:2 }}</p>
+        <p class="page-order__info">Сумма заказа: {{ order.get_total_cost | floatformat:2 }} руб.</p>
+        {% if  order.delivery_price%}
+        <p class="page-order__info">Стоимость доставки: {{ order.delivery_price | floatformat:2 }} руб.</p>
+        {% endif %}
         {% if  order.pay_method %}
         <p class="page-order__info">Способ оплаты: {{ order.pay_method }}</p>
         {% endif %}
