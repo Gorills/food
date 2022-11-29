@@ -43,11 +43,22 @@ def order_telegram(order):
     res = re.sub(r"[#%!@*{}]", "\n", str(pr))
     res = re.sub(r"[',]", "", res)
 
+    if order.address_comment:
+        address_comment = "\n" + "*Комментарий к адресу*: " + str(order.address_comment) 
+    else:
+        address_comment = ''
+
+    if order.order_conmment:
+        order_conmment = "\n" + "*Комментарий к заказу*: " + str(order.order_conmment)
+    else:
+        order_conmment = ''
+    
+
     if order.delivery_method == 'Доставка':
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Подъезд*: " + str(order.entrance) + "\n" + "*Этаж*: " + str(order.floor) + "\n" + "*Квартира*: " + str(order.flat) + "\n" + "*Оплата*: " +str(order.pay_method) + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Подъезд*: " + str(order.entrance) + "\n" + "*Этаж*: " + str(order.floor) + "\n" + "*Квартира*: " + str(order.flat) + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
 
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
     
     try:
         send_message(message)

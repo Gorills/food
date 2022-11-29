@@ -890,9 +890,11 @@ $(document).on('focus','#id_address',function(){
 
 
 
-$(".phone").mask("+7 (999) 99-99-999");
+$(document).on('click', '.phone' ,function(e){
+    $(".phone").mask("+7 (999) 99-99-999");
 
-$(".phone").on("blur", function() {
+})
+$(document).on('blur','.phone',function(){
     var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
 
     if( last.length == 3 ) {
@@ -902,4 +904,4 @@ $(".phone").on("blur", function() {
 
         $(this).val( first + '-' + lastfour );
     }
-});
+})

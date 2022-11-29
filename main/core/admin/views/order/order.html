@@ -36,7 +36,7 @@
                    
                 </div>
                 <div class="col col-7">
-                    ФИО
+                    Телефон
                    
                 </div>
                 <div class="col col-2">
@@ -60,7 +60,7 @@
             {% for order in orders %}
                 <li class="table-row {% if category.parent %}children{% endif %}">
                     <div class="col col-1" data-label="">{{ order.id }}</div>
-                    <div class="col col-7" data-label="">{{ order.first_name }} {{ order.last_name }}</div>
+                    <div class="col col-7" data-label="">{{ order.phone }}</div>
 
                     <div class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
                         {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
