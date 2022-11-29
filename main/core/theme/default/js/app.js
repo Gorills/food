@@ -688,10 +688,22 @@ $(document).on('click','#delivery',function(e){
 
 var count_id_address = 0
 $(document).on('focus','#id_address',function(){
+
+    var city = $(this).attr('data-city')
     if (count_id_address == 0) {
         ymaps.ready(init);
         function init(){
-            var suggestView=new ymaps.SuggestView('id_address');
+            
+            var suggestView=new ymaps.SuggestView(
+            'id_address', {
+                provider: {
+                  suggest: (function(request, options) {
+          
+                    return ymaps.suggest(city + ", " + request)
+                    })
+                  }}
+
+                )
             suggestView.events.add('select',function(event){
                 var selected=event.get('item').value;
                 ymaps.geocode(selected,{

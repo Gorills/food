@@ -13,8 +13,9 @@ class BaseSettings(SingletonModel):
     telegram_group = models.CharField(blank=True, null=True, max_length=350)
     copy_year = models.CharField(max_length=350, blank=True, null=True)
     copy = models.CharField(max_length=350, blank=True, null=True)
+    city = models.CharField(max_length=350, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
-    promo = models.CharField(max_length=500, blank=True, null=True)
+    
     meta_title = models.CharField(max_length=350, blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
     meta_keywords = models.CharField(max_length=350, blank=True, null=True)

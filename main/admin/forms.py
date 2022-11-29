@@ -1063,34 +1063,7 @@ class EmailSettingsForm(forms.ModelForm):
 class SetupForm(forms.ModelForm):
     class Meta:
         model = BaseSettings
-        fields = [
-            'name',
-            'phone',
-            'email',
-            'email_for_order',
-            'telegram_bot',
-            'telegram_group',
-            'copy_year',
-            'copy',
-            'address',
-            
-            'meta_title',
-            'meta_description',
-            'meta_keywords',
-            'social_image',
-            'logo_dark',
-            'logo_light',
-            
-            'icon_ico',
-            'icon_png',
-            'icon_svg',
-            
-            'theme_color',
-            'active',
-            'debugging_mode'
-         
-            
-            ]
+        fields = '__all__'
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'input',
@@ -1121,6 +1094,11 @@ class SetupForm(forms.ModelForm):
             'copy_year': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Год копирайта',
+                
+            }),
+            'city': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Город',
                 
             }),
             'copy': forms.TextInput(attrs={
@@ -1167,6 +1145,7 @@ class SetupForm(forms.ModelForm):
             'telegram_group': 'Группа в телеграм',
             'copy_year': 'Год копирайта',
             'copy': 'Копирайт',
+            'city': 'Город',
             'address': 'Адрес',
             
             'meta_title': 'Мета заголовок',
