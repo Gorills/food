@@ -62,7 +62,8 @@
             </li>
 
             {% for order in orders %}
-                <li class="table-row {% if category.parent %}children{% endif %}">
+                
+                <li class="table-row {% if order.status == 'Новый' %}table-row--new{% elif order.status == 'В работе' %}table-row--work{% elif order.status == 'Обработан' %}table-row--obr{% elif order.status == 'Выполнен' %}table-row--done{% elif order.status == 'Отказ' %}table-row--cancel{% endif %}">
                     <div class="col col-1" data-label="">{{ order.id }}</div>
                     <div class="col col-8" data-label="">{{ order.phone }}</div>
                     <div class="col col-2" data-label="">{{ order.status }}</div>

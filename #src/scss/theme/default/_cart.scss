@@ -306,7 +306,35 @@
         }
     }
 
-    
+
+   
+
+    // .cart__form-coupon
+
+    &__form-coupon {
+        display: flex;
+        align-items: center;
+
+    }
+
+    // .cart__form-coupon-inner
+    &__form-coupon-inner {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    // .cart__form-coupon-btn
+
+    &__form-coupon-btn {
+        height: 46px;
+        margin-bottom: 10px;
+        border: 1px solid var(--color-font);
+        background-color: var(--color-body);
+        color: var(--color-font);
+    }
+
+
 
     // .cart__form-wrap
 
@@ -365,7 +393,7 @@
         overflow-y: scroll;
         height: 100%;
         min-height: fit-content;
-        padding-bottom: 156px;
+        padding-bottom: 350px;
     }
 
     // .cart__input

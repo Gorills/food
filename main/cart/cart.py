@@ -137,21 +137,6 @@ class Cart(object):
         """
         return sum(item['quantity'] for item in self.cart.values())
 
-    def get_total_price(self):
-        """
-        Подсчет стоимости товаров в корзине.
-        """
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
-
-
-    def clear(self):
-        # удаление корзины из сессии
-        del self.session[settings.CART_SESSION_ID]
-        self.session.modified = True
-
-    
-
-
     def get_delivery(self):
 
         if self.get_d == 1:
@@ -165,6 +150,26 @@ class Cart(object):
         else:
             summ = Decimal(0)
             return summ
+
+    def get_total_price(self):
+        """
+        Подсчет стоимости товаров в корзине.
+        """
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+
+
+    def clear(self):
+        # удаление корзины из сессии
+        del self.session[settings.CART_SESSION_ID]
+        self.session['coupon_id'] = None
+        self.session.modified = True
+
+    
+
+    def get_total(self):
+
+        return self.get_total_price() + self.get_delivery()
+
             
       
 

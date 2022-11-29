@@ -219,6 +219,7 @@ TEMPLATES = [
                 'home.context_processors.get_days',
                 'cart.context_processors.cart',
                 'orders.context_processors.calback_form',
+                'coupons.context_processors.coupon_form',
             ],
         },
     },

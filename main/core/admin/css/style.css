@@ -825,6 +825,26 @@ label span {
   box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
 }
 
+.responsive-table .table-row--new {
+  border: 1px solid #884FFB;
+}
+
+.responsive-table .table-row--work {
+  border: 1px solid #17a2b8;
+}
+
+.responsive-table .table-row--obr {
+  border: 1px solid #FFCA60;
+}
+
+.responsive-table .table-row--done {
+  border: 1px solid #9AFDD2;
+}
+
+.responsive-table .table-row--cancel {
+  border: 1px solid #F64E60;
+}
+
 .responsive-table .table-row svg {
   width: 15px;
 }

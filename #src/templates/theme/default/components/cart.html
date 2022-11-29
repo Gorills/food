@@ -8,7 +8,7 @@
         <div class="cart__refresh">
             <div class="cart__top">
                 <div class="cart__top-wrap">
-                    <p class="cart__title">{{ cart.get_total_price_after_discount }} ₽</p>
+                    <p class="cart__title">{{ cart.get_total | floatformat:"2" }} ₽</p>
                     
                     <div class="cart__close">
                         <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,7 +58,7 @@
                                 </a>
                             </div>
                             <div class="cart__bottom">
-                                <p class="cart__total-price">{{ item.total_price }} ₽</p>
+                                <p class="cart__total-price">{{ item.total_price | floatformat:"2" }} ₽</p>
 
                                 <div class="cart-plus-minus">
                                                         
@@ -94,14 +94,14 @@
 
                     {% if cart.get_free != 0 %}
                     <div class="cart__delivery cart__delivery--top">
-                        Сумма заказа: {{ cart.get_total_price }} ₽
+                        Сумма заказа: {{ cart.get_total_price | floatformat:"2" }} ₽
                         <br>
                         
                     </div>
                     <div class="cart__delivery">
-                        Доставка: {{ cart.get_delivery }} ₽
+                        Доставка: {{ cart.get_delivery | floatformat:"2" }} ₽
                         <br>
-                        {% if cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free }} ₽</span>){% endif %}
+                        {% if cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }} ₽</span>){% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -127,6 +127,17 @@
                 <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
 
             </div>
+
+            
+            <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
+                <div class="cart__form-coupon-inner">
+                    {% csrf_token %}
+                    
+                    {{ coupon_form }}
+
+                    <button class="cart__form-coupon-btn">Применить</button>
+                </div>
+            </form>
             
             <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
                 {% csrf_token %}
@@ -255,13 +266,30 @@
             
                 <div class="cart__order-create-wrapper">
                     <div class="cart__order-create-wrapper-inner">
+                        
+
+                        {% if cart.coupon %}
+
                         <div class="cart__order-line">
-                            <p class="cart__order-line-text">Сумма заказа</p>
-                            <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount }} ₽</p>
+                            <p class="cart__order-line-text">Сумма</p>
+                            <p class="cart__order-line-summ">{{ cart.get_total | floatformat:"2" }} ₽</p>
+
+                        </div>
+                        <div class="cart__order-line">
+                            <p class="cart__order-line-text">Купон "{{ cart.coupon.code }}"</p>
+                            <p class="cart__order-line-summ">- {{ cart.get_discount|floatformat:"2" }}₽</p>
 
                         </div>
                         
-                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount }} ₽</button>
+                        {% endif %}
+                        <div class="cart__order-line">
+                            <p class="cart__order-line-text">Итого</p>
+                            <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</p>
+
+                        </div>
+                        
+                        
+                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</button>
                     </div>
                 </div>
                 

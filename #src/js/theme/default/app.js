@@ -189,6 +189,8 @@ $(function() {
       e.preventDefault();
     });
 });
+
+
 $(function() {
     $(document).on('submit','.qtybutton',function(e){
       var $form = $(this);
@@ -228,8 +230,29 @@ $(function() {
     });
 });
 
-
-
+$(function() {
+    $(document).on('submit','.cart__form-coupon',function(e){
+      var $form = $(this);
+      $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        data: $form.serialize()
+      }).done(function() {
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        $(".cart__form-coupon").load(location.href + " .cart__form-coupon-inner");
+        
+        
+        
+      }).fail(function() {
+        console.log('fail');
+      });
+      e.preventDefault();
+    });
+});
 
 //   Удаление из корзины
 $(document).on('click','.cart__remove, .product-remove a',function(e){
