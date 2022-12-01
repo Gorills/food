@@ -15,6 +15,18 @@ except:
 from .telegram import order_telegram, send_message
 
 
+from pay.models import Payment
+pay_name = Payment.objects.get().name
+
+if pay_name == 'yookassa':
+    
+    from pay.yookassa_pay import create_payment
+
+    # print(create_payment())
+
+
+
+
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
@@ -65,12 +77,13 @@ def order_create(request):
 
                 pr.save()
 
-                
-
-            order_telegram(order)
-            # очистка корзины
-            cart.clear()
-            return redirect('orders:thank')
+            if pay_name == 'yookassa':
+                return redirect(create_payment(order, cart))
+            else:
+                order_telegram(order)
+                # очистка корзины
+                cart.clear()
+                return redirect('orders:thank')
     else:
 
         try:

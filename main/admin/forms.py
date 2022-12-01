@@ -6,6 +6,47 @@ from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, 
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from pay.models import Payment, Yookassa
+
+
+# Платежи
+
+
+class YookassaForm(forms.ModelForm):
+    class Meta:
+        model = Yookassa
+        fields = '__all__'
+        
+        widgets = {
+            'shop_id': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'key': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            
+           
+            'vat_code': forms.Select(attrs={
+                'class': 'input',
+            }),
+        }
+
+
+class PaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        
+        widgets = {
+           
+            'name': forms.Select(attrs={
+                'class': 'input',
+            }),
+        }
+
+
+
+
 
 
 # Статус заказа

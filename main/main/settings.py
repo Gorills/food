@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'coupons',
     'blog',
     'yafeed',
+    'pay',
     
 ]
 

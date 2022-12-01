@@ -1,0 +1,49 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+
+<div class="page__title">Настройка платежей</div>
+
+<div class="breadcrumb">
+
+    <ol class="breadcrumb__list">
+        <li class="breadcrumb__item"><a class="breadcrumb__link" href="#">Главная</a></li>
+        <li class="breadcrumb__item">Настройка платежей</li>
+    </ol>
+
+</div>
+
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="." class="form" method="post">
+            {% csrf_token %}
+           
+            {{ form }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+
+{% if payment.name == 'yookassa' %}
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="{% url 'yookassa_save' %}" class="form" method="post">
+            {% csrf_token %}
+           
+            {{ yookassa_form.as_p }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+
+{% endblock %}

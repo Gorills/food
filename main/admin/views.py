@@ -6,13 +6,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm
+from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
+from pay.models import Payment, Yookassa
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
 import subprocess
@@ -128,6 +129,64 @@ def general_settings(request):
         'recaptcha_form': recaptcha_form,
     }
     return render(request, 'settings/general_settings.html', context)
+
+
+# Настроки платежей
+@user_passes_test(lambda u: u.is_superuser)
+def admin_payments(request):
+
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_payments')
+        else:
+            return render(request, 'settings/admin_payments.html', {'form':form})
+
+
+    try:
+        payment = Payment.objects.get()
+        form = PaymentForm(instance=payment)
+    except:
+        payment = None
+        form = PaymentForm()
+
+
+    try:
+        yookassa = Yookassa.objects.get()
+        yookassa_form = YookassaForm(instance=yookassa)
+    except:
+        yookassa_form = YookassaForm()
+
+
+    context = {
+        'payment': payment,
+        'form': form,
+        'yookassa_form':yookassa_form,
+
+    }
+
+    return render(request, 'settings/admin_payments.html', context)
+
+
+def yookassa_save(request):
+
+    if request.method == 'POST':
+        yookassa_form = YookassaForm(request.POST)
+        if yookassa_form.is_valid():
+            yookassa_form.save()
+
+            return redirect('admin_payments')
+
+        else:
+            return redirect('admin_payments')
+
+
+    else:
+        return redirect('admin_payments')
+
+
 
 
 
