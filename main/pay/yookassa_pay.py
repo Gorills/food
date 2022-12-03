@@ -7,9 +7,12 @@ from shop.models import Product
 # Create your views here.
 from yookassa import Configuration, Payment
 
-Configuration.account_id = Yookassa.objects.get().shop_id
-Configuration.secret_key = Yookassa.objects.get().key
-
+try:
+    Configuration.account_id = Yookassa.objects.get().shop_id
+    Configuration.secret_key = Yookassa.objects.get().key
+except:
+    Configuration.account_id = ''
+    Configuration.secret_key = ''
 
 def create_payment(order, cart, request):
 
