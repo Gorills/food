@@ -984,11 +984,14 @@ jQuery(document).ready(function ($) {
 
 
 jQuery(document).ready(function () {
-    var pathname = window.location.href.indexOf('?'); 
-    
-    console.log(pathname)
+    var pathname = window.location.href; 
+    var origin   = window.location.origin;
 
-    if(pathname != -1) {
+
+    res = pathname.replace(origin, '')
+    
+
+    if(res == '/?order=True') {
         $('.odred-done').show()
 
         $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
