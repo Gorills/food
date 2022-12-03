@@ -84,6 +84,16 @@
         {% if  order.pay_method %}
         <p class="page-order__info">Способ оплаты: {{ order.pay_method }}</p>
         {% endif %}
+        {% if  order.pay_method == 'Оплата картой на сайте' %}
+            {% if order.paid == False %}
+            <p class="page-order__info">Статус оплаты: <span class="page-order__info--error">не оплачен</span></p>
+            {% else %}
+            <p class="page-order__info">Статус оплаты: <span class="page-order__info--success">оплачен</span></p>
+
+            {% endif %}
+        
+        {% endif %}
+
         {% if  order.order_conmment%}
         <p class="page-order__info">Комментарий к заказу: {{ order.order_conmment }}</p>
         {% endif %}

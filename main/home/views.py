@@ -13,7 +13,7 @@ except:
 
 from django.views.generic import TemplateView, ListView
 
-
+from pay.models import PaymentSet, Yookassa
 
 
 @require_GET
@@ -69,7 +69,10 @@ from cart.cart import Cart
 
 def home(request):
     
-    
+    # payment = PaymentSet.objects.get()
+    # payment.delete()
+    # yookassa = Yookassa.objects.get()
+    # yookassa.delete()
     # cart = Cart(request)
     # cart.clear()
     manufacturers = Manufacturer.objects.all()[:12]

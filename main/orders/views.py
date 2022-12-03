@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from accounts.models import UserProfile
 
 from shop.models import Product, ProductOption
-from .models import OrderItem
+from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
 from setup.models import ThemeSettings
@@ -15,10 +15,31 @@ except:
 from .telegram import order_telegram, send_message
 
 
+from pay.models import PaymentSet
+try:
+    pay_name = PaymentSet.objects.get().name
+except:
+    pay_name = 'none'
+
+
+# print(pay_name)
+
+
+if pay_name == 'yookassa':
+    
+    from pay.yookassa_pay import create_payment
+
+   
+
+
+
+
 def order_create(request):
     cart = Cart(request)
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
+
+        pay_method = request.POST['pay_method']
         if form.is_valid():
             order = form.save(commit=False)
             if cart.coupon:
@@ -65,12 +86,27 @@ def order_create(request):
 
                 pr.save()
 
-                
+            
+            if pay_method == 'Оплата картой на сайте':
 
-            order_telegram(order)
-            # очистка корзины
-            cart.clear()
-            return redirect('orders:thank')
+                if pay_name == 'yookassa':
+                    data = create_payment(order, cart, request)
+                    payment_id = data['id']
+                    confirmation_url = data['confirmation_url']
+
+                    order.payment_id = payment_id
+                    order.payment_dop_info = confirmation_url
+                    order.save()
+
+                    print(data['path'])
+                    return redirect(confirmation_url)
+
+
+            else:
+                order_telegram(order)
+                # очистка корзины
+                cart.clear()
+                return redirect('/?order=True')
     else:
 
         try:
@@ -119,3 +155,38 @@ def thank(request):
 
 
     return render(request, 'orders/order/created.html')
+
+
+
+from yookassa import Payment
+
+
+def order_confirm(request, pk):
+    cart = Cart(request)
+    
+    try:
+        order = Order.objects.get(id=pk, paid=False, pay_method='Оплата картой на сайте')
+        payment = Payment.find_one(order.payment_id)
+        status = payment.status
+        status = payment.status
+
+        if status == 'succeeded':
+            order_telegram(order)
+            cart.clear()
+            request.session['delivery'] = 1
+            order.paid = True
+            order.save()
+
+            return redirect('/?order=True')
+
+        context = {
+            'order': order,
+            'status': status,
+            
+        }
+
+        return render(request, 'orders/order/confirm.html', context)
+    except:
+
+        return redirect('home')
+

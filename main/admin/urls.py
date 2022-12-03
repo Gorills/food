@@ -20,6 +20,11 @@ urlpatterns = [
     path('order_delete/<int:pk>/', views.order_delete, name='order_delete'),
     path('order_status_change/<int:pk>/', views.order_status_change, name='order_status_change'),
 
+
+    # payments
+    path('admin_payments/', views.admin_payments, name='admin_payments'),
+    path('yookassa_save/', views.yookassa_save, name='yookassa_save'),
+
     # sidebar
     path('sidebar_show/', views.sidebar_show, name='sidebar_show'),
     path('sidebar_hide/', views.sidebar_hide, name='sidebar_hide'),

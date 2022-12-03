@@ -26,7 +26,12 @@ class Order(models.Model):
     order_conmment = models.TextField(null=True, blank=True, verbose_name='Комментарий к заказу')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    payment_id = models.CharField(max_length=250, verbose_name="ID платежа", null=True, blank=True)
+    payment_dop_info = models.CharField(max_length=550, verbose_name="Информация о платеже (ссылка на плптеж)", null=True, blank=True)
+
     paid = models.BooleanField(default=False)
+
     summ = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     STATUS_CLASS = (
