@@ -625,69 +625,69 @@ $(document).on('click','#id_phone, #id_address',function(){
     $(this).css('border-color', '#eaedff')
 })
 
-// $(function() {
-//     $(document).on('submit','.cart__form-form',function(e){
-//         var getOrderTime = $('#order_time').attr('data-value')
-//         var getTime = $('#time').attr('data-value')
-//         var getData = $('#data').attr('data-value')
-//         var payMethod = $('#pay_method').attr('data-value')
-//         var getPhone = $('#id_phone').val()
-//         var getAddress = $('#id_address').val()
-//         if (getPhone == '') {
-//             $('#id_phone').css('border-color', 'red')
-//         } else {
-//             $('#id_phone').css('border-color', '#eaedff')
-//         }
-//         if (getAddress == '') {
-//             $('#id_address').css('border-color', 'red')
-//         } else {
-//             $('#id_address').css('border-color', '#eaedff')
-//         }
-//         if(getOrderTime=='0') {
-//             $('#order_time').children().children('.cart__select-error').show()
-//         } 
-//         if(getTime=='0') {
-//             $('#order_time').children().children('.cart__select-error').show()
-//         } 
-//         if(getData=='0') {
-//             $('#order_time').children().children('.cart__select-error').show()
-//         }
-//         if(payMethod=='0') {
-//             $('#pay_method').children().children('.cart__select-error').show()
-//         } else {
-//             $('#pay_method').children().children('.cart__select-error').hide()
-//         }
+$(function() {
+    $(document).on('click','.cart__order-create',function(){
+        var getOrderTime = $('#order_time').attr('data-value')
+        var getTime = $('#time').attr('data-value')
+        var getData = $('#data').attr('data-value')
+        var payMethod = $('#pay_method').attr('data-value')
+        var getPhone = $('#id_phone').val()
+        var getAddress = $('#id_address').val()
+        if (getPhone == '') {
+            $('#id_phone').css('border-color', 'red')
+        } else {
+            $('#id_phone').css('border-color', '#eaedff')
+        }
+        if (getAddress == '') {
+            $('#id_address').css('border-color', 'red')
+        } else {
+            $('#id_address').css('border-color', '#eaedff')
+        }
+        if(getOrderTime=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        } 
+        if(getTime=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        } 
+        if(getData=='0') {
+            $('#order_time').children().children('.cart__select-error').show()
+        }
+        if(payMethod=='0') {
+            $('#pay_method').children().children('.cart__select-error').show()
+        } else {
+            $('#pay_method').children().children('.cart__select-error').hide()
+        }
 
 
 
-//         if(getOrderTime != '0' && getTime != '0' && getData != '0' && payMethod != '0' && getPhone != '' && getAddress != '') {
-//             var $form = $(this);
-//             $.ajax({
-//                 type: $form.attr('method'),
-//                 url: $form.attr('action'),
-//                 data: $form.serialize()
-//             }).done(function() {
+        // if(getOrderTime != '0' && getTime != '0' && getData != '0' && payMethod != '0' && getPhone != '' && getAddress != '') {
+        //     var $form = $(this);
+        //     $.ajax({
+        //         type: $form.attr('method'),
+        //         url: $form.attr('action'),
+        //         data: $form.serialize()
+        //     }).done(function() {
 
-//                 $(".cart__inner").load(location.href + " .cart__refresh");
-//                 $(".cart__form-refresh").load(location.href + " .cart__form");
-//                 $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-//                 $(".header__cart-wrap").load(location.href + " .header__cart");
-//                 $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");   
+        //         $(".cart__inner").load(location.href + " .cart__refresh");
+        //         $(".cart__form-refresh").load(location.href + " .cart__form");
+        //         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        //         $(".header__cart-wrap").load(location.href + " .header__cart");
+        //         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");   
 
-//                 $('.cart').removeClass('cart--active')
-//                 $('.cart__form').hide()
-//                 $('body').removeClass('body')
+        //         $('.cart').removeClass('cart--active')
+        //         $('.cart__form').hide()
+        //         $('body').removeClass('body')
 
-//                 $('.odred-done').show()
+        //         $('.odred-done').show()
                 
                         
-//             }).fail(function() {
-//                 console.log('fail');
-//             });
-//         }
-//         e.preventDefault();
-//     });
-// });
+        //     }).fail(function() {
+        //         console.log('fail');
+        //     });
+        // }
+        // e.preventDefault();
+    });
+});
 
 $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
     e.preventDefault()
