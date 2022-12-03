@@ -13,7 +13,7 @@ Configuration.secret_key = Yookassa.objects.get().key
 
 def create_payment(order, cart, request):
 
-    path = request.get_full_path()
+    path = 'https://' + request.META['HTTP_HOST']
     
     items = []
 
@@ -42,7 +42,7 @@ def create_payment(order, cart, request):
         },
         "confirmation": {
             "type": "redirect",
-            "return_url": "http://localhost:3000/orders/confirm/" + str(order.id)
+            "return_url": path+"/orders/confirm/" + str(order.id)
         },
         "capture": True,
         "description": "Заказ №" + str(order.id),
@@ -61,6 +61,7 @@ def create_payment(order, cart, request):
         'id': payment.id,
         'confirmation_url': payment.confirmation.confirmation_url,
         'path': path
+        
     }
 
     

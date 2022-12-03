@@ -106,7 +106,7 @@ def order_create(request):
                 order_telegram(order)
                 # очистка корзины
                 cart.clear()
-                return redirect('orders:thank')
+                return redirect('/?order=True')
     else:
 
         try:
