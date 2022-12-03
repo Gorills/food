@@ -5,8 +5,8 @@ def categorys(request):
 
 
 # Показывать описания под товарами
-def view_desc(request):
+def shop_setup(request):
     try:
-        return {'view_desc': ShopSetup.objects.get().show_descrioption}
+        return {'shop_setup': ShopSetup.objects.get()}
     except:
-        return {'view_desc': ''}
+        return {'shop_setup': ''}

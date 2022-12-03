@@ -142,7 +142,7 @@
             <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
                 {% csrf_token %}
 
-                <input id="id_phone" name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+                <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
                 <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
                 
 
@@ -151,7 +151,7 @@
                     <div class="cart__form-refresh-delivery-inner">
                         
                         <div class="cart__input-address-wrap">
-                            <input name="address" type="text" data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="id_address">
+                            <input name="address" required type="text" data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="id_address">
                         </div>
                         <div class="cart__input-wrap">
                             <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
@@ -178,7 +178,7 @@
                             <div class="cart__select-time">
                                 <p id="time" data-value="0">Время</p>
                                 <p id="data" data-value="0"></p>
-                                <input type="text" id="id_datetime" hidden name="time">
+                                <input type="text" id="id_datetime" hidden name="time" required>
                             </div>
                             
 
@@ -245,17 +245,32 @@
                             </svg>
             
                             <span id="pay">Способ оплаты</span>
-                            <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden>
+                            <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden required>
                         </div>
                         <div class="cart__select-error">Выберите способ оплаты</div>
                         
                     </div>
 
                     
-                    <div class="cart__select-drop">
+                    <div class="cart__select-drop" id="cart__select-drop">
+                        <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
+                            {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
+
+                                {% if cart_active == True %}
+                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                {% else %}
+                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                {% if cart_active == True %}
+                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                         
-                        <div class="cart__select-item cart__select-item--card">Картой при получении</div>
-                        <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
                     </div>
 
                 </div>

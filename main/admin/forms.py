@@ -6,7 +6,7 @@ from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, 
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from pay.models import Payment, Yookassa
+from pay.models import PaymentSet, Yookassa
 
 
 # Платежи
@@ -34,7 +34,7 @@ class YookassaForm(forms.ModelForm):
 
 class PaymentForm(forms.ModelForm):
     class Meta:
-        model = Payment
+        model = PaymentSet
         fields = '__all__'
         
         widgets = {

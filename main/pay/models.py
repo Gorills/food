@@ -1,11 +1,12 @@
 from django.db import models
 from admin.singleton_model import SingletonModel
 # Create your models here.
-class Payment(SingletonModel):
+class PaymentSet(SingletonModel):
     PAY_CLASS = (
        ('yookassa', 'ЮКасса'),
     )
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
+    status = models.BooleanField(default=True, verbose_name='Включить онлайн оплаты')
 
 
 

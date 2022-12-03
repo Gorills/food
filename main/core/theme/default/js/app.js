@@ -612,7 +612,7 @@ $(document).ready(function(){
 
         $('#pay_method').attr('data-value', '1')
 
-        $(this).parent('.cart__select-drop').removeClass('cart__select-drop--active')
+        $(this).parent().parent('.cart__select-drop').removeClass('cart__select-drop--active')
         $('.cart__order-layout').hide()
 
         console.log(getPay)
@@ -704,6 +704,7 @@ $(document).on('click','.cart__form-btn',function(e){
 
     $.get( url, function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
+        $("#cart__select-drop").load(location.href + " #cart__select-drop-refresh");
        
         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
         
@@ -951,3 +952,53 @@ $(document).on('blur','.phone',function(){
         $(this).val( first + '-' + lastfour );
     }
 })
+
+
+// Платежи
+jQuery(document).ready(function ($) {
+
+    var confirm_page = $('#confirm_page').attr('data-order')
+    var confirm_status = $('#confirm_page').attr('data-status')
+    var order_id = $('#confirm_page').attr('data-order')
+    var count = 0
+    if(confirm_page && confirm_status=='pending') {
+            let timerId = setTimeout(function tick() {
+                confirm_status = $('#confirm_page').attr('data-status')
+                console.log(confirm_status)
+                if (count <= 5) {
+                    $(".thank").load(location.href + " .thank__refresh");
+                    if (confirm_status == 'pending') {
+                        timerId = setTimeout(tick, 1000); // (*)
+                        count +=1
+                    }
+                } else {
+                    $('.thank__loader').hide()
+                    $('.thank__try').addClass('thank__try--active')
+                }
+            }, 1000);
+            $.get('/order/confirm/'+order_id, function() {});
+    } else if(confirm_status=='succeeded') {
+        window.location.href = '/?order=True'
+    }
+})
+
+
+jQuery(document).ready(function () {
+    var pathname = window.location.href.indexOf('?'); 
+    
+    console.log(pathname)
+
+    if(pathname != -1) {
+        $('.odred-done').show()
+
+        $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
+            window.location.href = '/'
+        })
+    }
+
+
+    
+})
+
+// Платежи
+

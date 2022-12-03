@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+{% load theme_static %}
+<div class="thank">
+
+    <div class="thank__refresh">
+        <div class="container">
+            <div class="thank__inner" id="confirm_page" data-order="{{ order.id }}" data-status="{{ status }}">
+
+                <h1 class="thank__title">Ожидание платежа по заказу №{{ order.id }}!</h1>
+
+
+                <div class="thank__loader">
+                    <img src="{% get_static 'images/loader.gif' %}" alt="">
+
+
+                </div>
+
+                <div class="thank__try">
+                    <a href="{{ order.payment_dop_info }}" class="thank__try-href">Попробовать еще раз</a>
+                    <a href="{% url 'home' %}" class="thank__try-cancel">Отмена</a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+    
+{% endblock %}

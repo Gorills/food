@@ -1729,6 +1729,11 @@ a {
   display: block;
 }
 
+.cart__select-drop-refresh {
+  display: flex;
+  flex-direction: column;
+}
+
 .cart__select-drop-time .cart__select-item {
   width: 100%;
 }
@@ -2583,6 +2588,10 @@ td.product-thumbnail img {
   min-height: calc(100vh - 250px);
 }
 
+.thank__refresh {
+  width: 100%;
+}
+
 .thank__title {
   margin-bottom: 20px;
   font-size: 76px;
@@ -2590,6 +2599,36 @@ td.product-thumbnail img {
 
 .thank__text {
   margin-bottom: 40px;
+}
+
+.thank__loader img {
+  width: 30px;
+  opacity: 50%;
+}
+
+.thank__try {
+  width: 100%;
+  justify-content: center;
+  display: none;
+}
+
+.thank__try--active {
+  display: flex;
+}
+
+.thank__try-href {
+  display: inline-block;
+  padding: 8px 18px;
+  background-color: var(--color-success);
+  color: #fff;
+}
+
+.thank__try-cancel {
+  display: inline-block;
+  padding: 8px 18px;
+  margin-left: 10px;
+  background-color: var(--color-danger);
+  color: #fff;
 }
 
 .account {

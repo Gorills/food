@@ -13,7 +13,7 @@ from home.models import Page, Slider, SliderSetup
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
-from pay.models import Payment, Yookassa
+from pay.models import PaymentSet, Yookassa
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
 import subprocess
@@ -135,6 +135,9 @@ def general_settings(request):
 @user_passes_test(lambda u: u.is_superuser)
 def admin_payments(request):
 
+    # payment = PaymentSet.objects.get()
+    # PaymentSet.delete()
+
     if request.method == 'POST':
         form = PaymentForm(request.POST)
         if form.is_valid():
@@ -146,8 +149,9 @@ def admin_payments(request):
 
 
     try:
-        payment = Payment.objects.get()
+        payment = PaymentSet.objects.get()
         form = PaymentForm(instance=payment)
+
     except:
         payment = None
         form = PaymentForm()

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.shortcuts import render
 
-from .models import Payment, Yookassa
+from .models import PaymentSet, Yookassa
 from shop.models import Product
 
 # Create your views here.
@@ -11,7 +11,10 @@ Configuration.account_id = Yookassa.objects.get().shop_id
 Configuration.secret_key = Yookassa.objects.get().key
 
 
-def create_payment(order, cart):
+def create_payment(order, cart, request):
+
+    path = request.get_full_path()
+    
     items = []
 
     for item in cart:
@@ -39,7 +42,7 @@ def create_payment(order, cart):
         },
         "confirmation": {
             "type": "redirect",
-            "return_url": "https://demo-shop-profit.ru/orders/confirm/" + str(order.id)
+            "return_url": "http://localhost:3000/orders/confirm/" + str(order.id)
         },
         "capture": True,
         "description": "Заказ №" + str(order.id),
@@ -54,10 +57,14 @@ def create_payment(order, cart):
         }
     })
 
+    data = {
+        'id': payment.id,
+        'confirmation_url': payment.confirmation.confirmation_url,
+        'path': path
+    }
+
     
 
-    confirmation_url = payment.confirmation.confirmation_url
-
-    return confirmation_url
+    return data
 
 
