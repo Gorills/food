@@ -6,7 +6,7 @@ class PaymentSet(SingletonModel):
        ('yookassa', 'ЮКасса'),
     )
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
-    status = models.BooleanField(default=True, verbose_name='Включить онлайн оплаты')
+    status = models.BooleanField(default=False, verbose_name='Включить онлайн оплаты')
 
 
 
