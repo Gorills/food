@@ -45,7 +45,7 @@ class ProfileForm(forms.Form):
 
     first_name = forms.CharField(label='Имя', max_length=50, required=False)
     last_name = forms.CharField(label='Фамилия', max_length=50, required=False)
-    telephone = forms.CharField(label='Телефон', max_length=50, required=False)
+    phone = forms.CharField(label='Телефон', max_length=50, required=False)
     city = forms.CharField(label='Город', max_length=50, required=False)
     address = forms.CharField(label='Улица, дом', max_length=50, required=False)
     apartment = forms.CharField(label='Квартира', max_length=50, required=False)
@@ -663,11 +663,9 @@ class ProfileForm(forms.Form):
 
     first_name = forms.CharField(label='Имя', max_length=50, required=False)
     last_name = forms.CharField(label='Фамилия', max_length=50, required=False)
-    telephone = forms.CharField(label='Телефон', max_length=50, required=False)
-    city = forms.CharField(label='Город', max_length=50, required=False)
-    address = forms.CharField(label='Улица, дом', max_length=50, required=False)
-    apartment = forms.CharField(label='Квартира', max_length=50, required=False)
-    postal_code = forms.CharField(label='Почтовый индекс', max_length=50, required=False)
+    
+    phone  = forms.CharField(label="Телефон", max_length = 50, required=False, widget=forms.TextInput(attrs={'class': 'phone', 'placeholder': 'Телефон'})) 
+   
     
 
 

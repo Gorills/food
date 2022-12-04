@@ -23,7 +23,7 @@
             
             {% include 'account/profile_top.html' %}
 
-            {% for order in user.user_order.all %}
+            {% for order in user.user_profile.user_order.all %}
             <div class="account-order {% if order.status == 'Новый' %}account-order--new{% elif order.status == 'В работе' %}account-order--inwork{% elif order.status == 'Обработан' %}account-order--predone{% elif order.status == 'Выполнен' %}account-order--done{% elif order.status == 'Отказ' %}account-order--refused{% endif %}">
                 
 
@@ -44,6 +44,7 @@
                     
                 </div>
                 <div class="account-order__list">
+
                     {% for item in order.items.all %}
                         <div class="account-order__item">
                             {% thumbnail item.option.parent.thumb "50x50" crop="center" as im %}

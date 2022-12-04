@@ -116,21 +116,15 @@ def profile(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
-        telephone = request.POST['telephone']
-        address = request.POST['address']
-        apartment = request.POST['apartment']
-        postal_code = request.POST['postal_code']
-        city = request.POST['city']
+        phone = request.POST['phone']
+        
 
         user.first_name = first_name
         user.last_name = last_name
         user.save()
 
-        user_profile.telephone = telephone
-        user_profile.address = address
-        user_profile.apartment = apartment
-        user_profile.postal_code = postal_code
-        user_profile.city = city
+        user_profile.phone = phone
+        
         user_profile.save()
 
         return redirect('account:account_profile')
@@ -139,11 +133,8 @@ def profile(request):
     default_data = {
         'first_name': user.first_name, 
         'last_name': user.last_name, 
-        'telephone': user_profile.telephone, 
-        'address': user_profile.address, 
-        'apartment': user_profile.apartment, 
-        'postal_code': user_profile.postal_code, 
-        'city': user_profile.city, 
+        'phone': user_profile.phone, 
+       
     }
     profile_form = ProfileForm(default_data)
 

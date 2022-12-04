@@ -119,11 +119,9 @@ def order_create(request):
                 'last_name': request.user.last_name,
                 'email': request.user.email,
 
-                'phone': user_profile.telephone,
-                'apartment': user_profile.apartment,
-                'address': user_profile.address,
-                'postal_code': user_profile.postal_code,
-                'city': user_profile.city,
+                'phone': user_profile.phone,
+              
+                
             }
             form = OrderCreateForm(data)
 
