@@ -6,6 +6,7 @@ from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
 from setup.models import ThemeSettings
+from accounts.models import UserProfile
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -40,21 +41,23 @@ def order_create(request):
         form = OrderCreateForm(request.POST)
 
         pay_method = request.POST['pay_method']
+        phone = request.POST['phone']
+
         if form.is_valid():
+
+            try:
+                user_pr = UserProfile.objects.get(phone=phone)
+            except:
+                user_pr = UserProfile.objects.create(phone=phone)
+
+
             order = form.save(commit=False)
             if cart.coupon:
                 order.coupon = cart.coupon
                 order.discount = cart.coupon.discount
             
-            if request.user.is_authenticated:
-                user = request.user
-                order.user = user
-
-            else:
-                order.user = None
-
-            
-
+          
+            order.user_pr = user_pr
             order.summ = cart.get_total_price_after_discount()
             order.delivery_price = cart.get_delivery()
             order.save()

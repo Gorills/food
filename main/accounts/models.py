@@ -7,17 +7,9 @@ from allauth.account.models import EmailAddress
 
 class UserProfile(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-
-    telephone = models.CharField(
-        'Telephone', max_length=50, blank=True, null=True)
-    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True, blank=True)
+    phone = models.CharField(max_length=50, blank=True, null=True, unique=True)
     use_sms = models.BooleanField(default=True)
- 
-    apartment = models.CharField(max_length=20, blank=True, null=True)
-    address = models.CharField(max_length=50, blank=True, null=True)
-    postal_code = models.CharField(max_length=50, blank=True, null=True)
-    city = models.CharField(max_length=50, blank=True, null=True)
     
     mod_date = models.DateTimeField('Last modified', auto_now=True)
 

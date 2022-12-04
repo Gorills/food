@@ -117,6 +117,7 @@ urlpatterns = [
     # USERS
     path('users/', views.admin_users, name='admin_users'),
     path('users/delete/<int:pk>/', views.users_delete, name='users_delete'),
+    path('users/detail/<int:pk>/', views.users_detail, name='users_detail'),
 
 
 

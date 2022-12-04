@@ -516,7 +516,17 @@ $(document).ready(function(){
         e.preventDefault()
         $('.cart').addClass('cart--active')
         $('body').addClass('body')
+        $.get( "/cart/set_delivery/1/", function() { 
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__form-refresh").load(location.href + " .cart__form");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            
+
+        });
     })
+
     $(document).on('click','.cart__close, .cart__closer, #cancel',function(e){
         e.preventDefault()
 
@@ -526,6 +536,7 @@ $(document).ready(function(){
             $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+           
 
         });
 
@@ -919,7 +930,7 @@ $(document).on('focus','#id_address',function(){
 
 
 $(document).on('click', '.phone' ,function(e){
-    $(".phone").mask("+7 (999) 99-99-999");
+    $(".phone").mask("+7 (999) 999 99-99");
 
 })
 $(document).on('blur','.phone',function(){
