@@ -74,8 +74,14 @@ def admin(request):
     sales = Order.objects.all().aggregate(Sum('summ'))
 
     summ = sales['summ__sum']
+
+    users = User.objects.all().exclude(is_staff=True)
     
-    clients = UserProfile.objects.all().count()
+    clients_reg = UserProfile.objects.filter(user__in=users).count()
+    client_no_reg = UserProfile.objects.filter(user=None).count()
+
+    clients = clients_reg+client_no_reg
+
     products = Product.objects.all().count()
     
     context = {
@@ -1558,7 +1564,7 @@ def page_edit(request, pk):
 
 # !!! Пользователи USERS !!!
 
-
+from itertools import chain
 @user_passes_test(lambda u: u.is_superuser)
 def admin_users(request):
     q = request.GET.get('q')
@@ -1577,6 +1583,10 @@ def admin_users(request):
             users_pr = UserProfile.objects.all().order_by(*sort)
         except:
             users_pr = UserProfile.objects.all()
+
+
+    # Исключаем персонал и складываем две разные фильтрации
+    users_pr = list(chain(users_pr.filter(user=None), UserProfile.objects.filter(user__in=users)))
 
     context = {
         'users': users,
