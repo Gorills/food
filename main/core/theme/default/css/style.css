@@ -555,7 +555,7 @@ a {
   width: 30px !important;
   height: 30px !important;
   border-radius: 50% !important;
-  background-color: #fff !important;
+  background-color: var(--color-body) !important;
   font-size: 24px;
   transform: translateY(-50%);
 }
@@ -567,7 +567,7 @@ a {
   width: 30px !important;
   height: 30px !important;
   border-radius: 50% !important;
-  background-color: #fff !important;
+  background-color: var(--color-body) !important;
   font-size: 24px;
   transform: translateY(-50%);
 }

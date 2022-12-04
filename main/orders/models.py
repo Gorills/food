@@ -3,12 +3,16 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator, MaxValueValidator
 from coupons.models import Coupon
 from django.conf import settings
+from accounts.models import UserProfile
 
 # Create your models here.
 from shop.models import Product, ProductOption
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
+    # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
+
+    user_pr = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='user_order')
+
     phone = models.CharField(max_length=50, null=True, blank=True, verbose_name='Телефон')
     address = models.CharField(max_length=250, null=True, blank=True, verbose_name='Адрес')
     address_comment = models.TextField(null=True, blank=True, verbose_name='Комментарий к адресу')

@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
+from accounts.models import UserProfile
 
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
@@ -1560,14 +1561,47 @@ def page_edit(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_users(request):
+    q = request.GET.get('q')
+    sort = request.GET.getlist('sort')
+
+    try:
+        sort_t = sort[0]
+    except:
+        sort_t = sort
 
     users = User.objects.all().exclude(is_staff=True)
+    try:
+        users_pr = UserProfile.objects.filter(Q(phone__icontains=q)).order_by(*sort)
+    except:
+        try:
+            users_pr = UserProfile.objects.all().order_by(*sort)
+        except:
+            users_pr = UserProfile.objects.all()
 
     context = {
-        'users': users
+        'users': users,
+        'users_pr': users_pr,
+        'search': 'search',
+        'q': q,
+        'sort': sort_t,
     }
 
     return render(request, 'users/admin_users.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def users_detail(request, pk):
+
+    user_pr = UserProfile.objects.get(id=pk)
+
+    context = {
+      
+        'user_pr': user_pr,
+       
+    }
+
+   
+    return render(request, 'users/users_detail.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def users_delete(request, pk):

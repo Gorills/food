@@ -53,10 +53,10 @@ const requireDir = require("require-dir"),
             src: "./#src/img/theme/default/fav/*.{jpg,jpeg,png,gif}",
             dist: "./main/core/img/fav/",
         },
-        gzip: {
-            src: "./#src/.htaccess",
-            dist: "./main/core/"
-        },
+        // gzip: {
+        //     src: "./#src/.htaccess",
+        //     dist: "./main/core/"
+        // },
         // theme hot
         // hotviews: {
         //     src: [
@@ -207,7 +207,7 @@ export const prod = gulp.series("clean", "adminclean",
         "sprites", 
         "fonts", 
         "favicons", 
-        "gzip",
+        // "gzip",
         // "hotviews", 
         // "hotstyles", 
         // "hotscripts", 
