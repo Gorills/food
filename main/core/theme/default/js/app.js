@@ -931,8 +931,8 @@ $(document).on('focus','#id_address',function(){
 
 $(document).on('click', '.phone' ,function(e){
     $(".phone").mask("+7 (999) 999 99-99");
-
 })
+
 $(document).on('blur','.phone',function(){
     var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
 

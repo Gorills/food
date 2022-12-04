@@ -75,7 +75,7 @@ def admin(request):
 
     summ = sales['summ__sum']
     
-    clients = User.objects.all().exclude(is_staff=True).count()
+    clients = UserProfile.objects.all().count()
     products = Product.objects.all().count()
     
     context = {
