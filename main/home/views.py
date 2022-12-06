@@ -14,7 +14,7 @@ except:
 
 from django.views.generic import TemplateView, ListView
 
-from pay.models import PaymentSet, Yookassa
+from pay.models import PayKeeper, PaymentSet, Yookassa
 
 
 from pay.paykeeper_pay import create_payment
@@ -83,8 +83,12 @@ def home(request):
     # payment.delete()
     # yookassa = Yookassa.objects.get()
     # yookassa.delete()
+    # paykeeper = PayKeeper.objects.get()
+    # paykeeper.delete()
     # cart = Cart(request)
     # cart.clear()
+
+
     manufacturers = Manufacturer.objects.all()[:12]
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()

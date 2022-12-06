@@ -54,7 +54,7 @@ def create_payment(order, cart, request):
     post_data={
         'userName': login, 
         'password': password, 
-        'orderNumber': order.id+100,
+        'orderNumber': order.id,
         'amount': dec_to_cop(order.summ),
         'returnUrl': returnUrl,
         'failUrl': failUrl,

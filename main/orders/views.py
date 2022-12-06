@@ -23,7 +23,7 @@ except:
     pay_name = 'none'
 
 
-# print(pay_name)
+print(pay_name)
 
 
 if pay_name == 'yookassa':
@@ -102,6 +102,7 @@ def order_create(request):
                     order.save()
                     print(data['path'])
                     return redirect(confirmation_url)
+                    
                 if pay_name == 'paykeeper':
 
                     data = create_payment(order, cart, request)
