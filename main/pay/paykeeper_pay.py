@@ -4,9 +4,15 @@ import requests
 from .models import PaymentSet, PayKeeper
 from orders.models import Order
 from shop.models import Product
-login = PayKeeper.objects.get().login
-password = PayKeeper.objects.get().password
-token = PayKeeper.objects.get().token
+
+try:
+    login = PayKeeper.objects.get().login
+    password = PayKeeper.objects.get().password
+    token = PayKeeper.objects.get().token
+except:
+    login = ''
+    password = ''
+    token = ''
 
 gateway_url = ''
 
