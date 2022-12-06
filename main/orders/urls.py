@@ -15,7 +15,7 @@ urlpatterns = [
 try:
     pay_name = PaymentSet.objects.get().name
 except:
-    pass
+    pay_name = ''
 
 if pay_name == 'yookassa':
     urlpatterns.append(path('confirm/<int:pk>/', views.order_confirm, name='order_confirm')) 
