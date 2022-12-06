@@ -68,7 +68,7 @@ def create_payment(order, cart, request):
     confirmation_url = r.json()['formUrl']
     pay_id = r.json()['orderId']
 
-    
+    print(r.json())
 
     data = {
         'id': pay_id,
