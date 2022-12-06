@@ -17,7 +17,8 @@ from django.views.generic import TemplateView, ListView
 from pay.models import PaymentSet, Yookassa
 
 
-
+from pay.paykeeper_pay import create_payment
+# create_payment()
 
 
 
@@ -30,7 +31,7 @@ def robots_txt(request):
             lines = [
                 "User-Agent: *",
                 "Disallow: /admin/",
-                "Disallow: /order/",
+                "Disallow: /orders/",
                 "Disallow: /cart/",
                 "Disallow: /coupons/",
                 "Disallow: /accounts/",
@@ -39,7 +40,7 @@ def robots_txt(request):
 
                 "User-Agent: Yandex",
                 "Disallow: /admin/",
-                "Disallow: /order/",
+                "Disallow: /orders/",
                 "Disallow: /cart/",
                 "Disallow: /coupons/",
                 "Disallow: /accounts/",

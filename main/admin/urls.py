@@ -24,6 +24,7 @@ urlpatterns = [
     # payments
     path('admin_payments/', views.admin_payments, name='admin_payments'),
     path('yookassa_save/', views.yookassa_save, name='yookassa_save'),
+    path('paykeeper_save/', views.paykeeper_save, name='paykeeper_save'),
 
     # sidebar
     path('sidebar_show/', views.sidebar_show, name='sidebar_show'),

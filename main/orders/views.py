@@ -27,10 +27,10 @@ except:
 
 
 if pay_name == 'yookassa':
-    
     from pay.yookassa_pay import create_payment
 
-   
+if pay_name == 'paykeeper':
+    from pay.paykeeper_pay import create_payment, get_status
 
 
 
@@ -100,8 +100,18 @@ def order_create(request):
                     order.payment_id = payment_id
                     order.payment_dop_info = confirmation_url
                     order.save()
-
                     print(data['path'])
+                    return redirect(confirmation_url)
+                if pay_name == 'paykeeper':
+
+                    data = create_payment(order, cart, request)
+                    payment_id = data['id']
+                    confirmation_url = data['confirmation_url']
+
+                    order.payment_id = payment_id
+                    order.payment_dop_info = confirmation_url
+                    order.save()
+                    
                     return redirect(confirmation_url)
 
 
@@ -160,8 +170,6 @@ def thank(request):
 
 
 from yookassa import Payment
-
-
 def order_confirm(request, pk):
     cart = Cart(request)
     
@@ -191,3 +199,34 @@ def order_confirm(request, pk):
 
         return redirect('home')
 
+
+
+def order_error(request):
+
+
+    return render(request, 'orders/order/error.html')
+
+
+
+
+def order_success(request):
+    cart = Cart(request)
+
+    pay_id = request.GET['orderId']
+
+    data = get_status(pay_id)
+
+    if data['status'] == '0':
+        order = data['order']
+
+        order_telegram(order)
+        cart.clear()
+        request.session['delivery'] = 1
+        order.paid = True
+        
+        order.save()
+
+        return redirect('/?order=True')
+
+    else:
+        return redirect('orders:order_error')

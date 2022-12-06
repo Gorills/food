@@ -4,6 +4,7 @@ from admin.singleton_model import SingletonModel
 class PaymentSet(SingletonModel):
     PAY_CLASS = (
        ('yookassa', 'ЮКасса'),
+       ('paykeeper', 'PayKeeper'),
     )
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
     status = models.BooleanField(default=False, verbose_name='Включить онлайн оплаты')
@@ -25,3 +26,10 @@ class Yookassa(SingletonModel):
 
     )
     vat_code = models.CharField(max_length=250, verbose_name='Код ставки НДС ', choices=VAT_CODES)
+
+
+class PayKeeper(SingletonModel):
+    login = models.CharField(max_length=250, verbose_name='Логин API')
+    password = models.CharField(max_length=250, verbose_name='Пароль API')
+
+    token = models.CharField(max_length=250, verbose_name='Token', null=True, blank=True)

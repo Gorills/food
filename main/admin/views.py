@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
+from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PayKeeperForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import UserProfile
@@ -14,7 +14,7 @@ from accounts.models import UserProfile
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
-from pay.models import PaymentSet, Yookassa
+from pay.models import PaymentSet, Yookassa, PayKeeper
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
 import subprocess
@@ -146,6 +146,7 @@ def admin_payments(request):
     # PaymentSet.delete()
 
     if request.method == 'POST':
+
         form = PaymentForm(request.POST)
         if form.is_valid():
             form.save()
@@ -171,16 +172,25 @@ def admin_payments(request):
         yookassa_form = YookassaForm()
 
 
+    try:
+        paykeeper = PayKeeper.objects.get()
+        paykeeper_form = PayKeeperForm(instance=paykeeper)
+    except:
+        paykeeper_form = PayKeeperForm()
+
+
     context = {
         'payment': payment,
         'form': form,
         'yookassa_form':yookassa_form,
+        'paykeeper_form': paykeeper_form
 
     }
 
     return render(request, 'settings/admin_payments.html', context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def yookassa_save(request):
 
     if request.method == 'POST':
@@ -198,7 +208,22 @@ def yookassa_save(request):
         return redirect('admin_payments')
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def paykeeper_save(request):
 
+    if request.method == 'POST':
+        paykeeper_form = PayKeeperForm(request.POST)
+        if paykeeper_form.is_valid():
+            paykeeper_form.save()
+
+            return redirect('admin_payments')
+
+        else:
+            return redirect('admin_payments')
+
+
+    else:
+        return redirect('admin_payments')
 
 
 # Настройки почты POST

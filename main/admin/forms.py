@@ -6,7 +6,7 @@ from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, 
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from pay.models import PaymentSet, Yookassa
+from pay.models import PaymentSet, Yookassa, PayKeeper
 
 
 # Платежи
@@ -29,6 +29,23 @@ class YookassaForm(forms.ModelForm):
             'vat_code': forms.Select(attrs={
                 'class': 'input',
             }),
+        }
+
+class PayKeeperForm(forms.ModelForm):
+    class Meta:
+        model = PayKeeper
+        fields = '__all__'
+        
+        widgets = {
+            'login': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'password': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'token': forms.TextInput(attrs={
+                'class': 'input',
+            })
         }
 
 

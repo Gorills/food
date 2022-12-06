@@ -46,4 +46,21 @@
 {% endif %}
 
 
+{% if payment.name == 'paykeeper' %}
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="{% url 'paykeeper_save' %}" class="form" method="post">
+            {% csrf_token %}
+           
+            {{ paykeeper_form.as_p }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+
 {% endblock %}
