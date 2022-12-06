@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
@@ -14,6 +15,10 @@ except:
 from django.views.generic import TemplateView, ListView
 
 from pay.models import PaymentSet, Yookassa
+
+
+
+
 
 
 @require_GET
@@ -66,8 +71,12 @@ def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
 
 from cart.cart import Cart
+from sms.views import get_code
+from decimal import Decimal
 
 def home(request):
+
+
     
     # payment = PaymentSet.objects.get()
     # payment.delete()

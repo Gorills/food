@@ -140,9 +140,33 @@
             </form>
             
             <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
+                
                 {% csrf_token %}
 
+
+                {% if setup.sms_active == True %}
+
+                <div class="cart__input-phone">
+
+                    <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+
+                    <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
+                        <div class="cart__input-phone-btn"  data-sub="false">Подтвердить</div>
+                    </div>
+
+                    
+
+                    <input type="text" required hidden name="subject">
+                    
+                </div>
+
+                <input type="text" class="cart__input-sms cart__input" value="{{ request.session.code }}" placeholder="Код из смс">
+                {% else %}
                 <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+
+                {% endif %}
+
+
                 <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
                 
 

@@ -16,6 +16,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('yafeed/', include('yafeed.urls')),
+    path('sms/', include('sms.urls')),
 
 
     # Внизу, потому что url модели Page должны обрабатываться последними

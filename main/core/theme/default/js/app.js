@@ -652,6 +652,10 @@ $(function() {
         var payMethod = $('#pay_method').attr('data-value')
         var getPhone = $('#id_phone').val()
         var getAddress = $('#id_address').val()
+
+        var getPhoneSubject = $('.cart__input-phone-btn').attr('data-sub')
+
+
         if (getPhone == '') {
             $('#id_phone').css('border-color', 'red')
         } else {
@@ -676,6 +680,10 @@ $(function() {
         } else {
             $('#pay_method').children().children('.cart__select-error').hide()
         }
+        if (getPhoneSubject=='false') {
+            $('.cart__input-phone-btn-wrap').css('border-color', 'red')
+        }
+
 
 
     });
@@ -929,9 +937,89 @@ $(document).on('focus','#id_address',function(){
 
 
 
-$(document).on('click', '.phone' ,function(e){
+$(document).on('focus', '.phone' ,function(e){
     $(".phone").mask("+7 (999) 999 99-99");
 })
+
+
+$(document).on('keyup', '.phone' ,function(e){
+    var phone = $(this).val()
+    var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+
+    if (min.length == 13) {
+        $(this).attr('readonly', 'readonly');
+        $('.cart__input-phone-btn').css({'display':'flex'})
+    } else {
+        $('.cart__input-phone-btn').css({'display':'none'})
+    }
+
+})
+
+// Our countdown plugin takes a callback, a duration, and an optional message
+$.fn.countdown = function (callback, duration, message) {
+    // If no message is provided, we use an empty string
+    message = message || "";
+    // Get reference to container, and set initial content
+    var container = $(this[0]).html("<small>" + message + " " + "<center>" + duration + " секунд" + "</center>" + "</small>");
+    // Get reference to the interval doing the countdown
+    var countdown = setInterval(function () {
+        // If seconds remain
+        if (--duration) {
+            // Update our container's message
+            container.html("<small>" + message + " " + "<center>" + duration + " секунд" + "</center>" + "</small>");
+        // Otherwise
+        } else {
+            // Clear the countdown interval
+            clearInterval(countdown);
+            // And fire the callback passing our container as `this`
+            callback.call(container);
+        }
+    // Run interval every 1000ms (1 second)
+    }, 1000);
+};
+
+// Function to be called after 5 seconds
+function redirect () {
+    this.html('<div class="cart__input-phone-btn" data-sub="false">Отправить снова</div>');
+    $('.cart__input-phone-btn').css({'display':'flex'})
+
+    $('.phone').removeAttr('readonly');
+
+
+}
+
+
+
+// cart__input-phone-btn
+$(document).on('click', '.cart__input-phone-btn' ,function(e){
+    $(this).parent().css('border-color', '')
+
+    var csrf = $(this).parent().attr('data-token')
+
+    $.ajax({
+        method: "POST",
+        url: "/sms/",
+        data: { csrfmiddlewaretoken: csrf }
+        })
+      .done(function( msg ) {
+        $('.cart__input-sms').show()
+        $(".cart__input-phone-btn-wrap").css('padding', '0 15px')
+    
+        $(".cart__input-phone-btn-wrap").countdown(redirect, 120, "Повторная отправка через <br>");
+
+      });
+
+    
+})
+
+
+
+
+
+
+
+
+
 
 $(document).on('blur','.phone',function(){
     var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );

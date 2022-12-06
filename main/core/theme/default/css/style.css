@@ -1676,6 +1676,39 @@ a {
   color: var(--color-font);
 }
 
+.cart__input-sms {
+  display: none;
+  width: 110px;
+}
+
+.cart__input-phone-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+  height: 46px;
+}
+
+.cart__input-phone-btn-wrap {
+  cursor: pointer;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eaedff;
+  background-color: var(--color-body);
+  color: var(--color-font);
+  white-space: nowrap;
+  transition: all 0.5s ease;
+}
+
+.cart__input-phone-btn-wrap:hover {
+  background-color: #ebebeb;
+}
+
+.cart__input-phone {
+  display: flex;
+}
+
 .cart__input-wrap {
   display: flex;
 }
