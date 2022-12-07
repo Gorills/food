@@ -52,9 +52,16 @@
                     </div>
 
                     
-                    <div class="header__contacts">
+                    <div class="header__contacts {% if shop_setup.work_time %}header__contacts--col{% endif %}">
                         <a href="tel:{{ setup.get_phone }}" class="header__contacts-link">{{ setup.phone }}</a>
 
+                        {% if shop_setup.work_time %}
+                        <div class="header__work-time">
+                            <p class="header__work-title">Время работы:</p>
+                            <p class="header__work-data"> {{ shop_setup.work_time }}</p>
+                           
+                        </div>
+                        {% endif %}
                         <a href="#" class="header__contacts-btn">Обратный звонок</a>
                     </div>
                     

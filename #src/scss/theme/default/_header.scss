@@ -311,6 +311,22 @@
         top: 0;
     }
 
+    // .header__work-time
+    &__work-time {
+        margin-right: 20px;
+        line-height: 1.3;
+    }
+
+    // .header__work-title
+    &__work-title {
+        font-size: 14px;
+    }
+
+    // .header__work-time
+    &__work-data {
+        font-weight: 700;
+        text-align: center;
+    }
 
     // .header__contacts
 
@@ -323,6 +339,15 @@
             justify-content: space-between;
             width: 100%;
            
+        }
+
+        &--col {
+            @media screen and (max-width:480px) {
+                .header__contacts-btn {
+                    display: none;
+                }
+               
+            }
         }
     }
 

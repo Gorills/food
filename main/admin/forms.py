@@ -349,7 +349,11 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': '',
             }),
-            'start_delivery': forms.NumberInput(attrs={
+            'work_time': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+             'start_delivery': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
             }),

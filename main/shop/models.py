@@ -12,6 +12,8 @@ class ShopSetup(SingletonModel):
        ('out_of_stock', 'Статус: нет в налчии'),
        ('to_order', 'Статус: под заказ'),
     )
+    work_time = models.CharField(max_length=250, verbose_name='Время работы', null=True, blank=True)
+
     start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
     end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
     delay = models.PositiveIntegerField(default=2, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
