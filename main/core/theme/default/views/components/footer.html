@@ -21,11 +21,12 @@
                         {% endfor %}
                         <li class="footer__item"><a href="{% url 'blog' %}" class="footer__link">Новости</a></li>
 
+                        {% if setup.pay_image %}
                         <div class="footer__payments">
 
                             <img src="{{ setup.pay_image.url }}" alt="">
                         </div>
-
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="footer__col">
