@@ -695,6 +695,15 @@ a {
   fill: #fff;
 }
 
+.footer__payments {
+  margin-top: 50px;
+  height: 30px;
+}
+
+.footer__payments img {
+  height: 100%;
+}
+
 .breadcrumbs {
   width: 100%;
   margin: 0 auto;

@@ -23,7 +23,7 @@ except:
     pay_name = 'none'
 
 
-print(pay_name)
+# print(pay_name)
 
 
 if pay_name == 'yookassa':

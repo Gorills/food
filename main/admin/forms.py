@@ -1184,6 +1184,11 @@ class SetupForm(forms.ModelForm):
                 'placeholder': 'Ключевые слова',
                 
             }),
+            'time_zone': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ключевые слова',
+                
+            }),
             'theme_color': forms.TextInput(attrs={
                 
                 'placeholder': 'Основной цвет',
@@ -1205,6 +1210,8 @@ class SetupForm(forms.ModelForm):
             'copy': 'Копирайт',
             'city': 'Город',
             'address': 'Адрес',
+            'time_zone': 'Часовой пояс',
+
             
             'meta_title': 'Мета заголовок',
             'meta_description': 'Мета описание',
@@ -1216,6 +1223,7 @@ class SetupForm(forms.ModelForm):
             'icon_ico': 'Иконка .ico',
             'icon_png': 'Иконка .png',
             'icon_svg': 'Иконка .svg',
+            'pay_image': 'Изображение банков',
             'theme_color': 'Основной цвет',
             
             'active': 'Разрешить индексацию',
