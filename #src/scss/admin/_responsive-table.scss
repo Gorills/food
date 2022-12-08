@@ -89,7 +89,9 @@
         &__stock {
           padding: 3px 5px;
           min-width: 10px;
-          display: inline-block;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           border-width: 6px;
           text-align: center;
           &--warn {
@@ -115,7 +117,7 @@
     }
     .col-4 {
       flex-basis: 14%;
-      justify-content: center;
+      // justify-content: center;
       
     }
     .col-5 {

@@ -35,7 +35,7 @@
                     № 
                    
                 </div>
-                <div class="col col-8">
+                <div class="col col-4">
                     Телефон
                    
                 </div>
@@ -43,10 +43,14 @@
                     Статус 
                    
                 </div>
-                {% comment %} <div class="col col-2">
+                <div class="col col-4">
+                    Способ оплаты 
+                   
+                </div>
+                <div class="col col-2">
                     Оплата 
                    
-                </div> {% endcomment %}
+                </div>
                 <div class="col col-2">
                     Сумма 
                 </div>
@@ -65,13 +69,19 @@
                 
                 <li class="table-row {% if order.status == 'Новый' %}table-row--new{% elif order.status == 'В работе' %}table-row--work{% elif order.status == 'Обработан' %}table-row--obr{% elif order.status == 'Выполнен' %}table-row--done{% elif order.status == 'Отказ' %}table-row--cancel{% endif %}">
                     <div class="col col-1" data-label="">{{ order.id }}</div>
-                    <div class="col col-8" data-label="">{{ order.phone }}</div>
+                    <div class="col col-4" data-label="">{{ order.phone }}</div>
                     <div class="col col-2" data-label="">{{ order.status }}</div>
+                    <div class="col col-4" data-label="">{{ order.pay_method }}</div>
 
-                    {% comment %} <div class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
 
-                        {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
-                    </div> {% endcomment %}
+
+                    {% if order.pay_method == 'Оплата картой на сайте' %}
+                    <div style="font-size: 12px;" class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
+                            {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
+                    </div>
+                    {% else %}
+                    <div class="col col-2"></div>
+                    {% endif %}
 
                     <div class="col col-2" data-label="">{{ order.get_total_cost | floatformat:2}}</div>
                     <div class="col col-2" data-label="">
@@ -79,11 +89,16 @@
                             {{ order.discount }}% (купон: {{ order.coupon.code }})
                         {% endif %}
                     </div>
-                    <div class="col col-4" data-label="">{{ order.created }}</div>
+                    <div class="col col-4" style="font-size: 12px;" data-label="">{{ order.created }}</div>
 
                     <div class="col col-5" data-label="">
+
+
                         <a href="{% url 'order_detail' order.id %}" class="info">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M288 144a110.94 110.94 0 0 0-31.24 5 55.4 55.4 0 0 1 7.24 27 56 56 0 0 1-56 56 55.4 55.4 0 0 1-27-7.24A111.71 111.71 0 1 0 288 144zm284.52 97.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400c-98.65 0-189.09-55-237.93-144C98.91 167 189.34 112 288 112s189.09 55 237.93 144C477.1 345 386.66 400 288 400z"/></svg>                    
+                        </a>
+                        <a href="{% url 'order_delete' order.id %}" class="remove">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M268 416h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12zM432 80h-82.41l-34-56.7A48 48 0 0 0 274.41 0H173.59a48 48 0 0 0-41.16 23.3L98.41 80H16A16 16 0 0 0 0 96v16a16 16 0 0 0 16 16h16v336a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128h16a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16zM171.84 50.91A6 6 0 0 1 177 48h94a6 6 0 0 1 5.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12z"></path></svg>
                         </a>
                         
                         

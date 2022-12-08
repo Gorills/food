@@ -886,7 +886,9 @@ label span {
 .responsive-table .col__stock {
   padding: 3px 5px;
   min-width: 10px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-width: 6px;
   text-align: center;
 }
@@ -917,7 +919,6 @@ label span {
 
 .responsive-table .col-4 {
   flex-basis: 14%;
-  justify-content: center;
 }
 
 .responsive-table .col-5 {
