@@ -150,7 +150,7 @@ def admin_payments(request):
         form = PaymentForm(request.POST)
         if form.is_valid():
             form.save()
-
+            subprocess.call(["touch", RESET_FILE])
             return redirect('admin_payments')
         else:
             return render(request, 'settings/admin_payments.html', {'form':form})
@@ -205,7 +205,7 @@ def yookassa_save(request):
         yookassa_form = YookassaForm(request.POST)
         if yookassa_form.is_valid():
             yookassa_form.save()
-
+            subprocess.call(["touch", RESET_FILE])
             return redirect('admin_payments')
 
         else:
@@ -223,7 +223,7 @@ def alfabank_save(request):
         alfabank_form = AlfaBankForm(request.POST)
         if alfabank_form.is_valid():
             alfabank_form.save()
-
+            subprocess.call(["touch", RESET_FILE])
             return redirect('admin_payments')
 
         else:
@@ -241,7 +241,7 @@ def paykeeper_save(request):
         paykeeper_form = PayKeeperForm(request.POST)
         if paykeeper_form.is_valid():
             paykeeper_form.save()
-
+            subprocess.call(["touch", RESET_FILE])
             return redirect('admin_payments')
 
         else:
