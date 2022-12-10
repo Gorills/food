@@ -361,7 +361,7 @@ def theme_settings(request):
         form = ThemeSettingsForm(request.POST)
         if form.is_valid():
             form.save()
-
+            subprocess.call(["touch", RESET_FILE])
         return redirect('theme_settings')
 
     try:
