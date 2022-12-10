@@ -1,3 +1,8 @@
+import '../global/module.js';
+
+
+
+
 
 $(document).on('click','.toggle-menu',function(e){
     e.preventDefault();

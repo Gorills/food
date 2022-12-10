@@ -102,7 +102,7 @@
 <body>
 
     {% include 'components/header.html' %}
-    {% include 'components/cart.html' %}
+    
 
     <div class="content">
         <div class="content__inner">
@@ -124,8 +124,12 @@
 
 
     {% include 'components/footer.html' %}
-    {% include 'components/popup.html' %}
-    {% include 'components/order-done.html' %}
+
+    
+    {% include 'global/popup.html' %}
+    {% include 'global/order-done.html' %}
+    {% include 'global/cart.html' %}
+    {% include 'global/search.html' %}
 
     <script defer src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat&amp;apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e" type="text/javascript"></script>
     <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>

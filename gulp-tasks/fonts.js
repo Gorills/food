@@ -12,13 +12,13 @@ gulp.task("fonts", () => {
         }));
 });
 
-// gulp.task("hotfonts", () => {
-//     return gulp.src(paths.hotfonts.src)
-//         .pipe(gulp.dest(paths.hotfonts.dist))
-//         .pipe(debug({
-//             "title": "Fonts"
-//         }));
-// });
+gulp.task("chinafonts", () => {
+    return gulp.src(paths.chinafonts.src)
+        .pipe(gulp.dest(paths.chinafonts.dist))
+        .pipe(debug({
+            "title": "Fonts"
+        }));
+});
 
 gulp.task("adminfonts", () => {
     return gulp.src(paths.adminfonts.src)

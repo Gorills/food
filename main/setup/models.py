@@ -90,8 +90,8 @@ class CustomCode(models.Model):
 
 class ThemeSettings(SingletonModel):
     THEME_CLASS = (
-       ('default', 'default'),
-       ('hot', 'hot'),
+       ('default', 'Стандартная'),
+       ('china', 'Китайский ресторан'),
        
     )
     name = models.CharField(max_length=250, choices=THEME_CLASS, default='default')

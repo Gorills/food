@@ -15,6 +15,17 @@ const requireDir = require("require-dir"),
                 "./#src/templates/theme/default/pages/*.html"
             ]
         },
+        global_views: {
+            src: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ],
+            dist: "./main/core/theme/default/views/global/",
+            watch: [
+                "./#src/templates/global/default/**/*.html",
+                "./#src/templates/global/default/pages/*.html"
+            ]
+        },
         styles: {
             src: "./#src/scss/theme/default/style.{scss,sass}",
             dist: "./main/core/theme/default/css/",
@@ -28,7 +39,8 @@ const requireDir = require("require-dir"),
             dist: "./main/core/theme/default/js/",
             watch: [
                 "./#src/js/theme/default/**/*.js",
-                "./#src/js/theme/default/**/*.js"
+                "./#src/js/theme/default/**/*.js",
+              
             ]
         },
         images: {
@@ -57,60 +69,71 @@ const requireDir = require("require-dir"),
         //     src: "./#src/.htaccess",
         //     dist: "./main/core/"
         // },
-        // theme hot
-        // hotviews: {
-        //     src: [
-        //         "./#src/templates/theme/hot/**/*.html",
-        //         "./#src/templates/theme/hot/pages/*.html"
-        //     ],
-        //     dist: "./main/core/theme/hot/views/",
-        //     watch: [
-        //         "./#src/templates/theme/hot/**/*.html",
-        //         "./#src/templates/theme/hot/pages/*.html"
-        //     ]
-        // },
-        // hotstyles: {
-        //     src: "./#src/scss/theme/hot/style.{scss,sass}",
-        //     dist: "./main/core/theme/hot/css/",
-        //     watch: [
-        //         "./#src/scss/theme/hot/**/*.{scss,sass}",
-        //         "./#src/scss/theme/hot/**/*.{scss,sass}"
-        //     ]
-        // },
-        // hotscripts: {
-        //     src: "./#src/js/theme/hot/app.js",
-        //     dist: "./main/core/theme/hot/js/",
-        //     watch: [
-        //         "./#src/js/theme/hot/**/*.js",
-        //         "./#src/js/theme/hot/**/*.js"
-        //     ]
-        // },
-        // hotimages: {
-        //     src: [
-        //         "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,tiff,svg}",
-        //         "!./#src/images/theme/hot/fav/*.{jpg,jpeg,png,gif,tiff}"
-        //     ],
-        //     dist: "./main/core/theme/hot/images/",
-        //     watch: "./#src/images/theme/hot/**/*.{jpg,jpeg,png,gif,svg,tiff}"
-        // },
-        // hotsprites: {
-        //     src: "./#src/images/theme/hot/sprites/*.svg",
-        //     dist: "./main/core/theme/hot/images/sprites/",
-        //     watch: "./#src/images/theme/hot/sprites/*.svg"
-        // },
-        // hotfonts: {
-        //     src: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}",
-        //     dist: "./main/core/theme/hot/fonts/",
-        //     watch: "./#src/fonts/theme/hot/**/*.{woff,woff2,ttf}"
-        // },
-        // hotfavicons: {
-        //     src: "./#src/img/theme/hot/fav/*.{jpg,jpeg,png,gif}",
-        //     dist: "./main/core/img/fav/",
-        // },
-        // hotgzip: {
-        //     src: "./#src/.htaccess",
-        //     dist: "./main/core/"
-        // },
+        // theme china
+        chinaviews: {
+            src: [
+                "./#src/templates/theme/china/**/*.html",
+                "./#src/templates/theme/china/pages/*.html"
+            ],
+            dist: "./main/core/theme/china/views/",
+            watch: [
+                "./#src/templates/theme/china/**/*.html",
+                "./#src/templates/theme/china/pages/*.html"
+            ]
+        },
+        global_chinaviews: {
+            src: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ],
+            dist: "./main/core/theme/china/views/global/",
+            watch: [
+                "./#src/templates/global/default/**/*.html",
+                "./#src/templates/global/default/pages/*.html"
+            ]
+        },
+        chinastyles: {
+            src: "./#src/scss/theme/china/style.{scss,sass}",
+            dist: "./main/core/theme/china/css/",
+            watch: [
+                "./#src/scss/theme/china/**/*.{scss,sass}",
+                "./#src/scss/theme/china/**/*.{scss,sass}"
+            ]
+        },
+        chinascripts: {
+            src: "./#src/js/theme/china/app.js",
+            dist: "./main/core/theme/china/js/",
+            watch: [
+                "./#src/js/theme/china/**/*.js",
+                "./#src/js/theme/china/**/*.js"
+            ]
+        },
+        chinaimages: {
+            src: [
+                "./#src/images/theme/china/**/*.{jpg,jpeg,png,gif,tiff,svg}",
+                "!./#src/images/theme/china/fav/*.{jpg,jpeg,png,gif,tiff}"
+            ],
+            dist: "./main/core/theme/china/images/",
+            watch: "./#src/images/theme/china/**/*.{jpg,jpeg,png,gif,svg,tiff}"
+        },
+        chinasprites: {
+            src: "./#src/images/theme/china/sprites/*.svg",
+            dist: "./main/core/theme/china/images/sprites/",
+            watch: "./#src/images/theme/china/sprites/*.svg"
+        },
+        chinafonts: {
+            src: "./#src/fonts/theme/china/**/*.{woff,woff2,ttf}",
+            dist: "./main/core/theme/china/fonts/",
+            watch: "./#src/fonts/theme/china/**/*.{woff,woff2,ttf}"
+        },
+        chinafavicons: {
+            src: "./#src/img/theme/china/fav/*.{jpg,jpeg,png,gif}",
+            dist: "./main/core/img/fav/",
+        },
+        chinagzip: {
+            src: "./#src/.htaccess",
+            dist: "./main/core/"
+        },
         // admin
         adminviews: {
             src: [
@@ -170,6 +193,7 @@ export { paths };
 export const development = gulp.series("clean", "adminclean",
     gulp.parallel([
         "views", 
+        'global_views',
         "styles", 
         "scripts", 
         "images", 
@@ -177,14 +201,15 @@ export const development = gulp.series("clean", "adminclean",
         "sprites", 
         "fonts", 
         "favicons",
-        // "hotviews", 
-        // "hotstyles", 
-        // "hotscripts", 
-        // "hotimages", 
-        // "hotwebp", 
-        // "hotsprites", 
-        // "hotfonts", 
-        // "hotfavicons",
+        "chinaviews", 
+        'global_chinaviews',
+        "chinastyles", 
+        "chinascripts", 
+        "chinaimages", 
+        "chinawebp", 
+        "chinasprites", 
+        "chinafonts", 
+        "chinafavicons",
         "adminviews", 
         "adminstyles", 
         "adminscripts", 
@@ -208,15 +233,16 @@ export const prod = gulp.series("clean", "adminclean",
         "fonts", 
         "favicons", 
         // "gzip",
-        // "hotviews", 
-        // "hotstyles", 
-        // "hotscripts", 
-        // "hotimages", 
-        // "hotwebp", 
-        // "hotsprites", 
-        // "hotfonts", 
-        // "hotfavicons", 
-        // "hotgzip",
+        "chinaviews", 
+        'global_chinaviews',
+        "chinastyles", 
+        "chinascripts", 
+        "chinaimages", 
+        "chinawebp", 
+        "chinasprites", 
+        "chinafonts", 
+        "chinafavicons", 
+        // "chinagzip",
         "adminviews", 
         "adminstyles", 
         "adminscripts", 

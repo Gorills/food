@@ -1,0 +1,352 @@
+
+{% load thumbnail %}
+
+<div class="cart">
+    <div class="cart__closer"></div>
+
+    <div class="cart__inner">
+        <div class="cart__refresh">
+            <div class="cart__top">
+                <div class="cart__top-wrap">
+                    <p class="cart__title">{{ cart.get_total | floatformat:"2" }} ₽</p>
+                    
+                    <div class="cart__close">
+                        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
+                </div>
+                {% if cart|length > 0 %}
+                <div class="cart__top-row">
+                    <a href="#" class="cart__order">Заказать</a>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if cart|length > 0 %}
+                <div class="cart__list">
+                
+                    {% for item in cart %}
+                        {% with product=item.product %}
+                        <div class="cart__item">
+                            <div class="cart__item-inner">
+                                <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
+
+                                    {% if product.images.first %}
+                                    
+                                        {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                                    {% else %}
+                                    
+                                        {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                                    {% endif %}
+                                </a>
+
+                                <div class="cart__wrap">
+                                    <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
+                                    
+                                    
+                                </div>
+                                
+                                <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                                </a>
+                            </div>
+                            <div class="cart__bottom">
+                                <p class="cart__total-price">{{ item.total_price | floatformat:"2" }} ₽</p>
+
+                                <div class="cart-plus-minus">
+                                                        
+                                    
+
+
+                                    <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
+                                        {% csrf_token %}
+                                    
+                                        <input type="number" name="quantity" value="1" hidden required="">
+                                        <input type="hidden" name="update" value="False" hidden>
+                                        <button class="basket__minus">-</button>
+
+                                    </form>
+                                    <input type="text" value="{{ item.quantity }}" class="cart-input">
+                                    <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
+                                        {% csrf_token %}
+                                    
+                                        <input type="number" name="quantity" value="1" hidden required="">
+                                        <input type="hidden" name="update" value="False" hidden>
+                                        <button class="basket__minus">+</button>
+
+                                    </form>
+
+                                
+                                </div>
+    
+                            </div>
+                        </div>
+                       
+                        {% endwith %}
+                    {% endfor %}
+
+                    {% if cart.get_free != 0 %}
+                    <div class="cart__delivery cart__delivery--top">
+                        Сумма заказа: {{ cart.get_total_price | floatformat:"2" }} ₽
+                        <br>
+                        
+                    </div>
+                    <div class="cart__delivery">
+                        Доставка: {{ cart.get_delivery | floatformat:"2" }} ₽
+                        <br>
+                        {% if cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }} ₽</span>){% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                
+               
+            {% else %}
+            <div class="cart__empty">
+                <p class="cart__empty-text">Корзина пуста</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+   
+    <div class="cart__form-refresh">
+        {% if cart|length > 0 %}
+        <div class="cart__form">
+            <div class="cart__form-wrap">
+               
+                <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
+                <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
+                <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
+
+            </div>
+
+            
+            <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
+                <div class="cart__form-coupon-inner">
+                    {% csrf_token %}
+                    
+                    {{ coupon_form }}
+
+                    <button class="cart__form-coupon-btn">Применить</button>
+                </div>
+            </form>
+            
+            <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
+                
+                {% csrf_token %}
+
+
+                {% if setup.sms_active == True %}
+
+                <div class="cart__input-phone">
+
+                    <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+
+                    <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
+                        <div class="cart__input-phone-btn"  data-sub="false">Подтвердить</div>
+                    </div>
+
+                    
+
+                    <input type="text" required hidden name="subject">
+                    
+                </div>
+
+                <input type="text" class="cart__input-sms cart__input" value="{{ request.session.code }}" placeholder="Код из смс">
+                {% else %}
+                <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+
+                {% endif %}
+
+
+                <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
+                
+
+                <div class="cart__form-refresh-delivery">
+
+                    <div class="cart__form-refresh-delivery-inner">
+                        
+                        <div class="cart__input-address-wrap">
+                            <input name="address" required type="text" data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="id_address">
+                        </div>
+                        <div class="cart__input-wrap">
+                            <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                            <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                            <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+
+                        </div>
+                        <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+
+                    </div>
+                </div>
+
+
+
+                <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
+
+                <div class="cart__select" id="order_time" data-value="0">
+                    
+                    <div class="cart__select-active">
+                    
+                        <div class="cart__select-active-inner">
+                            <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24c5.523 0 10-4.477 10-10S19.523 4 14 4 4 8.477 4 14s4.477 10 10 10z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8v6l4 2" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            
+                            <div class="cart__select-time">
+                                <p id="time" data-value="0">Время</p>
+                                <p id="data" data-value="0"></p>
+                                <input type="text" id="id_datetime" hidden name="time" required>
+                            </div>
+                            
+
+                        </div>
+                    
+                        
+                        <div class="cart__select-error">Выберите время доставки</div>
+                    </div>
+
+                    
+                    <div class="cart__select-drop cart__select-drop-time">
+                        <div class="cart__select-drop-inner">
+                            <div class="cart__select-drop-wrap">
+                                {% if get_hours %}
+                                <div class="cart__select-item cart__select-item-first cart__select-item--data cart__select-item--active">Сегодня</div>
+                                {% endif %}
+                                {% for day in get_days %}
+                                <div class="cart__select-item cart__select-item-second cart__select-item--data">{{ day }}</div>
+                                {% endfor %}
+                                
+                            </div>
+
+                            <div class="cart__select-drop-wrap cart__select-drop-wrap-hours">
+                                {% if get_hours %}
+
+                                    <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
+                                    {% for hour in get_hours %}
+                                    <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                                    {% endfor %}
+                                    
+                                {% else %}
+
+                                    {% for hour in get_hours2 %}
+                                        <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                                    {% endfor %}
+                               
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cart__select-drop-two-hidden">
+                        {% for hour in get_hours2 %}
+                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="cart__select-drop-one-hidden">
+                        <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
+                        {% for hour in get_hours %}
+                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+
+                <div class="cart__select" id="pay_method" data-value="0">
+                    <div class="cart__select-active">
+                        <div class="cart__select-active-inner">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M26.2859 6.85718H5.71443C4.45206 6.85718 3.42871 7.88053 3.42871 9.14289V22.8572C3.42871 24.1195 4.45206 25.1429 5.71443 25.1429H26.2859C27.5482 25.1429 28.5716 24.1195 28.5716 22.8572V9.14289C28.5716 7.88053 27.5482 6.85718 26.2859 6.85718Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3.42871 13.7144H28.5716" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+            
+                            <span id="pay">Способ оплаты</span>
+                            <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden required>
+                        </div>
+                        <div class="cart__select-error">Выберите способ оплаты</div>
+                        
+                    </div>
+
+                    
+                    <div class="cart__select-drop" id="cart__select-drop">
+                        <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
+                            {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
+
+                                {% if cart_active == True %}
+                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                {% else %}
+                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                {% if cart_active == True %}
+                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+                
+                <textarea class="cart__input" name="order_conmment" id="" cols="30" rows="5" placeholder="Комментарий к заказу"></textarea>
+
+            
+                <div class="cart__order-create-wrapper">
+                    <div class="cart__order-create-wrapper-inner">
+                        
+
+                        {% if cart.coupon %}
+
+                        <div class="cart__order-line">
+                            <p class="cart__order-line-text">Сумма</p>
+                            <p class="cart__order-line-summ">{{ cart.get_total | floatformat:"2" }} ₽</p>
+
+                        </div>
+                        <div class="cart__order-line">
+                            <p class="cart__order-line-text">Купон "{{ cart.coupon.code }}"</p>
+                            <p class="cart__order-line-summ">- {{ cart.get_discount|floatformat:"2" }}₽</p>
+
+                        </div>
+                        
+                        {% endif %}
+                        <div class="cart__order-line">
+                            <p class="cart__order-line-text">Итого</p>
+                            <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</p>
+
+                        </div>
+                        
+                        
+                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</button>
+                    </div>
+                </div>
+                
+            </form>
+            <div class="cart__order-layout"></div>
+        </div>
+        
+        {% endif %}
+    </div>
+
+    {% comment %} <div id="map" style="width: 100%;max-width:1200px;height: 100vh;position:relative;z-index:99999;"></div> {% endcomment %}
+    <div class="cart__order-pickup-inner-html">
+        <div class="cart__order-pickup-inner-html-wrapper">
+            <p class="cart__order-text-address-text">Самовывоз:</p>
+            <p class="cart__order-text-address">{{ setup.address }}</p>
+            <input type="text" name="address" hidden value="{{ setup.address }}">
+        
+        </div>
+    </div>
+</div>
+

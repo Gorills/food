@@ -25,24 +25,24 @@ gulp.task("sprites", () => {
         .on("end", browsersync.reload);
 });
 
-// gulp.task("hotsprites", () => {
-//     return gulp.src(paths.hotsprites.src)
-//         .pipe(svg({
-//             shape: {
-//                 dest: "intermediate-svg"
-//             },
-//             mode: {
-//                 stack: {
-//                     sprite: "../sprite.svg"
-//                 }
-//             }
-//         }))
-//         .pipe(gulp.dest(paths.hotsprites.dist))
-//         .pipe(debug({
-//             "title": "Sprites"
-//         }))
-//         .on("end", browsersync.reload);
-// });
+gulp.task("chinasprites", () => {
+    return gulp.src(paths.chinasprites.src)
+        .pipe(svg({
+            shape: {
+                dest: "intermediate-svg"
+            },
+            mode: {
+                stack: {
+                    sprite: "../sprite.svg"
+                }
+            }
+        }))
+        .pipe(gulp.dest(paths.chinasprites.dist))
+        .pipe(debug({
+            "title": "Sprites"
+        }))
+        .on("end", browsersync.reload);
+});
 
 gulp.task("adminsprites", () => {
     return gulp.src(paths.adminsprites.src)

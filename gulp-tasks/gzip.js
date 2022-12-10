@@ -12,10 +12,10 @@ gulp.task("gzip", () => {
         }));
 });
 
-// gulp.task("hotgzip", () => {
-//     return gulp.src(paths.hotgzip.src)
-//         .pipe(gulp.dest(paths.hotgzip.dist))
-//         .pipe(debug({
-//             "title": "GZIP config"
-//         }));
-// });
+gulp.task("chinagzip", () => {
+    return gulp.src(paths.chinagzip.src)
+        .pipe(gulp.dest(paths.chinagzip.dist))
+        .pipe(debug({
+            "title": "GZIP config"
+        }));
+});

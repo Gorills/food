@@ -26,13 +26,13 @@ gulp.task("scripts", () => {
 		.pipe(browsersync.stream());
 });
 
-// gulp.task("hotscripts", () => {
-//     return gulp.src(paths.hotscripts.src)
-// 		.pipe(gulp.dest(paths.hotscripts.dist))
+gulp.task("chinascripts", () => {
+    return gulp.src(paths.chinascripts.src)
+		.pipe(gulp.dest(paths.chinascripts.dist))
 
-// 		.pipe(gulp.dest(paths.hotscripts.dist))
-// 		.pipe(browsersync.stream());
-// });
+		.pipe(gulp.dest(paths.chinascripts.dist))
+		.pipe(browsersync.stream());
+});
 
 gulp.task("adminscripts", () => {
     return gulp.src(paths.adminscripts.src)

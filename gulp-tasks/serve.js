@@ -18,12 +18,12 @@ gulp.task("serve", () => {
     gulp.watch(paths.images.watch, gulp.parallel("images"));
     gulp.watch(paths.fonts.watch, gulp.parallel("fonts"));
 
-    // gulp.watch(paths.hotviews.watch, gulp.parallel("hotviews"));
-    // gulp.watch(paths.hotstyles.watch, gulp.parallel("hotstyles"));
-    // gulp.watch(paths.hotscripts.watch, gulp.parallel("hotscripts"));
-    // gulp.watch(paths.hotsprites.watch, gulp.parallel("hotsprites"));
-    // gulp.watch(paths.hotimages.watch, gulp.parallel("hotimages"));
-    // gulp.watch(paths.hotfonts.watch, gulp.parallel("hotfonts"));
+    gulp.watch(paths.chinaviews.watch, gulp.parallel("chinaviews"));
+    gulp.watch(paths.chinastyles.watch, gulp.parallel("chinastyles"));
+    gulp.watch(paths.chinascripts.watch, gulp.parallel("chinascripts"));
+    gulp.watch(paths.chinasprites.watch, gulp.parallel("chinasprites"));
+    gulp.watch(paths.chinaimages.watch, gulp.parallel("chinaimages"));
+    gulp.watch(paths.chinafonts.watch, gulp.parallel("chinafonts"));
 
     gulp.watch(paths.adminviews.watch, gulp.parallel("adminviews"));
     gulp.watch(paths.adminstyles.watch, gulp.parallel("adminstyles"));
