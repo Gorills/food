@@ -79,7 +79,7 @@ def home(request):
 
     
     
-    print(request.session['myorder_id'])
+    
 
     # payment = PaymentSet.objects.get()
     # payment.delete()
