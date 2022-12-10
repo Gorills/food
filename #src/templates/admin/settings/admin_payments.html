@@ -46,6 +46,22 @@
 {% endif %}
 
 
+{% if payment.name == 'alfabank' %}
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="{% url 'alfabank_save' %}" class="form" method="post">
+            {% csrf_token %}
+           
+            {{ alfabank_form.as_p }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
 {% if payment.name == 'paykeeper' %}
 <div class="page">
     <div class="page__inner">
@@ -61,6 +77,5 @@
 </div>
 
 {% endif %}
-
 
 {% endblock %}

@@ -6,7 +6,7 @@ from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, 
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from pay.models import PaymentSet, Yookassa, PayKeeper
+from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper
 
 
 # Платежи
@@ -31,6 +31,25 @@ class YookassaForm(forms.ModelForm):
             }),
         }
 
+class AlfaBankForm(forms.ModelForm):
+    class Meta:
+        model = AlfaBank
+        fields = '__all__'
+        
+        widgets = {
+            'login': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'password': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'token': forms.TextInput(attrs={
+                'class': 'input',
+            })
+        }
+
+
+
 class PayKeeperForm(forms.ModelForm):
     class Meta:
         model = PayKeeper
@@ -43,7 +62,7 @@ class PayKeeperForm(forms.ModelForm):
             'password': forms.TextInput(attrs={
                 'class': 'input',
             }),
-            'token': forms.TextInput(attrs={
+            'server': forms.TextInput(attrs={
                 'class': 'input',
             })
         }

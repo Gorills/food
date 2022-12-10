@@ -20,6 +20,11 @@ except:
 if pay_name == 'yookassa':
     urlpatterns.append(path('confirm/<int:pk>/', views.order_confirm, name='order_confirm')) 
 
-if pay_name == 'paykeeper':
+if pay_name == 'alfabank':
     urlpatterns.append(path('error/', views.order_error, name='order_error')) 
     urlpatterns.append(path('success/', views.order_success, name='order_success')) 
+
+if pay_name == 'paykeeper':
+    urlpatterns.append(path('paykeeper/fail/', views.paykeeper_error, name='paykeeper_error')) 
+    urlpatterns.append(path('paykeeper/success/', views.paykeeper_success, name='paykeeper_success')) 
+    urlpatterns.append(path('paykeeper/session/<int:pk>/', views.paykeeper_session, name='paykeeper_session')) 

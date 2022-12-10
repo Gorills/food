@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from accounts.models import UserProfile
-
+import requests
 from shop.models import Product, ProductOption
 from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
 from setup.models import ThemeSettings
 from accounts.models import UserProfile
+from django.middleware import csrf
+from django.views.decorators.csrf import csrf_exempt
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -28,6 +30,9 @@ except:
 
 if pay_name == 'yookassa':
     from pay.yookassa_pay import create_payment
+
+if pay_name == 'alfabank':
+    from pay.alfabank_pay import create_payment, get_status
 
 if pay_name == 'paykeeper':
     from pay.paykeeper_pay import create_payment, get_status
@@ -103,7 +108,7 @@ def order_create(request):
                     print(data['path'])
                     return redirect(confirmation_url)
                     
-                if pay_name == 'paykeeper':
+                if pay_name == 'alfabank':
 
                     data = create_payment(order, cart, request)
                     payment_id = data['id']
@@ -114,6 +119,22 @@ def order_create(request):
                     order.save()
                     
                     return redirect(confirmation_url)
+
+                if pay_name == 'paykeeper':
+
+                    data = create_payment(order, cart, request)
+                    payment_id = data['id']
+                    confirmation_url = data['confirmation_url']
+                   
+                    # session_url = 'http://' + request.META['HTTP_HOST']+'/orders/paykeeper/session/' + payment_id + '/'
+                    # requests.post(session_url)
+
+                    order.payment_id = payment_id
+                    order.payment_dop_info = confirmation_url
+                    order.save()
+                    
+                    print(confirmation_url)
+                    return redirect('/orders/paykeeper/session/' + payment_id + '/')
 
 
             else:
@@ -231,3 +252,51 @@ def order_success(request):
 
     else:
         return redirect('orders:order_error')
+
+
+
+def paykeeper_error(request):
+    return render(request, 'orders/order/error.html')
+
+
+@csrf_exempt 
+def paykeeper_session(request, pk):
+    
+    request.session['myorder_id'] = str(pk)
+    request.session.modified = True
+    
+    order = Order.objects.get(payment_id=request.session['myorder_id']).payment_dop_info
+
+    print(order)
+
+    return redirect(order) 
+
+    
+    
+
+
+def paykeeper_success(request):
+    cart = Cart(request)
+
+    pay_id = request.session['myorder_id']
+    
+    print(pay_id)
+
+    data = get_status(pay_id)
+
+    if data['status'] == 'paid':
+        order = data['order']
+
+        order_telegram(order)
+        cart.clear()
+        request.session['delivery'] = 1
+        request.session['myorder_id'] = 0
+
+        order.paid = True
+        
+        order.save()
+
+        return redirect('/?order=True')
+
+    else:
+        return redirect('orders:paykeeper_error')

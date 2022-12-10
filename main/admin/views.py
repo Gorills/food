@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, PayKeeperForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
+from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import UserProfile
@@ -14,7 +14,7 @@ from accounts.models import UserProfile
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
-from pay.models import PaymentSet, Yookassa, PayKeeper
+from pay.models import PayKeeper, PaymentSet, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
 import subprocess
@@ -173,6 +173,13 @@ def admin_payments(request):
 
 
     try:
+        alfabank = AlfaBank.objects.get()
+        alfabank_form = AlfaBankForm(instance=alfabank)
+    except:
+        alfabank_form = AlfaBankForm()
+
+
+    try:
         paykeeper = PayKeeper.objects.get()
         paykeeper_form = PayKeeperForm(instance=paykeeper)
     except:
@@ -183,6 +190,7 @@ def admin_payments(request):
         'payment': payment,
         'form': form,
         'yookassa_form':yookassa_form,
+        'alfabank_form': alfabank_form,
         'paykeeper_form': paykeeper_form
 
     }
@@ -197,6 +205,24 @@ def yookassa_save(request):
         yookassa_form = YookassaForm(request.POST)
         if yookassa_form.is_valid():
             yookassa_form.save()
+
+            return redirect('admin_payments')
+
+        else:
+            return redirect('admin_payments')
+
+
+    else:
+        return redirect('admin_payments')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def alfabank_save(request):
+
+    if request.method == 'POST':
+        alfabank_form = AlfaBankForm(request.POST)
+        if alfabank_form.is_valid():
+            alfabank_form.save()
 
             return redirect('admin_payments')
 
@@ -224,7 +250,6 @@ def paykeeper_save(request):
 
     else:
         return redirect('admin_payments')
-
 
 # Настройки почты POST
 @user_passes_test(lambda u: u.is_superuser)

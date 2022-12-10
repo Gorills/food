@@ -5,6 +5,7 @@ class PaymentSet(SingletonModel):
     PAY_CLASS = (
        ('yookassa', 'ЮКасса'),
        ('paykeeper', 'PayKeeper'),
+    #    ('alfabank', 'AlfaBank'),
     )
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
     status = models.BooleanField(default=False, verbose_name='Включить онлайн оплаты')
@@ -28,8 +29,17 @@ class Yookassa(SingletonModel):
     vat_code = models.CharField(max_length=250, verbose_name='Код ставки НДС ', choices=VAT_CODES)
 
 
-class PayKeeper(SingletonModel):
+class AlfaBank(SingletonModel):
     login = models.CharField(max_length=250, verbose_name='Логин API')
     password = models.CharField(max_length=250, verbose_name='Пароль API')
 
     token = models.CharField(max_length=250, verbose_name='Token', null=True, blank=True)
+
+
+
+class PayKeeper(SingletonModel):
+    login = models.CharField(max_length=250, verbose_name='Логин')
+    password = models.CharField(max_length=250, verbose_name='Пароль')
+    server = models.CharField(max_length=250, verbose_name='Сервер (вместе с протоколом https://)', default='https://demo.paykeeper.ru')
+
+    

@@ -4,106 +4,89 @@ import requests
 from .models import PaymentSet, PayKeeper
 from orders.models import Order
 from shop.models import Product
+from http.client import HTTPSConnection
+from base64 import b64encode
+
 
 try:
     login = PayKeeper.objects.get().login
     password = PayKeeper.objects.get().password
-    token = PayKeeper.objects.get().token
+    server = PayKeeper.objects.get().server
+    if server[-1] == '/':
+        server = server[:-1]
+   
 except:
     login = ''
     password = ''
-    token = ''
+    server = ''
 
-gateway_url = ''
+    
+def basic_auth(login, password):
+    token = b64encode(f"{login}:{password}".encode('utf-8')).decode("ascii")
+    return f'Basic {token}'
+
+
+headers={
+    "Content-Type":"application/x-www-form-urlencoded",
+    'Authorization' : basic_auth(login, password)
+    }
+
+
+info = server + '/info/settings/token/'
+pay_url = server + '/change/invoice/preview/'
 
 
 
 def create_payment(order, cart, request):
 
-    returnUrl = 'https://' + request.META['HTTP_HOST']+'/orders/success/'
-    failUrl = 'https://' + request.META['HTTP_HOST']+'/orders/error/'
 
-    def dec_to_cop(price):
+    get_token = requests.get(info, headers=headers)
+    token = get_token.json()['token']
 
-        res = str(round(price, 2))
-        res_filter = res.replace(',', '').replace('.', '')
-        return res_filter
+    post_data = {
+        "pay_amount": order.summ,
+        "orderid": order.id,
+        
+        "client_phone": order.phone,
+        'token': token
 
-    items = []
-    count = 1
-    for item in cart:
-        product = Product.objects.get(id=item['product'].id)
-        i = {
-            "positionId":count,
-            "name":product.name,
-            "quantity":
-                {
-                    "value":int(item['quantity']),
-                    "measure":"шт"
-                },
-            "itemAmount":dec_to_cop(Decimal(item['price'])*item['quantity']),
-            "itemCode":product.id,
-            "itemPrice":dec_to_cop(Decimal(item['price'])),
-            }
-        count += 1
-        items.append(i)
-
-
-   
-
-    post_data={
-        'userName': login, 
-        'password': password, 
-        'orderNumber': order.id,
-        'amount': dec_to_cop(order.summ),
-        'returnUrl': returnUrl,
-        'failUrl': failUrl,
-
-        "cartItems": items
-            
     }
+    
+    
 
-    r = requests.post("https://web.rbsuat.com/ab/rest/register.do", post_data) 
-
-    confirmation_url = r.json()['formUrl']
-    pay_id = r.json()['orderId']
-
-    print(r.json())
+    get_url = requests.post(pay_url, post_data, headers=headers)
 
     data = {
-        'id': pay_id,
-        'confirmation_url': confirmation_url
+        'id': get_url.json()['invoice_id'],
+        'confirmation_url': server + '/bill/' + get_url.json()['invoice_id'] + '/'
     }
 
+    return(data)
 
-    return data
-   
 
 
 
 def get_status(pay_id):
 
     order = Order.objects.get(payment_id=pay_id)
+    get_status = requests.get(server + '/info/invoice/byid/?id=' + str(pay_id), headers=headers)
+    status = get_status.json()['status']
 
-    post_data={
-        'userName': login, 
-        'password': password, 
-        'orderId': pay_id,
-        'orderNumber': order.id
-            
-    }
-
-    r = requests.post("https://web.rbsuat.com/ab/rest/getOrderStatusExtended.do", post_data) 
-
-    status = r.json()['errorCode']  
+    print(get_status.content)
+    
 
     data = {
         'status': status,
         'order': order
+        
     }
 
+    return(data)
 
-    return data    
+
+
+
+
 
 
 

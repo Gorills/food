@@ -14,11 +14,11 @@ except:
 
 from django.views.generic import TemplateView, ListView
 
-from pay.models import PayKeeper, PaymentSet, Yookassa
+from pay.models import AlfaBank, PaymentSet, Yookassa
 
 
-from pay.paykeeper_pay import create_payment
-# create_payment()
+from pay.paykeeper_pay import get_status
+# get_status()
 
 
 
@@ -77,14 +77,16 @@ from decimal import Decimal
 
 def home(request):
 
-
     
+    
+    print(request.session['myorder_id'])
+
     # payment = PaymentSet.objects.get()
     # payment.delete()
     # yookassa = Yookassa.objects.get()
     # yookassa.delete()
-    # paykeeper = PayKeeper.objects.get()
-    # paykeeper.delete()
+    # AlfaBank = AlfaBank.objects.get()
+    # AlfaBank.delete()
     # cart = Cart(request)
     # cart.clear()
 
