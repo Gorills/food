@@ -55,7 +55,7 @@
 
         <div class="product-list__bottom">
             <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
-            {% if shop_setup.show_descrioption == True %}
+            {% if shop_setup.show_descrioption == True and product.short_description %}
             <div class="product-list__desc">
                {{ product.short_description }}
 
