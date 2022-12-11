@@ -79,6 +79,7 @@
     &__title {
         margin-bottom: 15px;
         font-size: 26px;
+        @include china;
     }
 
     // .product-detail__price-wrap

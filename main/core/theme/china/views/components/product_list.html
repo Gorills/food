@@ -46,7 +46,7 @@
                 <input type="text" name="quantity" hidden value="1">
                 <input type="hidden" name="update" value="False" id="id_update">
                
-                <button class="btn btn--primary">В Корзину</button>
+                <button class="btn btn--empty">В Корзину</button>
             </form>
 
             
@@ -55,7 +55,8 @@
 
         <div class="product-list__bottom">
             <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
-            {% if shop_setup.show_descrioption == True %}
+            
+            {% if product.short_description and shop_setup.show_descrioption == True %}
             <div class="product-list__desc">
                {{ product.short_description }}
 

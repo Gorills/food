@@ -75,8 +75,12 @@ a   {
     position: relative;
     z-index: 2;
 
+    @media screen and (max-width:1200px) {
+        margin-top: 90px;
+    }
+
     @media screen and (max-width:480px) {
-        margin-top: 230px;
+        margin-top: 222px;
     }
 }
 
@@ -102,13 +106,14 @@ a   {
     font-size: 28px;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
+    @include china;
 }
 
 .basket__minus {
     color: var(--color-font);
 }
 .btn {
-
+    @include china;
     font-weight: 600;
     border: 2px solid var(--color-btn-border);
     display: inline-block;
@@ -118,16 +123,17 @@ a   {
     font-size: 14px;
     &--primary {
         background-color: var(--color-btn-bg);
-        color: var(--color-btn-font-light);
+        color: var(--color-btn-font);
 
         &:hover {
             background-color: var(--color-primary);
             border-color: var(--color-primary);
+            
         }
     }
     &--empty {
         background: none;
-        color: var(--color-btn-font);
+        color: var(--color-btn-font-light);
         &:hover {
             background-color: var(--color-body);
             border-color: var(--color-font);
@@ -136,7 +142,7 @@ a   {
     }
     &--full {
         background-color: var(--color-btn-bg);
-        color: var(--color-btn-font-light);
+        color: var(--color-btn-font);
 
         &:hover {
             background: none;

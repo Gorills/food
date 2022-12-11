@@ -1,7 +1,7 @@
 from .models import Category, ShopSetup
 
 def categorys(request):
-    return {'categorys': Category.objects.filter(parent=None, status=True).order_by('sort_order')}
+    return {'categorys': Category.objects.filter(status=True).order_by('sort_order')}
 
 
 # Показывать описания под товарами

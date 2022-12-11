@@ -39,6 +39,7 @@
     // .footer__title
 
     &__title {
+        @include china;
         font-size: 20px;
         margin-bottom: 20px;
         font-weight: 700;

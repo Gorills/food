@@ -45,7 +45,7 @@ class Category(models.Model):
     meta_description = models.TextField(null=True, blank=True)
     meta_keywords = models.TextField(null=True, blank=True)
 
-    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    
     image = models.ImageField(upload_to='catalog', null=True, blank=True)
     top = models.BooleanField()
     column = models.PositiveIntegerField(default=1)

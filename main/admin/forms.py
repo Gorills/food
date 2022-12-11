@@ -870,25 +870,12 @@ class CategoryForm(forms.ModelForm):
     
     class Meta:
         model = Category
-        fields = [
-            
-            'name',
-            'description',
-            'meta_title',
-            'meta_description',
-            'meta_keywords',
-            'image',
-            'top',
-            'column',
-            'sort_order',
-            'status',
-            'slug',
-            
-        ]
+        fields = '__all__'
         labels = {
             
 
             'name': 'Название категории',
+            'meta_h1': 'Заголовок h1',
             'meta_title': 'Мета заголовок',
             'meta_description': 'Мета описание',
             'meta_keywords': 'Ключевые слова',
@@ -909,6 +896,10 @@ class CategoryForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Название категории',
             }),
+            'meta_h1': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Мета заголовок',
+            }),
            
             'meta_title': forms.TextInput(attrs={
                 'class': 'input',
@@ -918,15 +909,9 @@ class CategoryForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Мета описание',
             }),
-            'meta_keywords': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ключевые слова',
-            }),
+          
             
-            'top': forms.CheckboxInput(attrs={
-                'class': '',
-                'placeholder': 'Отображать в меню',
-            }),
+            
             'column': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Количество колонок',
@@ -981,6 +966,7 @@ class ColorsForm(forms.ModelForm):
             'bg_btn',
             'border_btn',
             'color_btn',
+            'color_btn_light'
         ]
         widgets = {
             'primary': forms.TextInput(attrs={
@@ -1048,6 +1034,11 @@ class ColorsForm(forms.ModelForm):
                 'placeholder': 'Цвет шрифтов в кнопках',
                 'type': 'color'
             }),
+            'color_btn_light': forms.TextInput(attrs={
+                
+                'placeholder': 'Цвет шрифтов в кнопках без фона',
+                'type': 'color'
+            }),
         }
         labels = {
             'primary': 'Основной цвет',
@@ -1064,6 +1055,7 @@ class ColorsForm(forms.ModelForm):
             'bg_btn': 'Цвет кнопок',
             'border_btn': 'Цвет обводки кнопок',
             'color_btn': 'Цвет шрифтов в кнопках',
+            'color_btn_light': 'Цвет шрифтов в кнопках без фона',
         }
 
 class RecaptchaSettingsForm(forms.ModelForm):

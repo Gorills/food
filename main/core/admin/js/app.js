@@ -172,29 +172,7 @@ jQuery(document).ready(function () {
 });
 // end Замена запятой в поле для прайса
 
-// Если у категории есть родитель то скрываем возможность поставить галку на главное меню и колонки
-$(document).on('change','#id_parent',function(){
-  var selVal = $(this).val()
-  if (selVal != '') {
-    $('#id_column').parent('p').hide()
-    $('#id_top').parent('p').hide()
-  } else {
-    $('#id_column').parent('p').show()
-    $('#id_top').parent('p').show()
-  }
-})
-jQuery(document).ready(function () {
-  var selVal = $('#id_parent').val()
-  // console.log(selVal)
-  if (selVal != '') {
-    $('#id_column').parent('p').hide()
-    $('#id_top').parent('p').hide()
-  } else {
-    $('#id_column').parent('p').show()
-    $('#id_top').parent('p').show()
-  }
-});
-// end
+
 
 // save form
 $(document).on('click','#save',function(e){

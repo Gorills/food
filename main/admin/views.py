@@ -556,7 +556,7 @@ def category_add(request):
             meta_title = request.POST['meta_title']
             meta_description = request.POST['meta_description']
             meta_keywords = request.POST['meta_keywords']
-            parent = request.POST['parent']
+            # parent = request.POST['parent']
             try:
                 # Пытаемся получить изображение
                 image = request.FILES['image']
@@ -586,7 +586,7 @@ def category_add(request):
                 meta_title=meta_title,
                 meta_description=meta_description,
                 meta_keywords=meta_keywords,
-                parent_id=parent,
+               
                 image=image,
                 top=top,
                 column=column,
@@ -600,7 +600,7 @@ def category_add(request):
             return render(request, 'shop/category/category_add.html', {'form': form_new})
     context = {
         'form': CategoryForm(),
-        'categorys': Category.objects.filter(parent=None)
+        'categorys': Category.objects.filter()
     }
     return render(request, 'shop/category/category_add.html', context)
 
@@ -630,7 +630,7 @@ def category_edit(request, pk):
     context = {
         'form': CategoryForm(instance=cat),
         'category': cat,
-        'categorys': Category.objects.filter(parent=None).exclude(id=pk)
+        'categorys': Category.objects.filter().exclude(id=pk)
     }
 
     return render(request, 'shop/category/category_edit.html', context)

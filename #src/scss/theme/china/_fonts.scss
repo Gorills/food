@@ -1,3 +1,15 @@
+
+@font-face {
+	font-family: 'ChinaCyr';
+	src: url('../fonts/chinacyr.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/chinacyr.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/chinacyr.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/chinacyr.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/chinacyr.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/chinacyr.svg#chinacyr') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+
 @font-face {
     font-family: 'Circe';
     src: url('../fonts/Circe-Light.eot');
