@@ -1422,6 +1422,28 @@ a {
   list-style: none;
   padding: 0;
   margin: 20px 0 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.pagination .active {
+  width: 45px;
+  height: 45px;
+  line-height: 42px;
+  text-align: center;
+  border: 2px solid #ebebeb;
+  font-size: 12px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination svg {
+  height: 20px;
+}
+
+.pagination svg path {
+  fill: #a9a9a9;
 }
 
 .pagination li {
@@ -1430,7 +1452,7 @@ a {
 
 .pagination li a {
   color: var(--color-font);
-  display: inline-block;
+  display: flex;
   width: 45px;
   height: 45px;
   line-height: 42px;
@@ -1438,6 +1460,8 @@ a {
   border: 2px solid #ebebeb;
   font-size: 12px;
   font-weight: 500;
+  align-items: center;
+  justify-content: center;
 }
 
 .pagination li + li {

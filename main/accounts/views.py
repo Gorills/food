@@ -144,7 +144,7 @@ def profile(request):
         
     }
 
-    return render(request, 'account/profile.html', context)
+    return render(request, 'global/profile.html', context)
 
 
 
@@ -153,14 +153,14 @@ def profile_orders(request):
 
 
     
-    return render(request, 'account/profile_orders.html')
+    return render(request, 'global/profile_orders.html')
 
 
 
 @login_required
 def profile_wishlist(request):
     
-    return render(request, 'account/profile_wishlist.html')
+    return render(request, 'global/profile_wishlist.html')
 
 
 @login_required
@@ -171,7 +171,7 @@ def profile_history(request):
 
     }
 
-    return render(request, 'account/profile_history.html', context)
+    return render(request, 'global/profile_history.html', context)
 
 
 
@@ -182,7 +182,7 @@ def profile_update(request):
 
     }
 
-    return render(request, 'account/profile_update.html', context)
+    return render(request, 'global/profile_update.html', context)
 
 
 

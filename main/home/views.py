@@ -126,7 +126,7 @@ def page_detail(request, slug):
 from django.db.models import Q
 class SearchResultsView(ListView):
     model = Product
-    template_name = 'home/search_detail.html'
+    template_name = 'global/search_detail.html'
 
     def get_queryset(self): # новый
         query = self.request.GET.get('q')

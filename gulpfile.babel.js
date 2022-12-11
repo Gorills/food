@@ -22,8 +22,8 @@ const requireDir = require("require-dir"),
             ],
             dist: "./main/core/theme/default/views/global/",
             watch: [
-                "./#src/templates/global/default/**/*.html",
-                "./#src/templates/global/default/pages/*.html"
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
             ]
         },
         styles: {
@@ -31,7 +31,10 @@ const requireDir = require("require-dir"),
             dist: "./main/core/theme/default/css/",
             watch: [
                 "./#src/scss/theme/default/**/*.{scss,sass}",
-                "./#src/scss/theme/default/**/*.{scss,sass}"
+                "./#src/scss/theme/default/**/*.{scss,sass}",
+                "./#src/scss/theme/global/**/*.{scss,sass}"
+
+                
             ]
         },
         scripts: {
@@ -88,8 +91,8 @@ const requireDir = require("require-dir"),
             ],
             dist: "./main/core/theme/china/views/global/",
             watch: [
-                "./#src/templates/global/default/**/*.html",
-                "./#src/templates/global/default/pages/*.html"
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
             ]
         },
         chinastyles: {
@@ -97,7 +100,8 @@ const requireDir = require("require-dir"),
             dist: "./main/core/theme/china/css/",
             watch: [
                 "./#src/scss/theme/china/**/*.{scss,sass}",
-                "./#src/scss/theme/china/**/*.{scss,sass}"
+                "./#src/scss/theme/china/**/*.{scss,sass}",
+                "./#src/scss/theme/global/**/*.{scss,sass}"
             ]
         },
         chinascripts: {
