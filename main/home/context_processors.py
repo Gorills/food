@@ -28,32 +28,44 @@ def get_hours(request):
     get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
 
     hour_now = datetime.now().hour
+    print(hour_now)
+
     hour_list = []
 
-    count = 0
-    for i in range(11):
-        item = str(get_hour+count) + ':00-' + str(get_hour+count) + ':30'
-        item_two = str(get_hour+count) + ':30-' + str(get_hour+count+1) + ':00'
-        # До какого времени + 30 минут возможна доставка
-        if get_hour+count < end and hour_now >= start:
-            hour_list.append(item)
-            hour_list.append(item_two)
+    list_attach = []
+    for i in range(end):
+        if i >= start and i <= end:
+            list_attach.append(i)
+    list_attach.append(end)
 
-        count += 1
+    if hour_now in list_attach:
+        for l in list_attach:
+            item = str(l+delay) + ':00-' + str(l+delay) + ':30'
+            item_two = str(l+delay) + ':30-' + str(l+delay+1) + ':00'
 
-    # Если получаем пустой список, значит текущее время не попадает в доставку. Следовательно формируем список со всем возможным временем доставки
-    if hour_list == []:
-        for i in range(end-start-1):
-            if i >= 1:
-                item = str(get_hour+i) + ':00-' + str(get_hour+i) + ':30'
-                item_two = str(get_hour+i) + ':30-' + str(get_hour+i+1) + ':00'
+            if l >= hour_now:
+                hour_list.append(item)
+                hour_list.append(item_two)
 
-                if hour_now < start:
-                    hour_list.append(item)
-                    hour_list.append(item_two)
+    
 
-                count += 1
 
+    if hour_now < min(list_attach) and hour_now >= 0:
+        hour_list = []
+        count_two = 0
+        for i in range(end):
+            item = str(count_two+delay) + ':00-' + str(count_two+delay) + ':30'
+            item_two = str(count_two+delay) + ':30-' + str(count_two+delay+1) + ':00'
+
+            if count_two >= start and count_two + delay +1 <= end:
+                hour_list.append(item)
+                hour_list.append(item_two)
+            count_two += 1
+
+
+
+    print(list_attach)
+    print(hour_list)
 
 
     hour_list_two = []
