@@ -43,7 +43,7 @@ def get_hours(request):
             item = str(l+delay) + ':00-' + str(l+delay) + ':30'
             item_two = str(l+delay) + ':30-' + str(l+delay+1) + ':00'
 
-            if l >= hour_now:
+            if l >= hour_now and l <= end-delay-1:
                 hour_list.append(item)
                 hour_list.append(item_two)
 
