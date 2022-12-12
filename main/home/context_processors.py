@@ -26,16 +26,35 @@ def get_hours(request):
     
     # Определяем задержку времени до доставки
     get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
+
+    hour_now = datetime.now().hour
     hour_list = []
+
     count = 0
     for i in range(11):
         item = str(get_hour+count) + ':00-' + str(get_hour+count) + ':30'
         item_two = str(get_hour+count) + ':30-' + str(get_hour+count+1) + ':00'
         # До какого времени + 30 минут возможна доставка
-        if get_hour+count < end and get_hour-delay >= start:
+        if get_hour+count < end and hour_now >= start:
             hour_list.append(item)
             hour_list.append(item_two)
+
         count += 1
+
+    # Если получаем пустой список, значит текущее время не попадает в доставку. Следовательно формируем список со всем возможным временем доставки
+    if hour_list == []:
+        for i in range(end-start-1):
+            if i >= 1:
+                item = str(get_hour+i) + ':00-' + str(get_hour+i) + ':30'
+                item_two = str(get_hour+i) + ':30-' + str(get_hour+i+1) + ':00'
+
+                if hour_now < start:
+                    hour_list.append(item)
+                    hour_list.append(item_two)
+
+                count += 1
+
+
 
     hour_list_two = []
     count_two = 0
