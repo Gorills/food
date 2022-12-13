@@ -427,7 +427,35 @@
     &__input-sms {
         display: none;
         width: 110px;
+        margin-bottom: 10px;
     }
+
+
+    // .cart__input-sms-inner
+
+    &__input-sms-inner {
+        display: flex;
+        align-items: center;
+        input {
+            width: 150px;
+            margin-bottom: 0;
+        }
+    }
+
+    
+    // .cart__input-sms-btn
+
+    &__input-sms-btn {
+        padding: 5px 10px 3px;
+        margin-left: 10px;
+        font-size: 10px;
+        color: var(--color-success);
+        line-height: 1.4;
+        border: 1px solid var(--color-success);
+        cursor: pointer;
+    }
+
+
 
     // .cart__input-phone-btn
     &__input-phone-btn {
@@ -438,6 +466,30 @@
         padding: 0 15px;
         height: 46px;
 
+    }
+
+    .id_phone-wrap {
+        position: relative;
+
+        &:hover {
+            .id_phone__edit {
+                opacity: 100%;
+            }
+        }
+    }
+
+    .id_phone__edit {
+        opacity: 0;
+        transition: all .5s ease;
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        svg {
+            width: 15px;
+            opacity: 50%;
+        }
     }
 
     // .cart__input-phone-btn-wrap
@@ -703,5 +755,23 @@
     
 
 
-    
 
+.hidden-content {
+    display: none;
+    // .hidden-content__wrap
+
+    &__wrap {
+        position: relative;
+        width: 100%;
+    }
+
+    // .hidden-content__remove
+
+    &__remove {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+}

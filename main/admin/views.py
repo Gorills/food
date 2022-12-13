@@ -1666,7 +1666,7 @@ def users_detail(request, pk):
 @user_passes_test(lambda u: u.is_superuser)
 def users_delete(request, pk):
 
-    user = User.objects.get(id=pk)
+    user = UserProfile.objects.get(id=pk)
     user.delete()
 
     return redirect('admin_users')
