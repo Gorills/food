@@ -947,7 +947,7 @@ $(document).on('keyup', '.phone-sms' ,function(e){
     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
 
     if (min.length == 13) {
-        $(this).attr('readonly', 'readonly');
+        
         $('.cart__input-phone-btn').css({'display':'flex'})
     } else {
         $('.cart__input-phone-btn').css({'display':'none'})
@@ -993,7 +993,7 @@ function redirect () {
 // cart__input-phone-btn
 $(document).on('click', '.cart__input-phone-btn' ,function(e){
     $(this).parent().css('border-color', '')
-
+    $('#id_phone').attr('readonly', 'readonly');
     var csrf = $(this).parent().attr('data-token')
     var phone = $('.phone-get').val()
     $.ajax({

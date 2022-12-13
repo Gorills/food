@@ -104,7 +104,7 @@ def usersession_add(request):
     if request.session['code']:
         user_phone = request.POST['phone']
         code = request.POST['code']
-        if request.session['code'] == code:
+        if request.session['code'] == code and request.session['phone'] == user_phone:
             try:
                 userprofile = UserProfile.objects.get(phone=user_phone)
             except:
@@ -112,7 +112,9 @@ def usersession_add(request):
                 userprofile.save()
 
             request.session['user_profile_id'] = userprofile.id
-
+            del request.session['code']
+            del request.session['code_date']
+            del request.session['phone']
             return redirect('home')
 
 
@@ -133,13 +135,15 @@ def add_code(request):
     gen_code = True
     session = request.session
     
+    session['phone'] = request.POST['phone']
+
     phone = request.POST['phone']
     
     if 'code' in session and 'code_date' in session:
         if int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())< 90:
             code = session['code']
             gen_code=False
-            print('!!!')
+            
             return redirect('home')
         else:
             del request.session['code']
