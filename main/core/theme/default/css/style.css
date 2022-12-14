@@ -3281,6 +3281,11 @@ td.product-thumbnail img {
     margin-top: 10px;
   }
 
+  .cart__form-btn + .cart__form-btn {
+    margin-left: 5px;
+    margin-top: 0;
+  }
+
   .cart__select-drop {
     position: fixed;
     top: 50%;
@@ -3566,6 +3571,10 @@ td.product-thumbnail img {
 
   .cart__item {
     width: 100%;
+  }
+
+  .cart__form-wrap {
+    flex-direction: row;
   }
 
   .cart-top {

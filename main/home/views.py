@@ -71,6 +71,18 @@ def robots_txt(request):
 def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
 
+
+
+
+def home_login(request):
+
+    context = {
+
+    }
+
+    return render(request, 'global/login.html', context)
+
+
 from cart.cart import Cart
 from sms.views import get_code
 from decimal import Decimal

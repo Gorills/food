@@ -1035,8 +1035,15 @@ $(document).on('click', '.cart__input-sms-btn' ,function(e){
         $('.code_value').css('border-color', 'green')
         $('.cart__input-sms').hide()
         $('#phone').removeAttr('readonly');
-        $('#phone').css('border-color', 'green');
         $(".phone_refresh").load(location.href + " .phone_refresh__inner");
+
+        function getPause() {
+            $('#id_phone').css('border-color', 'green');
+        }
+
+        setTimeout(getPause, 1000);
+     
+        
     }).fail(function() {
         $('.code_value').css('border-color', 'red')
     });
