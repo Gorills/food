@@ -28,7 +28,7 @@ def get_hours(request):
     get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
 
     hour_now = datetime.now().hour
-    print(hour_now)
+    
 
     hour_list = []
 
@@ -62,10 +62,6 @@ def get_hours(request):
                 hour_list.append(item_two)
             count_two += 1
 
-
-
-    print(list_attach)
-    print(hour_list)
 
 
     hour_list_two = []

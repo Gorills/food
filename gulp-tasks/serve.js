@@ -12,6 +12,7 @@ gulp.task("serve", () => {
 	});
 
     gulp.watch(paths.views.watch, gulp.parallel("views"));
+    gulp.watch(paths.global_views.watch, gulp.parallel("global_views"));
     gulp.watch(paths.styles.watch, gulp.parallel("styles"));
     gulp.watch(paths.scripts.watch, gulp.parallel("scripts"));
     gulp.watch(paths.sprites.watch, gulp.parallel("sprites"));
@@ -19,6 +20,7 @@ gulp.task("serve", () => {
     gulp.watch(paths.fonts.watch, gulp.parallel("fonts"));
 
     gulp.watch(paths.chinaviews.watch, gulp.parallel("chinaviews"));
+    gulp.watch(paths.global_chinaviews.watch, gulp.parallel("global_chinaviews"));
     gulp.watch(paths.chinastyles.watch, gulp.parallel("chinastyles"));
     gulp.watch(paths.chinascripts.watch, gulp.parallel("chinascripts"));
     gulp.watch(paths.chinasprites.watch, gulp.parallel("chinasprites"));

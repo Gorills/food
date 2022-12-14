@@ -525,6 +525,27 @@ a {
 .cart__input-sms {
   display: none;
   width: 110px;
+  margin-bottom: 10px;
+}
+
+.cart__input-sms-inner {
+  display: flex;
+  align-items: center;
+}
+
+.cart__input-sms-inner input {
+  width: 150px;
+  margin-bottom: 0;
+}
+
+.cart__input-sms-btn {
+  padding: 5px 10px 3px;
+  margin-left: 10px;
+  font-size: 10px;
+  color: var(--color-success);
+  line-height: 1.4;
+  border: 1px solid var(--color-success);
+  cursor: pointer;
 }
 
 .cart__input-phone-btn {
@@ -533,6 +554,29 @@ a {
   justify-content: center;
   padding: 0 15px;
   height: 46px;
+}
+
+.cart .id_phone-wrap {
+  position: relative;
+}
+
+.cart .id_phone-wrap:hover .id_phone__edit {
+  opacity: 100%;
+}
+
+.cart .id_phone__edit {
+  opacity: 0;
+  transition: all 0.5s ease;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.cart .id_phone__edit svg {
+  width: 15px;
+  opacity: 50%;
 }
 
 .cart__input-phone-btn-wrap {
@@ -709,6 +753,23 @@ a {
 
 .cart__delivery span {
   font-size: 12px;
+}
+
+.hidden-content {
+  display: none;
+}
+
+.hidden-content__wrap {
+  position: relative;
+  width: 100%;
+}
+
+.hidden-content__remove {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .error {
@@ -1658,6 +1719,11 @@ a {
 .header__work-data {
   font-weight: 700;
   text-align: center;
+}
+
+.header__contacts-wrap {
+  display: flex;
+  align-items: center;
 }
 
 .header__contacts {
@@ -3284,6 +3350,11 @@ td.product-thumbnail img {
     margin-top: 10px;
   }
 
+  .cart__form-btn + .cart__form-btn {
+    margin-left: 5px;
+    margin-top: 0;
+  }
+
   .cart__select-drop {
     position: fixed;
     top: 50%;
@@ -3530,6 +3601,10 @@ td.product-thumbnail img {
 
   .cart__item {
     width: 100%;
+  }
+
+  .cart__form-wrap {
+    flex-direction: row;
   }
 
   .cart-top {

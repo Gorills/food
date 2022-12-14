@@ -21,9 +21,13 @@
     <div class="container">
         <div class="account__content">
             
-            {% include 'account/profile_top.html' %}
+            {% include 'global/profile_top.html' %}
 
-            {% for order in user.user_profile.user_order.all %}
+           
+
+            {% for order in user_profile.user_order.all %}
+
+          
             <div class="account-order {% if order.status == 'Новый' %}account-order--new{% elif order.status == 'В работе' %}account-order--inwork{% elif order.status == 'Обработан' %}account-order--predone{% elif order.status == 'Выполнен' %}account-order--done{% elif order.status == 'Отказ' %}account-order--refused{% endif %}">
                 
 
@@ -37,7 +41,64 @@
                         <div class="account-order__status">{{ order.status }}</div>
                     </div>
                    
-                    <p class="account-order__text">Данные заказа:  {% if order.city %}{{ order.city }}{% endif %} {% if order.postal_code %}{{ order.postal_code }}{% endif %} {% if order.address %}{{ order.address }}{% endif %}</p>
+                    <p class="account-order__text">Данные заказа: </p>
+
+                    {% if  order.address%}
+                    <p class="page-order__info">Адрес: {{ order.address }}</p>
+                    {% endif %}
+                    
+                    {% if  order.entrance%}
+                    <p class="page-order__info">Подъезд: {{ order.entrance }}</p>
+                    {% endif %}
+                    {% if  order.floor%}
+                    <p class="page-order__info">Этаж: {{ order.floor }}</p>
+                    {% endif %}
+                    {% if  order.flat%}
+                    <p class="page-order__info">Квартира: {{ order.flat }}</p>
+                    {% endif %}
+                    {% if  order.address_comment%}
+                    <p class="page-order__info">Комментарий к адресу: {{ order.address_comment }}</p>
+                    {% endif %}
+                    
+            
+                    {% if  order.time%}
+                    <p class="page-order__info">Время: {{ order.time }}</p>
+                    {% endif %}
+                    {% if  order.coupon%}
+                    <p class="page-order__info">Промокод: {{ order.coupon }}</p>
+                    {% endif %}
+                    {% if  order.discount%}
+                    <p class="page-order__info">Скидка по промокоду: {{ order.discount }}</p>
+                    {% endif %}
+                    
+                    
+                    {% comment %} <p class="page-order__info">Статус оплаты: {% if order.paid == True %}Оплачен {% else %}Не оплачен{% endif %}</p> {% endcomment %}
+                    
+                    
+                    <p class="page-order__info">Сумма заказа: {{ order.get_total_cost | floatformat:2 }} руб.</p>
+                    {% if  order.delivery_method %}
+                    <p class="page-order__info">Способ доставки: {{ order.delivery_method }}</p>
+                    {% endif %}
+                    {% if  order.delivery_price%}
+                    <p class="page-order__info">Стоимость доставки: {{ order.delivery_price | floatformat:2 }} руб.</p>
+                    {% endif %}
+                    {% if  order.delivery_method %}
+                    <p class="page-order__info">Способ оплаты: {{ order.pay_method }}</p>
+                    {% endif %}
+                   
+                    {% if  order.pay_method == 'Оплата картой на сайте' %}
+                        {% if order.paid == False %}
+                        <p class="page-order__info">Статус оплаты: <span class="page-order__info--error">не оплачен</span></p>
+                        {% else %}
+                        <p class="page-order__info">Статус оплаты: <span class="page-order__info--success">оплачен</span></p>
+            
+                        {% endif %}
+                    
+                    {% endif %}
+            
+                    {% if  order.order_conmment%}
+                    <p class="page-order__info">Комментарий к заказу: {{ order.order_conmment }}</p>
+                    {% endif %}
                
                     <p class="account-order__total">Сумма: {{ order.get_total_cost }}₽</p>
 
@@ -47,13 +108,13 @@
 
                     {% for item in order.items.all %}
                         <div class="account-order__item">
-                            {% thumbnail item.option.parent.thumb "50x50" crop="center" as im %}
-                                <a href="{{ item.option.parent.get_absolute_url }}" class="account-order__wrap">
+                            {% thumbnail item.product.thumb "50x50" crop="center" as im %}
+                                <a href="{{ item.product.parent.get_absolute_url }}" class="account-order__wrap">
                                     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="account-order__img">
                                 </a>
                             {% endthumbnail %}
                             
-                                <a href="{{ item.product.get_absolute_url }}" class="account-order__title"> {{ item.option.parent.name }}</a>
+                                <a href="{{ item.product.get_absolute_url }}" class="account-order__title"> {{ item.product.name }}</a>
                                 <p class="account-order__quantity"><span>x </span> {{ item.quantity }} </p>
                                 
                                 <p class="account-order__price">{{ item.price }}₽</p>

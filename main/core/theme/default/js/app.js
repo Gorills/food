@@ -938,12 +938,13 @@ $(document).on('focus','#id_address',function(){
 
 
 
+
 $(document).on('focus', '.phone' ,function(e){
     $(".phone").mask("+7 (999) 999 99-99");
 })
 
 
-$(document).on('keyup', '.phone' ,function(e){
+$(document).on('keyup', '.phone-sms' ,function(e){
     var phone = $(this).val()
     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
 
@@ -996,11 +997,14 @@ $(document).on('click', '.cart__input-phone-btn' ,function(e){
     $(this).parent().css('border-color', '')
 
     var csrf = $(this).parent().attr('data-token')
-
+    var phone = $('.phone-get').val()
     $.ajax({
         method: "POST",
-        url: "/sms/",
-        data: { csrfmiddlewaretoken: csrf }
+        url: "/accounts/code/",
+        data: { 
+            csrfmiddlewaretoken: csrf,
+            phone: phone
+        }
         })
       .done(function( msg ) {
         $('.cart__input-sms').show()
@@ -1014,12 +1018,33 @@ $(document).on('click', '.cart__input-phone-btn' ,function(e){
 })
 
 
+// cart__input-phone-btn
+$(document).on('click', '.cart__input-sms-btn' ,function(e){
+    
+    var csrf = $(this).attr('data-token')
+    var phone = $('.phone-get').val()
+    var code = $('.code_value').val()
 
+    $.ajax({
+        method: "POST",
+        url: "/accounts/add/",
+        data: { 
+            csrfmiddlewaretoken: csrf,
+            phone: phone,
+            code: code
+        }
+    }).done(function(  ) {
+        $('.code_value').css('border-color', 'green')
+        $('.cart__input-sms').hide()
+        $('#phone').removeAttr('readonly');
+        $('#phone').css('border-color', 'green');
+        $(".phone_refresh").load(location.href + " .phone_refresh__inner");
+    }).fail(function() {
+        $('.code_value').css('border-color', 'red')
+    });
 
-
-
-
-
+    
+})
 
 
 $(document).on('blur','.phone',function(){
@@ -1032,6 +1057,21 @@ $(document).on('blur','.phone',function(){
 
         $(this).val( first + '-' + lastfour );
     }
+})
+
+// id_phone__edit
+$(document).on('click','.id_phone__edit',function(){
+
+    var newForm = $('.hidden-content').html()
+
+    $('.id_phone-wrap').html(newForm)
+
+})
+
+$(document).on('click','.hidden-content__remove',function(){
+
+    $(".phone_refresh").load(location.href + " .phone_refresh__inner");
+
 })
 
 
@@ -1085,4 +1125,3 @@ jQuery(document).ready(function () {
 })
 
 // Платежи
-

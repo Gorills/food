@@ -7,14 +7,13 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
-
+from .usersession import UserSession
 
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
     theme_address = 'default'
-
 
 
 
@@ -98,64 +97,125 @@ class Logout(LogoutView):
     template_name = 'account/logged_out.html'
 
 
+# Предварительная регистрация по телефону
+from django.views.decorators.http import require_POST
+@require_POST
+def usersession_add(request):
+    if request.session['code']:
+        user_phone = request.POST['phone']
+        code = request.POST['code']
+        if request.session['code'] == code and request.session['phone'] == user_phone:
+            try:
+                userprofile = UserProfile.objects.get(phone=user_phone)
+            except:
+                userprofile = UserProfile(phone=user_phone)
+                userprofile.save()
+
+            request.session['user_profile_id'] = userprofile.id
+            del request.session['code']
+            del request.session['code_date']
+            del request.session['phone']
+            return redirect('home')
 
 
+       
+text = 'Код доступа'
+sender = 'INFORM'
+apikey = 'BS0H0F27LS92CU4G3YVZQ693A1QGCTQT2DBOF2NDKMB99465LQSU8O7RPU084Y60'
 
+import requests
+from datetime import datetime
+import random
+def generate_code():
+    random.seed()
+    return str(random.randint(10000,99999))
+
+@require_POST
+def add_code(request):
+    gen_code = True
+    session = request.session
+    
+    session['phone'] = request.POST['phone']
+
+    phone = request.POST['phone']
+    
+    if 'code' in session and 'code_date' in session:
+        if int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())< 90:
+            code = session['code']
+            gen_code=False
+            
+            return redirect('home')
+        else:
+            del request.session['code']
+            gen_code=True
+            return redirect('home')
+
+    if gen_code:
+        request.session["code_date"] = str(datetime.now())
+        code = generate_code()
+        request.session['code'] = code
+
+        url = "http://smspilot.ru/api.php?send="+'Ваш код:'+code+"&to="+phone+"&from="+sender+"&apikey="+apikey+"&format=json"
+        result = requests.get(url)
+        print(request.session['code'])
+        
+        return redirect('home')
+    
+
+    
 
 from .forms import ProfileForm
-@login_required
+
 def profile(request):
-    user = request.user
 
     try:
-        user_profile = user.profile
+        user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
     except:
-        user_profile = UserProfile(user=user)
-        user_profile.save()
+        user_profile = None
 
     if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
+       
         phone = request.POST['phone']
         
-
-        user.first_name = first_name
-        user.last_name = last_name
-        user.save()
 
         user_profile.phone = phone
         
         user_profile.save()
 
         return redirect('account:account_profile')
-    
-
-    default_data = {
-        'first_name': user.first_name, 
-        'last_name': user.last_name, 
-        'phone': user_profile.phone, 
-       
-    }
-    profile_form = ProfileForm(default_data)
-
-    context = {
-        'user': user, 
-        'profile_form': profile_form,
-        
-    }
-
-    return render(request, 'global/profile.html', context)
 
 
+    if user_profile:
+        default_data = {
+            'phone': user_profile.phone, 
+        }
+        profile_form = ProfileForm(default_data)
+        context = {
+            # 'user': user, 
+            'profile_form': profile_form,
+        }
+        return render(request, 'global/profile.html', context)
+    else:
 
-@login_required
+        return redirect('home')
+
+
 def profile_orders(request):
 
-
     
-    return render(request, 'global/profile_orders.html')
+    try:
+        user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+    except:
+        user_profile = None
 
-
+    if user_profile:
+        
+        context = {
+            'user_profile': user_profile
+        }
+        return render(request, 'global/profile_orders.html', context)
+    else:
+        return redirect('home')
 
 @login_required
 def profile_wishlist(request):

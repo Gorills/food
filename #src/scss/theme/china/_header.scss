@@ -333,6 +333,8 @@
 
     // .header__contacts-wrap
     &__contacts-wrap {
+        display: flex;
+        align-items: center;
         @media screen and (max-width:480px) {
             margin-bottom: 20px;
            
