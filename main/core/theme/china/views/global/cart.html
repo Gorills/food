@@ -139,229 +139,231 @@
                 </div>
             </form>
             
-            <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
+            <div class="cart__form-form-wrap">
+                <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
+                    
+                    {% csrf_token %}
+
+
                 
-                {% csrf_token %}
 
+                    
+                    <div class="phone_refresh">
+                        <div class="phone_refresh__inner">
 
-               
-
-                
-                <div class="phone_refresh">
-                    <div class="phone_refresh__inner">
-
-                        {% if setup.sms == True %}
-                        
-                            {% if not request.session.user_profile_id %}
-
-                            <div class="cart__input-phone">
-                                <input id="id_phone" required name="phone" type="text" class="cart__input phone phone-sms phone-get" placeholder="+7 999 999 99 99">
-                                <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
-                                    <div class="cart__input-phone-btn"  data-sub="false">Подтвердить</div>
-                                </div>
-        
-                                <input type="text" required hidden name="subject">
-                                
-                            </div>
-        
-                            <div class="cart__input-sms">
-                                <div class="cart__input-sms-inner">
-                                    <input type="text" class="cart__input code_value" name="code" value="" placeholder="Код из смс">
-                                    <div class="cart__input-sms-btn" data-token="{{ csrf_token }}">Ок</div>
-                                </div>
-                            </div>
-        
-                            {% else %}
-                            <div class="id_phone-wrap">
-
-                                <input id="id_phone" value="{{ userprofile.phone }}" readonly required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
-                                <div class="id_phone__edit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>
-                                </div>
-
-                            </div>
+                            {% if setup.sms == True %}
                             
-        
+                                {% if not request.session.user_profile_id %}
+
+                                <div class="cart__input-phone">
+                                    <input id="id_phone" required name="phone" type="text" class="cart__input phone phone-sms phone-get" placeholder="+7 999 999 99 99">
+                                    <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
+                                        <div class="cart__input-phone-btn"  data-sub="false">Подтвердить</div>
+                                    </div>
+            
+                                    <input type="text" required hidden name="subject">
+                                    
+                                </div>
+            
+                                <div class="cart__input-sms">
+                                    <div class="cart__input-sms-inner">
+                                        <input type="text" class="cart__input code_value" name="code" value="" placeholder="Код из смс">
+                                        <div class="cart__input-sms-btn" data-token="{{ csrf_token }}">Ок</div>
+                                    </div>
+                                </div>
+            
+                                {% else %}
+                                <div class="id_phone-wrap">
+
+                                    <input id="id_phone" value="{{ userprofile.phone }}" readonly required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+                                    <div class="id_phone__edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>
+                                    </div>
+
+                                </div>
+                                
+            
+                                {% endif %}
+
+                            {% else %}
+
+                            <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
                             {% endif %}
 
-                        {% else %}
-
-                        <input id="id_phone" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
-                        {% endif %}
-
+                        </div>
                     </div>
-                </div>
-                    
-                
-                
-
-
-                <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
-                
-
-                <div class="cart__form-refresh-delivery">
-
-                    <div class="cart__form-refresh-delivery-inner">
                         
-                        <div class="cart__input-address-wrap">
-                            <input name="address" required type="text" data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="id_address">
-                        </div>
-                        <div class="cart__input-wrap">
-                            <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
-                            <input name="floor" type="text" class="cart__input" placeholder="Этаж">
-                            <input name="flat" type="text" class="cart__input" placeholder="Квартира">
-
-                        </div>
-                        <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
-
-                    </div>
-                </div>
-
-
-
-                <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
-
-                <div class="cart__select" id="order_time" data-value="0">
                     
-                    <div class="cart__select-active">
                     
-                        <div class="cart__select-active-inner">
-                            <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24c5.523 0 10-4.477 10-10S19.523 4 14 4 4 8.477 4 14s4.477 10 10 10z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8v6l4 2" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+
+                    <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
+                    
+
+                    <div class="cart__form-refresh-delivery">
+
+                        <div class="cart__form-refresh-delivery-inner">
                             
-                            <div class="cart__select-time">
-                                <p id="time" data-value="0">Время</p>
-                                <p id="data" data-value="0"></p>
-                                <input type="text" id="id_datetime" hidden name="time" required>
+                            <div class="cart__input-address-wrap">
+                                <input name="address" required type="text" data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="id_address">
                             </div>
-                            
+                            <div class="cart__input-wrap">
+                                <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                                <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                                <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+
+                            </div>
+                            <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
 
                         </div>
-                    
-                        
-                        <div class="cart__select-error">Выберите время доставки</div>
                     </div>
 
-                    
-                    <div class="cart__select-drop cart__select-drop-time">
-                        <div class="cart__select-drop-inner">
-                            <div class="cart__select-drop-wrap">
-                                {% if get_hours %}
-                                <div class="cart__select-item cart__select-item-first cart__select-item--data cart__select-item--active">Сегодня</div>
-                                {% endif %}
-                                {% for day in get_days %}
-                                <div class="cart__select-item cart__select-item-second cart__select-item--data">{{ day }}</div>
-                                {% endfor %}
+
+
+                    <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
+
+                    <div class="cart__select" id="order_time" data-value="0">
+                        
+                        <div class="cart__select-active">
+                        
+                            <div class="cart__select-active-inner">
+                                <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24c5.523 0 10-4.477 10-10S19.523 4 14 4 4 8.477 4 14s4.477 10 10 10z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8v6l4 2" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 
+                                <div class="cart__select-time">
+                                    <p id="time" data-value="0">Время</p>
+                                    <p id="data" data-value="0"></p>
+                                    <input type="text" id="id_datetime" hidden name="time" required>
+                                </div>
+                                
+
                             </div>
+                        
+                            
+                            <div class="cart__select-error">Выберите время доставки</div>
+                        </div>
 
-                            <div class="cart__select-drop-wrap cart__select-drop-wrap-hours">
-                                {% if get_hours %}
-
-                                    <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
-                                    {% for hour in get_hours %}
-                                    <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                        
+                        <div class="cart__select-drop cart__select-drop-time">
+                            <div class="cart__select-drop-inner">
+                                <div class="cart__select-drop-wrap">
+                                    {% if get_hours %}
+                                    <div class="cart__select-item cart__select-item-first cart__select-item--data cart__select-item--active">Сегодня</div>
+                                    {% endif %}
+                                    {% for day in get_days %}
+                                    <div class="cart__select-item cart__select-item-second cart__select-item--data">{{ day }}</div>
                                     {% endfor %}
                                     
-                                {% else %}
+                                </div>
 
-                                    {% for hour in get_hours2 %}
+                                <div class="cart__select-drop-wrap cart__select-drop-wrap-hours">
+                                    {% if get_hours %}
+
+                                        <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
+                                        {% for hour in get_hours %}
                                         <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                                    {% endfor %}
-                               
-                                {% endif %}
+                                        {% endfor %}
+                                        
+                                    {% else %}
+
+                                        {% for hour in get_hours2 %}
+                                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                                        {% endfor %}
                                 
+                                    {% endif %}
+                                    
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="cart__select-drop-two-hidden">
-                        {% for hour in get_hours2 %}
-                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="cart__select-drop-one-hidden">
-                        <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
-                        {% for hour in get_hours %}
-                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                        {% endfor %}
-                    </div>
-
-                </div>
-
-
-                <div class="cart__select" id="pay_method" data-value="0">
-                    <div class="cart__select-active">
-                        <div class="cart__select-active-inner">
-                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M26.2859 6.85718H5.71443C4.45206 6.85718 3.42871 7.88053 3.42871 9.14289V22.8572C3.42871 24.1195 4.45206 25.1429 5.71443 25.1429H26.2859C27.5482 25.1429 28.5716 24.1195 28.5716 22.8572V9.14289C28.5716 7.88053 27.5482 6.85718 26.2859 6.85718Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M3.42871 13.7144H28.5716" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-            
-                            <span id="pay">Способ оплаты</span>
-                            <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden required>
+                        <div class="cart__select-drop-two-hidden">
+                            {% for hour in get_hours2 %}
+                                <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                            {% endfor %}
                         </div>
-                        <div class="cart__select-error">Выберите способ оплаты</div>
+                        <div class="cart__select-drop-one-hidden">
+                            <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
+                            {% for hour in get_hours %}
+                                <div class="cart__select-item cart__select-item--time">{{hour}}</div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+
+                    <div class="cart__select" id="pay_method" data-value="0">
+                        <div class="cart__select-active">
+                            <div class="cart__select-active-inner">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M26.2859 6.85718H5.71443C4.45206 6.85718 3.42871 7.88053 3.42871 9.14289V22.8572C3.42871 24.1195 4.45206 25.1429 5.71443 25.1429H26.2859C27.5482 25.1429 28.5716 24.1195 28.5716 22.8572V9.14289C28.5716 7.88053 27.5482 6.85718 26.2859 6.85718Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M3.42871 13.7144H28.5716" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                
+                                <span id="pay">Способ оплаты</span>
+                                <input type="text" name="pay_method" id="get_pay" class="cart__input" value="" hidden required>
+                            </div>
+                            <div class="cart__select-error">Выберите способ оплаты</div>
+                            
+                        </div>
+
                         
+                        <div class="cart__select-drop" id="cart__select-drop">
+                            <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
+                                {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
+
+                                    {% if cart_active == True %}
+                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                    {% else %}
+                                    <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                    <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="cart__select-item cart__select-item--card">Картой при получении</div>
+                                    <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
+                                    {% if cart_active == True %}
+                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+
                     </div>
 
                     
-                    <div class="cart__select-drop" id="cart__select-drop">
-                        <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
-                            {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
+                    <textarea class="cart__input" name="order_conmment" id="" cols="30" rows="5" placeholder="Комментарий к заказу"></textarea>
 
-                                {% if cart_active == True %}
-                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
-                                {% else %}
-                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
-                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
-                                {% endif %}
-                            {% else %}
-                                <div class="cart__select-item cart__select-item--card">Картой при получении</div>
-                                <div class="cart__select-item cart__select-item--card">Наличными курьеру</div>
-                                {% if cart_active == True %}
-                                <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
-                                {% endif %}
+                
+                    <div class="cart__order-create-wrapper">
+                        <div class="cart__order-create-wrapper-inner">
+                            
+
+                            {% if cart.coupon %}
+
+                            <div class="cart__order-line">
+                                <p class="cart__order-line-text">Сумма</p>
+                                <p class="cart__order-line-summ">{{ cart.get_total | floatformat:"2" }} ₽</p>
+
+                            </div>
+                            <div class="cart__order-line">
+                                <p class="cart__order-line-text">Купон "{{ cart.coupon.code }}"</p>
+                                <p class="cart__order-line-summ">- {{ cart.get_discount|floatformat:"2" }}₽</p>
+
+                            </div>
+                            
                             {% endif %}
+                            <div class="cart__order-line">
+                                <p class="cart__order-line-text">Итого</p>
+                                <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</p>
+
+                            </div>
+                            
+                            
+                            <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</button>
                         </div>
-                        
                     </div>
-
-                </div>
-
-                
-                <textarea class="cart__input" name="order_conmment" id="" cols="30" rows="5" placeholder="Комментарий к заказу"></textarea>
-
-            
-                <div class="cart__order-create-wrapper">
-                    <div class="cart__order-create-wrapper-inner">
-                        
-
-                        {% if cart.coupon %}
-
-                        <div class="cart__order-line">
-                            <p class="cart__order-line-text">Сумма</p>
-                            <p class="cart__order-line-summ">{{ cart.get_total | floatformat:"2" }} ₽</p>
-
-                        </div>
-                        <div class="cart__order-line">
-                            <p class="cart__order-line-text">Купон "{{ cart.coupon.code }}"</p>
-                            <p class="cart__order-line-summ">- {{ cart.get_discount|floatformat:"2" }}₽</p>
-
-                        </div>
-                        
-                        {% endif %}
-                        <div class="cart__order-line">
-                            <p class="cart__order-line-text">Итого</p>
-                            <p class="cart__order-line-summ">{{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</p>
-
-                        </div>
-                        
-                        
-                        <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }} ₽</button>
-                    </div>
-                </div>
-                
-            </form>
+                    
+                </form>
+            </div>
             <div class="cart__order-layout"></div>
         </div>
         

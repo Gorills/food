@@ -495,9 +495,12 @@ a {
   text-decoration: underline;
 }
 
-.cart__form-form {
+.cart__form-form-wrap {
   overflow-y: scroll;
   height: 100%;
+}
+
+.cart__form-form {
   min-height: fit-content;
   padding-bottom: 350px;
 }
@@ -3341,10 +3344,6 @@ td.product-thumbnail img {
     padding: 20px 20px 130px 20px;
   }
 
-  .cart__form-wrap {
-    flex-direction: column;
-  }
-
   .cart__form-btn + .cart__form-btn {
     margin-left: 0;
     margin-top: 10px;
@@ -3365,6 +3364,7 @@ td.product-thumbnail img {
 
   .cart__order-create-wrapper {
     position: relative;
+    padding-bottom: 60px;
   }
 
   .cart__order-pickup-inner-html-wrapper {

@@ -156,7 +156,7 @@ def add_code(request):
         request.session['code'] = code
 
         url = "http://smspilot.ru/api.php?send="+'Ваш код:'+code+"&to="+phone+"&from="+sender+"&apikey="+apikey+"&format=json"
-        result = requests.get(url)
+        # result = requests.get(url)
         print(request.session['code'])
         
         return redirect('home')
