@@ -1,14 +1,12 @@
 
-{% extends 'base.html' %}
-
 {% load thumbnail %}
 {% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
 {% block description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
 {% block keywords %}{{ product.meta_keywords }}{% endblock %}
-{% block canonical %}{% url 'catalog' %}{% endblock %}
+{% block canonical %}{{ product.get_absolute_url }}{% endblock %}
 {% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
 {% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
-{% block og:url %}{% url 'catalog' %}{% endblock %}
+{% block og:url %}{{ product.get_absolute_url }}{% endblock %}
 {% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
 {% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
 
@@ -48,7 +46,7 @@
                     </a>
                 </li>
                 <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="{{ product.name }}" itemprop="item">
+                    <a class="breadcrumbs__link" href="{{ product.get_absolute_url }}" title="{{ product.name }}" itemprop="item">
                         <span itemprop="name">{{ product.name }}</span>
                         <meta itemprop="position" content="3">
                     </a>
@@ -57,6 +55,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="product-detail">
     <div class="container">

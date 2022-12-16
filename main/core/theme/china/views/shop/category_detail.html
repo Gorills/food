@@ -6,10 +6,10 @@
 {% block title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
 {% block description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
 {% block keywords %}{{ category.meta_keywords }}{% endblock %}
-{% block canonical %}{% url 'catalog' %}{% endblock %}
+{% block canonical %}{{ category.get_absolute_url }}{% endblock %}
 {% block og:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
 {% block og:description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
-{% block og:url %}{% url 'catalog' %}{% endblock %}
+{% block og:url %}{{ category.get_absolute_url }}{% endblock %}
 {% block twitter:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
 {% block twitter:description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
 
