@@ -75,10 +75,15 @@ def get_hours(request):
             hour_list_two.append(item_two)
         count_two += 1
 
+    try:
+        get_sec = int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())
+    except:
+        get_sec = ''
     
     return {
         'get_hours': hour_list,
         'get_hours2': hour_list_two,
+        'get_sec': get_sec
     }
 
 

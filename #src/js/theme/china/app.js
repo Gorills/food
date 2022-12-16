@@ -281,13 +281,13 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         count = index
     })
     if (count==0) {
-        function remove(){
+        // function remove(){
             $('.cart').removeClass('cart--active')
             $('.cart__form').hide()
             $('body').removeClass('body')
 
-        }
-        setTimeout(remove, 1000);
+        // }
+        // setTimeout(remove, 1000);
     }
 });
 
@@ -949,6 +949,23 @@ $(document).on('keyup', '.phone-sms' ,function(e){
     if (min.length == 13) {
         
         $('.cart__input-phone-btn').css({'display':'flex'})
+        
+
+        $(".get-sec").load(location.href + " .get-sec__inner");
+        var secGet = $('.get-sec__inner').attr('data-timer')
+
+        if (secGet != '') {
+            var sec = 120 - secGet
+
+            console.log(sec)
+    
+            if (sec > 0) {
+                $(".cart__input-phone-btn-wrap").countdown(redirect, sec, "Повторная отправка через <br>");
+            }
+        }
+        
+
+        
     } else {
         $('.cart__input-phone-btn').css({'display':'none'})
     }
@@ -987,6 +1004,7 @@ function redirect () {
 
 
 }
+
 
 
 
@@ -1067,9 +1085,40 @@ $(document).on('blur','.phone',function(){
 // id_phone__edit
 $(document).on('click','.id_phone__edit',function(){
 
-    var newForm = $('.hidden-content').html()
+    var csrf = $(this).attr('data-token')
+    var formNew = `
+    
+        <div class="cart__input-phone">
 
-    $('.id_phone-wrap').html(newForm)
+            <div class="hidden-content__wrap">
+                <input id="id_phone" required name="phone" type="text" class="cart__input phone phone-sms phone-get" placeholder="+7 999 999 99 99">
+                
+                <div class="hidden-content__remove">
+                    <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="cart__input-phone-btn-wrap" data-token="`+csrf+`">
+                <div class="cart__input-phone-btn"  data-sub="false">Подтвердить</div>
+            </div>
+
+            <input type="text" required hidden name="subject">
+            
+        </div>
+
+        <div class="cart__input-sms">
+            <div class="cart__input-sms-inner">
+                <input type="text" class="cart__input code_value" name="code" value="" placeholder="Код из смс">
+                <div class="cart__input-sms-btn" data-token="`+csrf+`">Ок</div>
+            </div>
+        </div>
+   
+    `
+
+    
+
+    $('.id_phone-wrap').html(formNew)
 
 })
 

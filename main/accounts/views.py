@@ -140,15 +140,14 @@ def add_code(request):
     phone = request.POST['phone']
     
     if 'code' in session and 'code_date' in session:
-        if int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())< 90:
+        if int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())< 10:
             code = session['code']
             gen_code=False
             
-            return redirect('home')
         else:
             del request.session['code']
             gen_code=True
-            return redirect('home')
+           
 
     if gen_code:
         request.session["code_date"] = str(datetime.now())
