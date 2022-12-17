@@ -19,6 +19,7 @@ except:
 
 if pay_name == 'yookassa':
     urlpatterns.append(path('confirm/<int:pk>/', views.order_confirm, name='order_confirm')) 
+    urlpatterns.append(path('confirm/', views.order_webhook, name='order_webhook')) 
 
 if pay_name == 'alfabank':
     urlpatterns.append(path('error/', views.order_error, name='order_error')) 

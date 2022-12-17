@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from accounts.models import UserProfile
 import requests
@@ -221,14 +222,31 @@ def order_confirm(request, pk):
 
         return redirect('home')
 
+# Проверка событий Юкассы
+import json
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def order_webhook(request):
+    if request.method == 'POST':
+        
+        post_json = json.loads(request.body.decode())
+        pay_id = post_json['object']['id']
+        order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
+        data = get_status(pay_id)
+
+        
+        if data['status'] == 'succeeded':
+            order = data['order']
+            order_telegram(order)
+            order.paid = True
+            order.save()
+            return HttpResponse("Webhook received!")
+
 
 
 def order_error(request):
-
-
     return render(request, 'orders/order/error.html')
-
-
 
 
 def order_success(request):
