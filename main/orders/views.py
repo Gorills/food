@@ -222,7 +222,7 @@ def order_confirm(request, pk):
 
         return redirect('home')
 
-# Проверка событий Юкассы
+# Проверка событий Юкассы не работает
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -232,15 +232,19 @@ def order_webhook(request):
         
         post_json = json.loads(request.body.decode())
         pay_id = post_json['object']['id']
-        order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
-        data = get_status(pay_id)
 
-        
-        if data['status'] == 'succeeded':
-            order = data['order']
-            order_telegram(order)
-            order.paid = True
-            order.save()
+        try:
+            order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
+            data = get_status(pay_id)
+
+            
+            if data['status'] == 'succeeded':
+                order = data['order']
+                order_telegram(order)
+                order.paid = True
+                order.save()
+                return HttpResponse("Webhook received!")
+        except:
             return HttpResponse("Webhook received!")
 
 
