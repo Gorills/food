@@ -4,13 +4,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from allauth.account.forms import SignupForm
 from django.views import generic
-
-
-
-
-
-
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import UserProfile
 from django.contrib.auth.decorators import login_required
@@ -160,6 +153,7 @@ def add_code(request):
     
 
 from .forms import ProfileForm
+from setup.models import BaseSettings
 
 def profile(request):
 
@@ -168,19 +162,9 @@ def profile(request):
     except:
         user_profile = None
 
-    if request.method == 'POST':
-       
-        phone = request.POST['phone']
-        
+    
 
-        user_profile.phone = phone
-        
-        user_profile.save()
-
-        return redirect('account:account_profile')
-
-
-    if user_profile:
+    if user_profile and BaseSettings.objects.get().sms == True:
         default_data = {
             'phone': user_profile.phone, 
         }
