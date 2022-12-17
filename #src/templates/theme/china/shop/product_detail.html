@@ -1,4 +1,5 @@
 
+{% extends 'base.html' %}
 {% load thumbnail %}
 {% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
 {% block description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}

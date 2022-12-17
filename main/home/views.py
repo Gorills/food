@@ -1,5 +1,5 @@
 import datetime
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
 from shop.models import Manufacturer, ShopSetup, Product
@@ -35,6 +35,7 @@ def robots_txt(request):
                 "Disallow: /cart/",
                 "Disallow: /coupons/",
                 "Disallow: /accounts/",
+                "Disallow: /login/",
                 "Disallow: *utm=",
                 
 
@@ -44,6 +45,7 @@ def robots_txt(request):
                 "Disallow: /cart/",
                 "Disallow: /coupons/",
                 "Disallow: /accounts/",
+                "Disallow: /login/",
                 "Disallow: *utm=",
                 "Clean-Param: utm_source&utm_medium&utm_campaign",
 
@@ -76,22 +78,30 @@ def page_not_found_view(request, exception):
 
 def home_login(request):
 
+    try:
+        user_id = request.session['user_profile_id']
+    except:
+        user_id = None
+
+    if user_id:
+        return redirect('account:account_profile')
     context = {
-
     }
-
     return render(request, 'global/login.html', context)
 
 
+def home_logout(request):
+
+    del request.session['user_profile_id']
+    return redirect('home_login')
+    
+
+
 from cart.cart import Cart
-from sms.views import get_code
+
 from decimal import Decimal
 
 def home(request):
-
-    
-    
-    
 
     # payment = PaymentSet.objects.get()
     # payment.delete()
@@ -102,8 +112,7 @@ def home(request):
     # cart = Cart(request)
     # cart.clear()
 
-
-    manufacturers = Manufacturer.objects.all()[:12]
+    
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
     sliders = Slider.objects.all()
@@ -113,7 +122,7 @@ def home(request):
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
 
     context = {
-        'manufacturers':manufacturers,
+       
         'slider_setup': slider_setup,
         'sliders': sliders,
         'shop_setup': shop_setup,

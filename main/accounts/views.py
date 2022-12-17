@@ -3,42 +3,27 @@ import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from allauth.account.forms import SignupForm
-from django.urls import reverse_lazy
 from django.views import generic
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
-from .usersession import UserSession
-
-from setup.models import ThemeSettings
-try:
-    theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'default'
 
 
 
 
-from django.shortcuts import render, get_object_or_404
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import UserProfile
-
-
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from allauth.account.views import SignupView, _ajax_response
-
-
-
 from django.contrib import messages
-
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import (
     Http404,
     HttpResponsePermanentRedirect,
     HttpResponseRedirect,
 )
-from django.shortcuts import redirect
+
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
@@ -82,6 +67,13 @@ INTERNAL_RESET_SESSION_KEY = "_password_reset_key"
 sensitive_post_parameters_m = method_decorator(
     sensitive_post_parameters("oldpassword", "password", "password1", "password2")
 )
+
+from setup.models import ThemeSettings
+try:
+    theme_address = ThemeSettings.objects.get().name
+except:
+    theme_address = 'default'
+
 
 
 class SignUpView(generic.CreateView):
@@ -155,9 +147,13 @@ def add_code(request):
         request.session['code'] = code
 
         url = "http://smspilot.ru/api.php?send="+'Ваш код:'+code+"&to="+phone+"&from="+sender+"&apikey="+apikey+"&format=json"
-        result = requests.get(url)
-        # print(request.session['code'])
+        # result = requests.get(url)
+        print(request.session['code'])
         
+        return redirect('home')
+
+
+    else: 
         return redirect('home')
     
 

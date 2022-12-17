@@ -1,0 +1,26 @@
+.user-login {
+    padding: 180px 0;
+    // .user-login__inner
+
+    &__inner {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
+    }
+
+    // .user-login__form
+    &__form {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
+    }
+
+    .btn {
+        width: 100%;
+    }
+    // .user-login__title
+
+    &__title {
+        text-align: center;
+    }
+}

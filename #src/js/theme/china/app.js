@@ -942,6 +942,8 @@ $(document).on('focus', '.phone' ,function(e){
 })
 
 
+
+// Номер телефона в корзине
 $(document).on('keyup', '.phone-sms' ,function(e){
     var phone = $(this).val()
     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
@@ -949,17 +951,19 @@ $(document).on('keyup', '.phone-sms' ,function(e){
     if (min.length == 13) {
         
         $('.cart__input-phone-btn').css({'display':'flex'})
-        
-
+    
         $(".get-sec").load(location.href + " .get-sec__inner");
         var secGet = $('.get-sec__inner').attr('data-timer')
 
+        // $('.id_phone-wrap--remove').remove()
+
+        
         if (secGet != '') {
             var sec = 120 - secGet
-
+            var nowData = $('.cart__input-phone-btn').text()
             console.log(sec)
-    
-            if (sec > 0) {
+            console.log(nowData)
+            if (sec > 0 && nowData == 'Подтвердить' || sec > 0 && nowData == 'Отправить снова') {
                 $(".cart__input-phone-btn-wrap").countdown(redirect, sec, "Повторная отправка через <br>");
             }
         }
@@ -1041,6 +1045,8 @@ $(document).on('click', '.cart__input-sms-btn' ,function(e){
     var phone = $('.phone-get').val()
     var code = $('.code_value').val()
 
+    var loc = $(this).attr('data-url')
+
     $.ajax({
         method: "POST",
         url: "/accounts/add/",
@@ -1060,6 +1066,10 @@ $(document).on('click', '.cart__input-sms-btn' ,function(e){
         }
 
         setTimeout(getPause, 1000);
+
+        if (loc == 'login') {
+            window.location.href = "/accounts/profile/";
+        }
      
         
     }).fail(function() {
@@ -1116,11 +1126,10 @@ $(document).on('click','.id_phone__edit',function(){
    
     `
 
-    
-
     $('.id_phone-wrap').html(formNew)
 
 })
+
 
 $(document).on('click','.hidden-content__remove',function(){
 
@@ -1179,4 +1188,8 @@ jQuery(document).ready(function () {
 })
 
 // Платежи
+
+
+
+
 

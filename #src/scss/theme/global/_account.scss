@@ -71,6 +71,9 @@
     // .account__data
 
     &__data {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 auto;
     }
 
     // .account__content-wrapper
@@ -85,12 +88,30 @@
         margin-bottom: 30px;
     }
 
+    // .account__phone 
+    &__phone {
+        font-size: 18px;
+        font-weight: 700;
+        padding: 10px 20px;
+    }
+
+
+    // .account__logout
+    &__logout {
+        color: var(--color-danger);
+        display: inline-block;
+        padding: 10px 20px;
+    }
+
     // .account__form
 
     &__form {
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
+
+        display: flex;
+        justify-content: space-between;
         p {
             display: flex;
             flex-direction: column;

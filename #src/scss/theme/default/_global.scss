@@ -118,7 +118,7 @@ a   {
     font-size: 14px;
     &--primary {
         background-color: var(--color-btn-bg);
-        color: var(--color-btn-font-light);
+        color: var(--color-btn-font);
 
         &:hover {
             background-color: var(--color-primary);
@@ -127,7 +127,7 @@ a   {
     }
     &--empty {
         background: none;
-        color: var(--color-btn-font);
+        color: var(--color-btn-font-light);
         &:hover {
             background-color: var(--color-body);
             border-color: var(--color-font);

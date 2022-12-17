@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %} {% endblock %}
+{% block title %} Вход {% endblock %}
 {% block description %} {% endblock %}
 {% block keywords %} {% endblock %}
 {% block canonical %} {% endblock %}
@@ -17,5 +17,33 @@
 {% load static %}
 {% load thumbnail %}
 
+
+<div class="user-login">
+    <div class="container">
+        <div class="user-login__inner">
+            <h1 class="user-login__title title">Вход/регистрация</h1>
+
+
+            <div class="cart__input-phone">
+                <input id="id_phone" required name="phone" type="text" class="cart__input phone phone-sms phone-get" placeholder="+7 999 999 99 99">
+                <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
+                    
+                    <div class="cart__input-phone-btn"  data-sub="false"> Подтвердить</div>
+                </div>
+
+                <input type="text" required hidden name="subject">
+                
+            </div>
+
+            <div class="cart__input-sms">
+                <div class="cart__input-sms-inner">
+                    <input type="text" class="cart__input code_value" name="code" value="" placeholder="Код из смс">
+                    <div class="cart__input-sms-btn" data-token="{{ csrf_token }}" data-url="login">Ок</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}

@@ -36,7 +36,7 @@ textarea {
     color: var(--color-font);
     &::placeholder {
         font-family: 'Circe', sans-serif;
-        color: var(--color-font)
+        color: rgb(120, 120, 120)!important;
     }
 
 }
@@ -45,7 +45,7 @@ input {
     color: var(--color-font);
     &::placeholder {
         font-family: 'Circe', sans-serif;
-        color: var(--color-font)
+        color: rgb(120, 120, 120)!important;
     }
 }
 

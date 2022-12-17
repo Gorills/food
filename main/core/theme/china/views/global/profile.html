@@ -39,7 +39,9 @@
                 <div method="post" class="account__form">
                    
                     {% comment %} {% csrf_token %} {% endcomment %}
-                    {{ profile_form.as_p }}
+                    <p class="account__phone">{{ userprofile.phone }}</p>
+
+                    <a href="{% url 'home_logout' %}" class="account__logout">Выйти</a>
                     {% comment %} <button class="btn btn--full">Сохранить</button> {% endcomment %}
 
                 </div>

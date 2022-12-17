@@ -235,7 +235,19 @@
 
     // .header__sign
 
+    
+
     &__sign {
+        position: relative;
+        height: fit-content;
+        height: 26px;
+        margin-left: 20px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        svg {
+            height: 22px;
+        }
     }
 
     // .header__login

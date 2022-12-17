@@ -428,6 +428,10 @@
         &::placeholder {
             color: var(--color-font)
         }
+
+        &--done {
+            border-color: var(--color-success);
+        }
         
     }
 
@@ -481,29 +485,7 @@
 
     }
 
-    .id_phone-wrap {
-        position: relative;
-
-        &:hover {
-            .id_phone__edit {
-                opacity: 100%;
-            }
-        }
-    }
-
-    .id_phone__edit {
-        opacity: 0;
-        transition: all .5s ease;
-        position: absolute;
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
-        cursor: pointer;
-        svg {
-            width: 15px;
-            opacity: 50%;
-        }
-    }
+    
 
     // .cart__input-phone-btn-wrap
     &__input-phone-btn-wrap {
@@ -763,7 +745,33 @@
 
 
 
+.id_phone-wrap {
+    position: relative;
 
+    &:hover {
+        .id_phone__edit {
+            opacity: 100%;
+        }
+    }
+    svg {
+        width: 15px;
+        opacity: 50%;
+    }
+}
+
+.id_phone__edit {
+    opacity: 0;
+    transition: all .5s ease;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    svg {
+        width: 15px;
+        opacity: 50%;
+    }
+}
 
 
     
