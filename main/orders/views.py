@@ -233,12 +233,13 @@ def order_webhook(request):
     if request.method == 'POST':
         
         # post_json = json.loads(request.body)
-        post_json = request.body
-        
+        # post_json = request.text
+        post_json = request.body.decode('utf-8')
+        body_data = json.loads(post_json)
 
-        logger.info(post_json)
+        logger.info(body_data)
 
-        pay_id = post_json['object']['id']
+        pay_id = body_data['object']['id']
 
         try:
             order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
