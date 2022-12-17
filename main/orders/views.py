@@ -200,7 +200,7 @@ def order_confirm(request, pk):
         order = Order.objects.get(id=pk, paid=False, pay_method='Оплата картой на сайте')
         payment = Payment.find_one(order.payment_id)
         status = payment.status
-        status = payment.status
+        
 
         if status == 'succeeded':
             order_telegram(order)
@@ -232,11 +232,8 @@ from yookassa.domain.notification import WebhookNotification
 @csrf_exempt
 def order_webhook(request):
     if request.method == 'POST':
-        
-    
         event_json = json.loads(request.body)
             
-        
         try:
             notification_object = WebhookNotification(event_json)
         except Exception as e:
@@ -245,15 +242,13 @@ def order_webhook(request):
         # Получите объекта платежа
         payment = notification_object.object
         logger.info(payment.id)
-        
         pay_id = payment.id
         try:
             order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
-            data = get_status(pay_id)
-
-            
-            if data['status'] == 'succeeded':
-                order = data['order']
+            payment = Payment.find_one(pay_id)
+            status = payment.status
+            if status == 'succeeded':
+                
                 order_telegram(order)
                 order.paid = True
                 order.save()
