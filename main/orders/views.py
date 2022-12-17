@@ -232,16 +232,25 @@ from django.views.decorators.csrf import csrf_exempt
 def order_webhook(request):
     if request.method == 'POST':
         
-        # post_json = json.loads(request.body)
-        # post_json = request.text
-        post_json = request.body.encode()
-        body_data = json.loads(post_json)
+      
+        post_json = request.body
 
-        # logger.info(body_data)
-        f = open( 'some_file.txt', 'w+')
-        f.write(str(body_data))
+        
 
-        pay_id = body_data['object']['id']
+
+        
+        my_json = post_json.decode('utf8').replace("'", '"').replace("\\n", '').replace("        ", '').replace('{  "type" : "notification",  "event" : "payment.succeeded",  "object" : {    ', '')
+        print(my_json)
+        print('- ' * 20)
+        s = my_json.split(',    "status"', 1)[0]
+        s = s.split(',    "status"', 1)[0]
+        s = s.replace('"id" : "', '').replace('"', '')
+
+        logger.info(s)
+        
+        pay_id = s
+
+        
 
         try:
             order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
