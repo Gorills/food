@@ -231,6 +231,9 @@ def order_webhook(request):
     if request.method == 'POST':
         
         post_json = json.loads(request.body.decode())
+        with open("file.txt", "w") as output:
+            output.write(str(post_json))
+
         pay_id = post_json['object']['id']
 
         try:
