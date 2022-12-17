@@ -238,7 +238,7 @@ def order_webhook(request):
 
         
     
-        my_json = post_json.decode('utf8').replace("'", '"').replace("\\n", '').replace("        ", '').replace('{  "type" : "notification",  "event" : "payment.succeeded",  "object" : {    ', '')
+        my_json = post_json.replace("'", '"').replace("\\n", '').replace("        ", '').replace('{  "type" : "notification",  "event" : "payment.succeeded",  "object" : {    ', '')
         logger.info(my_json)
         
         s = my_json.split(',    "status"', 1)[0]
