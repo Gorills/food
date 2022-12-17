@@ -223,6 +223,8 @@ def order_confirm(request, pk):
         return redirect('home')
 
 # Проверка событий Юкассы не работает
+import logging
+logger = logging.getLogger(__name__)
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -231,8 +233,9 @@ def order_webhook(request):
     if request.method == 'POST':
         
         post_json = json.loads(request.body.decode())
-        with open("file.txt", "w") as output:
-            output.write(str(post_json))
+        
+
+        logger.info("The value of var is %s", post_json)
 
         pay_id = post_json['object']['id']
 
