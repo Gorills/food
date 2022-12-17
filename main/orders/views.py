@@ -237,7 +237,9 @@ def order_webhook(request):
         post_json = request.body.decode('utf-8')
         body_data = json.loads(post_json)
 
-        logger.info(body_data)
+        # logger.info(body_data)
+        f = open( 'some_file.txt', 'w+')
+        f.write(body_data)
 
         pay_id = body_data['object']['id']
 
