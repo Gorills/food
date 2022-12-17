@@ -518,10 +518,10 @@ $(document).ready(function(){
         $('body').addClass('body')
         $.get( "/cart/set_delivery/1/", function() { 
             $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__form-refresh").load(location.href + " .cart__form");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__form-refresh").load(location.href + " .cart__form");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             
 
         });
@@ -532,10 +532,10 @@ $(document).ready(function(){
 
         $.get( "/cart/set_delivery/1/", function() { 
             $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__form-refresh").load(location.href + " .cart__form");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__form-refresh").load(location.href + " .cart__form");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
            
 
         });
@@ -546,7 +546,7 @@ $(document).ready(function(){
         $('#id_address').css('border-color', '#eaedff')
         $('#id_phone').css('border-color', '#eaedff')
         $('.cart__select-error').hide()
-        $(".cart__form-refresh").load(location.href + " .cart__form");
+        // $(".cart__form-refresh").load(location.href + " .cart__form");
 
         
         
@@ -942,6 +942,15 @@ $(document).on('focus', '.phone' ,function(e){
 })
 
 
+$(".phone").on("blur", function() {
+    var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
+    if( last.length == 3 ) {
+        var move = $(this).val().substr( $(this).val().indexOf("-") - 1, 1 );
+        var lastfour = move + last;
+        var first = $(this).val().substr( 0, 9 );
+        $(this).val( first + '-' + lastfour );
+    }
+});
 
 // Номер телефона в корзине
 $(document).on('keyup', '.phone-sms' ,function(e){
