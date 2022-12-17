@@ -228,42 +228,38 @@ logger = logging.getLogger(__name__)
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from yookassa.domain.notification import WebhookNotification
 @csrf_exempt
 def order_webhook(request):
     if request.method == 'POST':
         
-      
-        post_json = request.body
-        logger.info(post_json)
-
-        
     
-        my_json = post_json.replace("'", '"').replace("\\n", '').replace("        ", '').replace('{  "type" : "notification",  "event" : "payment.succeeded",  "object" : {    ', '')
-        logger.info(my_json)
-        
-        s = my_json.split(',    "status"', 1)[0]
-        s = s.split(',    "status"', 1)[0]
-        s = s.replace('"id" : "', '').replace('"', '')
-
-        logger.info(s)
-        
-        pay_id = s
-
-        
-
+        event_json = json.loads(request.body)
+            
+        # Cоздайте объект класса уведомлений в зависимости от события
         try:
-            order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
-            data = get_status(pay_id)
+            notification_object = WebhookNotification(event_json)
+        except Exception as e:
+            print(e)
+            # обработка ошибок
+
+        # Получите объекта платежа
+        payment = notification_object.object
+        logger.info(payment)
+        
+        # try:
+        #     order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
+        #     data = get_status(pay_id)
 
             
-            if data['status'] == 'succeeded':
-                order = data['order']
-                order_telegram(order)
-                order.paid = True
-                order.save()
-                return HttpResponse("Webhook received!")
-        except:
-            return HttpResponse("Webhook received!")
+        #     if data['status'] == 'succeeded':
+        #         order = data['order']
+        #         order_telegram(order)
+        #         order.paid = True
+        #         order.save()
+        #         return HttpResponse(status=200)
+        # except:
+        #     return HttpResponse(status=200)
 
 
 
