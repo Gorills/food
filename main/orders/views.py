@@ -234,7 +234,7 @@ def order_webhook(request):
         
         # post_json = json.loads(request.body)
         # post_json = request.text
-        post_json = request.body.decode('utf-8')
+        post_json = request.body.encode()
         body_data = json.loads(post_json)
 
         # logger.info(body_data)
