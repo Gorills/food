@@ -235,7 +235,7 @@ def order_webhook(request):
         post_json = json.loads(request.body.decode())
         
 
-        logger.info("The value of var is %s", post_json)
+        logger.info("The value of var is %s", str(post_json))
 
         pay_id = post_json['object']['id']
 
