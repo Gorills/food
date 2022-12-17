@@ -258,7 +258,8 @@ def order_webhook(request):
                 order.paid = True
                 order.save()
                 return HttpResponse(status=200)
-        except:
+        except Exception as e:
+            logger.info(e)
             return HttpResponse(status=200)
 
 
