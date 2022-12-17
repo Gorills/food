@@ -234,6 +234,7 @@ def order_webhook(request):
         
       
         post_json = request.body
+        logger.info(post_json)
 
         
     
