@@ -239,7 +239,7 @@ def order_webhook(request):
 
         # logger.info(body_data)
         f = open( 'some_file.txt', 'w+')
-        f.write(body_data)
+        f.write(str(body_data))
 
         pay_id = body_data['object']['id']
 
