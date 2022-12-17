@@ -236,13 +236,12 @@ def order_webhook(request):
     
         event_json = json.loads(request.body)
             
-        # Cоздайте объект класса уведомлений в зависимости от события
+        
         try:
             notification_object = WebhookNotification(event_json)
         except Exception as e:
             print(e)
-            # обработка ошибок
-
+          
         # Получите объекта платежа
         payment = notification_object.object
         logger.info(payment)
