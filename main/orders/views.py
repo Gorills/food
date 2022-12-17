@@ -245,6 +245,7 @@ def order_webhook(request):
         # Получите объекта платежа
         payment = notification_object.object
         logger.info(payment.id)
+        return HttpResponse(status=200)
         
         # try:
         #     order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
