@@ -232,8 +232,8 @@ from django.views.decorators.csrf import csrf_exempt
 def order_webhook(request):
     if request.method == 'POST':
         
-        # post_json = json.loads(request.body.decode())
-        post_json = request.body
+        post_json = json.loads(request.body)
+        # post_json = request.body
         
 
         logger.info(post_json)
