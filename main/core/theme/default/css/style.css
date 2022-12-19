@@ -1416,6 +1416,7 @@ a {
   padding-left: 50px;
   padding-right: 20px;
   border: none;
+  color: #222;
   border-bottom: 1px solid #222;
   outline: none;
   font-size: 16px;
@@ -1423,6 +1424,7 @@ a {
 
 .search__input::placeholder {
   font-size: 16px;
+  color: #222;
 }
 
 .popup {

@@ -17,7 +17,7 @@ except:
 
 
 from .telegram import order_telegram, send_message
-
+from sms.views import send_sms
 
 from pay.models import PaymentSet
 try:
@@ -140,6 +140,8 @@ def order_create(request):
 
             else:
                 order_telegram(order)
+                text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+                send_sms(text, phone)
                 # очистка корзины
                 cart.clear()
                 return redirect('/?order=True')
@@ -204,6 +206,8 @@ def order_confirm(request, pk):
 
         if status == 'succeeded':
             order_telegram(order)
+            text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+            send_sms(text, order.phone)
             cart.clear()
             request.session['delivery'] = 1
             order.paid = True
@@ -250,6 +254,8 @@ def order_webhook(request):
             if status == 'succeeded':
                 
                 order_telegram(order)
+                text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+                send_sms(text, order.phone)
                 order.paid = True
                 order.save()
                 return HttpResponse(status=200)
@@ -274,6 +280,8 @@ def order_success(request):
         order = data['order']
 
         order_telegram(order)
+        text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+        send_sms(text, order.phone)
         cart.clear()
         request.session['delivery'] = 1
         order.paid = True
@@ -320,6 +328,8 @@ def paykeeper_success(request):
         order = data['order']
 
         order_telegram(order)
+        text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+        send_sms(text, order.phone)
         cart.clear()
         request.session['delivery'] = 1
         request.session['myorder_id'] = 0

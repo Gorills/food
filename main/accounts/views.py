@@ -105,8 +105,7 @@ def usersession_add(request):
 
        
 text = 'Код доступа'
-sender = 'INFORM'
-apikey = 'BS0H0F27LS92CU4G3YVZQ693A1QGCTQT2DBOF2NDKMB99465LQSU8O7RPU084Y60'
+
 
 import requests
 from datetime import datetime
@@ -114,6 +113,9 @@ import random
 def generate_code():
     random.seed()
     return str(random.randint(10000,99999))
+
+
+from sms.views import send_sms
 
 @require_POST
 def add_code(request):
@@ -139,8 +141,8 @@ def add_code(request):
         code = generate_code()
         request.session['code'] = code
 
-        url = "http://smspilot.ru/api.php?send="+'Ваш код:'+code+"&to="+phone+"&from="+sender+"&apikey="+apikey+"&format=json"
-        result = requests.get(url)
+        text = 'Ваш код: ' + code
+        send_sms(text, phone)
         # print(request.session['code'])
         
         return redirect('home')
