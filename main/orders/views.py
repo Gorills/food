@@ -140,7 +140,7 @@ def order_create(request):
 
             else:
                 order_telegram(order)
-                text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+                text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
                 send_sms(text, phone)
                 # очистка корзины
                 cart.clear()
@@ -206,7 +206,7 @@ def order_confirm(request, pk):
 
         if status == 'succeeded':
             order_telegram(order)
-            text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+            text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
             send_sms(text, order.phone)
             cart.clear()
             request.session['delivery'] = 1
@@ -254,7 +254,7 @@ def order_webhook(request):
             if status == 'succeeded':
                 
                 order_telegram(order)
-                text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+                text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
                 send_sms(text, order.phone)
                 order.paid = True
                 order.save()
@@ -280,7 +280,7 @@ def order_success(request):
         order = data['order']
 
         order_telegram(order)
-        text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+        text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
         send_sms(text, order.phone)
         cart.clear()
         request.session['delivery'] = 1
@@ -328,7 +328,7 @@ def paykeeper_success(request):
         order = data['order']
 
         order_telegram(order)
-        text = 'Заказ №'+str(order.id) + ' с сайта https://' + str(request.META['HTTP_HOST']) + ' успешно оформлен.'
+        text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
         send_sms(text, order.phone)
         cart.clear()
         request.session['delivery'] = 1

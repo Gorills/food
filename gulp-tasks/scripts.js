@@ -26,6 +26,24 @@ gulp.task("scripts", () => {
 		.pipe(browsersync.stream());
 });
 
+gulp.task("global_js", () => {
+    return gulp.src(paths.global_js.src)
+    
+		.pipe(gulp.dest(paths.global_js.dist))
+
+		.pipe(gulp.dest(paths.global_js.dist))
+		.pipe(browsersync.stream());
+});
+
+gulp.task("global_chinajs", () => {
+    return gulp.src(paths.global_chinajs.src)
+    
+		.pipe(gulp.dest(paths.global_chinajs.dist))
+
+		.pipe(gulp.dest(paths.global_chinajs.dist))
+		.pipe(browsersync.stream());
+});
+
 gulp.task("chinascripts", () => {
     return gulp.src(paths.chinascripts.src)
 		.pipe(gulp.dest(paths.chinascripts.dist))

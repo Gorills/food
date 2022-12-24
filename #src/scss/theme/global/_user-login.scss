@@ -24,3 +24,85 @@
         text-align: center;
     }
 }
+
+.user-login {
+
+    // .user-login__inner
+
+    &__inner {
+    }
+
+    // .user-login__title
+
+    &__title {
+    }
+
+    // .user-login__wrap
+
+    &__wrap {
+        display: flex;
+    }
+
+    // .user-login__input
+
+    &__input {
+        cursor: pointer;
+        height: 46px;
+        padding: 0 15px;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #eaedff;
+        background-color: var(--color-body);
+        color: var(--color-font);
+        white-space: nowrap;
+        transition: all 0.5s ease;
+        outline: none;
+    }
+
+    // .user-login__btn
+
+    &__btn {
+        cursor: pointer;
+        padding: 0 15px;
+        height: 46px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #eaedff;
+        background-color: var(--color-body);
+        color: var(--color-font);
+        white-space: nowrap;
+        transition: all 0.5s ease;
+        display: none;
+    }
+
+    // .user-login__sms
+
+    &__sms {
+        display: none;
+    }
+
+    // .user-login__sms-inner
+
+    &__sms-inner {
+        display: flex;
+    }
+
+    // .user-login__code
+
+    &__code {
+    }
+
+    // .user-login__input-sms-btn
+
+    &__input-sms-btn {
+        height: 46px;
+        padding: 0 15px;
+        border: 1px solid #eaedff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+}
+

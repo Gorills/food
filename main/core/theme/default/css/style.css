@@ -418,6 +418,16 @@ a {
   text-transform: uppercase;
 }
 
+.cart__form-success {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.cart__form-success label {
+  display: flex;
+  align-items: center;
+}
+
 .cart__form {
   border-left: 1px solid #e1e1e1;
   position: relative;
@@ -477,7 +487,7 @@ a {
 
 .cart__form-politic {
   font-size: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: var(--color-font);
 }
 
@@ -1585,6 +1595,57 @@ a {
 
 .user-login__title {
   text-align: center;
+}
+
+.user-login__wrap {
+  display: flex;
+}
+
+.user-login__input {
+  cursor: pointer;
+  height: 46px;
+  padding: 0 15px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eaedff;
+  background-color: var(--color-body);
+  color: var(--color-font);
+  white-space: nowrap;
+  transition: all 0.5s ease;
+  outline: none;
+}
+
+.user-login__btn {
+  cursor: pointer;
+  padding: 0 15px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eaedff;
+  background-color: var(--color-body);
+  color: var(--color-font);
+  white-space: nowrap;
+  transition: all 0.5s ease;
+  display: none;
+}
+
+.user-login__sms {
+  display: none;
+}
+
+.user-login__sms-inner {
+  display: flex;
+}
+
+.user-login__input-sms-btn {
+  height: 46px;
+  padding: 0 15px;
+  border: 1px solid #eaedff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .header {

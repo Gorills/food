@@ -37,7 +37,13 @@ def robots_txt(request):
                 "Disallow: /accounts/",
                 "Disallow: /login/",
                 "Disallow: *utm=",
-                
+                "Disallow: /order/",
+                "Disallow: /search/",
+                "Disallow: /bonus/",
+                "Disallow: *?sort=",
+                "Disallow: *?page=",
+                "Disallow: *?limit=",
+                "Disallow: *?order=",
 
                 "User-Agent: Yandex",
                 "Disallow: /admin/",
@@ -47,6 +53,13 @@ def robots_txt(request):
                 "Disallow: /accounts/",
                 "Disallow: /login/",
                 "Disallow: *utm=",
+                "Disallow: /order/",
+                "Disallow: /search/",
+                "Disallow: /bonus/",
+                "Disallow: *?sort=",
+                "Disallow: *?page=",
+                "Disallow: *?limit=",
+                "Disallow: *?order=",
                 "Clean-Param: utm_source&utm_medium&utm_campaign",
 
                 sitemap_txt
@@ -111,7 +124,7 @@ def home(request):
     # AlfaBank.delete()
     # cart = Cart(request)
     # cart.clear()
-
+    order_get = request.GET.getlist('order')
     
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
@@ -120,6 +133,7 @@ def home(request):
     sale_products = Product.objects.all().exclude(old_price=None)[:8]
     hit_products = Product.objects.all().order_by('-sales').exclude(sales=0)[:8]
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
+
 
     context = {
        
@@ -130,6 +144,7 @@ def home(request):
         'sale_products': sale_products,
         'news': news,
         'hit_products': hit_products,
+        'order_get': order_get
     }
     
     return render(request, 'home/home.html', context)

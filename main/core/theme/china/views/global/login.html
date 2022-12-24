@@ -24,23 +24,31 @@
             <h1 class="user-login__title title">Вход/регистрация</h1>
 
 
-            <div class="cart__input-phone">
-                <input id="id_phone" required name="phone" type="text" class="cart__input phone phone-sms phone-get" placeholder="+7 999 999 99 99">
-                <div class="cart__input-phone-btn-wrap" data-token="{{ csrf_token }}">
+            <div class="user-login__wrap">
+                <input required name="phone" type="text" class="user-login__input user-login__input-phone phone" placeholder="+7 999 999 99 99">
+                
+                <div class="" data-token="{{ csrf_token }}">
                     
-                    <div class="cart__input-phone-btn"  data-sub="false"> Подтвердить</div>
+                    <div class="user-login__btn" data-sub="false">Подтвердить</div>
                 </div>
 
-                <input type="text" required hidden name="subject">
+               
                 
             </div>
-
-            <div class="cart__input-sms">
-                <div class="cart__input-sms-inner">
-                    <input type="text" class="cart__input code_value" name="code" value="" placeholder="Код из смс">
-                    <div class="cart__input-sms-btn" data-token="{{ csrf_token }}" data-url="login">Ок</div>
-                </div>
+            <p class="cart__form-politic">Указывая номер телефона, Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
+            <div class="cart__form-success">
+                <label for="">
+                    Согласие на смс-рассылки информационного и рекламного характера
+                    <input type="checkbox" class="cart__form-success-sms" name="sms" checked>
+                </label>
             </div>
+
+            <div class="user-login__sms">
+                <div class="user-login__sms-inner">
+                    <input type="text" class="user-login__input user-login__code" name="code" value="" placeholder="Код из смс">
+                    <div class="user-login__input-sms-btn" data-token="{{ csrf_token }}" data-url="login">Ок</div>
+                </div>
+            </div> 
 
         </div>
     </div>

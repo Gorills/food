@@ -26,6 +26,16 @@ const requireDir = require("require-dir"),
                 "./#src/templates/theme/global/pages/*.html"
             ]
         },
+        global_js: {
+            src: [
+                "./#src/js/theme/global/**/*.js",
+                
+            ],
+            dist: "./main/core/theme/default/js/",
+            watch: [
+                "./#src/js/theme/global/**/*.js",
+            ]
+        },
         styles: {
             src: "./#src/scss/theme/default/style.{scss,sass}",
             dist: "./main/core/theme/default/css/",
@@ -93,6 +103,16 @@ const requireDir = require("require-dir"),
             watch: [
                 "./#src/templates/theme/global/**/*.html",
                 "./#src/templates/theme/global/pages/*.html"
+            ]
+        },
+        global_chinajs: {
+            src: [
+                "./#src/js/theme/global/**/*.js",
+                
+            ],
+            dist: "./main/core/theme/china/js/",
+            watch: [
+                "./#src/js/theme/global/**/*.js",
             ]
         },
         chinastyles: {
@@ -198,6 +218,7 @@ export const development = gulp.series("clean", "adminclean",
     gulp.parallel([
         "views", 
         'global_views',
+        'global_js',
         "styles", 
         "scripts", 
         "images", 
@@ -207,6 +228,7 @@ export const development = gulp.series("clean", "adminclean",
         "favicons",
         "chinaviews", 
         'global_chinaviews',
+        'global_chinajs',
         "chinastyles", 
         "chinascripts", 
         "chinaimages", 
@@ -229,7 +251,9 @@ export const development = gulp.series("clean", "adminclean",
 export const prod = gulp.series("clean", "adminclean",
     gulp.parallel([
         "views", 
+        "global_views",
         "styles", 
+        "global_js",
         "scripts", 
         "images", 
         "webp", 
@@ -239,6 +263,7 @@ export const prod = gulp.series("clean", "adminclean",
         // "gzip",
         "chinaviews", 
         'global_chinaviews',
+        'global_chinajs',
         "chinastyles", 
         "chinascripts", 
         "chinaimages", 

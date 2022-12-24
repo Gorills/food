@@ -4,7 +4,10 @@ from django.shortcuts import render
 import requests
 from setup.models import BaseSettings
 
-sms = BaseSettings.objects.get().sms
+try:
+    sms = BaseSettings.objects.get().sms
+except:
+    sms = False
 
 sender = 'INFORM'
 apikey = 'BS0H0F27LS92CU4G3YVZQ693A1QGCTQT2DBOF2NDKMB99465LQSU8O7RPU084Y60'
@@ -13,4 +16,5 @@ apikey = 'BS0H0F27LS92CU4G3YVZQ693A1QGCTQT2DBOF2NDKMB99465LQSU8O7RPU084Y60'
 def send_sms(text, phone):
     url = "http://smspilot.ru/api.php?send="+text+"&to="+phone+"&from="+sender+"&apikey="+apikey+"&format=json"
     if sms == True:
+        # pass
         result = requests.get(url)

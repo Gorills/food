@@ -80,10 +80,31 @@ class Login(LoginView):
 
 class Logout(LogoutView):
     template_name = 'account/logged_out.html'
+from django.views.decorators.http import require_POST
+def register(request):
+    if request.session['code']:
+        user_phone = request.POST['phone']
+        code = request.POST['code']
+        sms = request.POST['sms']
+
+        if request.session['code'] == code and request.session['phone'] == user_phone:
+            try:
+                userprofile = UserProfile.objects.get(phone=user_phone)
+                userprofile.use_sms = sms
+                userprofile.save()
+            except:
+                userprofile = UserProfile(phone=user_phone, use_sms = sms)
+                userprofile.save()
+
+            request.session['user_profile_id'] = userprofile.id
+            del request.session['code']
+            del request.session['code_date']
+            del request.session['phone']
+            return redirect('home')
+
 
 
 # Предварительная регистрация по телефону
-from django.views.decorators.http import require_POST
 @require_POST
 def usersession_add(request):
     if request.session['code']:
@@ -140,7 +161,7 @@ def add_code(request):
         request.session["code_date"] = str(datetime.now())
         code = generate_code()
         request.session['code'] = code
-
+        print(code)
         text = 'Ваш код: ' + code
         send_sms(text, phone)
         # print(request.session['code'])
