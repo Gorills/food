@@ -1,18 +1,31 @@
 .product-list {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     justify-content: space-between;
+    flex-wrap: wrap;
+    grid-gap: 20px;   
+    
+    @media screen and (max-width: 1200px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    @media screen and (max-width: 992px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    @media screen and (max-width: 480px) {
+        grid-template-columns: repeat(1, 1fr);
+    }
     // .product-list__item
 
     &__item {
-        width: 235px;
+        
+        width: 100%;
         margin-bottom: 30px;
         overflow: hidden;
         &--big {
-            width: 326px;
+            width: 100%;
             .product-list__top {
-                width: 326px;
+                width: 100%;
                 
                 display: flex;
                 flex-direction: column;
@@ -21,15 +34,15 @@
                  }
             }
             .product-list__thumb {
-                width: 326px;
-                height: 326px;
+                width: 100%;
+                height: 100%;
                 @media screen and (max-width:480px) {
                     width: 100%;
                  }
             }
             .product-list__image {
-                width: 326px;
-                height: 326px;
+                width: 100%;
+                height: 100%;
                 @media screen and (max-width:480px) {
                     width: 100%;
                  }
@@ -70,8 +83,9 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        width: 235px;
+        width: 100%;
         height: fit-content;
+        overflow: hidden;
         
         @media screen and (max-width:480px) {
             width: 100%;
@@ -203,6 +217,8 @@
     &__form {
         // opacity: 0;
         // position: absolute;
+        background-color: var(--color-body);
+
         bottom: 0;
         left: 0;
         right: 0;
@@ -237,8 +253,8 @@
         top: 0;
         left: 0;
         z-index: 1;
-        width: 235px;
-        height: 298px;
+        width: 100%;
+        height: 100%;
         transition: all .5s ease;
         object-fit: cover;
         @media screen and (max-width:480px) {
@@ -251,18 +267,13 @@
 
     &__bottom {
         padding: 20px 0 0 0;
-
-
-        @media screen and (max-width:480px) {
-            // padding: 60px 0 0 0 ;
-        }
     }
 
     // .product-list__title
 
     &__title {
         font-size: 18px;
-        @include china;
+        
         margin-bottom: 10px;
         font-weight: 700;
 

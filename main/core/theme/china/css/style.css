@@ -2430,35 +2430,37 @@ a {
 
 .product-list {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   justify-content: space-between;
+  flex-wrap: wrap;
+  grid-gap: 20px;
 }
 
 .product-list__item {
-  width: 235px;
+  width: 100%;
   margin-bottom: 30px;
   overflow: hidden;
 }
 
 .product-list__item--big {
-  width: 326px;
+  width: 100%;
 }
 
 .product-list__item--big .product-list__top {
-  width: 326px;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .product-list__item--big .product-list__thumb {
-  width: 326px;
-  height: 326px;
+  width: 100%;
+  height: 100%;
 }
 
 .product-list__item--big .product-list__image {
-  width: 326px;
-  height: 326px;
+  width: 100%;
+  height: 100%;
 }
 
 .product-list__item:hover .product-list__menu {
@@ -2481,8 +2483,9 @@ a {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 235px;
+  width: 100%;
   height: fit-content;
+  overflow: hidden;
 }
 
 .product-list__top-wrap {
@@ -2589,6 +2592,7 @@ a {
 }
 
 .product-list__form {
+  background-color: var(--color-body);
   bottom: 0;
   left: 0;
   right: 0;
@@ -2615,8 +2619,8 @@ a {
   top: 0;
   left: 0;
   z-index: 1;
-  width: 235px;
-  height: 298px;
+  width: 100%;
+  height: 100%;
   transition: all 0.5s ease;
   object-fit: cover;
 }
@@ -2627,7 +2631,6 @@ a {
 
 .product-list__title {
   font-size: 18px;
-  font-family: "ChinaCyr", sans-serif;
   margin-bottom: 10px;
   font-weight: 700;
 }
@@ -3398,6 +3401,10 @@ td.product-thumbnail img {
     margin-left: 30px;
   }
 
+  .product-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .product-detail__inner {
     flex-direction: column;
   }
@@ -3445,6 +3452,12 @@ td.product-thumbnail img {
 
   .header-bottom__list .header-bottom__dropdown-item + .header-bottom__dropdown-item {
     margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .product-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -3805,6 +3818,10 @@ td.product-thumbnail img {
 
   .sl .owl-next {
     display: none;
+  }
+
+  .product-list {
+    grid-template-columns: repeat(1, 1fr);
   }
 
   .product-list__item--big .product-list__top {
