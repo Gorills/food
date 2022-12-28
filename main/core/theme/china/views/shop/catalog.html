@@ -81,12 +81,15 @@
 </div>
 
 
-
-
-
-
 {% if shop_setup.description %}
-    {{ shop_setup.description | safe }}
+<div class="cat-desc">
+    <div class="container">
+        <div class="cat-desc__inner">
+            {{ shop_setup.description | safe }}
+
+        </div>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}
