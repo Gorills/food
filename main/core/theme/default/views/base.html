@@ -82,7 +82,7 @@
         }
     </style>
     <link href="{% get_libs 'owl/assets/owl.carousel.min.css' %}" rel="stylesheet">
-    <link href="{% get_static 'css/style.css' %}?v1.0.0" rel="stylesheet">
+    <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">
 
     {% for code in codes %}
         {% if code.h_f == True %}
