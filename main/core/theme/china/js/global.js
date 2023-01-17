@@ -387,7 +387,7 @@ $(document).on('click','.sort__option',function(){
 
 
 // Фильтры
-// !!! Какая то хуйня
+
 $(document).on('keyup','.filter__input',function(){
     // $(this).val($(this).val().replace(/[A-Za-zА-Яа-яЁё]/, ''))
     var filter = $(this).attr('data-filter')
