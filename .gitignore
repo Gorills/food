@@ -36,4 +36,5 @@ passenger_wsgi.py
 
 **/__pycache__
 **/migrations
+delivery.json
 

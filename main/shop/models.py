@@ -19,6 +19,8 @@ class ShopSetup(SingletonModel):
     delay = models.PositiveIntegerField(default=2, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
 
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')
+    zones_delivery = models.BooleanField(default=False, verbose_name='Включить зоны доставки')
+
     price_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость доставки', default=0)
     free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)
 

@@ -284,6 +284,7 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         // function remove(){
             $('.cart').removeClass('cart--active')
             $('.cart__form').hide()
+            $('#map').hide()
             $('body').removeClass('body')
 
         // }
@@ -542,6 +543,7 @@ $(document).ready(function(){
 
         $('.cart').removeClass('cart--active')
         $('.cart__form').hide()
+        $('#map').hide()
         $('body').removeClass('body')
         $('#id_address').css('border-color', '#eaedff')
         $('#id_phone').css('border-color', '#eaedff')
@@ -557,6 +559,7 @@ $(document).ready(function(){
     $(document).on('click','.cart__order',function(e){
         e.preventDefault()
         $('.cart__form').show()
+        $('#map').show()
     })
     
 
@@ -732,208 +735,188 @@ $(document).on('click','#delivery',function(e){
 
 })
 
+var deliveryArea;
+var myMap;
+ymaps.ready(init);
 
-var count_id_address = 0
-$(document).on('focus','#id_address',function(){
+function init() {
 
-    var city = $(this).attr('data-city')
-    if (count_id_address == 0) {
-        ymaps.ready(init);
-        function init(){
-            
-            var suggestView=new ymaps.SuggestView(
-            'id_address', {
-                provider: {
-                  suggest: (function(request, options) {
-          
-                    return ymaps.suggest(city + ", " + request)
-                    })
-                  }}
+    var city = $('#suggest').attr('data-city')
+    var zones = $('#suggest').attr('data-zones')
 
-                )
-            suggestView.events.add('select',function(event){
-                var selected=event.get('item').value;
-                ymaps.geocode(selected,{
-                    results:1
-                }).then(function(res){
-                    return ymaps.geocode(res.geoObjects.get(0).geometry.getCoordinates(),{
-                        kind:'district',
-                        results:10
-                    }).then(function(res){
-                        var founded=res['metaData']['geocoder']['found'];
-                        $('label.suggest .description').html("");
-                        for(i=0;i<=founded-1;i++){
-                            var info=res.geoObjects.get(i).properties.getAll();
-                            console.log(info);
-                            var name=info['name'];
-                            if(name.search('район')!=-1){
-                                name=name.replace(' район','');
-                                console.log(name);
-                            }
-                        }
-                    });
-                });
+    var suggestView=new ymaps.SuggestView(
+        'suggest', {
+            provider: {
+            suggest: (function(request, options) {
+    
+                return ymaps.suggest(city + ", " + request)
+                })
+            }}
+
+            );
+
+    if (zones == 'false') {
+        $(document).on('click', '.ymaps-2-1-79-suggest-item' ,function(e){
+            $('#finaladress').val($('#suggest').val())
+        })
+    } else {
+        
+
+        ymaps.geocode(city).then(function (res) {
+            myMap = new ymaps.Map('map', {
+                center: res.geoObjects.get(0).geometry.getCoordinates(),
+                zoom : 12
             });
-        //установка смещения блока подсказок по вертикали
-        document.getElementsByTagName('ymaps')[0].style.top = document.getElementsByTagName('ymaps')[0].style.top.match(/d+/)*1 + 5 + 'px';
-        //установка смещения блока подсказок по горизонтали
-        document.getElementsByTagName('ymaps')[0].style.left = document.getElementsByTagName('ymaps')[0].style.left.match(/d+/)*1 - 1 + 'px';
-        } 
+
+
+            function getzones() {
+                var flickerAPI = "core/libs/delivery.json";
+                $.getJSON( flickerAPI, {
+                    tags: "mount rainier",
+                    tagmode: "any",
+                    format: "json"
+                })
+                .done(function( data ) {
+                    var count = 0
+                    $.each(data.deliverys, function(index, val) {
+                        
+                        freeArea = new ymaps.Polygon(
+                            [
+                                val.coords
+                            ], {
+                                hintContent: val.hintContent,
+                                balloonContent: val.balloonContent,
+                                balloonContentHeader: val.balloonContentHeader,
+                                balloonContentBody: val.balloonContentBody,
+                                balloonContentFooter: val.balloonContentFooter
+                            }, {
+                        
+                            fillColor: val.fillColor,
+                            strokeColor: val.strokeColor,
+                            opacity: val.opacity
+                        });
+                    
+                        myMap.geoObjects.add(freeArea);
+    
+                        count+=1
+    
+                    })
+    
+                    
+    
+    
+                });
+            };
+            getzones()
+            $(document).on('click', '.ymaps-2-1-79-suggest-item' ,function(e){
+                geocode();
+                getzones()
+            })
+            function showError(message) {
+                $('#suggest').addClass('suggest-error')
+                $('#addressError').text(message)
+                $('#addressError').show()
+            }
+            function geocode() {
+                // Забираем запрос из поля ввода.
+                myMap.geoObjects.removeAll()
+                var request = $('#suggest').val();
+                // Геокодируем введённые данные.
+                ymaps.geocode(request).then(function (res) {
+                    var obj = res.geoObjects.get(0),
+                        error, hint;
+    
+                    if (obj) {
+                        // Об оценке точности ответа геокодера можно прочитать тут: https://tech.yandex.ru/maps/doc/geocoder/desc/reference/precision-docpage/
+                        switch (obj.properties.get('metaDataProperty.GeocoderMetaData.precision')) {
+                            case 'exact':
+                                break;
+                            case 'number':
+                            case 'near':
+                            case 'range':
+                                error = 'Уточните номер дома';
+                                hint = 'Уточните номер дома';
+                                break;
+                            case 'street':
+                                error = 'Уточните номер дома';
+                                hint = 'Уточните номер дома';
+                                break;
+                            case 'other':
+                            default:
+                                error = 'Уточните адрес';
+                                hint = 'Уточните адрес';
+                        }
+                    } else {
+                        error = 'Адрес не найден';
+                        hint = 'Уточните адрес';
+                    }
+    
+                    // Если геокодер возвращает пустой массив или неточный результат, то показываем ошибку.
+                    if (error) {
+                        showError(error)
+                        
+                    } else {
+                        // showResult(obj);
+                        
+                        var deliveryText = ''
+                        myMap.geoObjects.each(function (item) {
+                            if(item.geometry.getType() == "Polygon"){
+                                if (item.geometry.contains(obj.geometry._coordinates)) {
+                                    deliveryText = item.properties._data.hintContent
+                                    deliveryPrice = item.properties._data.hintContent
+                                    console.log(deliveryText)
+    
+                                    myGeoObject = new ymaps.GeoObject({
+                                        // Описание геометрии.
+                                        geometry: {
+                                            type: "Point",
+                                            coordinates: obj.geometry._coordinates
+                                        },
+                                        // Свойства.
+                                        properties: {
+                                            iconContent: 'Я тут',
+                                        }
+                                    }, {
+                                        // Опции.
+                                        // Иконка метки будет растягиваться под размер ее содержимого.
+                                        preset: 'islands#blackStretchyIcon',
+                                        // Метку можно перемещать.
+                                        draggable: false
+                                    })
+                                    $('#suggest').removeClass('suggest-error')
+                                    $('#addressError').text('')
+                                    $('#addressError').hide()
+                                    myMap.geoObjects.removeAll()
+                                    getzones()
+                                    myMap.geoObjects.add(item)
+                                    myMap.geoObjects.add(myGeoObject)
+                                    $('#finaladress').val($('#suggest').val())
+    
+                                } else {
+    
+    
+                                    showError('Нет доставки')
+                                    $('#finaladress').val('')
+    
+                                }
+    
+                            }
+    
+                        })
+                        
+                        
+                    }
+                }, function (e) {
+                    console.log(e.geometry._coordinates)
+                })
+    
+            }
+        });
+
     }
-    count_id_address +=1 
-})
-
-
-
-
-
-
-
-// ymaps.ready(init);
-// function init() {
-//     var myMap;
     
-//     ymaps.geolocation.get().then(function (res) {
-//         var mapContainer = $('#map'),
-//             bounds = res.geoObjects.get(0).properties.get('boundedBy'),
-//             // Рассчитываем видимую область для текущей положения пользователя.
-//             mapState = ymaps.util.bounds.getCenterAndZoom(
-//                 bounds,
-//                 [10, 10]
-//             );
-            
-//         createMap(mapState);
+}
 
-        
-//     }, function (e) {
-//         // Если местоположение невозможно получить, то просто создаем карту.
-//         createMap({
-//             center: [55.751574, 37.573856],
-//             zoom: 2
-//         });
-//     });
-    
-//     function createMap (state) {
-        
-//         var myMap = new ymaps.Map('map', state),
-
-//             deliveryPoint = new ymaps.GeoObject({
-//                 geometry: {type: 'Point'},
-//                 properties: {iconCaption: 'Адрес'}
-//             }, {
-//                 preset: 'islands#blackDotIconWithCaption',
-//                 draggable: true,
-//                 iconCaptionMaxWidth: '215'
-//             }),
-//             searchControl = myMap.controls.get('searchControl');
-//         searchControl.options.set({noPlacemark: true, placeholderContent: 'Введите адрес доставки'});
-//         myMap.geoObjects.add(deliveryPoint);
-//         // myMap.controls.remove('zoomControl');
-//         // myMap.controls.remove('searchControl');
-        
-//         function onZonesLoad(json) {
-//             // Добавляем зоны на карту.
-//             var deliveryZones = ymaps.geoQuery(json).addToMap(myMap);
-//             // Задаём цвет и контент балунов полигонов.
-//             deliveryZones.each(function (obj) {
-//                 obj.options.set({
-//                     fillColor: obj.properties.get('fill'),
-//                     fillOpacity: obj.properties.get('fill-opacity'),
-//                     strokeColor: obj.properties.get('stroke'),
-//                     strokeWidth: obj.properties.get('stroke-width'),
-//                     strokeOpacity: obj.properties.get('stroke-opacity')
-//                 });
-//                 obj.properties.set('balloonContent', obj.properties.get('description'));
-//             });
-
-
-
-//             // Проверим попадание результата поиска в одну из зон доставки.
-//             searchControl.events.add('resultshow', function (e) {
-//                 highlightResult(searchControl.getResultsArray()[e.get('index')]);
-                
-//             });
-
-            
-//             // Проверим попадание метки геолокации в одну из зон доставки.
-//             myMap.controls.get('geolocationControl').events.add('locationchange', function (e) {
-//                 highlightResult(e.get('geoObjects').get(0));
-//             });
-
-//             // При перемещении метки сбрасываем подпись, содержимое балуна и перекрашиваем метку.
-//             deliveryPoint.events.add('dragstart', function () {
-//                 deliveryPoint.properties.set({iconCaption: '', balloonContent: ''});
-//                 deliveryPoint.options.set('iconColor', 'black');
-//             });
-
-//             // По окончании перемещения метки вызываем функцию выделения зоны доставки.
-//             deliveryPoint.events.add('dragend', function () {
-//                 highlightResult(deliveryPoint);
-//             });
-
-//             function highlightResult(obj) {
-//                 // Сохраняем координаты переданного объекта.
-//                 var coords = obj.geometry.getCoordinates(),
-//                 // Находим полигон, в который входят переданные координаты.
-//                     polygon = deliveryZones.searchContaining(coords).get(0);
-
-//                 if (polygon) {
-//                     // Уменьшаем прозрачность всех полигонов, кроме того, в который входят переданные координаты.
-//                     deliveryZones.setOptions('fillOpacity', 0.2);
-//                     polygon.options.set('fillOpacity', 0.4);
-//                     // Перемещаем метку с подписью в переданные координаты и перекрашиваем её в цвет полигона.
-//                     deliveryPoint.geometry.setCoordinates(coords);
-//                     deliveryPoint.options.set('iconColor', polygon.properties.get('fill'));
-//                     // Задаем подпись для метки.
-//                     if (typeof(obj.getThoroughfare) === 'function') {
-//                         setData(obj);
-//                     } else {
-//                         // Если вы не хотите, чтобы при каждом перемещении метки отправлялся запрос к геокодеру,
-//                         // закомментируйте код ниже.
-//                         ymaps.geocode(coords, {results: 1}).then(function (res) {
-//                             var obj = res.geoObjects.get(0);
-//                             setData(obj);
-//                         });
-//                     }
-//                 } else {
-//                     // Если переданные координаты не попадают в полигон, то задаём стандартную прозрачность полигонов.
-//                     deliveryZones.setOptions('fillOpacity', 0.4);
-//                     // Перемещаем метку по переданным координатам.
-//                     deliveryPoint.geometry.setCoordinates(coords);
-//                     // Задаём контент балуна и метки.
-//                     deliveryPoint.properties.set({
-//                         iconCaption: 'Нет доставки',
-//                         balloonContent: 'Cвяжитесь с оператором',
-//                         balloonContentHeader: ''
-//                     });
-//                     // Перекрашиваем метку в чёрный цвет.
-//                     deliveryPoint.options.set('iconColor', 'black');
-//                 }
-
-//                 function setData(obj){
-//                     var address = [obj.getThoroughfare(), obj.getPremiseNumber(), obj.getPremise()].join(' ');
-//                     if (address.trim() === '') {
-//                         address = obj.getAddressLine();
-//                     }
-//                     var price = polygon.properties.get('description');
-//                     price = price.match(/<strong>(.+)<\/strong>/)[1];
-//                     deliveryPoint.properties.set({
-//                         iconCaption: address,
-//                         balloonContent: address,
-//                         balloonContentHeader: price
-//                     });
-//                 }
-//             }
-//         }
-        
-//         $.ajax({
-//             url: 'core/libs/data.geojson',
-//             dataType: 'json',
-//             success: onZonesLoad
-//         });
-
-//     }
-// }
 
 
 

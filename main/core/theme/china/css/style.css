@@ -751,6 +751,26 @@ a {
   font-size: 12px;
 }
 
+.cart .address-error {
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: red;
+  margin-top: -10px;
+  display: none;
+}
+
+.cart .suggest-error {
+  border-color: red;
+}
+
+.ymaps-2-1-79-search__suggest {
+  top: 0 !important;
+}
+
+#map {
+  display: none;
+}
+
 .id_phone-wrap {
   position: relative;
 }
