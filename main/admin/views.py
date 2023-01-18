@@ -1735,7 +1735,7 @@ def zone_file(request):
             })
             
 
-        with open(os.path.join('core/libs/', 'delivery.json'), 'w', encoding='utf-8') as f:
+        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
             json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         
