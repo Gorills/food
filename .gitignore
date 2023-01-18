@@ -33,6 +33,8 @@ venv
 passenger_wsgi.py
 
 **/ckeditor
+.bash_history
+.ssh
 
 **/__pycache__
 **/migrations
