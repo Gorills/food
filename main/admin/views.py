@@ -1678,6 +1678,8 @@ def users_delete(request, pk):
 
 # !!! Загрузка файлла с зонами доставки !!!
 import json
+import os
+
 @user_passes_test(lambda u: u.is_superuser)
 def zone_file(request):
 
@@ -1733,7 +1735,7 @@ def zone_file(request):
             })
             
 
-        with open('core/libs/delivery.json', 'w', encoding='utf-8') as f:
+        with open(os.path.join('core/libs/', 'delivery.json'), 'w', encoding='utf-8') as f:
             json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         
