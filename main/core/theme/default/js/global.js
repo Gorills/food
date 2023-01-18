@@ -836,16 +836,9 @@ function init() {
                             strokeColor: val.strokeColor,
                             opacity: val.opacity
                         });
-                    
                         myMap.geoObjects.add(freeArea);
-    
                         count+=1
-    
                     })
-    
-                    
-    
-    
                 });
             };
             getzones()

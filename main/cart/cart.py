@@ -151,7 +151,11 @@ class Cart(object):
             if self.get_d == 1:
 
                 if self.get_sum:
-                    return self.get_sum
+                    if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+                        summ = Decimal(0)
+                        return summ
+                    else:
+                        return self.get_sum
 
                 else:
                     summ = Decimal(0)
