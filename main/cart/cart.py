@@ -3,7 +3,11 @@ from django.conf import settings
 from shop.models import Product, Product, ShopSetup
 from coupons.models import Coupon
 
-del_zones = ShopSetup.objects.get().zones_delivery
+
+try:
+    del_zones = ShopSetup.objects.get().zones_delivery
+except:
+    del_zones = False
 
 
 try:
