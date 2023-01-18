@@ -1,0 +1,17 @@
+
+.author {
+    background-color: var(--color-bg-dark);
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    // .author__inner
+
+    &__inner {
+
+        a {
+            text-decoration: underline;
+            color: #fff;
+            font-weight: 700;
+        }
+    }
+}
