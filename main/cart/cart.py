@@ -30,7 +30,7 @@ class Cart(object):
         get_sum = request.session.get('delivery_summ')
 
         if not get_sum:
-            self.get_d = 1
+            self.get_d = 0
         self.get_sum = get_sum
 
         if not get_d:
@@ -148,14 +148,14 @@ class Cart(object):
     def get_delivery(self):
 
         if del_zones:
-
-
             if self.get_d == 1:
+
                 if self.get_sum:
                     return self.get_sum
 
                 else:
-                    return 0
+                    summ = Decimal(0)
+                    return summ
             else:
                 summ = Decimal(0)
                 return summ

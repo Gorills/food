@@ -357,6 +357,11 @@
                     <div class="cart__order-create-wrapper">
                         <div class="cart__order-create-wrapper-inner">
                             
+                            <div class="cart__order-line">
+                                <p class="cart__order-line-text">Доставка:</p>
+                                <p class="cart__order-line-summ"> {{ cart.get_delivery | floatformat:"2" }} ₽</p>
+
+                            </div>
 
                             {% if cart.coupon %}
 
