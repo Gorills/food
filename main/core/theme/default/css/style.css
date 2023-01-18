@@ -3544,6 +3544,10 @@ td.product-thumbnail img {
     max-height: 90px;
   }
 
+  .header__logo-wrap {
+    max-height: fit-content;
+  }
+
   .header__nav {
     position: fixed;
     top: 0;
@@ -3799,10 +3803,6 @@ td.product-thumbnail img {
 
   .popup__inner {
     padding: 20px;
-  }
-
-  .header__logo-wrap {
-    max-height: fit-content;
   }
 
   .header__right {

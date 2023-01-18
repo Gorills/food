@@ -38,6 +38,10 @@ urlpatterns = [
     path('promo/edit/<int:pk>/', views.promo_edit, name='promo_edit'),
     path('promo/delete/<int:pk>/', views.promo_delete, name='promo_delete'),
 
+    # zone file
+
+    path('zone_file/', views.zone_file, name='zone_file'),
+
     # shop
     path('shop_settings/', views.shop_settings, name='shop_settings'),
     path('category/', views.admin_category, name='admin_category'),

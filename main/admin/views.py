@@ -1673,3 +1673,76 @@ def users_delete(request, pk):
 
 
 # !!! Пользователи USERS !!!
+
+
+
+# !!! Загрузка файлла с зонами доставки !!!
+import json
+@user_passes_test(lambda u: u.is_superuser)
+def zone_file(request):
+
+    if request.method == 'POST':
+        json_file = request.FILES['file']
+        
+        
+        deliverys = json.load(json_file)
+
+        new_file = {
+            "deliverys": [
+
+            ]
+        }
+
+        for d in deliverys['features']:
+
+            
+
+            
+            if d['properties']['description'] == '0':
+                hintContent = 'Зона бесплатной доставки'
+                balloonContent = 'Бесплатная доставка'
+                balloonContentHeader = 'Зона бесплатной доставки'
+                balloonContentBody = 'Стоимость доставки'
+                balloonContentFooter = d['properties']['description'] + ' рублей'
+            else:
+                hintContent = 'Зона платной доставки'
+                balloonContent = 'Платная доставка'
+                balloonContentHeader = 'Зона платной доставки'
+                balloonContentBody = 'Стоимость доставки'
+                balloonContentFooter = d['properties']['description'] + ' рублей'
+
+            coords = []
+
+            for i in d['geometry']['coordinates']:
+                for l in i:
+                    coords.append(
+                        [str(l[1]), str(l[0])]
+                    )
+
+            new_file['deliverys'].append({
+                'hintContent': hintContent,
+                'balloonContent': balloonContent,
+                'balloonContentHeader': balloonContentHeader,
+                'balloonContentBody': balloonContentBody,
+                'balloonContentFooter': balloonContentFooter,
+
+                'coords': coords,
+                "fillColor": d['properties']['fill'],
+                "strokeColor": d['properties']['stroke'],
+                "opacity": d['properties']['fill-opacity'],
+            })
+            
+
+        with open('core/libs/delivery.json', 'w', encoding='utf-8') as f:
+            json.dump(new_file, f, ensure_ascii=False, indent=4)
+
+        
+
+
+        return redirect('shop_settings')
+
+
+
+
+
+# !!! Загрузка файлла с зонами доставки !!!

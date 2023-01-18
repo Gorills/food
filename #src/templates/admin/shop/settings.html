@@ -30,6 +30,15 @@
             <button class="btn btn--primary">Сохранить</button>
 
         </form>
+        <form action="{% url 'zone_file' %}" class="form" method="post" enctype="multipart/form-data">
+            Файл с зонами доставки (подготовлен черех конструктор Яндекс карт)
+
+            <input type="file" name="file">
+            {% csrf_token %}
+            
+            <button class="btn btn--primary">Сохранить</button>
+
+        </form>
 
     
 </div>
