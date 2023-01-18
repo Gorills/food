@@ -753,6 +753,30 @@
         }
     }
 
+    // .cart__deliv-method
+    &__deliv-method {
+        display: flex;
+    }
+
+    // .cart__form-refresh-delivery
+    &__form-refresh-delivery {
+        display: none;
+
+        &--active {
+            display: block;
+        }
+    }
+
+    // .cart__pickup-row
+    &__pickup-row {
+        display: none;
+        margin-bottom: 10px;
+
+        &--active {
+            display: block;
+        }
+    }
+
     .address-error {
         font-size: 12px;
         margin-bottom: 10px;
@@ -772,6 +796,10 @@
 
 #map {
     display: none;
+
+    @media screen and (max-width: 768px) {
+        display: none!important;
+    }
 }
 
 .id_phone-wrap {

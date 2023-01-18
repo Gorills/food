@@ -100,3 +100,8 @@ def cart_detail(request):
 def set_delivery(request, value): 
     request.session['delivery'] = value
     return redirect('home')
+
+
+def delivery_summ(request, value): 
+    request.session['delivery_summ'] = value
+    return redirect('home')

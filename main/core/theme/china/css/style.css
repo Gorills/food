@@ -751,6 +751,27 @@ a {
   font-size: 12px;
 }
 
+.cart__deliv-method {
+  display: flex;
+}
+
+.cart__form-refresh-delivery {
+  display: none;
+}
+
+.cart__form-refresh-delivery--active {
+  display: block;
+}
+
+.cart__pickup-row {
+  display: none;
+  margin-bottom: 10px;
+}
+
+.cart__pickup-row--active {
+  display: block;
+}
+
 .cart .address-error {
   font-size: 12px;
   margin-bottom: 10px;
@@ -3542,6 +3563,10 @@ td.product-thumbnail img {
 
   .cart #cancel {
     display: inline-block;
+  }
+
+  #map {
+    display: none !important;
   }
 
   .order-detail__inner {

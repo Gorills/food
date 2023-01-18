@@ -121,10 +121,15 @@
         
         <div class="cart__form">
             <div class="cart__form-wrap">
-               
-                <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
-                <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
-                <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
+
+                <div class="cart__deliv-method-wrap">
+                    <div class="cart__deliv-method">
+                
+                        <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
+                        <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
+                        <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
+                    </div>
+                </div>
 
             </div>
             
@@ -202,16 +207,17 @@
                     
         
 
-                    <div class="cart__form-refresh-delivery">
+                    <div class="cart__form-refresh-delivery {% if request.session.delivery == 1 %}cart__form-refresh-delivery--active{% endif %}">
 
                         <div class="cart__form-refresh-delivery-inner">
                             
                             <div class="cart__input-address-wrap">
-                                <input required type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="suggest">
+                                <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="suggest">
                                 <div id="addressError" class="address-error"></div>
-                                <input name="address" type="text" required id="finaladress" hidden>
+                                <input {% if request.session.delivery == 1 %}required{% endif %} {% if request.session.delivery == 1 %}name="address"{% endif %} type="text" id="finaladress" hidden>
                                 
-
+                            
+                                
                             </div>
                             <div class="cart__input-wrap">
                                 <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
@@ -222,6 +228,15 @@
                             <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
 
                         </div>
+                    </div>
+
+                    <div class="cart__pickup-row {% if request.session.delivery == 0 %}cart__pickup-row--active{% endif %}">
+
+                        <p class="cart__order-text-address-text">Самовывоз:</p>
+                        <p class="cart__order-text-address">{{ setup.address }}</p>
+                        <input id="pickupInput" type="text" {% if request.session.delivery == 0 %}name="address"{% endif %} hidden value="{{ setup.address }}">
+
+
                     </div>
 
 

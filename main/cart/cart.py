@@ -3,6 +3,9 @@ from django.conf import settings
 from shop.models import Product, Product, ShopSetup
 from coupons.models import Coupon
 
+del_zones = ShopSetup.objects.get().zones_delivery
+
+
 try:
     price_delivery = ShopSetup.objects.get().price_delivery
     free_delivery = ShopSetup.objects.get().free_delivery
@@ -24,6 +27,11 @@ class Cart(object):
 
 
         get_d = request.session.get('delivery')
+        get_sum = request.session.get('delivery_summ')
+
+        if not get_sum:
+            self.get_d = 1
+        self.get_sum = get_sum
 
         if not get_d:
             self.get_d = 1
@@ -139,17 +147,32 @@ class Cart(object):
 
     def get_delivery(self):
 
-        if self.get_d == 1:
-       
-            if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+        if del_zones:
+
+
+            if self.get_d == 1:
+                if self.get_sum:
+                    return self.get_sum
+
+                else:
+                    return 0
+            else:
                 summ = Decimal(0)
                 return summ
-            else:
-                return price_delivery
+
 
         else:
-            summ = Decimal(0)
-            return summ
+            if self.get_d == 1:
+        
+                if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+                    summ = Decimal(0)
+                    return summ
+                else:
+                    return price_delivery
+
+            else:
+                summ = Decimal(0)
+                return summ
 
     def get_total_price(self):
         """

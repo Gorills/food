@@ -154,19 +154,33 @@ $(document).on('click','.search__closer',function(e){
 $(function() {
     $(document).on('submit','.product-list__form, .product-detail__form',function(e){
       var $form = $(this);
-      $.get( "/cart/set_delivery/1/", function() { 
-        $(".cart__inner").load(location.href + " .cart__refresh");
-        
-        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+      
 
-        });
       $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
         data: $form.serialize()
       }).done(function() {
+
+        $.get( "/cart/set_delivery/1/", function() { 
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+            $('#suggest').attr('required', 'required')
+            $('#finaladress').attr('required', 'required')
+            $('#finaladress').attr('name', 'address')
+            $('#pickupInput').removeAttr('name')
+            $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
+            $('.cart__pickup-row').removeClass('cart__pickup-row--active')
+            $('#delivery_method').val('Доставка')
+    
+        });
+
+
         $(".cart__inner").load(location.href + " .cart__refresh");
         
         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
@@ -519,7 +533,7 @@ $(document).ready(function(){
         $('body').addClass('body')
         $.get( "/cart/set_delivery/1/", function() { 
             $(".cart__inner").load(location.href + " .cart__refresh");
-            // 
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
@@ -533,7 +547,8 @@ $(document).ready(function(){
 
         $.get( "/cart/set_delivery/1/", function() { 
             $(".cart__inner").load(location.href + " .cart__refresh");
-            // 
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
@@ -657,7 +672,7 @@ $(function() {
         var getData = $('#data').attr('data-value')
         var payMethod = $('#pay_method').attr('data-value')
         var getPhone = $('#id_phone').val()
-        var getAddress = $('#id_address').val()
+        var getAddress = $('#finaladress').val()
 
         var getPhoneSubject = $('.cart__input-phone-btn').attr('data-sub')
 
@@ -668,9 +683,9 @@ $(function() {
             $('#id_phone').css('border-color', '#eaedff')
         }
         if (getAddress == '') {
-            $('#id_address').css('border-color', 'red')
+            $('#suggest').addClass('suggest-error')
         } else {
-            $('#id_address').css('border-color', '#eaedff')
+            $('#suggest').removeClass('suggest-error')
         }
         if(getOrderTime=='0') {
             $('#order_time').children().children('.cart__select-error').show()
@@ -722,18 +737,36 @@ $(document).on('click','.cart__form-btn',function(e){
 $(document).on('click','#pickup',function(e){
 
     
+    $('.cart__form-refresh-delivery').removeClass('cart__form-refresh-delivery--active')
+    $('.cart__pickup-row').addClass('cart__pickup-row--active')
+
+    $('#suggest').removeAttr('required')
+    $('#finaladress').removeAttr('required')
+    $('#finaladress').removeAttr('name')
+
+    $('#suggest').val('')
+    $('#finaladress').val('')
+
+    $('#pickupInput').attr('name', 'address')
+
+
+
     $('#delivery_method').val('Самовывоз')
-    var htmlReplace = $('.cart__order-pickup-inner-html').html()
-
-    // console.log(htmlReplace)
-
-    $('.cart__form-refresh-delivery').html(htmlReplace)
 
 })
 
 $(document).on('click','#delivery',function(e){
 
-    $(".cart__form-refresh-delivery").load(location.href + " .cart__form-refresh-delivery-inner");   
+    $('#suggest').attr('required', 'required')
+    $('#finaladress').attr('required', 'required')
+    $('#finaladress').attr('name', 'address')
+
+
+    $('#pickupInput').removeAttr('name')
+
+
+    $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
+    $('.cart__pickup-row').removeClass('cart__pickup-row--active')
     $('#delivery_method').val('Доставка')
 
 })
@@ -762,7 +795,7 @@ function init() {
         );
 
     if (zones == 'false') {
-        $(document).on('click', '.ymaps-2-1-79-suggest-item' ,function(e){
+        $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
             $('#finaladress').val($('#suggest').val())
         })
     } else {
@@ -771,7 +804,9 @@ function init() {
         ymaps.geocode(city).then(function (res) {
             myMap = new ymaps.Map('map', {
                 center: res.geoObjects.get(0).geometry.getCoordinates(),
-                zoom : 12
+                zoom : 12,
+                controls: []
+
             });
 
 
@@ -814,7 +849,7 @@ function init() {
                 });
             };
             getzones()
-            $(document).on('click', '.ymaps-2-1-79-suggest-item' ,function(e){
+            $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
                 geocode();
                 getzones()
             })
@@ -868,8 +903,25 @@ function init() {
                         myMap.geoObjects.each(function (item) {
                             if(item.geometry.getType() == "Polygon"){
                                 if (item.geometry.contains(obj.geometry._coordinates)) {
-                                    deliveryText = item.properties._data.hintContent
-                                    deliveryPrice = item.properties._data.hintContent
+
+                                    var deliveryText = item.properties._data.hintContent
+                                    var deliveryPrice = item.properties._data.balloonContentFooter
+                                    var sd=parseInt(deliveryPrice);
+                                    $.get( "/cart/delivery_summ/"+sd+'/', function() { 
+                                        $(".cart__inner").load(location.href + " .cart__refresh");
+                                        
+                                        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+                                        $(".header__cart-wrap").load(location.href + " .header__cart");
+                                        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+                                        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+                            
+                                        
+                                
+                                    });
+
+
+
+                                    console.log(deliveryPrice)
                                     console.log(deliveryText)
     
                                     myGeoObject = new ymaps.GeoObject({
@@ -897,13 +949,12 @@ function init() {
                                     myMap.geoObjects.add(item)
                                     myMap.geoObjects.add(myGeoObject)
                                     $('#finaladress').val($('#suggest').val())
+                                    myMap.setCenter(obj.geometry._coordinates);
+                                    myMap.setZoom(17);
     
                                 } else {
-    
-    
                                     showError('Нет доставки')
                                     $('#finaladress').val('')
-    
                                 }
     
                             }

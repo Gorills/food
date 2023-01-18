@@ -67,5 +67,6 @@ def order_telegram(order):
     try:
         send_message(message)
     except Exception as e:
-        print(e)
+        # print(e)
+        pass
         
