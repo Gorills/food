@@ -6,13 +6,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
+from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import UserProfile
 
 from orders.models import Order
-from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
+from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -489,6 +489,102 @@ def order_delete(request, pk):
 
 
 
+# !!! Загрузка файлла с зонами доставки !!!
+import json
+import os
+
+@user_passes_test(lambda u: u.is_superuser)
+def zone_file(request):
+
+    if request.method == 'POST':
+        json_file = request.FILES['file']
+        deliverys = json.load(json_file)
+        new_file = {
+            "deliverys": [
+            ]
+        }
+        for d in deliverys['features']:
+            if d['properties']['description'] == '0':
+                hintContent = 'Зона бесплатной доставки'
+                balloonContent = 'Бесплатная доставка'
+                balloonContentHeader = 'Зона бесплатной доставки'
+                balloonContentBody = 'Стоимость доставки'
+                balloonContentFooter = d['properties']['description'] + ' рублей'
+            else:
+                hintContent = 'Зона платной доставки'
+                balloonContent = 'Платная доставка'
+                balloonContentHeader = 'Зона платной доставки'
+                balloonContentBody = 'Стоимость доставки'
+                balloonContentFooter = d['properties']['description'] + ' рублей'
+            coords = []
+            for i in d['geometry']['coordinates']:
+                for l in i:
+                    coords.append(
+                        [str(l[1]), str(l[0])]
+                    )
+            new_file['deliverys'].append({
+                'hintContent': hintContent,
+                'balloonContent': balloonContent,
+                'balloonContentHeader': balloonContentHeader,
+                'balloonContentBody': balloonContentBody,
+                'balloonContentFooter': balloonContentFooter,
+                'coords': coords,
+                "fillColor": d['properties']['fill'],
+                "strokeColor": d['properties']['stroke'],
+                "opacity": d['properties']['fill-opacity'],
+            })
+        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
+            json.dump(new_file, f, ensure_ascii=False, indent=4)
+        return redirect('shop_settings')
+
+# !!! Загрузка файлла с зонами доставки !!!
+
+
+# !!! Добавить зону доставки !!!
+@user_passes_test(lambda u: u.is_superuser)
+def add_zone(request):
+    if request.method == 'POST':
+        form = PickupAreasForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/zones/add_zone.html', {'form':form})
+    form = PickupAreasForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/zones/add_zone.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_zone(request, pk):
+    zone = PickupAreas.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PickupAreasForm(request.POST, request.FILES, instance=zone)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/zones/add_zone.html', {'form':form})
+    form = PickupAreasForm(instance=zone)
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/zones/add_zone.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_zone(request, pk):
+    zone = PickupAreas.objects.get(id=pk)
+    zone.delete()
+    return redirect('shop_settings')
+
+
+
+# !!! Добавить зону доставки !!!
+
+
 # !!!!! МАГАЗИН !!!!! 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -515,7 +611,8 @@ def shop_settings(request):
 
 
     context = {
-        'form': form
+        'form': form,
+        'zones': PickupAreas.objects.all()
     }
 
     return render(request, 'shop/settings.html', context)
@@ -1676,75 +1773,9 @@ def users_delete(request, pk):
 
 
 
-# !!! Загрузка файлла с зонами доставки !!!
-import json
-import os
-
-@user_passes_test(lambda u: u.is_superuser)
-def zone_file(request):
-
-    if request.method == 'POST':
-        json_file = request.FILES['file']
-        
-        
-        deliverys = json.load(json_file)
-
-        new_file = {
-            "deliverys": [
-
-            ]
-        }
-
-        for d in deliverys['features']:
-
-            
-
-            
-            if d['properties']['description'] == '0':
-                hintContent = 'Зона бесплатной доставки'
-                balloonContent = 'Бесплатная доставка'
-                balloonContentHeader = 'Зона бесплатной доставки'
-                balloonContentBody = 'Стоимость доставки'
-                balloonContentFooter = d['properties']['description'] + ' рублей'
-            else:
-                hintContent = 'Зона платной доставки'
-                balloonContent = 'Платная доставка'
-                balloonContentHeader = 'Зона платной доставки'
-                balloonContentBody = 'Стоимость доставки'
-                balloonContentFooter = d['properties']['description'] + ' рублей'
-
-            coords = []
-
-            for i in d['geometry']['coordinates']:
-                for l in i:
-                    coords.append(
-                        [str(l[1]), str(l[0])]
-                    )
-
-            new_file['deliverys'].append({
-                'hintContent': hintContent,
-                'balloonContent': balloonContent,
-                'balloonContentHeader': balloonContentHeader,
-                'balloonContentBody': balloonContentBody,
-                'balloonContentFooter': balloonContentFooter,
-
-                'coords': coords,
-                "fillColor": d['properties']['fill'],
-                "strokeColor": d['properties']['stroke'],
-                "opacity": d['properties']['fill-opacity'],
-            })
-            
-
-        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
-            json.dump(new_file, f, ensure_ascii=False, indent=4)
-
-        
-
-
-        return redirect('shop_settings')
 
 
 
 
 
-# !!! Загрузка файлла с зонами доставки !!!
+

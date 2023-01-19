@@ -160,6 +160,28 @@ a {
   text-decoration: underline;
 }
 
+.page__row {
+  margin-top: 20px;
+}
+
+.page__item {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.page__item-row {
+  display: flex;
+}
+
+.page__item-row .remove {
+  margin-left: 10px;
+}
+
 .django-ckeditor-widget {
   width: 100%;
 }
@@ -1063,6 +1085,11 @@ label span {
   padding: 30px;
   margin-bottom: 20px;
   font-size: 19px;
+}
+
+.form--mini {
+  width: fit-content;
+  max-width: 50%;
 }
 
 .form__title {

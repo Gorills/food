@@ -39,8 +39,14 @@ urlpatterns = [
     path('promo/delete/<int:pk>/', views.promo_delete, name='promo_delete'),
 
     # zone file
-
     path('zone_file/', views.zone_file, name='zone_file'),
+
+
+    # pickup zones
+    path('add_zone/', views.add_zone, name='add_zone'),
+    path('edit_zone/<int:pk>/', views.edit_zone, name='edit_zone'),
+    path('delete_zone/<int:pk>/', views.delete_zone, name='delete_zone'),
+
 
     # shop
     path('shop_settings/', views.shop_settings, name='shop_settings'),

@@ -8,6 +8,11 @@
     padding: 30px;
     margin-bottom: 20px;
     font-size: 19px;
+
+    &--mini {
+        width: fit-content;
+        max-width: 50%;
+    }
     // .form__title
 
     &__title {

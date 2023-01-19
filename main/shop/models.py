@@ -39,6 +39,22 @@ class ShopSetup(SingletonModel):
 
 
 
+class PickupAreas(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название филиала (для внутреннего использования)')
+    address = models.CharField(max_length=250, verbose_name='Адрес')
+    time_to_open = models.CharField(max_length=250, verbose_name='Время открытия (не обязательно)', null=True, blank=True)
+    time_to_close = models.CharField(max_length=250, verbose_name='Время закрытия (не обязательно)', null=True, blank=True)
+    show_to_contacts = models.BooleanField(default=False, verbose_name='Показывать в контактах (не обязательно)')
+    phone = models.CharField(max_length=18, null=True, blank=True, verbose_name='Телефон (не обязательно)')
+
+    def __str__(self):
+        return self.name
+
+
+
+
+
+
 class Category(models.Model):
     name = models.CharField(max_length=350)
     description = models.TextField(null=True, blank=True)

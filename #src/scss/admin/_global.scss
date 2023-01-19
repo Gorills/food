@@ -172,11 +172,56 @@ a   {
         color: #333;
         text-decoration: underline;
     }
+
+     // .page__row
+
+    &__row {
+        margin-top: 20px;
+    }
+
+    // .page__item
+
+    &__item {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+
+    }
+     // .page__item-name
+
+     &__item-name {
+    }
+
+    // .page__item-address
+
+    &__item-address {
+    }
+
+    // .page__item-row
+
+    &__item-row {
+        display: flex;
+
+        .remove {
+            margin-left: 10px;
+        }
+    }
+
 }
 
 
 
+
+
+
+
    
+
+
 
 
 

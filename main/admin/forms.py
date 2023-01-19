@@ -2,11 +2,42 @@ from django import forms
 from coupons.models import Coupon
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings
-from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup
+from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper
+
+
+# Зоны самовывоза
+
+class PickupAreasForm(forms.ModelForm):
+    class Meta:
+        model = PickupAreas
+        fields = '__all__'
+        
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'time_to_open': forms.TextInput(attrs={
+                'class': 'input',
+                
+            }),
+            'time_to_close': forms.TextInput(attrs={
+                'class': 'input',
+                
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+        }
+
+
+
 
 
 # Платежи

@@ -537,6 +537,15 @@ $(document).ready(function(){
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+
+            $('#suggest').attr('required', 'required')
+            $('#finaladress').attr('required', 'required')
+            $('#finaladress').attr('name', 'address')
+            $('#pickupInput').removeAttr('name')
+            $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
+            $('.cart__pickup-row').removeClass('cart__pickup-row--active')
+            $('#delivery_method').val('Доставка')
             
 
         });
@@ -546,9 +555,21 @@ $(document).ready(function(){
         e.preventDefault()
 
         $.get( "/cart/set_delivery/1/", function() { 
+            
             $(".cart__inner").load(location.href + " .cart__refresh");
             $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            
+            $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
+
+
+            $('#suggest').attr('required', 'required')
+            $('#finaladress').attr('required', 'required')
+            $('#finaladress').attr('name', 'address')
+            $('#pickupInput').removeAttr('name')
+            $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
+            $('.cart__pickup-row').removeClass('cart__pickup-row--active')
+            $('#delivery_method').val('Доставка')
+
+
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
@@ -659,6 +680,25 @@ $(document).ready(function(){
 
     })
 
+    $(document).on('click','.cart__select-item--pickup',function(){
+        $('.cart__select-item--pickup').removeClass('cart__select-item--active')
+        $(this).addClass('cart__select-item--active')
+        
+        var getPickup = $(this).text()
+
+        $('#pickup_text').text(getPickup)
+
+        $('#get_area').val(getPickup)
+
+        $('#pickup_areas').attr('data-value', '1')
+
+        $(this).parent('.cart__select-drop').removeClass('cart__select-drop--active')
+        $('.cart__order-layout').hide()
+
+        console.log(getPickup)
+
+    })
+
 })
 
 $(document).on('click','#id_phone, #id_address',function(){
@@ -675,6 +715,13 @@ $(function() {
         var getAddress = $('#finaladress').val()
 
         var getPhoneSubject = $('.cart__input-phone-btn').attr('data-sub')
+
+
+        var pickupArea = $('#pickup_areas').attr('data-value')
+
+        if (pickupArea=='0') {
+            $('#pickup_areas').children().children('.cart__select-error').show()
+        }
 
 
         if (getPhone == '') {
@@ -773,6 +820,12 @@ $(document).on('click','#delivery',function(e){
 
 
 // Карты
+$(document).on('keyup','#suggest',function(e){
+    $('#suggest').css('border-color', 'red');
+    $('#finaladress').val('')
+})
+
+
 
 var deliveryArea;
 var myMap;
@@ -914,8 +967,8 @@ function init() {
 
 
 
-                                    console.log(deliveryPrice)
-                                    console.log(deliveryText)
+                                    // console.log(deliveryPrice)
+                                    // console.log(deliveryText)
     
                                     myGeoObject = new ymaps.GeoObject({
                                         // Описание геометрии.
@@ -944,6 +997,7 @@ function init() {
                                     $('#finaladress').val($('#suggest').val())
                                     myMap.setCenter(obj.geometry._coordinates);
                                     myMap.setZoom(17);
+                                    $('#suggest').css('border-color', 'green');
     
                                 } else {
                                     showError('Нет доставки')

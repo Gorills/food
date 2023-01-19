@@ -230,18 +230,85 @@
                         </div>
                     </div>
 
-                    <div class="cart__pickup-row {% if request.session.delivery == 0 %}cart__pickup-row--active{% endif %}">
+                    
 
-                        <p class="cart__order-text-address-text">Самовывоз:</p>
-                        <p class="cart__order-text-address">{{ setup.address }}</p>
-                        <input id="pickupInput" type="text" {% if request.session.delivery == 0 %}name="address"{% endif %} hidden value="{{ setup.address }}">
+                    {% if pickup_areas %}
 
+                        <div class="cart__pickup-row {% if request.session.delivery == 0 %}cart__pickup-row--active{% endif %}">
 
-                    </div>
+                        
 
+                            <div class="cart__select" id="pickup_areas" data-value="0">
+                                <div class="cart__select-active">
+                                    <div class="cart__select-active-inner">
+                                        
+                                        
+                                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M23 12C23 19 14 25 14 25C14 25 5 19 5 12C5 9.61305 5.94821 7.32387 7.63604 5.63604C9.32387 3.94821 11.6131 3 14 3C16.3869 3 18.6761 3.94821 20.364 5.63604C22.0518 7.32387 23 9.61305 23 12Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14 15C15.6569 15 17 13.6569 17 12C17 10.3431 15.6569 9 14 9C12.3431 9 11 10.3431 11 12C11 13.6569 12.3431 15 14 15Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+    
+                                        <span id="pickup_text">Пункт самовывоза</span>
+                                        <input type="text" name="address" id="get_area" class="cart__input" value="" required hidden>
+                                    </div>
+                                    <div class="cart__select-error">Выберите пункт самовывоза</div>
+                                    
+                                </div>
+        
+                                
+                                <div class="cart__select-drop" id="">
+                                   
+
+                                        {% for area in pickup_areas %}
+                                            <div class="cart__select-item cart__select-item--pickup">{{ area.address }}</div>
+                                          
+                                            
+                                        {% endfor %}
+                                    
+                                  
+                                    
+                                </div>
+        
+                            </div>
+                                    
+                        </div> 
+                    
+                    {% else %}
+                       
+
+                        <div class="cart__pickup-row {% if request.session.delivery == 0 %}cart__pickup-row--active{% endif %}">
+
+                            
+
+                            <div class="cart__select" data-value="1">
+                                <div class="cart__select-nodrop">
+                                    <div class="cart__select-active-inner">
+                                        
+                                        
+                                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M23 12C23 19 14 25 14 25C14 25 5 19 5 12C5 9.61305 5.94821 7.32387 7.63604 5.63604C9.32387 3.94821 11.6131 3 14 3C16.3869 3 18.6761 3.94821 20.364 5.63604C22.0518 7.32387 23 9.61305 23 12Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14 15C15.6569 15 17 13.6569 17 12C17 10.3431 15.6569 9 14 9C12.3431 9 11 10.3431 11 12C11 13.6569 12.3431 15 14 15Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+    
+                                        <span id="pickup_text">{{ setup.address }}</span>
+                                        <input type="text" name="address" id="get_area" class="cart__input" value="{{ setup.address }}" required hidden>
+                                    </div>
+                                    
+                                    
+                                </div>
+        
+                                
+                                
+        
+                            </div>
+                                    
+                        </div> 
+                    {% endif %}
+                   
 
 
                     <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
+
 
                     <div class="cart__select" id="order_time" data-value="0">
                         
