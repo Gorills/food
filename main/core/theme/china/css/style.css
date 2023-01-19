@@ -2496,6 +2496,10 @@ a {
   grid-gap: 20px;
 }
 
+.product-list--slider .product-list__item--big {
+  padding: 20px;
+}
+
 .product-list__item {
   width: 100%;
   margin-bottom: 30px;
@@ -3022,7 +3026,6 @@ a {
   padding: 3px;
   display: inline-block;
   height: fit-content;
-  height: 28px;
   margin-right: 10px;
 }
 
@@ -3031,9 +3034,8 @@ a {
 }
 
 .product-detail__option-link {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
+  display: flex;
+  color: var(--color-font);
 }
 
 .product-detail__options-row {

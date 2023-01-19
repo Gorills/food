@@ -207,6 +207,9 @@ class Product(models.Model):
     # Маленькое изображение
     thumb = models.ImageField(upload_to='products/thumb')
 
+    
+    
+
     # Показывать/не показывать. Возможность скрыть товар
     status = models.BooleanField(default=True)
     sort_order = models.PositiveIntegerField(default=0)
@@ -215,11 +218,8 @@ class Product(models.Model):
     update_at = models.DateField(auto_now=True)    
 
     def __str__(self):
-        try:
-            name = self.name + ', ' + self.color_name
-        except:
-            name = self.name
-        return name
+        
+        return self.name
 
     def get_absolute_url(self):
         return reverse("product_detail", kwargs={"parent": self.parent.slug, "slug": self.slug})

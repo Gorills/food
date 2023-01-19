@@ -100,13 +100,13 @@
                 {% if product.product_connect.count > 0 %}
                 <div class="product-detail__options">
                     <div class="product-detail__options-row">
-                        <div class="product-detail__options-name">Цвет: </div>
+                       
                         
                         <div class="product-detail__option-link-wrap product-detail__option-link-wrap--active">
                                             
-                            <a style="background: {{ product.color }};" href="{{ product.get_absolute_url }}" class="product-detail__option-link product-detail__option-link--active">
+                            <a href="{{ product.get_absolute_url }}" class="product-detail__option-link product-detail__option-link--active">
 
-                                
+                                {{ product.weight }} {{ product.weight_class }} 
 
                             </a>
 
@@ -116,9 +116,9 @@
 
                         <div class="product-detail__option-link-wrap">
                                             
-                            <a style="background: {{ pr.color }};" href="{{ pr.get_absolute_url }}" class="product-detail__option-link">
+                            <a href="{{ pr.get_absolute_url }}" class="product-detail__option-link">
 
-                                
+                                {{ pr.weight }} {{ product.weight_class }}                                
 
                             </a>
 
