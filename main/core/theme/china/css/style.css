@@ -470,10 +470,15 @@ a {
   color: var(--color-font);
 }
 
+.cart__deliv-method-wrap {
+  width: 100%;
+}
+
 .cart__form-wrap {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .cart__form-btn {

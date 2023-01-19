@@ -820,10 +820,7 @@ $(document).on('click','#delivery',function(e){
 
 
 // Карты
-$(document).on('keyup','#suggest',function(e){
-    $('#suggest').css('border-color', 'red');
-    $('#finaladress').val('')
-})
+
 
 
 
@@ -852,7 +849,10 @@ function init() {
             $('#finaladress').val($('#suggest').val())
         })
     } else {
-        
+        $(document).on('keyup','#suggest',function(e){
+            $('#suggest').css('border-color', 'red');
+            $('#finaladress').val('')
+        })
 
         ymaps.geocode(city).then(function (res) {
             myMap = new ymaps.Map('map', {

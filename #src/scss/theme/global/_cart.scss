@@ -346,13 +346,17 @@
     }
 
 
-
+    // .cart__deliv-method-wrap
+    &__deliv-method-wrap {
+        width: 100%;
+    }
     // .cart__form-wrap
 
     &__form-wrap {
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
+        width: 100%;
 
         // @media screen and (max-width: 768px) {
         //     flex-direction: column;
