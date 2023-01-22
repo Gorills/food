@@ -797,7 +797,7 @@ $(document).on('click','#pickup',function(e){
     $('#pickupInput').attr('name', 'address')
 
 
-
+    $(".wrap-delivery-address").load(location.href + " .wrap-delivery-address__inner");
     $('#delivery_method').val('Самовывоз')
 
 })
@@ -808,6 +808,8 @@ $(document).on('click','#delivery',function(e){
     $('#finaladress').attr('required', 'required')
     $('#finaladress').attr('name', 'address')
 
+    $('#pickup_areas').attr('data-value', '0')
+    $("#pickup_areas").load(location.href + " .#pickup_areas_refresh");
 
     $('#pickupInput').removeAttr('name')
 
@@ -815,6 +817,8 @@ $(document).on('click','#delivery',function(e){
     $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
     $('.cart__pickup-row').removeClass('cart__pickup-row--active')
     $('#delivery_method').val('Доставка')
+    $('#get_area').val('')
+    $(".wrap-delivery-address").load(location.href + " .wrap-delivery-address__inner");
 
 })
 

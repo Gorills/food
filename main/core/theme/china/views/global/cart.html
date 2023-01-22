@@ -214,9 +214,6 @@
                             <div class="cart__input-address-wrap">
                                 <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="suggest">
                                 <div id="addressError" class="address-error"></div>
-                                <input {% if request.session.delivery == 1 %}required{% endif %} {% if request.session.delivery == 1 %}name="address"{% endif %} type="text" id="finaladress" hidden>
-                                
-                            
                                 
                             </div>
                             <div class="cart__input-wrap">
@@ -239,7 +236,7 @@
                         
 
                             <div class="cart__select" id="pickup_areas" data-value="0">
-                                <div class="cart__select-active">
+                                <div class="cart__select-active" id="pickup_areas_refresh">
                                     <div class="cart__select-active-inner">
                                         
                                         
@@ -249,7 +246,7 @@
                                         </svg>
     
                                         <span id="pickup_text">Пункт самовывоза</span>
-                                        <input type="text" name="address" id="get_area" class="cart__input" value="" required hidden>
+                                       
                                     </div>
                                     <div class="cart__select-error">Выберите пункт самовывоза</div>
                                     
@@ -291,7 +288,7 @@
                                         </svg>
     
                                         <span id="pickup_text">{{ setup.address }}</span>
-                                        <input type="text" name="address" id="get_area" class="cart__input" value="{{ setup.address }}" required hidden>
+                                        
                                     </div>
                                     
                                     
@@ -303,8 +300,21 @@
                             </div>
                                     
                         </div> 
-                    {% endif %}
-                   
+                    {% endif %} 
+
+                    <div class="wrap-delivery-address">
+
+                        <div class="wrap-delivery-address__inner">
+                            {% if request.session.delivery == 1 %}
+                            <input  name="address" type="text" id="finaladress" required hidden>
+                            {% else %}
+                            <input type="text" name="address" id="get_area" class="cart__input" value="" required hidden>
+
+                            {% endif %}
+    
+                        </div>
+
+                    </div>
 
 
                     <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
@@ -465,14 +475,7 @@
     {% if shop_setup.zones_delivery %}
     <div id="map" style="width: 100%;max-width:1200px;height: 100vh;position:relative;z-index:99999;"></div> 
     {% endif %}
-    <div class="cart__order-pickup-inner-html">
-        <div class="cart__order-pickup-inner-html-wrapper">
-            <p class="cart__order-text-address-text">Самовывоз:</p>
-            <p class="cart__order-text-address">{{ setup.address }}</p>
-            <input type="text" name="address" hidden value="{{ setup.address }}">
-        
-        </div>
-    </div>
+    
 </div>
 
 <div class="get-sec">
