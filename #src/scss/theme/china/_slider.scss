@@ -24,6 +24,23 @@
         object-fit: cover;
         // position: absolute;
         left: 0;
+
+        @media screen and (max-width: 480px) {
+            display: none!important;
+        }
+    }
+
+    // .sl__img-mobile
+    &__img-mobile {
+        width: 100%;
+        height: fit-content;
+        object-fit: contain;
+
+        display: none!important;
+
+        @media screen and (max-width: 480px) {
+            display: block!important;
+        }
     }
 
     // .slider__wrap

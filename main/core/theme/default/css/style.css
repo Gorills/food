@@ -2046,6 +2046,13 @@ a {
   left: 0;
 }
 
+.sl__img-mobile {
+  width: 100%;
+  height: fit-content;
+  object-fit: contain;
+  display: none !important;
+}
+
 .sl__wrap {
   position: absolute;
   width: 100%;
@@ -3837,6 +3844,14 @@ td.product-thumbnail img {
 
   .header__contacts--col .header__contacts-btn {
     display: none;
+  }
+
+  .sl__img {
+    display: none !important;
+  }
+
+  .sl__img-mobile {
+    display: block !important;
   }
 
   .sl .owl-prev {

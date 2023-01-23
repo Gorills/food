@@ -16,6 +16,7 @@ class Slider(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
     title = models.CharField(max_length=250, null=True, blank=True, verbose_name='Заголовок (не обязательно)')
     image = models.ImageField(upload_to='slider', verbose_name='Изображение')
+    image_mob = models.ImageField(upload_to='slider', verbose_name='Изображение для мобильного', null=True, blank=True)
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
     link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка (не обязательно)')
