@@ -49,7 +49,7 @@
                         {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
-                        {% thumbnail slider.image_mob "1227x1895" format="WEBP" crop="center" as im %}
+                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
                     
@@ -75,7 +75,7 @@
                         {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
-                        {% thumbnail slider.image_mob "1227x1895" format="WEBP" crop="center" as im %}
+                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
                     
