@@ -6,13 +6,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm
+from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import UserProfile
 
 from orders.models import Order
-from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
+from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -136,6 +136,46 @@ def general_settings(request):
         'recaptcha_form': recaptcha_form,
     }
     return render(request, 'settings/general_settings.html', context)
+
+
+# Способы оплаты
+@user_passes_test(lambda u: u.is_superuser)
+def add_pay_method(request):
+    if request.method == 'POST':
+        form = PayMethodForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/pay_method/add_pay_method.html', {'form':form})
+    form = PayMethodForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/pay_method/add_pay_method.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_pay_method(request, pk):
+    method = PayMethod.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PayMethodForm(request.POST, request.FILES, instance=method)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/pay_method/add_pay_method.html', {'form':form})
+    form = PayMethodForm(instance=method)
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/pay_method/add_pay_method.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_pay_method(request, pk):
+    method = PayMethod.objects.get(id=pk)
+    method.delete()
+    return redirect('shop_settings')
 
 
 # Настроки платежей
@@ -612,7 +652,8 @@ def shop_settings(request):
 
     context = {
         'form': form,
-        'zones': PickupAreas.objects.all()
+        'zones': PickupAreas.objects.all(),
+        'methods': PayMethod.objects.all()
     }
 
     return render(request, 'shop/settings.html', context)

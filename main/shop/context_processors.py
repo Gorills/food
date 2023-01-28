@@ -1,4 +1,4 @@
-from .models import Category, ShopSetup, PickupAreas
+from .models import Category, ShopSetup, PickupAreas, PayMethod
 
 def categorys(request):
     return {'categorys': Category.objects.filter(status=True).order_by('sort_order')}
@@ -16,4 +16,11 @@ def pickup_areas(request):
     try:
         return {'pickup_areas': PickupAreas.objects.all()}
     except:
-        return {'shop_setup': ''}
+        return {'pickup_areas': ''}
+
+
+def pay_method(request):
+    try:
+        return {'pay_method': PayMethod.objects.all()}
+    except:
+        return {'pay_method': ''}

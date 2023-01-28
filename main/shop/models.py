@@ -52,7 +52,11 @@ class PickupAreas(models.Model):
 
 
 
+class PayMethod(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название способа оплаты')
 
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):

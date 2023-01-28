@@ -217,6 +217,7 @@ TEMPLATES = [
                 'shop.context_processors.categorys',
                 'shop.context_processors.shop_setup',
                 'shop.context_processors.pickup_areas',
+                'shop.context_processors.pay_method',
                 'home.context_processors.pages',
                 'home.context_processors.odrer_form',
                 'home.context_processors.get_hours',

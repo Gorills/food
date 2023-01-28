@@ -405,6 +405,29 @@
 
                         
                         <div class="cart__select-drop" id="cart__select-drop">
+                            {% if pay_method %}
+                            <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
+                                {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
+
+                                    {% if cart_active == True %}
+                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                    {% else %}
+                                        {% for meth in pay_method %}
+                                        <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                        {% endfor %}
+                                    
+                                    {% endif %}
+                                {% else %}
+                                    {% for meth in pay_method %}
+                                        <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                    {% endfor %}
+                                    {% if cart_active == True %}
+                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            
+                            {% else %}
                             <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
                                 {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
 
@@ -422,6 +445,9 @@
                                     {% endif %}
                                 {% endif %}
                             </div>
+                            
+                            {% endif %}
+                            
                             
                         </div>
 

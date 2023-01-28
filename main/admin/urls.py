@@ -27,6 +27,12 @@ urlpatterns = [
     path('alfabank_save/', views.alfabank_save, name='alfabank_save'),
     path('paykeeper_save/', views.paykeeper_save, name='paykeeper_save'),
 
+    # paay method
+    path('add_pay_method/', views.add_pay_method, name='add_pay_method'),
+    path('edit_pay_method/<int:pk>/', views.edit_pay_method, name='edit_pay_method'),
+    path('delete_pay_method/<int:pk>/', views.delete_pay_method, name='delete_pay_method'),
+  
+
     # sidebar
     path('sidebar_show/', views.sidebar_show, name='sidebar_show'),
     path('sidebar_hide/', views.sidebar_hide, name='sidebar_hide'),
