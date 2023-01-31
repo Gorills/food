@@ -538,7 +538,7 @@ a {
 }
 
 .cart__input::placeholder {
-  color: var(--color-font);
+  color: #797979;
 }
 
 .cart__input--done {
@@ -600,12 +600,12 @@ a {
   display: flex;
 }
 
-.cart__input-wrap {
-  display: flex;
+.cart__input-col:nth-child(1) {
+  margin-right: 10px;
 }
 
-.cart__input-wrap input + input {
-  margin-left: 15px;
+.cart__input-wrap {
+  display: flex;
 }
 
 .cart__select {

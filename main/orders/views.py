@@ -49,6 +49,13 @@ def order_create(request):
         pay_method = request.POST['pay_method']
         phone = request.POST['phone']
 
+        try:
+            domofon = request.POST['domofon']
+            if domofon == '':
+                domofon = request.POST['flat']
+        except:
+            domofon = request.POST['flat']
+
         if form.is_valid():
 
             try:
@@ -66,6 +73,10 @@ def order_create(request):
             order.user_pr = user_pr
             order.summ = cart.get_total_price_after_discount()
             order.delivery_price = cart.get_delivery()
+
+            
+            order.flat = order.flat + ' (домофон: ' + domofon + ')'
+
             order.save()
 
 

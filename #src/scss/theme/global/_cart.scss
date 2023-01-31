@@ -441,7 +441,7 @@
         resize: none;
         color: var(--color-font);
         &::placeholder {
-            color: var(--color-font)
+            color: #797979;
         }
 
         &--done {
@@ -529,14 +529,19 @@
         display: flex;
     }
 
+    // .cart__input-col
+    &__input-col {
+
+        &:nth-child(1) {
+            margin-right: 10px;
+        }
+    }
     // .cart__input-wrap
 
     &__input-wrap {
         display: flex;
 
-        input + input {
-            margin-left: 15px;
-        }
+        
     }
 
     // .cart__select
