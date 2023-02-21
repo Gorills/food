@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Product, Product, ShopSetup
+from shop.models import Category, Product, Product, ShopSetup
 from coupons.models import Coupon
 
 
@@ -26,6 +26,7 @@ class Cart(object):
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         
+        
         # сохранение текущего примененного купона
         self.coupon_id = self.session.get('coupon_id')
 
@@ -40,6 +41,9 @@ class Cart(object):
         if not get_d:
             self.get_d = 1
         self.get_d = get_d
+
+
+        
        
         if not cart:
             # save an empty cart in the session
@@ -51,9 +55,12 @@ class Cart(object):
         """
         Добавить продукт в корзину или обновить его количество.
         """
+
+
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
+                                     'free': 0,
                                     'price': str(product.price),
                                     
                                     }
@@ -68,7 +75,31 @@ class Cart(object):
 
         else:
             self.cart[product_id]['quantity'] += quantity
+
+        
+        
+        related = Product.objects.filter(related=True)
+        for rel in related:
+            rel_id = str(rel.id)
+            if rel_id not in self.cart:
+                self.cart[rel_id] = {'quantity': rel.minimum,
+                                     'free': rel.free,
+                                    'price': str(rel.price),
+                                    }
+        
+        cat = Category.objects.get(id=product.parent.id)
+        cat_related = Product.objects.filter(related=True, parent=cat)
+
+        for rel in cat_related:
+            rel_id = str(rel.id)
+            if rel_id not in self.cart:
+                self.cart[rel_id] = {'quantity': rel.minimum,
+                                     'free': rel.free,
+                                    'price': str(rel.price),
+                                    }
         self.save()
+
+  
 
     def save(self):
         # Обновление сессии cart
@@ -123,31 +154,30 @@ class Cart(object):
         products = Product.objects.filter(id__in=product_ids)
 
         if not products:
+            
             self.clear()
+        
+
 
         for product in products:
             self.cart[str(product.id)]['product'] = product
         
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
-            item['total_price'] = (item['price']) * item['quantity']
+            item['total_price'] = (item['price'] * item['quantity']) - (item['price'] * item['free'])
            
 
             yield item
 
 
     def __len__(self):
+       
         """
         Подсчет всех товаров в корзине.
         """
         return sum(item['quantity'] for item in self.cart.values())
 
 
-    def __len__(self):
-        """
-        Подсчет всех товаров в корзине.
-        """
-        return sum(item['quantity'] for item in self.cart.values())
 
     def get_delivery(self):
 

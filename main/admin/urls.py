@@ -96,6 +96,12 @@ urlpatterns = [
     path('char/delete/<int:pk>/', views.char_delete, name='char_delete'),
 
 
+    # Сопутствующие товары
+    path('related/', views.related, name='related'),
+
+    path('related/add/', views.related_add, name='related_add'),
+    path('related_edit/edit/<int:pk>/', views.related_edit, name='related_edit'),
+    path('related_delete/delete/<int:pk>/', views.related_delete, name='related_delete'),
 
     # БЛОГ
     path('blog_settings/', views.blog_settings, name='blog_settings'),

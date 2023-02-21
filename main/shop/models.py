@@ -137,7 +137,7 @@ class Manufacturer(models.Model):
 
 class Product(models.Model):
     # Выводить в меню и других списках
-    name = models.CharField(max_length=350)
+    name = models.CharField(max_length=350, verbose_name='Название')
     # Короткое описание, которое выводится в каталоге товаров, если есть
     short_description = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -155,7 +155,7 @@ class Product(models.Model):
     sku = models.CharField(max_length=350, null=True, blank=True)
     
     # Цена с учетом скидки
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     # Цена до скидки
     old_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
@@ -173,7 +173,7 @@ class Product(models.Model):
     # Новинка
     new = models.BooleanField(default=False)
 
-    slug = models.SlugField(unique=True, max_length=250)
+    slug = models.SlugField(unique=True, max_length=250, null=True)
 
     # Дата поступления
     date_available = models.DateField(auto_now_add=True)
@@ -203,13 +203,13 @@ class Product(models.Model):
 
     # Связи
     product_manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='manufacturer_products', null=True, blank=True)
-    parent = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    parent = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', blank=True, null=True, verbose_name='Категория')
 
     # Связанные товары
     product_connect = models.ManyToManyField('self', related_name='connects', blank=True)
 
     # Маленькое изображение
-    thumb = models.ImageField(upload_to='products/thumb')
+    thumb = models.ImageField(upload_to='products/thumb', verbose_name='Основное изображение')
 
     
     
@@ -221,12 +221,24 @@ class Product(models.Model):
     create_at = models.DateField(auto_now_add=True)
     update_at = models.DateField(auto_now=True)    
 
+
+    # Если товар сопутствующий
+    related = models.BooleanField(default=False, verbose_name='Сделать сопутствующим')
+    all_cats = models.BooleanField(default=True, verbose_name='Отображать во всех категориях')
+    free = models.PositiveIntegerField(default=0, verbose_name='Бесплатно в заказе')
+    minimum = models.PositiveIntegerField(default=1, verbose_name='Минимальное количество')
+
+
     def __str__(self):
         
         return self.name
 
     def get_absolute_url(self):
-        return reverse("product_detail", kwargs={"parent": self.parent.slug, "slug": self.slug})
+
+        try:
+            return reverse("product_detail", kwargs={"parent": self.parent.slug, "slug": self.slug})
+        except:
+            return('')
     
     def get_sale(self):
         old = self.old_price
@@ -331,3 +343,6 @@ class ProductChar(models.Model):
 
     def __str__(self):
         return self.char_name
+
+
+

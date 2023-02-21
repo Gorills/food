@@ -10,6 +10,51 @@ from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper
 
 
 
+# Сопутствующие товары
+class RelatedProductsForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = [
+            'related',
+            'name',
+            'price',
+            'free',
+            'all_cats',
+            'minimum',
+            'parent',
+            'thumb'
+        ]
+
+        widgets = {
+            'related': forms.CheckboxInput(attrs={
+                'hidden': 'hidden'
+            }),
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'price': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'free': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'minimum': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'input',
+            }),
+
+        }
+
+        labels = {
+            'parent': 'Категория (не обязательно)',
+            'name': 'Название',
+            'related': ''
+          
+        }
+
+
 # Способы оплаты
 class PayMethodForm(forms.ModelForm):
     class Meta:

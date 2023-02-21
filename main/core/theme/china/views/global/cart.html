@@ -28,66 +28,142 @@
                 
                     {% for item in cart %}
                         {% with product=item.product %}
-                        <div class="cart__item">
-                            <div class="cart__item-inner">
-                                <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
 
-                                    {% if product.images.first %}
-                                    
-                                        {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
-                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                        {% endthumbnail %}
 
-                                    {% else %}
-                                    
-                                        {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
-                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                        {% endthumbnail %}
+                            {% if product.related != True %}
+                            <div class="cart__item">
+                                <div class="cart__item-inner">
+                                    <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
 
-                                    {% endif %}
-                                </a>
+                                        {% if product.images.first %}
+                                        
+                                            {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
 
-                                <div class="cart__wrap">
-                                    <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
+                                        {% else %}
+                                        
+                                            {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
+
+                                        {% endif %}
+                                    </a>
+
+                                    <div class="cart__wrap">
+                                        <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
+                                        
+                                        
+                                    </div>
                                     
-                                    
+                                    <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                                    </a>
                                 </div>
-                                
-                                <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
-                                </a>
-                            </div>
-                            <div class="cart__bottom">
-                                <p class="cart__total-price">{{ item.total_price | floatformat:"2" }} ₽</p>
+                                <div class="cart__bottom">
+                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }} ₽</p>
 
-                                <div class="cart-plus-minus">
-                                                        
+                                    <div class="cart-plus-minus">
+                                                            
+                                        
+
+
+                                        <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">-</button>
+
+                                        </form>
+                                        <input type="text" value="{{ item.quantity }}" class="cart-input">
+                                        <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">+</button>
+
+                                        </form>
+
                                     
-
-
-                                    <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
-                                        {% csrf_token %}
-                                    
-                                        <input type="number" name="quantity" value="1" hidden required="">
-                                        <input type="hidden" name="update" value="False" hidden>
-                                        <button class="basket__minus">-</button>
-
-                                    </form>
-                                    <input type="text" value="{{ item.quantity }}" class="cart-input">
-                                    <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
-                                        {% csrf_token %}
-                                    
-                                        <input type="number" name="quantity" value="1" hidden required="">
-                                        <input type="hidden" name="update" value="False" hidden>
-                                        <button class="basket__minus">+</button>
-
-                                    </form>
-
-                                
+                                    </div>
+        
                                 </div>
-    
                             </div>
-                        </div>
+                            
+                            {% endif %}
+                       
+                        {% endwith %}
+                    {% endfor %}
+
+                    {% for item in cart %}
+                        {% with product=item.product %}
+
+
+                            {% if product.related == True %}
+                            <div class="cart__item">
+                                <div class="cart__item-inner">
+                                    <div class="cart__img-wrap">
+
+                                        {% if product.images.first %}
+                                        
+                                            {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
+
+                                        {% else %}
+                                        
+                                            {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
+
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="cart__wrap">
+                                        <p class="cart__name">{{ product.name }}</p>
+                                        
+                                        
+                                    </div>
+                                    
+                                    <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                                    </a>
+                                </div>
+                                <div class="cart__bottom">
+                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }} ₽</p>
+
+                                    <div class="cart-plus-minus">
+                                                            
+                                        
+
+
+                                        <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">-</button>
+
+                                        </form>
+                                        <input type="text" value="{{ item.quantity }}" class="cart-input">
+                                        <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">+</button>
+
+                                        </form>
+
+                                    
+                                    </div>
+        
+                                </div>
+                            </div>
+                            
+                            {% endif %}
                        
                         {% endwith %}
                     {% endfor %}

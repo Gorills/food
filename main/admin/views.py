@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
+from admin.forms import RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import UserProfile
@@ -1814,6 +1814,76 @@ def users_delete(request, pk):
 
 
 
+
+# !!! Сопутствующие товары !!!
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def related(request):
+
+    context = {
+        'relateds': Product.objects.filter(related=True)
+    }
+
+    return render(request, 'shop/related/related.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def related_add(request):
+
+    if request.method == 'POST':
+        form = RelatedProductsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('related')
+
+        else:
+            return render(request, 'shop/related/related_add.html', {'form': form})
+
+    form = RelatedProductsForm(
+        {
+        'related': True,
+        'all_cats': True,
+        'free': 0,
+        'minimum': 1,
+        'price': 0,
+        
+        }
+    )
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'shop/related/related_add.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def related_edit(request, pk):
+    related = Product.objects.get(id=pk)
+    if request.method == 'POST':
+        form = RelatedProductsForm(request.POST, request.FILES, instance=related)
+        if form.is_valid():
+            form.save()
+            return redirect('related')
+        else:
+            return render(request, 'shop/related/related_edit.html', {'form': form})
+            
+    form = RelatedProductsForm(instance=related)
+    context = {
+        'form': form,
+    }
+    return render(request, 'shop/related/related_edit.html', context)
+
+def related_delete(request, pk):
+    related = Product.objects.get(id=pk)
+    related.delete()
+    return redirect('related')
+    
+
+
+
+# !!! Сопутствующие товары !!!
 
 
 
