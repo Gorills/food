@@ -205,7 +205,7 @@ def add_code(request):
         print(code)
         text = 'Ваш код: ' + code
 
-        # send_sms(text, phone)
+        send_sms(text, phone)
         
         
         return redirect('home')
