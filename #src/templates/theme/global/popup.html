@@ -19,7 +19,7 @@
 
     </div>
 </div>
-
+{% comment %} 
 {% if request.session.get_cookie == 'True' %}
 
 
@@ -33,4 +33,4 @@
         <a data-token="{{ csrf_token }}" href="#" class="cookie__btn">ОК</a>
     </div>
 </div>
-{% endif %}
+{% endif %} {% endcomment %}
