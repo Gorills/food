@@ -238,7 +238,10 @@ def profile(request):
         loyalty_card_settings = LoyaltyCardSettings.objects.get()
         
         if LoyaltyCardSettings.objects.get().active == True:
-            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            try:
+                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            except:
+                loyalty_card = None
         else:
 
             loyalty_card = None
