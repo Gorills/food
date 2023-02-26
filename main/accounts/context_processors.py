@@ -12,5 +12,8 @@ def userprofile(request):
 
 def card_loyalty_settings(request):
 
-    return {'card_loyalty_settings': LoyaltyCardSettings.objects.get()}
+    try:
+        return {'card_loyalty_settings': LoyaltyCardSettings.objects.get()}
+    except:
+        return {'card_loyalty_settings': None}
     
