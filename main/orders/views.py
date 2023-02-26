@@ -163,7 +163,13 @@ def order_create(request):
                 
                 if LoyaltyCardSettings.objects.get().active == True:
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+                    try:
+                       
+                        loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                    
+                    except:
+                        loyalty_card = LoyaltyCard.objects.create(user=user_profile)
 
                     try:
                         if order.bonuses_pay > 0:
@@ -243,7 +249,10 @@ def order_confirm(request, pk):
 
             if LoyaltyCardSettings.objects.get().active == True:
                 user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                try:
+                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                except:
+                    loyalty_card = LoyaltyCard.objects.create(user=user_profile)
 
                 try:
                     if order.bonuses_pay > 0:
@@ -308,7 +317,10 @@ def order_webhook(request):
 
                 if LoyaltyCardSettings.objects.get().active == True:
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                    try:
+                        loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                    except:
+                        loyalty_card = LoyaltyCard.objects.create(user=user_profile)
 
                     try:
                         if order.bonuses_pay > 0:
@@ -348,7 +360,10 @@ def order_success(request):
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            try:
+                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            except:
+                loyalty_card = LoyaltyCard.objects.create(user=user_profile)
 
             try:
                 if order.bonuses_pay > 0:
@@ -412,7 +427,10 @@ def paykeeper_success(request):
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            try:
+                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            except:
+                loyalty_card = LoyaltyCard.objects.create(user=user_profile)
 
             try:
                 if order.bonuses_pay > 0:
