@@ -5,7 +5,7 @@ class PaymentSet(SingletonModel):
     PAY_CLASS = (
        ('yookassa', 'ЮКасса'),
        ('paykeeper', 'PayKeeper'),
-    #    ('alfabank', 'AlfaBank'),
+       ('alfabank', 'AlfaBank'),
     )
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
     status = models.BooleanField(default=False, verbose_name='Включить онлайн оплаты')

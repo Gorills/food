@@ -5,8 +5,73 @@ from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings,
 from shop.models import Category, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
+from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper
+
+
+
+
+# Карты лояльности
+
+class LoyaltyCardForm(forms.ModelForm):
+    class Meta:
+        model = LoyaltyCard
+        fields = '__all__'
+        widgets = {
+           
+            'user': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'code': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'summ': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'balls': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+         
+        }
+
+
+
+# Статусы карт лояльности
+class LoyaltyCardStatusForm(forms.ModelForm):
+    class Meta:
+        model = LoyaltyCardStatus
+        fields = '__all__'
+        widgets = {
+           
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'summ': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'percent_up': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'percent_down': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'percent_pay': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+        }
+
+
+
+# Настройка карт лояльности
+
+class LoyaltyCardSettingsForm(forms.ModelForm):
+    text = forms.CharField(label='Описание программы лояльности', required=False, widget=CKEditorUploadingWidget())
+    class Meta:
+        model = LoyaltyCardSettings
+        fields = '__all__'
+        
+
 
 
 

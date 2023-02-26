@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from allauth.account.models import EmailAddress
-
+from admin.singleton_model import SingletonModel
 # Create your models here.
 
 
@@ -17,7 +17,7 @@ class UserProfile(models.Model):
         verbose_name = 'User Profile'
 
     def __str__(self):
-        return "{}'s profile".format(self.user.__str__())
+        return self.phone
 
 
     def account_verified(self):
@@ -29,3 +29,45 @@ class UserProfile(models.Model):
 
 
 
+class LoyaltyCardSettings(SingletonModel):
+    active = models.BooleanField(default=False, verbose_name='Включить карты лояльности')
+    status_down = models.BooleanField(default=True, verbose_name='Скидка')
+    status_up = models.BooleanField(default=False, verbose_name='Накопление')
+    show_status = models.BooleanField(default=True, verbose_name='Отображать статус карты в кабинете пользователя')
+    show_summ = models.BooleanField(default=True, verbose_name='Отображать сумму покупок в кабинете пользователя')
+    text = models.TextField(verbose_name='Описание программы лояльности')
+
+
+class LoyaltyCardStatus(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Название статуса карты')
+    summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма для получения')
+    percent_up = models.PositiveIntegerField(default=0, verbose_name='Процент зачисления при накоплении')
+    percent_down = models.PositiveIntegerField(default=0, verbose_name='Процент скидки при оплате')
+    percent_pay = models.PositiveIntegerField(default=0, verbose_name='Процент оплаты накопленными баллами')
+
+
+class LoyaltyCard(models.Model):
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='card')
+    code = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма покупок')
+    balls = models.DecimalField(default=0.00, max_digits=10, decimal_places=2, verbose_name='Количество баллов')
+    
+
+    def status(self):
+
+        card_statuses = LoyaltyCardStatus.objects.all()
+
+        summ = self.summ
+
+        SUMM_LIST = []
+
+
+        for status in card_statuses:
+            SUMM_LIST.append(status.summ)
+
+        
+        result = max([x for x in SUMM_LIST if x <= summ])
+
+
+        card_status = LoyaltyCardStatus.objects.get(summ=result)
+        return card_status

@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.conf import settings
 from shop.models import Category, Product, Product, ShopSetup
 from coupons.models import Coupon
+from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 
 
 try:
@@ -25,8 +26,45 @@ class Cart(object):
         """
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
+
+
+
+        # Программа лояльности
+        try:
+            user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            
+
+            percent_up = loyalty_card.status().percent_up
+            percent_down = loyalty_card.status().percent_down
+            percent_pay = loyalty_card.status().percent_pay
+            balls = loyalty_card.balls
+            
+
+        except Exception as e:
+            print(e)
+            user_profile = None
+            loyalty_card = None
+
+            percent_up = 0
+            percent_down = 0
+            percent_pay = 0
+            balls = 0
+
         
-        
+        self.percent_up = percent_up
+        self.percent_down = percent_down
+        self.percent_pay = percent_pay
+        self.balls = balls
+
+
+        try:
+            self.active_balls = Decimal(request.session['active_balls'])
+        except:
+            self.active_balls = Decimal('0.00')
+
+
+
         # сохранение текущего примененного купона
         self.coupon_id = self.session.get('coupon_id')
 
@@ -55,7 +93,7 @@ class Cart(object):
         """
         Добавить продукт в корзину или обновить его количество.
         """
-
+        self.session['active_balls'] = '0.00'
 
         product_id = str(product.id)
         if product_id not in self.cart:
@@ -108,7 +146,7 @@ class Cart(object):
         self.session.modified = True
 
     def minus(self, product, quantity, update_quantity=False):
-        
+        self.session['active_balls'] = '0.00'
         product_id = str(product.id)
        
         self.cart[product_id]['quantity'] -= quantity
@@ -122,7 +160,7 @@ class Cart(object):
 
 
     def plus(self, product, quantity, update_quantity=False):
-        
+        self.session['active_balls'] = '0.00'
         product_id = str(product.id)
         if product.subtract == True:
             if product.stock < self.cart[product_id]['quantity'] + quantity:
@@ -136,6 +174,7 @@ class Cart(object):
        
 
     def remove(self, product):
+        self.session['active_balls'] = '0.00'
         """
         Удаление товара из корзины.
         """
@@ -178,36 +217,28 @@ class Cart(object):
         return sum(item['quantity'] for item in self.cart.values())
 
 
-
     def get_delivery(self):
-
         if del_zones:
             if self.get_d == 1:
-
                 if self.get_sum:
                     if Decimal(self.get_total_price()) >= Decimal(free_delivery):
                         summ = Decimal(0)
                         return summ
                     else:
                         return self.get_sum
-
                 else:
                     summ = Decimal(0)
                     return summ
             else:
                 summ = Decimal(0)
                 return summ
-
-
         else:
             if self.get_d == 1:
-        
                 if Decimal(self.get_total_price()) >= Decimal(free_delivery):
                     summ = Decimal(0)
                     return summ
                 else:
                     return price_delivery
-
             else:
                 summ = Decimal(0)
                 return summ
@@ -216,7 +247,7 @@ class Cart(object):
         """
         Подсчет стоимости товаров в корзине.
         """
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+        return sum((Decimal(item['price']) * item['quantity']) - (Decimal(item['price']) * item['free']) for item in self.cart.values())
 
 
     def clear(self):
@@ -226,13 +257,50 @@ class Cart(object):
         self.session.modified = True
 
     
+    def get_personal_sale(self):
+
+        if LoyaltyCardSettings.objects.get().active == True:
+
+            return self.percent_down
+        
+        else:
+
+            return 0
+    
+
+
+    def get_personal_balls(self):
+
+        
+
+        result = Decimal(self.balls) - Decimal(self.active_balls)
+
+        return result
+        
+        
+    
+    # Активируем баллы для списания
+    def get_max_balls(self):
+        
+        a = self.get_total_price()
+        max_bonus = (Decimal(a) / Decimal('100')) * Decimal(self.percent_pay)
+
+        if Decimal(max_bonus) >= Decimal(self.balls):
+            max_bonus = self.balls
+
+
+        return max_bonus
+
+       
+    def get_personal_pay(self):
+        return self.percent_pay
+
 
     def get_total(self):
 
         return self.get_total_price() + self.get_delivery()
 
-            
-      
+        
 
     def get_free(self):
         
@@ -250,4 +318,11 @@ class Cart(object):
         return Decimal('0')
 
     def get_total_price_after_discount(self):
-        return self.get_total_price() - self.get_discount() + self.get_delivery()
+        a = self.get_total_price()
+        b = self.get_discount()
+        c = self.get_delivery()
+        d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
+        e = self.active_balls 
+       
+        
+        return a - b + c - d - e

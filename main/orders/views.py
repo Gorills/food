@@ -1,6 +1,6 @@
 
 from django.shortcuts import render, redirect
-from accounts.models import UserProfile
+from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
 from shop.models import Product, ProductOption
 from .models import Order, OrderItem
@@ -74,8 +74,12 @@ def order_create(request):
             order.summ = cart.get_total_price_after_discount()
             order.delivery_price = cart.get_delivery()
 
+            # Бонусы сохраняем в заказ
+            if cart.active_balls > 0:
+                order.bonuses_pay = cart.active_balls
+
             
-            order.flat = order.flat + ' (домофон: ' + domofon + ')'
+            order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
 
             order.save()
 
@@ -85,6 +89,7 @@ def order_create(request):
                     order=order,
                     product=item['product'],
                     price=item['price'],
+                    free=item['free'],
                     quantity=item['quantity']
                     )
                 
@@ -151,10 +156,26 @@ def order_create(request):
 
             else:
                 order_telegram(order)
-                text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
+                text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
                 send_sms(text, phone)
                 # очистка корзины
+                
+                
+                if LoyaltyCardSettings.objects.get().active == True:
+                    user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+                    try:
+                        if order.bonuses_pay > 0:
+                            loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+                    except:
+                        pass
+                    
+                    loyalty_card.save()
+
                 cart.clear()
+
                 return redirect('/?order=True')
     else:
 
@@ -217,8 +238,23 @@ def order_confirm(request, pk):
 
         if status == 'succeeded':
             order_telegram(order)
-            text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
+            text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
             send_sms(text, order.phone)
+
+            if LoyaltyCardSettings.objects.get().active == True:
+                user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+                try:
+                    if order.bonuses_pay > 0:
+                        loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+                except:
+                    pass
+                
+                loyalty_card.save()
+
+
             cart.clear()
             request.session['delivery'] = 1
             order.paid = True
@@ -265,10 +301,25 @@ def order_webhook(request):
             if status == 'succeeded':
                 
                 order_telegram(order)
-                text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
+                text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
                 send_sms(text, order.phone)
                 order.paid = True
                 order.save()
+
+                if LoyaltyCardSettings.objects.get().active == True:
+                    user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+                    try:
+                        if order.bonuses_pay > 0:
+                            loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+                    except:
+                        pass
+                    
+                    loyalty_card.save()
+
+
                 return HttpResponse(status=200)
         except Exception as e:
             logger.info(e)
@@ -291,8 +342,25 @@ def order_success(request):
         order = data['order']
 
         order_telegram(order)
-        text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
+        
+        text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
         send_sms(text, order.phone)
+
+        if LoyaltyCardSettings.objects.get().active == True:
+            user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+            try:
+                if order.bonuses_pay > 0:
+                    loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+            except:
+                pass
+            
+            loyalty_card.save()
+
+
+
         cart.clear()
         request.session['delivery'] = 1
         order.paid = True
@@ -339,8 +407,24 @@ def paykeeper_success(request):
         order = data['order']
 
         order_telegram(order)
-        text = 'Заказ №'+str(order.id) + ' оформлен. Доставим ' + order.time
+        text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
         send_sms(text, order.phone)
+
+        if LoyaltyCardSettings.objects.get().active == True:
+            user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+
+            try:
+                if order.bonuses_pay > 0:
+                    loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+            except:
+                pass
+            
+            loyalty_card.save()
+
+
+
         cart.clear()
         request.session['delivery'] = 1
         request.session['myorder_id'] = 0

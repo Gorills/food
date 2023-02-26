@@ -812,6 +812,10 @@ label span {
   display: flex;
 }
 
+.breadcrumb__wrap a + a {
+  margin-left: 10px;
+}
+
 .responsive-table {
   background-color: #fff;
   border-radius: 30px;
@@ -1564,6 +1568,57 @@ label span {
 .page-order--new select:focus {
   outline: none;
   border: 1px solid #9AFDD2;
+}
+
+.admin-info {
+  padding: 30px 0;
+}
+
+.admin-info__text {
+  font-size: 12px;
+}
+
+.card-statuses {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.card-statuses__list {
+  padding: 20px;
+  background-color: #fff;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 30px;
+}
+
+.card-statuses__item {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+.card-statuses__item:nth-child(1) {
+  font-weight: 700;
+}
+
+.card-statuses__inner {
+  width: 100%;
+  max-width: 20%;
+  white-space: normal;
+  display: flex;
+}
+
+.card-statuses__inner a + a {
+  margin-left: 5px;
+}
+
+.card-statuses__inner:last-child {
+  max-width: 7%;
 }
 
 @media all and (max-width: 767px) {

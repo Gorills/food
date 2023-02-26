@@ -1,11 +1,12 @@
 # account/views.py
 import datetime
+from decimal import Decimal
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from allauth.account.forms import SignupForm
 from django.views import generic
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import UserProfile
+from .models import LoyaltyCard, UserProfile
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from allauth.account.views import SignupView, _ajax_response
@@ -80,6 +81,39 @@ class Login(LoginView):
 
 class Logout(LogoutView):
     template_name = 'account/logged_out.html'
+
+
+from accounts.models import LoyaltyCardSettings
+
+
+
+
+# Если включена система лояльности, то при регистрации или входе создает начальную карту 
+def add_loyalty_card(userprofile):
+    try:
+        card_active = LoyaltyCardSettings.objects.get().active
+    except:
+        card_active = False
+        
+    if card_active == True:            
+        try:
+            loyalty_card = LoyaltyCard.objects.get(user=userprofile)
+
+        except Exception as e:
+            print(e)
+            loyalty_card = LoyaltyCard(
+                user=userprofile,
+                summ=Decimal('0.00')
+                )
+            
+            loyalty_card.save()
+
+            # Сделать тут сразу отправку карты в интеграцию Тинькофф
+
+
+    
+
+
 from django.views.decorators.http import require_POST
 def register(request):
     if request.session['code']:
@@ -96,6 +130,8 @@ def register(request):
                 userprofile = UserProfile(phone=user_phone, use_sms = sms)
                 userprofile.save()
 
+            add_loyalty_card(userprofile)
+
             request.session['user_profile_id'] = userprofile.id
             del request.session['code']
             del request.session['code_date']
@@ -104,7 +140,8 @@ def register(request):
 
 
 
-# Предварительная регистрация по телефону
+
+# Предварительная регистрация по телефону при оформлении заказа
 @require_POST
 def usersession_add(request):
     if request.session['code']:
@@ -116,6 +153,10 @@ def usersession_add(request):
             except:
                 userprofile = UserProfile(phone=user_phone)
                 userprofile.save()
+
+
+            add_loyalty_card(userprofile)
+
 
             request.session['user_profile_id'] = userprofile.id
             del request.session['code']
@@ -163,8 +204,9 @@ def add_code(request):
         request.session['code'] = code
         print(code)
         text = 'Ваш код: ' + code
-        send_sms(text, phone)
-        # print(request.session['code'])
+
+        # send_sms(text, phone)
+        
         
         return redirect('home')
 
@@ -177,7 +219,7 @@ def add_code(request):
 
 from .forms import ProfileForm
 from setup.models import BaseSettings
-
+from .models import LoyaltyCardSettings, LoyaltyCard, LoyaltyCardStatus
 def profile(request):
 
     try:
@@ -192,8 +234,19 @@ def profile(request):
             'phone': user_profile.phone, 
         }
         profile_form = ProfileForm(default_data)
+
+        loyalty_card_settings = LoyaltyCardSettings.objects.get()
+        
+        if LoyaltyCardSettings.objects.get().active == True:
+            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+        else:
+
+            loyalty_card = None
+
         context = {
             # 'user': user, 
+            'loyalty_card_settings': loyalty_card_settings,
+            'loyalty_card': loyalty_card,
             'profile_form': profile_form,
         }
         return render(request, 'global/profile.html', context)

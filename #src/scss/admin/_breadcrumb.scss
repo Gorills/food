@@ -56,5 +56,8 @@
 
     &__wrap {
         display: flex;
+        a + a {
+            margin-left: 10px;
+        }
     }
 }

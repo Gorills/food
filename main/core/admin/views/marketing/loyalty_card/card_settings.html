@@ -1,0 +1,46 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Настройки карт лояльности</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin_card' %}">Карты лояльности</a></li>
+
+            <li class="breadcrumb__item">Настройки карт лояльности</li>
+          
+        </ol>
+
+
+        
+    </div>
+</div>
+
+
+
+
+<form action="." class="form" method="post" enctype="multipart/form-data" id="addCat">
+    
+    {% csrf_token %}
+
+    {{ form.as_p }}
+    {{ form.media }}
+
+
+    <div class="form__wrap">
+        <button class="btn btn--success">Сохранить</button>
+        <a href="{% url 'admin_card' %}" class="btn btn--danger">Отменить</a>
+
+    </div>
+</form>
+
+    
+  
+    
+
+{% endblock %}

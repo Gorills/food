@@ -6,10 +6,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
+from admin.forms import LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
-from accounts.models import UserProfile
+from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
@@ -427,7 +427,7 @@ def admin_promo(request):
         'coupons': Coupon.objects.all().order_by('valid_to')
     }
 
-    return render(request, 'marketing/promo.html', context)
+    return render(request, 'marketing/coupons/promo.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def promo_add(request):
@@ -443,7 +443,7 @@ def promo_add(request):
         'form': form
     }
 
-    return render(request, 'marketing/promo_add.html', context)
+    return render(request, 'marketing/coupons/promo_add.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def promo_edit(request, pk):
@@ -457,7 +457,7 @@ def promo_edit(request, pk):
             return redirect('admin_promo')
 
         else:
-            return render(request, 'marketing/promo_edit.html', {'form':form})
+            return render(request, 'marketing/coupons/promo_edit.html', {'form':form})
 
     form = CouponForm(instance=coupon)
     context = {
@@ -465,13 +465,170 @@ def promo_edit(request, pk):
         'coupon': coupon
     }
 
-    return render(request, 'marketing/promo_edit.html', context)
+    return render(request, 'marketing/coupons/promo_edit.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def promo_delete(request, pk):
     coupon = Coupon.objects.get(id=pk)
     coupon.delete()
     return redirect('admin_promo')
+
+
+
+
+# Карты лояльности
+@user_passes_test(lambda u: u.is_superuser)
+def card_settings(request):
+
+    settings = LoyaltyCardSettings.objects.get()
+
+    if request.method == 'POST':
+        if settings:
+            form = LoyaltyCardSettingsForm(request.POST, instance=settings)
+        else:
+            form = LoyaltyCardSettingsForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            
+            return redirect('admin_card')
+
+        else:
+            
+            return render(request, 'marketing/loyalty_card/card_settings.html', {'form':form})
+
+    if settings:
+        form = LoyaltyCardSettingsForm(instance=settings)
+    else:
+        form = LoyaltyCardSettingsForm()
+
+    context = {
+
+        'form': form
+
+    }
+    return render(request, 'marketing/loyalty_card/card_settings.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_card(request):
+
+
+    if request.method == 'POST':
+        form = LoyaltyCardStatusForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_card')
+        
+        else:
+            
+            return render(request, 'marketing/loyalty_card/admin_card.html', {'form': form})
+
+
+
+
+    form = LoyaltyCardStatusForm()
+
+    card_statuses = LoyaltyCardStatus.objects.all()
+    user_cards = LoyaltyCard.objects.all()
+
+    setting = LoyaltyCardSettings.objects.get()
+
+    context = {
+
+        'card_statuses': card_statuses,
+        'user_cards': user_cards,
+        'form': form,
+        'setting': setting,
+
+
+    }
+    return render(request, 'marketing/loyalty_card/admin_card.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def loyalty_card_status_edit(request, pk):
+    card_status = LoyaltyCardStatus.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = LoyaltyCardStatusForm(request.POST, instance=card_status)
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_card')
+        
+        else:
+            return render(request, 'marketing/loyalty_card/loyalty_card_status_edit.html', {'form': form})
+
+
+
+
+    form = LoyaltyCardStatusForm(instance=card_status)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/loyalty_card/loyalty_card_status_edit.html', context)
+
+
+    
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def loyalty_card_status_delete(request, pk):
+    status = LoyaltyCardStatus.objects.get(id=pk)
+    status.delete()
+
+    return redirect('admin_card')
+
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def card_add(request):
+
+    context = {
+
+    }
+
+
+    return render(request, 'marketing/loyalty_card/card_add.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def card_edit(request, pk):
+
+    card = LoyaltyCard.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = LoyaltyCardForm(request.POST, instance=card)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_card')
+        else:
+
+            return render(request, 'marketing/loyalty_card/card_edit.html', {'form':form})
+    
+    
+    form = LoyaltyCardForm(instance=card)
+    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/loyalty_card/card_edit.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def card_delete(request, pk):
+    
+    
+    card = LoyaltyCard.objects.get(id=pk)
+    card.delete()
+
+    return redirect('admin_card')
 
 
 
@@ -508,13 +665,37 @@ def order_detail(request, pk):
     return render(request, 'order/order_detail.html', context)
 
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
+
+    loyalty_settings = LoyaltyCardSettings.objects.get()
+
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
+
+
+            if loyalty_settings.active == True:
+                status = request.POST['status']
+
+                if status == 'Выполнен':
+
+                    user = order.user_pr
+                    card = LoyaltyCard.objects.get(user=user)
+                    card.summ = card.summ + order.summ
+                    
+
+                    if loyalty_settings.status_up == True:
+
+                        card.balls = card.balls + ((Decimal(order.summ) / 100) * card.status().percent_up)
+
+
+                    card.save()
+
+
 
             return redirect('order_detail', order.id)
 

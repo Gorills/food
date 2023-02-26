@@ -1,0 +1,51 @@
+.card-statuses {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: flex-start;
+    // .card-statuses__list
+
+    &__list {
+        padding: 20px;
+        background-color: #fff;
+        width: 100%;
+        margin-right: 20px;
+        border-radius: 30px;
+    }
+
+    // .card-statuses__item
+
+    &__item {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 10px;
+        &:nth-child(1) {
+            font-weight: 700;
+        }
+    }
+
+    // .card-statuses__inner
+
+    &__inner {
+        width: 100%;
+        max-width: 20%;
+        white-space: normal;
+        display: flex;
+
+        a + a {
+            margin-left: 5px;
+        }
+
+        &:last-child {
+            max-width: 7%;
+        }
+    }
+
+    // .card-statuses__add
+
+    &__add {
+    }
+}

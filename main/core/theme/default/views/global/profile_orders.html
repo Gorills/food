@@ -117,7 +117,7 @@
                                 <a href="{{ item.product.get_absolute_url }}" class="account-order__title"> {{ item.product.name }}</a>
                                 <p class="account-order__quantity"><span>x </span> {{ item.quantity }} </p>
                                 
-                                <p class="account-order__price">{{ item.price }}₽</p>
+                                <p class="account-order__price">{{ item.get_cost }}₽</p>
                         </div>
 
 

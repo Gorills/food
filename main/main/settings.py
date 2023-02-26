@@ -224,6 +224,7 @@ TEMPLATES = [
                 'home.context_processors.get_days',
                 'cart.context_processors.cart',
                 'accounts.context_processors.userprofile',
+                'accounts.context_processors.card_loyalty_settings',
                 'orders.context_processors.calback_form',
                 'coupons.context_processors.coupon_form',
                 'pay.context_processors.cart_active',

@@ -306,6 +306,29 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
     }
 });
 
+
+//   Применение баллов
+$(document).on('click','.cart__order-line__balls-link',function(e){
+    e.preventDefault();
+    var url = $(this).attr('href')
+    $.get(url, function() {
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+        // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+    
+    });
+
+   
+});
+
 // Купон
 $(function() {
     $(document).on('submit','.cart-coupon',function(e){
@@ -1247,6 +1270,16 @@ $(document).on('click', '.cart__input-sms-btn' ,function(e){
         $('#phone').removeAttr('readonly');
         $(".phone_refresh").load(location.href + " .phone_refresh__inner");
 
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+        // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
         function getPause() {
             $('#id_phone').css('border-color', 'green');
         }
@@ -1350,9 +1383,20 @@ jQuery(document).ready(function () {
     
 })
 
+
 // Платежи
 
 
+$(document).on('click','.cookie__btn',function(e){
+    e.preventDefault();
+   
 
+    var csrfToken = $(this).attr('data-token')
+    $.post( "/", { get_cookie: "ZcMWy~DhAiTo0@~", csrfmiddlewaretoken: csrfToken})
+        
+        .done(function( ) {
+            $('.cookie').hide()
+        });
+})
 
 

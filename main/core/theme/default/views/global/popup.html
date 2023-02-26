@@ -19,3 +19,18 @@
 
     </div>
 </div>
+
+{% if request.session.get_cookie == 'True' %}
+
+
+{% else %}
+<div class="cookie">
+    <div class="cookie__inner">
+        <div class="cookie__text">
+            Продолжая использовать наш сайт, вы даете согласие на <a href="/politic/">обработку файлов cookie</a>, которые обеспечивают правильную работу сайта.
+
+        </div>
+        <a data-token="{{ csrf_token }}" href="#" class="cookie__btn">ОК</a>
+    </div>
+</div>
+{% endif %}

@@ -118,6 +118,11 @@ from decimal import Decimal
 
 def home(request):
 
+    if request.method == 'POST':
+        get_cookie = request.POST['get_cookie']
+        if get_cookie == 'ZcMWy~DhAiTo0@~':
+            request.session['get_cookie'] = 'True'
+
     # payment = PaymentSet.objects.get()
     # payment.delete()
     # yookassa = Yookassa.objects.get()

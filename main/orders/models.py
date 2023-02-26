@@ -37,6 +37,8 @@ class Order(models.Model):
     paid = models.BooleanField(default=False)
 
     summ = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    bonuses_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     STATUS_CLASS = (
        ('Новый', 'Новый'),
@@ -69,9 +71,10 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+    free = models.PositiveIntegerField(default=0, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 
    
     def get_cost(self):
-        return self.price * self.quantity
+        return (self.price * self.quantity) - (self.price * self.free)

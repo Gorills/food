@@ -678,6 +678,24 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
+
+        &--balls {
+            font-size: 12px;
+        }
+    }
+
+    // .cart__order-line__balls
+    &__order-line__balls {
+
+    }
+
+    // .cart__order-line__balls-link
+    &__order-line__balls-link {
+        font-size: 14px;
+        color: var(--color-font);
+        text-decoration: underline;
+        display: inline-block;
+        
     }
 
     // .cart__order-line-text

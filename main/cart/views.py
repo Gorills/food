@@ -105,3 +105,12 @@ def set_delivery(request, value):
 def delivery_summ(request, value): 
     request.session['delivery_summ'] = value
     return redirect('home')
+
+from accounts.models import LoyaltyCard, UserProfile
+
+def active_balls(request):
+    cart = Cart(request)
+    request.session['active_balls'] = str(cart.get_max_balls())
+
+
+    return redirect('home')

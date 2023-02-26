@@ -44,6 +44,20 @@ urlpatterns = [
     path('promo/edit/<int:pk>/', views.promo_edit, name='promo_edit'),
     path('promo/delete/<int:pk>/', views.promo_delete, name='promo_delete'),
 
+
+    # loyalty card
+    path('admin_card/', views.admin_card, name='admin_card'),
+    path('card_settings/', views.card_settings, name='card_settings'),
+    path('card_add/', views.card_add, name='card_add'),
+    path('card_edit/<int:pk>/', views.card_edit, name='card_edit'),
+    path('card_delete/<int:pk>/', views.card_delete, name='card_delete'),
+
+
+    path('loyalty_card_status_edit/<int:pk>/', views.loyalty_card_status_edit, name='loyalty_card_status_edit'),
+    path('loyalty_card_status_delete/<int:pk>/', views.loyalty_card_status_delete, name='loyalty_card_status_delete'),
+
+
+
     # zone file
     path('zone_file/', views.zone_file, name='zone_file'),
 

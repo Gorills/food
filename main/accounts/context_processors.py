@@ -1,4 +1,4 @@
-from accounts.models import UserProfile
+from accounts.models import UserProfile, LoyaltyCardSettings
 
 def userprofile(request):
 
@@ -7,3 +7,10 @@ def userprofile(request):
         return {'userprofile': UserProfile.objects.get(id=id)}
     except:
         return {'userprofile': []}
+    
+
+
+def card_loyalty_settings(request):
+
+    return {'card_loyalty_settings': LoyaltyCardSettings.objects.get()}
+    
