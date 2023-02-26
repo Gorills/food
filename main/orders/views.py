@@ -10,6 +10,7 @@ from setup.models import ThemeSettings
 from accounts.models import UserProfile
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -169,7 +170,10 @@ def order_create(request):
                         loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                     
                     except:
-                        loyalty_card = LoyaltyCard.objects.create(user=user_profile)
+                        loyalty_card = LoyaltyCard.objects.create(
+                            user=user_profile,
+                            summ=Decimal('0.00')
+                            )
 
                     try:
                         if order.bonuses_pay > 0:
@@ -252,7 +256,10 @@ def order_confirm(request, pk):
                 try:
                     loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                 except:
-                    loyalty_card = LoyaltyCard.objects.create(user=user_profile)
+                    loyalty_card = LoyaltyCard.objects.create(
+                        user=user_profile,
+                        summ=Decimal('0.00')
+                        )
 
                 try:
                     if order.bonuses_pay > 0:
@@ -320,7 +327,10 @@ def order_webhook(request):
                     try:
                         loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                     except:
-                        loyalty_card = LoyaltyCard.objects.create(user=user_profile)
+                        loyalty_card = LoyaltyCard.objects.create(
+                            user=user_profile,
+                            summ=Decimal('0.00')
+                            )
 
                     try:
                         if order.bonuses_pay > 0:
@@ -363,7 +373,10 @@ def order_success(request):
             try:
                 loyalty_card = LoyaltyCard.objects.get(user=user_profile)
             except:
-                loyalty_card = LoyaltyCard.objects.create(user=user_profile)
+                loyalty_card = LoyaltyCard.objects.create(
+                    user=user_profile,
+                    summ=Decimal('0.00')
+                    )
 
             try:
                 if order.bonuses_pay > 0:
@@ -430,7 +443,10 @@ def paykeeper_success(request):
             try:
                 loyalty_card = LoyaltyCard.objects.get(user=user_profile)
             except:
-                loyalty_card = LoyaltyCard.objects.create(user=user_profile)
+                loyalty_card = LoyaltyCard.objects.create(
+                    user=user_profile,
+                    summ=Decimal('0.00')
+                    )
 
             try:
                 if order.bonuses_pay > 0:
