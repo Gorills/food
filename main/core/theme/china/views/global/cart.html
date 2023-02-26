@@ -323,7 +323,7 @@
 
                         
 
-                            <div class="cart__select" id="pickup_areas" data-value="0">
+                            <div class="cart__select" id="pickup_areas" data-value="{% if request.session.delivery == 1 %}1{% else %}0{% endif %}">
                                 <div class="cart__select-active" id="pickup_areas_refresh">
                                     <div class="cart__select-active-inner">
                                         

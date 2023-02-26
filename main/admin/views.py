@@ -688,12 +688,14 @@ def order_status_change(request, pk):
 
                     user = order.user_pr
                     card = LoyaltyCard.objects.get(user=user)
-                    card.summ = card.summ + order.summ
+                    
+                    # Накапливаем сумму на карту лояльности
+                    card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
                     
 
                     if loyalty_settings.status_up == True:
 
-                        card.balls = card.balls + ((Decimal(order.summ) / 100) * card.status().percent_up) - order.delivery_price
+                        card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up) 
 
 
                     card.save()

@@ -737,6 +737,12 @@ $(function() {
         var getPhone = $('#id_phone').val()
         var getAddress = $('#finaladress').val()
 
+        var deliveryMethod = $('#delivery_method').val()
+        if (deliveryMethod == 'Доставка') {
+            $('#pickup_areas').attr('data-value', '1')
+        }
+
+
         var getPhoneSubject = $('.cart__input-phone-btn').attr('data-sub')
 
 
