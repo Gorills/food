@@ -693,7 +693,7 @@ def order_status_change(request, pk):
 
                     if loyalty_settings.status_up == True:
 
-                        card.balls = card.balls + ((Decimal(order.summ) / 100) * card.status().percent_up)
+                        card.balls = card.balls + ((Decimal(order.summ) / 100) * card.status().percent_up) - order.delivery_price
 
 
                     card.save()
