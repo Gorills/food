@@ -534,7 +534,10 @@ def admin_card(request):
     card_statuses = LoyaltyCardStatus.objects.all()
     user_cards = LoyaltyCard.objects.all()
 
-    setting = LoyaltyCardSettings.objects.get()
+    try:
+        setting = LoyaltyCardSettings.objects.get()
+    except:
+        setting = LoyaltyCardSettings.objects.create()
 
     context = {
 
