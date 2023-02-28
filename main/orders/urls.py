@@ -29,3 +29,8 @@ if pay_name == 'paykeeper':
     urlpatterns.append(path('paykeeper/fail/', views.paykeeper_error, name='paykeeper_error')) 
     urlpatterns.append(path('paykeeper/success/', views.paykeeper_success, name='paykeeper_success')) 
     urlpatterns.append(path('paykeeper/session/<int:pk>/', views.paykeeper_session, name='paykeeper_session')) 
+
+
+if pay_name == 'tinkoff':
+    urlpatterns.append(path('error/', views.order_error, name='order_error')) 
+    urlpatterns.append(path('tinkoff_success/', views.tinkoff_success, name='tinkoff_success')) 

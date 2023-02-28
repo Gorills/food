@@ -30,7 +30,7 @@ def create_payment(order, request):
     items_arr = []
     
     
-    success_url = f'https://{request.META["HTTP_HOST"]}/orders/success/{order.id}/'
+    success_url = f'https://{request.META["HTTP_HOST"]}/orders/tinkoff_success/{order.id}/'
 
     items = OrderItem.objects.filter(order=order)
     

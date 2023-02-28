@@ -484,3 +484,20 @@ def paykeeper_success(request):
 
     else:
         return redirect('orders:paykeeper_error')
+    
+
+
+
+
+def tinkoff_success(request, pk):
+    cart = Cart(request)
+    cart.clear()
+
+    order = Order.objects.get(id=pk)
+    order.paid = True
+    order.save()
+    order_telegram(order)
+    text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
+    send_sms(text, order.phone)
+    
+    return redirect('/?order=True')
