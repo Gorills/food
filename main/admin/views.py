@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, YookassaForm, PayMethodForm
+from admin.forms import LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -14,7 +14,7 @@ from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus,
 from orders.models import Order
 from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
-from pay.models import PayKeeper, PaymentSet, Yookassa, AlfaBank
+from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
 import subprocess
@@ -225,13 +225,20 @@ def admin_payments(request):
     except:
         paykeeper_form = PayKeeperForm()
 
+    try:
+        tinkoff = Tinkoff.objects.get()
+        tinkoff_form = TinkoffForm(instance=tinkoff)
+    except:
+        tinkoff_form = TinkoffForm()
+
 
     context = {
         'payment': payment,
         'form': form,
         'yookassa_form':yookassa_form,
         'alfabank_form': alfabank_form,
-        'paykeeper_form': paykeeper_form
+        'paykeeper_form': paykeeper_form,
+        'tinkoff_form': tinkoff_form
 
     }
 
@@ -290,6 +297,26 @@ def paykeeper_save(request):
 
     else:
         return redirect('admin_payments')
+    
+
+@user_passes_test(lambda u: u.is_superuser)
+def tinkoff_save(request):
+
+    if request.method == 'POST':
+        paykeeper_form = TinkoffForm(request.POST)
+        if paykeeper_form.is_valid():
+            paykeeper_form.save()
+            subprocess.call(["touch", RESET_FILE])
+            return redirect('admin_payments')
+
+        else:
+            return redirect('admin_payments')
+
+
+    else:
+        return redirect('admin_payments')
+    
+
 
 # Настройки почты POST
 @user_passes_test(lambda u: u.is_superuser)

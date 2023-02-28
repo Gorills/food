@@ -39,6 +39,9 @@ if pay_name == 'alfabank':
 if pay_name == 'paykeeper':
     from pay.paykeeper_pay import create_payment, get_status
 
+if pay_name == 'tinkoff':
+    from pay.tinkoff_pay import create_payment
+
 
 
 
@@ -153,6 +156,16 @@ def order_create(request):
                     
                     print(confirmation_url)
                     return redirect('/orders/paykeeper/session/' + payment_id + '/')
+                
+                if pay_name == 'tinkoff':
+                    data = create_payment(order, request)
+
+                    
+                    order.payment_dop_info = data
+                    order.save()
+
+                    return redirect(data)
+
 
 
             else:

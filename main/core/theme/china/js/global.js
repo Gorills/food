@@ -560,7 +560,7 @@ $(document).ready(function(){
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-
+            $("#cart__select-drop").load(location.href + " #cart__select-drop-refresh");
 
             $('#suggest').attr('required', 'required')
             $('#finaladress').attr('required', 'required')

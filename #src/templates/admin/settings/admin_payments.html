@@ -78,4 +78,21 @@
 
 {% endif %}
 
+
+{% if payment.name == 'tinkoff' %}
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="{% url 'tinkoff_save' %}" class="form" method="post">
+            {% csrf_token %}
+           
+            {{ tinkoff_form.as_p }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
 {% endblock %}

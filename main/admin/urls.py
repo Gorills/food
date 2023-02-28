@@ -26,6 +26,7 @@ urlpatterns = [
     path('yookassa_save/', views.yookassa_save, name='yookassa_save'),
     path('alfabank_save/', views.alfabank_save, name='alfabank_save'),
     path('paykeeper_save/', views.paykeeper_save, name='paykeeper_save'),
+    path('tinkoff_save/', views.tinkoff_save, name='tinkoff_save'),
 
     # paay method
     path('add_pay_method/', views.add_pay_method, name='add_pay_method'),

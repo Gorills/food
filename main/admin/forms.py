@@ -7,7 +7,7 @@ from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper
+from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 
 
 
@@ -225,6 +225,25 @@ class PayKeeperForm(forms.ModelForm):
                 'class': 'input',
             })
         }
+
+
+class TinkoffForm(forms.ModelForm):
+    class Meta:
+        model = Tinkoff
+        fields = '__all__'
+        
+        widgets = {
+            'terminalkey': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'password': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'taxation': forms.Select(attrs={
+                'class': 'input',
+            })
+        }
+
 
 
 class PaymentForm(forms.ModelForm):
