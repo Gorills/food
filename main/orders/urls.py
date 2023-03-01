@@ -33,4 +33,4 @@ if pay_name == 'paykeeper':
 
 if pay_name == 'tinkoff':
     urlpatterns.append(path('error/', views.order_error, name='order_error')) 
-    urlpatterns.append(path('tinkoff_success/', views.tinkoff_success, name='tinkoff_success')) 
+    urlpatterns.append(path('tinkoff_success/<int:pk>/', views.tinkoff_success, name='tinkoff_success')) 
