@@ -78,7 +78,7 @@ def order_create(request):
           
             order.user_pr = user_pr
             order.summ = cart.get_total_price_after_discount()
-            order.delivery_price = cart.get_delivery()
+            order.delivery_price = Decimal(cart.get_delivery())
 
             # Бонусы сохраняем в заказ
             if cart.active_balls > 0:

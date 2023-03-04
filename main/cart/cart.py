@@ -226,7 +226,7 @@ class Cart(object):
                         summ = Decimal(0)
                         return summ
                     else:
-                        return self.get_sum
+                        return Decimal(self.get_sum)
                 else:
                     summ = Decimal(0)
                     return summ
@@ -239,7 +239,7 @@ class Cart(object):
                     summ = Decimal(0)
                     return summ
                 else:
-                    return price_delivery
+                    return Decimal(price_delivery)
             else:
                 summ = Decimal(0)
                 return summ

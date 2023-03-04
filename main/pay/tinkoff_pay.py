@@ -25,6 +25,8 @@ except:
     email = ''
 
 import decimal
+from decimal import Decimal
+D = Decimal
 def create_payment(order, request):
     
     items_arr = []
@@ -96,7 +98,8 @@ def create_payment(order, request):
 
 
     delivery_price = order.delivery_price
-    del_pr = str(delivery_price).replace('.', '').replace(',', '')
+
+    del_pr = str(Decimal(delivery_price).quantize(D("1.00"))).replace('.', '').replace(',', '')
     
     if Decimal(delivery_price) > 0:
 
@@ -146,7 +149,7 @@ def create_payment(order, request):
     
 
     
-    with open('data.json', 'w') as f:
-        json.dump(payList, f)
+    # with open('data.json', 'w') as f:
+    #     json.dump(payList, f)
 
     return url

@@ -25,7 +25,7 @@ class Order(models.Model):
     
     pay_method = models.CharField(max_length=250, verbose_name="Способ оплаты", null=True, blank=True)
     delivery_method = models.CharField(max_length=250, verbose_name="Способ доставка", null=True, blank=True)
-    delivery_price = models.CharField(max_length=250, verbose_name="Стоимость доставки", null=True, blank=True)
+    delivery_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость доставки", null=True, blank=True)
 
     order_conmment = models.TextField(null=True, blank=True, verbose_name='Комментарий к заказу')
     created = models.DateTimeField(auto_now_add=True)
