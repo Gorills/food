@@ -38,15 +38,19 @@ def create_payment(order, request):
     total = total.replace('.', '')
 
     
+    print(items.count())
     
     for item in items:
 
         name = item.product.name
+        quantity = item.quantity
 
-        if order.coupon:
-            price = item.product.price
-            discount = (price/100)*order.discount
-            price = price - discount
+        if order.balls :
+            balls = order.balls / items.count()
+            
+        
+            price = ((item.product.price * quantity) - balls) / quantity
+            
             price = str(price)
             price = price.replace('.', '')
            
@@ -56,8 +60,7 @@ def create_payment(order, request):
             price = str(price)
             price = price.replace('.', '')
 
-
-        quantity = item.quantity
+        
     
 
         amount = Decimal(price) * Decimal(quantity)
@@ -66,8 +69,6 @@ def create_payment(order, request):
         
         
 
-        print(item.free)
-        print(item.quantity)
 
         if quantity > item.free:
             items_arr.append({
@@ -84,15 +85,16 @@ def create_payment(order, request):
     
 
     delivery_price = order.delivery_price
+    
 
     del_pr = str(delivery_price).replace('.', '').replace(',', '')
-
+    print(del_pr)
     if Decimal(delivery_price) > 0:
         items_arr.append({
                 
             'Name': 'Доставка',
             "Price": str(del_pr),
-            "Quantity": '1',
+            "Quantity": 1,
             "Amount": str(del_pr),
             "PaymentMethod": "full_prepayment",
             "PaymentObject": "commodity",
@@ -101,7 +103,7 @@ def create_payment(order, request):
 
     
 
-    
+    print(total)
 
     dictionary = {
         "TerminalKey": terminalkey,

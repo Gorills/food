@@ -73,6 +73,8 @@ def order_create(request):
                 order.coupon = cart.coupon
                 order.discount = cart.coupon.discount
             
+            if cart.active_balls:
+                order.balls = cart.active_balls
           
             order.user_pr = user_pr
             order.summ = cart.get_total_price_after_discount()
