@@ -85,7 +85,7 @@ def create_payment(order, request):
 
     delivery_price = order.delivery_price
 
-    del_pr = str(delivery_price).replace('.', '')
+    del_pr = str(delivery_price).replace('.', '').replace(',', '')
 
     if Decimal(delivery_price) > 0:
         items_arr.append({
