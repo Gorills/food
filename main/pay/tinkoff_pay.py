@@ -84,13 +84,16 @@ def create_payment(order, request):
     
 
     delivery_price = order.delivery_price
+
+    del_pr = str(delivery_price).replace('.', '')
+
     if Decimal(delivery_price) > 0:
         items_arr.append({
                 
             'Name': 'Доставка',
-            "Price": delivery_price,
+            "Price": str(del_pr),
             "Quantity": '1',
-            "Amount": delivery_price.replace('.', '').replace(',', ''),
+            "Amount": str(del_pr),
             "PaymentMethod": "full_prepayment",
             "PaymentObject": "commodity",
             "Tax": "none",
@@ -124,6 +127,7 @@ def create_payment(order, request):
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
     print(response.text)
     res = response.json()
+    print(res)
     url = res['PaymentURL']
     
 
