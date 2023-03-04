@@ -147,6 +147,6 @@ def create_payment(order, request):
 
     
     with open('data.json', 'w') as f:
-        json.dump(res, f)
+        json.dump(payList, f)
 
     return url
