@@ -24,7 +24,7 @@ try:
 except:
     email = ''
 
-
+import decimal
 def create_payment(order, request):
     
     items_arr = []
@@ -37,23 +37,24 @@ def create_payment(order, request):
     total = str(order.summ)
     total = total.replace('.', '')
 
+    print(total)
+
     
-    print(items.count())
+    # print(items.count())
     
     for item in items:
 
         name = item.product.name
         quantity = item.quantity
+        quantity = quantity - item.free
+
 
         if order.balls :
-            balls = order.balls / items.count()
-            
-        
-            price = ((item.product.price * quantity) - balls) / quantity
-            
+            price = item.product.price
+            discount = (price/100)*order.percent_pay
+            price = price - discount
             price = str(price)
             price = price.replace('.', '')
-           
 
         else:
             price = item.product.price
@@ -61,16 +62,17 @@ def create_payment(order, request):
             price = price.replace('.', '')
 
         
-    
+        
 
         amount = Decimal(price) * Decimal(quantity)
         amount = str(amount)
+        print(amount)
         amount = amount.replace('.', '')
-        
-        
 
-
+    
+        
         if quantity > item.free:
+            
             items_arr.append({
                 
                 'Name': name,
@@ -81,15 +83,24 @@ def create_payment(order, request):
                 "PaymentObject": "commodity",
                 "Tax": "none",
                 })
+        # print(order.percent_pay)
+        # print('Price:')
+        # print(price)
+        # print('item.free')
+        # print(item.free)
+        # print('quantity')
+        # print(quantity)
+        print('Amount:')
+        print(amount)
 
-    
+
 
     delivery_price = order.delivery_price
-    
-
     del_pr = str(delivery_price).replace('.', '').replace(',', '')
-    print(del_pr)
+    
     if Decimal(delivery_price) > 0:
+
+        print(delivery_price)
         items_arr.append({
                 
             'Name': 'Доставка',
@@ -103,7 +114,6 @@ def create_payment(order, request):
 
     
 
-    print(total)
 
     dictionary = {
         "TerminalKey": terminalkey,
@@ -124,6 +134,8 @@ def create_payment(order, request):
 
     payList = json.dumps(dictionary, indent=4)
 
+
+    print(payList)
     
 
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)

@@ -284,13 +284,14 @@ class Cart(object):
     def get_max_balls(self):
         
         a = self.get_total_price()
+        # print(a)
         max_bonus = (Decimal(a) / Decimal('100')) * Decimal(self.percent_pay)
 
         if Decimal(max_bonus) >= Decimal(self.balls):
             max_bonus = self.balls
 
 
-        return Decimal(max_bonus.quantize(Decimal("1"), decimal.ROUND_DOWN))
+        return Decimal(max_bonus)
 
        
     def get_personal_pay(self):

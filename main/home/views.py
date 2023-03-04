@@ -138,7 +138,7 @@ def home(request):
     sliders = Slider.objects.all()
     new_products = Product.objects.filter(new=True).order_by('-id')[:8]
     sale_products = Product.objects.all().exclude(old_price=None)[:8]
-    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0)[:8]
+    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True)[:8]
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
 
 

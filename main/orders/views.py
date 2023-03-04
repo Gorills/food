@@ -83,9 +83,11 @@ def order_create(request):
             # Бонусы сохраняем в заказ
             if cart.active_balls > 0:
                 order.bonuses_pay = cart.active_balls
+                order.percent_pay = cart.percent_pay
 
             
-            order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
+            if order.flat:
+                order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
 
             order.save()
 

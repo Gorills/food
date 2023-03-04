@@ -83,7 +83,7 @@
                     <div class="col col-2"></div>
                     {% endif %}
 
-                    <div class="col col-2" data-label="">{{ order.get_total_cost | floatformat:2}}</div>
+                    <div class="col col-2" data-label="">{{ order.summ | floatformat:2}}</div>
                     <div class="col col-2" data-label="">
                         {% if order.discount %}
                             {{ order.discount }}% (купон: {{ order.coupon.code }})
