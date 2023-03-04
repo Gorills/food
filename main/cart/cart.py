@@ -3,7 +3,8 @@ from django.conf import settings
 from shop.models import Category, Product, Product, ShopSetup
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
-
+import decimal
+D = decimal.Decimal
 
 try:
     del_zones = ShopSetup.objects.get().zones_delivery
@@ -289,7 +290,7 @@ class Cart(object):
             max_bonus = self.balls
 
 
-        return max_bonus
+        return max_bonus.quantize(D("1.00"), decimal.ROUND_DOWN)
 
        
     def get_personal_pay(self):
