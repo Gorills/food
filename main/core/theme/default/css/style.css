@@ -1783,6 +1783,69 @@ a {
   justify-content: space-between;
 }
 
+#inputResult h4 {
+  font-size: 26px;
+}
+
+#inputResult .mb-4 {
+  margin-bottom: 40px;
+}
+
+#inputResult h5 {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+#inputResult .purpose-table,
+#inputResult .purpose-table th,
+#inputResult .purpose-table td {
+  border: 1px solid #d8d8d8;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+#inputResult .purpose-table th,
+#inputResult .purpose-table td {
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+
+#inputResult .purpose-table th,
+#inputResult .purpose-table td {
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+
+#inputResult .purpose-table th {
+  width: 200px;
+  text-align: left;
+  font-weight: 500;
+}
+
+#inputResult .purpose-table,
+#inputResult .purpose-table th,
+#inputResult .purpose-table td {
+  border: 1px solid #d8d8d8;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+#inputResult .link.mark {
+  border-bottom: 1.5px dotted #fa8669;
+}
+
+#inputResult .link {
+  cursor: pointer;
+}
+
+#inputResult .mark,
+#inputResult mark {
+  display: inline;
+  padding: 0.05em;
+  background-color: #fcf8e3;
+  word-wrap: break-word;
+}
+
 .header {
   box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
   align-items: center;
