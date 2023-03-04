@@ -695,7 +695,7 @@ def order_detail(request, pk):
     return render(request, 'order/order_detail.html', context)
 
 
-
+import decimal
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
@@ -722,7 +722,7 @@ def order_status_change(request, pk):
 
                     if loyalty_settings.status_up == True:
 
-                        card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1.0")) 
+                        card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
 
 
                     card.save()

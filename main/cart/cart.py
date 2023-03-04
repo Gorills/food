@@ -290,7 +290,7 @@ class Cart(object):
             max_bonus = self.balls
 
 
-        return max_bonus.quantize(D("1.00"), decimal.ROUND_DOWN)
+        return Decimal(max_bonus.quantize(Decimal("1"), decimal.ROUND_DOWN))
 
        
     def get_personal_pay(self):

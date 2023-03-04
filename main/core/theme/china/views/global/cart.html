@@ -590,7 +590,7 @@
                                     </div>
                                     {% if cart.active_balls <= 0 %}
                                     <div class="cart__order-line cart__order-line--balls">
-                                        Списать {{ cart.get_max_balls }} суммы покупки баллами? 
+                                        Списать {{ cart.get_max_balls | floatformat:"2" }} суммы покупки баллами? 
                                         <a href="{% url 'cart:active_balls' %}" class="cart__order-line__balls-link">Списать</a>
                                     </div>
                                     {% endif %}
