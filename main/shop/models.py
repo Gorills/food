@@ -16,6 +16,8 @@ class ShopSetup(SingletonModel):
 
     start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
     end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
+
+    delivery_full = models.BooleanField(default=False, verbose_name='Доставка 24/7')
     delay = models.PositiveIntegerField(default=2, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
 
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')

@@ -19,6 +19,12 @@ def get_hours(request):
         start = ShopSetup.objects.get().start_delivery
         end = ShopSetup.objects.get().end_delivery
         delay = ShopSetup.objects.get().delay
+
+        if ShopSetup.objects.get().delivery_full:
+            start = 0
+            end = 24
+            
+
     except:
         start = 10
         end = 22
