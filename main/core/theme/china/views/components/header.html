@@ -42,10 +42,12 @@
                                 {% endfor %}
                             
 
+                                {% if posts %}
                                 <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
                                     <meta itemprop="name" content="Новости" />
                                     <a class="header__link" itemprop="url" href="{% url 'blog' %}">Новости</a>
                                 </li>
+                                {% endif %}
                                 
                             </ul>
                         </nav>
