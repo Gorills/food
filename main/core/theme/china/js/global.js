@@ -871,7 +871,10 @@ function init() {
             provider: {
             suggest: (function(request, options) {
     
-                return ymaps.suggest(city + ", " + request)
+                return ymaps.suggest(request, {
+                    boundedBy: myMap.getBounds()
+                  });
+
                 })
             }}
 

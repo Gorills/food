@@ -69,17 +69,21 @@
     &__last {
         width: fit-content;
     }
-
+    // .footer__address-item
+    &__address-item {
+        margin-bottom: 25px;
+    }
     // .footer__contact
 
     &__contact {
         display: flex;
         align-items: center;
         color: #fff;
-        margin-bottom: 15px;
+        
         svg {
             margin-right: 10px;
-            width: 20px;
+            width: 15px;
+            height: 15px;
             fill: #fff;
         }
     }

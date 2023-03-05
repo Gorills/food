@@ -156,7 +156,8 @@
     </div>
     {{ form.as_p }}
     {{ form.media }}
-
+    <input type="text" id="data-slug" hidden>
+    <input type="text" id="data-color" hidden>
     <div class="form__wrap">
         <a href="#" class="btn btn--warning draft" data-action="{% url 'post_draft' %}">Сохранить как черновик</a>
         <button class="btn btn--success">Опубликовать</button>

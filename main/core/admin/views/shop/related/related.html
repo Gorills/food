@@ -3,6 +3,7 @@
 
 
 {% block body %}
+{% load thumbnail %}
 <div class="page__title">Сопутствующие товары</div>
 
 <div class="breadcrumb">
@@ -58,7 +59,9 @@
             <li class="table-row">
 
                 <div class="col col-3" data-label="">
-                    <img width="150" src="{{ related.thumb.url }}" alt="">
+                    {% thumbnail related.thumb "40x26" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                    {% endthumbnail %}
                 </div>
 
                 

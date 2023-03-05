@@ -3,7 +3,7 @@
 
 
 {% block body %}
-
+{% load thumbnail %}
 
 
 
@@ -61,7 +61,13 @@
             {% for product in products %}
                 <li class="table-row">
                     <div class="col col-2" data-label="">
-                        <img src="{{ product.thumb.url }}" alt="">
+
+                        {% thumbnail product.thumb "40x26" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                        {% endthumbnail %}
+
+                        
+
                     </div>
                     <div class="col col-6" data-label="">
                         {{ product.name }}

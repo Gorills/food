@@ -162,6 +162,9 @@ class PickupAreasForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'dop_info': forms.TextInput(attrs={
+                'class': 'input',
+            }),
         }
 
 

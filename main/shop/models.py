@@ -44,12 +44,22 @@ class PickupAreas(models.Model):
     address = models.CharField(max_length=250, verbose_name='Адрес')
     time_to_open = models.CharField(max_length=250, verbose_name='Время открытия (не обязательно)', null=True, blank=True)
     time_to_close = models.CharField(max_length=250, verbose_name='Время закрытия (не обязательно)', null=True, blank=True)
+    all_time = models.BooleanField(default=False, verbose_name='Работает 24/7')
+    dop_info = models.CharField(max_length=250, null=True, blank=True, verbose_name='Дополнительные условия работы (выходные)')
     show_to_contacts = models.BooleanField(default=False, verbose_name='Показывать в контактах (не обязательно)')
     phone = models.CharField(max_length=18, null=True, blank=True, verbose_name='Телефон (не обязательно)')
 
     def __str__(self):
         return self.name
 
+    def get_phone(self):
+
+        try:
+            res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+        except:
+            res = '899999999'
+
+        return res
 
 
 class PayMethod(models.Model):

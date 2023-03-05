@@ -38,7 +38,8 @@
     </div>
     {{ form.as_p }}
     {{ form.media }}
-
+    <input type="text" id="data-slug" hidden>
+    <input type="text" id="data-color" hidden>
     <div class="form__wrap">
         <button class="btn btn--success">Добавить</button>
         <a href="{% url 'blog_category' %}" class="btn btn--danger">Отменить</a>
