@@ -159,7 +159,7 @@ def home(request):
 
 
 def page_detail(request, slug):
-    page = get_object_or_404(Page, type=slug)
+    page = get_object_or_404(Page, type=slug, status=True)
     context = {
         'page': page
     }
