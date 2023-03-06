@@ -58,11 +58,32 @@ def order_telegram(order):
     else:
         coupon_comment = ''
 
+    if order.bonuses_pay:
+        bonuses_pay = f"\n*Оплачено баллами*: { order.bonuses_pay }"
+    else:
+        bonuses_pay = ''
+
+    if order.entrance:
+        entrance = "\n" + "*Подъезд*: " + str(order.entrance)
+    else:
+        entrance = ''
+
+    if order.floor:
+        floor = "\n" + "*Этаж*: " + str(order.floor)
+    else:
+        floor = ''
+
+    if order.flat:
+        flat = "\n" + "*Квартира*: " + str(order.flat)
+    else:
+        flat = ''
+
+
     if order.delivery_method == 'Доставка':
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Подъезд*: " + str(order.entrance) + "\n" + "*Этаж*: " + str(order.floor) + "\n" + "*Квартира*: " + str(order.flat) + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
 
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
     
     try:
         send_message(message)
