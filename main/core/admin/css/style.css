@@ -1641,6 +1641,7 @@ label span {
 }
 
 .faq__item {
+  display: none;
   margin-bottom: 20px;
   padding: 40px;
 }
