@@ -212,7 +212,7 @@
             </div>
             
             
-            {% comment %} <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
+            <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
                 <div class="cart__form-coupon-inner">
                     {% csrf_token %}
                     
@@ -220,7 +220,7 @@
 
                     <button class="cart__form-coupon-btn">Применить</button>
                 </div>
-            </form> {% endcomment %}
+            </form> 
             
             <div class="cart__form-form-wrap">
                 <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
