@@ -650,3 +650,9 @@ $(document).on('change','.submit-file',function(){
 
 
 // end Создание поста в блоге
+
+
+
+$(document).on('click','.faq__title',function(){
+    $(this).next().next().toggleClass('faq__item--active')
+});

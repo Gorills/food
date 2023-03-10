@@ -46,6 +46,18 @@ def sidebar_hide(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
+def faq(request):
+    
+    context = {
+
+    }
+    
+    return render(request, 'faq.html', context)
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
 def admin(request):
     try:
         setup = BaseSettings.objects.get()

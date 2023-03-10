@@ -45,7 +45,7 @@
 
 <div class="page">
     <div class="container">
-        <div class="page__inner">
+        <div class="page__inner {% if page.type == 'politic' %}inputResult{% endif %}">
 
             {{ page.text | safe }}
 

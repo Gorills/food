@@ -160,6 +160,10 @@ urlpatterns = [
 
 
 
+    # FAQ
+    path('faq/', views.faq, name='faq'),
+
+
 ]
 
 
