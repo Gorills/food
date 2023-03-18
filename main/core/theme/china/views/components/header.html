@@ -149,6 +149,15 @@
         <div class="container">
             <div class="header-bottom__inner">
                 <ul class="header-bottom__list" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+
+                    {% if combos %}
+                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                            <a class="header-bottom__link" itemprop="url" href="{% url 'home' %}#combo">Комбо</a>
+                            <meta itemprop="name" content="Комбо" />
+                        </li>
+                    
+                    
+                    {% endif %}
                     
                     {% for cat in categorys %}
                         {% if cat.top == True %}

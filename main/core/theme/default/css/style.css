@@ -58,6 +58,14 @@ body {
   height: 100vh;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-primary);
 }
@@ -115,7 +123,6 @@ a {
 .content {
   margin-top: 156px;
   position: relative;
-  z-index: 2;
 }
 
 .container {
@@ -354,6 +361,19 @@ a {
   line-height: 1;
 }
 
+.cart__name-option-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cart__name-option {
+  font-size: 11px;
+}
+
+.cart__name-option + .cart__name-option {
+  margin-left: 5px;
+}
+
 .cart__price {
   font-size: 13px;
 }
@@ -383,6 +403,50 @@ a {
 .cart__remove svg path {
   transition: all 0.5s ease;
   fill: rgb(117, 117, 117);
+}
+
+.cart .combo__remove {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cart .combo__remove:hover svg path {
+  fill: var(--color-font);
+}
+
+.cart .combo__remove svg {
+  width: 6px;
+  transition: all 0.5s ease;
+}
+
+.cart .combo__remove svg path {
+  transition: all 0.5s ease;
+  fill: rgb(117, 117, 117);
+}
+
+.cart .plus_combo {
+  background: none;
+  border: none;
+  color: var(--color-font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  height: 22px;
+  border: 1px solid rgb(124, 124, 124);
+  width: 22px;
+  background: transparent;
+  line-height: 1;
+  cursor: pointer;
+  text-align: center;
 }
 
 .cart__total {
@@ -2630,6 +2694,10 @@ a {
   padding: 20px;
 }
 
+.product-list .btn {
+  text-align: center;
+}
+
 .product-list__item {
   width: 100%;
   margin-bottom: 30px;
@@ -3557,6 +3625,153 @@ td.product-thumbnail img {
 
 .header-bottom__link:hover {
   color: var(--color-primary);
+}
+
+.combo-popup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.combo-popup--active {
+  display: flex;
+}
+
+.combo-popup__layout {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+  background-color: hsla(0deg, 0%, 0%, 0.2);
+}
+
+.combo-popup__inner {
+  padding: 30px;
+  background-color: #fff;
+  position: relative;
+  border-radius: 30px;
+  z-index: 100001;
+  box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
+}
+
+.combo-popup__closer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.combo-popup__name {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.combo-popup__desc {
+  margin-bottom: 40px;
+}
+
+.combo-popup__item-group {
+  color: #b0b0b0;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.combo-popup__parent_list {
+  margin-bottom: 20px;
+}
+
+.combo-popup__item-row {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.combo-popup__item-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.05);
+  transition: 0.2s background-color;
+  background-color: rgba(92, 90, 87, 0.1);
+}
+
+.combo-popup__item-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 48%;
+  margin-bottom: 15px;
+}
+
+.combo-popup__item-item--active .combo-popup__item-check {
+  background-color: rgba(92, 90, 87, 0.7);
+}
+
+.combo-popup__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.combo-popup__bottom-wrap {
+  display: flex;
+  align-items: center;
+  margin-right: 40px;
+}
+
+.combo-popup__btn {
+  cursor: not-allowed;
+  font-size: 12px;
+  background-color: #646464;
+  color: #b0b0b0;
+}
+
+.combo-popup__btn--active {
+  cursor: pointer;
+  background-color: var(--color-btn-bg);
+  color: var(--color-btn-font);
+}
+
+.combo-popup__summ {
+  font-size: 30px;
+}
+
+.counter {
+  margin-right: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.counter__btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.counter__input {
+  outline: none;
+  padding: 8px;
+  width: 85px;
+  height: 55px;
+  text-align: center;
+  font-size: 18px;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #e1e1e1;
 }
 
 @media screen and (max-width: 1426px) {

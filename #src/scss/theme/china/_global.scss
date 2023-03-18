@@ -24,7 +24,12 @@ body {
         
     }
 }
-
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
 
 
 ::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
@@ -73,7 +78,7 @@ a   {
 .content {
     margin-top: 156px;
     position: relative;
-    z-index: 2;
+    
 
     @media screen and (max-width:1200px) {
         margin-top: 90px;

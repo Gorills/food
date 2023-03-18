@@ -215,6 +215,7 @@ TEMPLATES = [
                 'setup.context_processors.colors',
                 'setup.context_processors.theme',
                 'shop.context_processors.categorys',
+                'shop.context_processors.combos',
                 'shop.context_processors.shop_setup',
                 'shop.context_processors.pickup_areas',
                 'shop.context_processors.pickup_address',

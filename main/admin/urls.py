@@ -81,6 +81,17 @@ urlpatterns = [
     path('product/edit/<int:pk>/', views.product_edit, name='product_edit'),
     path('product/delete/<int:pk>/', views.product_delete, name='product_delete'),
 
+    # Комбо
+    path('combo/', views.admin_combo, name='admin_combo'),
+    path('add_combo/', views.add_combo, name='add_combo'),
+    path('edit_combo/<int:pk>/', views.edit_combo, name='edit_combo'),
+    path('delete_combo/<int:pk>/', views.delete_combo, name='delete_combo'),
+
+    path('delete_combo_item/<int:pk>/', views.delete_combo_item, name='delete_combo_item'),
+
+    
+    
+
     path('option_image/delete/<int:pk>/', views.option_image_delete, name='option_image_delete'),
     path('option/delete/<int:pk>/', views.option_delete, name='option_delete'),
 

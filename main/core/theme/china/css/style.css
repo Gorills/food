@@ -66,6 +66,14 @@ body {
   height: 100vh;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-primary);
 }
@@ -123,7 +131,6 @@ a {
 .content {
   margin-top: 156px;
   position: relative;
-  z-index: 2;
 }
 
 .container {
@@ -364,6 +371,19 @@ a {
   line-height: 1;
 }
 
+.cart__name-option-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cart__name-option {
+  font-size: 11px;
+}
+
+.cart__name-option + .cart__name-option {
+  margin-left: 5px;
+}
+
 .cart__price {
   font-size: 13px;
 }
@@ -393,6 +413,50 @@ a {
 .cart__remove svg path {
   transition: all 0.5s ease;
   fill: rgb(117, 117, 117);
+}
+
+.cart .combo__remove {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cart .combo__remove:hover svg path {
+  fill: var(--color-font);
+}
+
+.cart .combo__remove svg {
+  width: 6px;
+  transition: all 0.5s ease;
+}
+
+.cart .combo__remove svg path {
+  transition: all 0.5s ease;
+  fill: rgb(117, 117, 117);
+}
+
+.cart .plus_combo {
+  background: none;
+  border: none;
+  color: var(--color-font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  height: 22px;
+  border: 1px solid rgb(124, 124, 124);
+  width: 22px;
+  background: transparent;
+  line-height: 1;
+  cursor: pointer;
+  text-align: center;
 }
 
 .cart__total {
@@ -2648,6 +2712,10 @@ a {
 
 .product-list--slider .product-list__item--big {
   padding: 20px;
+}
+
+.product-list .btn {
+  text-align: center;
 }
 
 .product-list__item {

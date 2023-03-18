@@ -505,3 +505,69 @@ label {
 .green {
     border: 1px solid $success;
 }
+
+
+.form {
+
+
+    .search {
+        position: relative;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        input {
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+    }
+
+    // .form-item
+    .form-item {
+        display: flex;
+    }
+
+    .form-item__val {
+        padding: 5px 10px;
+        border: 1px solid #eee;
+        
+        &:nth-child(1) {
+            min-width: 550px;
+        }
+        &:nth-child(2) {
+            min-width: 100px;
+        }
+    }
+
+    .remove_item {
+        width: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .remove_item_bace {
+        width: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    .products {
+        list-style: none;
+        padding: 0;
+        position: absolute;
+        top: 19px;
+        background-color: #fff;
+        box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+        display: none;
+        max-height: 150px;
+        overflow-y: scroll;
+        li {
+            padding: 10px 40px;
+            cursor: pointer;
+        }
+
+    }
+
+
+}

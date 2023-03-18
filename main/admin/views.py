@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -2100,6 +2100,8 @@ def related_edit(request, pk):
     }
     return render(request, 'shop/related/related_edit.html', context)
 
+
+@user_passes_test(lambda u: u.is_superuser)
 def related_delete(request, pk):
     related = Product.objects.get(id=pk)
     related.delete()
@@ -2110,8 +2112,158 @@ def related_delete(request, pk):
 
 # !!! Сопутствующие товары !!!
 
+from shop.models import Combo, ComboItem
+
+# !!! Комбо !!!
+@user_passes_test(lambda u: u.is_superuser)
+def admin_combo(request):
+
+    combos = Combo.objects.all()    
+    context = {
+        'combos': combos
+    }
+
+    return render(request, 'shop/combo/admin_combo.html', context)
 
 
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def add_combo(request):
 
+    if request.method == 'POST':
+        
+        form = ComboForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            combo = form.save(commit=False)
+        
+            items = request.POST.getlist('item')
+            item_prices = request.POST.getlist('item_price')
+
+            
+            combo.save()
+
+            cat_list = []
+            for item in items:
+                product = Product.objects.get(name=item)
+                if product.parent.name not in cat_list:
+                    cat_list.append(product.parent.name)
+            
+
+            for cat in cat_list:
+
+                count = 0
+                for item in items:
+                    product = Product.objects.get(name=item)
+
+                    if product.parent.name == cat:
+                        ComboItem.objects.create(
+                            combo=combo,
+                            product=product,
+                            cat=product.parent.name,
+                            price=item_prices[count]
+                        )
+                    count += 1
+
+            return redirect('admin_combo')
+        
+        else:
+            return render(request, 'shop/combo/edit_combo.html', {'form':form})
+    
+    products = Product.objects.all()
+
+
+    context = {
+        'products': products
+    }
+
+    return render(request, 'shop/combo/add_combo.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_combo(request, pk):
+    combo = Combo.objects.get(id=pk)
+
+    if request.method == 'POST':
+
+        form = ComboForm(request.POST, request.FILES, instance=combo)
+
+        if form.is_valid():
+            combo = form.save(commit=False)
+        
+            items = request.POST.getlist('item')
+            item_prices = request.POST.getlist('item_price')
+
+            
+            combo.save()
+
+            items_combo = ComboItem.objects.filter(combo=combo)
+            items_combo.delete()
+
+            cat_list = []
+            for item in items:
+                product = Product.objects.get(name=item)
+                if product.parent.name not in cat_list:
+                    cat_list.append(product.parent.name)
+            
+
+            for cat in cat_list:
+
+                count = 0
+                for item in items:
+                    product = Product.objects.get(name=item)
+
+                    if product.parent.name == cat:
+                        item_price = item_prices[count].replace(',','.')
+                        ComboItem.objects.create(
+                            combo=combo,
+                            product=product,
+                            cat=product.parent.name,
+                            price=item_price
+                        )
+                    count += 1
+
+            return redirect('admin_combo')
+        
+        else:
+            return render(request, 'shop/combo/edit_combo.html', {'form':form})
+    
+
+    
+    form = ComboForm(instance=combo)
+    products = Product.objects.all()
+    context = {
+        'products': products,
+        'combo':combo,
+        'form': form
+    }
+
+    return render(request, 'shop/combo/edit_combo.html', context)
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_combo(request, pk):
+    combo = Combo.objects.get(id=pk)
+    combo.delete()
+
+    return redirect('admin_combo')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_combo_item(request, pk):
+    
+    item = ComboItem.objects.get(id=pk)
+    parent_id = item.combo.id
+
+    item.delete()
+
+    return redirect(f'/admin/edit_combo/{parent_id}/')
+
+
+
+
+# !!! Комбо !!!

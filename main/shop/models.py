@@ -358,3 +358,20 @@ class ProductChar(models.Model):
 
 
 
+
+
+class Combo(models.Model):
+    name = models.CharField(max_length=350, verbose_name='Название')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
+    thumb = models.ImageField(upload_to='products/thumb', verbose_name='Основное изображение', null=True, blank=True)
+    
+
+
+
+class ComboItem(models.Model):
+    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='combo_items')
+    cat = models.CharField(max_length=250, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Наценка')
+

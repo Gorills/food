@@ -1,7 +1,12 @@
-from .models import Category, ShopSetup, PickupAreas, PayMethod, PickupAreas
+from .models import Category, ShopSetup, PickupAreas, PayMethod, PickupAreas, Combo
 
 def categorys(request):
     return {'categorys': Category.objects.filter(status=True).order_by('sort_order')}
+
+
+
+def combos(request):
+    return {'combos': Combo.objects.all()}
 
 
 # Показывать описания под товарами

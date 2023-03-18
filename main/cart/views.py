@@ -114,3 +114,63 @@ def active_balls(request):
 
 
     return redirect('home')
+
+
+
+def add_combo(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        combo = request.POST['combo']
+        combo_id = request.POST['combo']
+        products = request.POST['products'][:-1]
+        quantity = request.POST['quantity']
+        price = request.POST['price']
+
+        combo = combo + ','+products
+        
+       
+        cart.add_combo(combo, combo_id, products, quantity, price)
+        
+
+    
+    return redirect('/')
+
+
+def remove_combo(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        combo = request.POST['combo']
+        
+        
+       
+        cart.remove_combo(combo)
+        
+
+    
+    return redirect('/')
+
+
+def plus_combo(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        combo = request.POST['combo']
+       
+        cart.plus_combo(combo)
+        
+
+    
+    return redirect('/')
+
+
+def minus_combo(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        combo = request.POST['combo']
+       
+        cart.minus_combo(combo)
+        
+
+    
+    return redirect('/')

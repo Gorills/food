@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Category, Product, Product, ShopSetup
+from shop.models import Category, Combo, ComboItem, Product, Product, ShopSetup
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 import decimal
@@ -88,6 +88,140 @@ class Cart(object):
             # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
+
+
+        # Перебираем все ключи и ищем товары, которые были удалены 
+        product_ids = self.cart.keys()
+        empty = []
+        for id in product_ids:
+            try:
+                prod = Product.objects.get(id=id)
+              
+            except:
+                product = id
+                empty.append(product)
+        
+        # Удаляем удаленные товары из корзины
+        for em in empty:
+            product = str(em)
+            self.remove(product)
+
+
+        combos = request.session.get('combos')
+
+        
+
+        if not combos:
+            combos = self.session['combos'] = {
+                '0': { 
+                    'id': 0,
+                    'combo': 0,
+                    'quantity': 0,
+                    'price': 0,
+                    'products': None
+                }
+            }
+
+        self.combos = combos
+
+        
+        
+        
+
+    def add_combo(self, combo, combo_id,  products, quantity, price):
+
+        if combo not in self.combos:
+
+            self.combos[combo] = {
+                'combo': int(combo_id),
+                'quantity': int(quantity),
+                'price': str(price),
+                'products': products
+                
+                }
+
+        else:
+            self.combos[combo]['quantity'] += int(quantity)
+        
+        self.session.modified = True
+
+
+
+
+    def remove_combo(self, combo):
+        self.session['active_balls'] = '0.00'
+       
+
+        if combo in self.combos:
+            del self.combos[combo]
+            self.save()
+
+    def plus_combo(self, combo):
+
+        
+        self.combos[combo]['quantity'] += 1
+        self.save()
+       
+
+
+    def minus_combo(self, combo):
+        self.combos[combo]['quantity'] -= 1
+
+        if self.combos[combo]['quantity'] == 0:
+            del self.combos[combo]
+        self.save()
+
+
+
+
+    def get_combos(self):
+        combo_list = []
+        # combo_items = ComboItem.objects
+        for item in self.combos.values():
+            try:
+
+                combo_items = []
+                items_list = str(item['products']).split(',')
+
+                for i in items_list:
+                    try:
+                        item_c = ComboItem.objects.get(id=str(i))
+                        combo_items.append(item_c)
+
+                    except: 
+                        pass
+                
+                combo_get = Combo.objects.get(id=str(item['combo']))
+                combo_list.append({
+
+                    'combo':combo_get,
+                    'price': Decimal(item['price']),
+                    'quantity': int(item['quantity']),
+                    'products': combo_items
+
+                    })
+  
+
+            except:
+                pass
+
+            
+
+        
+        return combo_list
+    
+    def combo_summ(self):
+        
+        
+        return sum((Decimal(item['price']) * item['quantity']) for item in self.combos.values())
+
+
+
+
+    def count_combos(self):
+        combo_len = sum(int(item['quantity']) for item in self.combos.values())
+        return combo_len
+    
 
 
     def add(self, product, quantity=1, update_quantity=False):
@@ -179,10 +313,14 @@ class Cart(object):
         """
         Удаление товара из корзины.
         """
-        product_id = str(product.id)
+        try:
+            product_id = str(product.id)
+        except:
+            product_id = str(product)
         if product_id in self.cart:
             del self.cart[product_id]
             self.save()
+
 
 
     def __iter__(self):
@@ -192,12 +330,6 @@ class Cart(object):
         product_ids = self.cart.keys()
         # получение объектов product и добавление их в корзину
         products = Product.objects.filter(id__in=product_ids)
-
-        if not products:
-            
-            self.clear()
-        
-
 
         for product in products:
             self.cart[str(product.id)]['product'] = product
@@ -209,13 +341,20 @@ class Cart(object):
 
             yield item
 
+        
+        
+
+
 
     def __len__(self):
        
         """
         Подсчет всех товаров в корзине.
         """
-        return sum(item['quantity'] for item in self.cart.values())
+        all_len = sum(item['quantity'] for item in self.cart.values())
+        
+
+        return all_len + self.count_combos()
 
 
     def get_delivery(self):
@@ -248,7 +387,9 @@ class Cart(object):
         """
         Подсчет стоимости товаров в корзине.
         """
-        return sum((Decimal(item['price']) * item['quantity']) - (Decimal(item['price']) * item['free']) for item in self.cart.values())
+        total_pr = sum((Decimal(item['price']) * item['quantity']) - (Decimal(item['price']) * item['free']) for item in self.cart.values())
+
+        return total_pr + self.combo_summ()
 
 
     def clear(self):
@@ -325,6 +466,6 @@ class Cart(object):
         c = self.get_delivery()
         d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
         e = self.active_balls 
-       
+        
         
         return a - b + c - d - e

@@ -1409,3 +1409,188 @@ $(document).on('click','.cookie__btn',function(e){
 })
 
 
+
+
+// .combo
+
+$(document).on('click','.open-combo',function(e){
+    e.preventDefault();
+    $(this).parent().prev('.combo-popup').addClass('combo-popup--active')
+
+})
+
+$(document).on('click','.combo-popup__closer, .combo-popup__layout',function(e){
+
+    $('.combo-popup').removeClass('combo-popup--active')
+
+})
+
+$(document).ready(function() {
+    $('.combo-popup__item-item').click(function() {
+      const itemRow = $(this).closest('.combo-popup__item-row');
+      const itemItemsInRow = itemRow.find('.combo-popup__item-item');
+      itemItemsInRow.removeClass('combo-popup__item-item--active');
+      var dataId = $(this).attr('data-id');
+      var price = $(this).attr('data-price');
+      $(this).parent().parent().attr('data-check', dataId);
+      $(this).parent().parent().attr('data-price', price);
+      $(this).addClass('combo-popup__item-item--active');
+      var dataCheck = 0;
+      var count = 0;
+      var itemSumm = 0;
+      var comboPopup = $(this).closest('.combo-popup');
+      comboPopup.find('.combo-popup__parent_list').each(function() {
+        if($(this).attr('data-check') != '') {
+          dataCheck ++;
+        } 
+        count++;
+        var pr = parseFloat($(this).attr('data-price'));
+        itemSumm += pr;
+      });
+      var summPrice = parseFloat(comboPopup.find('.combo-popup__summ').attr('data-price'));
+      var quantity = parseFloat(comboPopup.find('.counter__input').val());
+      itemSumm += summPrice;
+      var res = itemSumm*quantity + ',00₽';
+      comboPopup.find('.combo-popup__summ').text(res);
+      comboPopup.find('.combo-popup__summ').attr('data-final', itemSumm);
+      if (dataCheck == count) {
+        comboPopup.find('.combo-popup__btn').addClass('combo-popup__btn--active');
+      }
+    });
+  
+    $('.counter__btn').on('click', function(e) {
+      e.preventDefault();
+      var input = $(this).siblings('.counter__input');
+      var currentValue = parseInt(input.val());
+      if ($(this).hasClass('counter__btn--minus')) {
+        if (currentValue > 1) { // Minimum value of 1
+          input.val(currentValue - 1);
+        }
+      } else {
+        input.val(currentValue + 1);
+      }
+      var dataCheck = 0;
+      var count = 0;
+      var itemSumm = 0;
+      var comboPopup = $(this).closest('.combo-popup');
+      comboPopup.find('.combo-popup__parent_list').each(function() {
+        if($(this).attr('data-check') != '') {
+          dataCheck ++;
+        } 
+        count++;
+        var pr = parseFloat($(this).attr('data-price'));
+        itemSumm += pr;
+      });
+      var summPrice = parseFloat(comboPopup.find('.combo-popup__summ').attr('data-price'));
+      var quantity = parseFloat(comboPopup.find('.counter__input').val());
+      itemSumm += summPrice;
+      var res = itemSumm*quantity + ',00₽';
+
+      comboPopup.find('.combo-popup__summ').text(res);
+      comboPopup.find('.combo-popup__summ').attr('data-final', itemSumm);
+      if (dataCheck == count) {
+        comboPopup.find('.combo-popup__btn').addClass('combo-popup__btn--active');
+      }
+    });
+  });
+
+
+
+
+
+  $(document).on('click','.combo-popup__btn',function(e){
+    e.preventDefault();
+   
+
+    var csrfToken = $(this).attr('data-token')
+    var combo = $(this).attr('data-id')
+    var comboPopup = $(this).closest('.combo-popup');
+    var price = comboPopup.find('.combo-popup__summ').attr('data-final');
+    var quantity = comboPopup.find('.counter__input').val();
+    
+
+    
+
+    var dataCheck = 0;
+    var count = 0;
+    var comboPopup = $(this).closest('.combo-popup');
+    var products = ''
+    comboPopup.find('.combo-popup__parent_list').each(function() {
+    if($(this).attr('data-check') != '') {
+            dataCheck ++;
+            
+            
+            
+        } 
+        count++;
+
+        
+        products += $(this).attr('data-check') + ','
+    
+ 
+    });
+
+    data = {
+        combo: combo, 
+        price:price,
+        quantity:quantity,
+        products: products,
+        csrfmiddlewaretoken: csrfToken
+    }
+
+    if (dataCheck == count) {
+        console.log(data)
+        $.post( "/cart/add_combo/", data)
+            .done(function( ) {
+            
+                comboPopup.removeClass('combo-popup--active');
+                $(".cart__inner").load(location.href + " .cart__refresh");
+            
+                $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+                $(".header__cart-wrap").load(location.href + " .header__cart");
+                $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+                $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+            });
+    }
+})
+
+
+$(document).on('click','.combo__remove',function(e){
+    e.preventDefault();
+    var csrfToken = $(this).attr('data-token')
+    var combo = $(this).attr('data-id')
+    data = {
+        combo: combo, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( "/cart/remove_combo/", data)
+        .done(function( ) {      
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        });
+})
+
+
+$(document).on('click','.plus_combo',function(e){
+    e.preventDefault();
+    var csrfToken = $(this).attr('data-token')
+    var combo = $(this).attr('data-id')
+    var url = $(this).attr('data-url')
+    data = {
+        combo: combo, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( url, data)
+        .done(function( ) {      
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        });
+})
+  

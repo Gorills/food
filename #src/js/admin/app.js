@@ -656,3 +656,69 @@ $(document).on('change','.submit-file',function(){
 $(document).on('click','.faq__title',function(){
     $(this).next().next().toggleClass('faq__item--active')
 });
+
+
+
+
+$(function(){
+  $("#search").keyup(function(){
+
+    $('.products').show()
+
+
+    var val = $(this).val().toLowerCase();
+    $(".products li").hide();
+    $(".products li").each(function(){
+      var text = $(this).text().toLowerCase();
+      if(text.indexOf(val) != -1)
+      {
+        $(this).show();
+      }
+    });
+  });
+ });
+
+
+ $(document).on('click','.products li',function(){
+    var value = $(this).text()
+    $("#search").val(value)
+    $('.products').hide()
+    $('#search').attr('data-search', '1')
+});
+
+$(document).on('click','#add_combo',function(e){
+  e.preventDefault();
+
+  var search = $('#search').val()
+  var price = $('#price').val()
+
+  if (price == '') {
+    price = '0.00'
+  } else {
+    price = price + '.00'
+  }
+  var dataSearch = $('#search').attr('data-search')
+
+  if (search != '' && dataSearch != '0' ) {
+    
+    var getHtml = '<div class="form-item"><div class="form-item__val">'+ search +'</div><div class="form-item__val">'+ price +'</div><input type="text" name="item" hidden value="'+ search +'"><input type="text" name="item_price" hidden value="'+ price +'"><svg class="remove_item" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></div>'
+
+
+    $('.form-item__wrap').append(getHtml)
+
+    $("#search").val('')
+    $("#price").val('0')
+
+  } else {
+
+  }
+
+  
+
+});
+
+$(document).on('click','.remove_item',function(e){
+
+  $(this).parent().remove()
+
+});

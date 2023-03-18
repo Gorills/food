@@ -11,4 +11,8 @@ urlpatterns = [
     path('set_delivery/<int:value>/', views.set_delivery, name='set_delivery'),
     path('delivery_summ/<int:value>/', views.delivery_summ, name='delivery_summ'),
     path('active_balls/', views.active_balls, name='active_balls'),
+    path('add_combo/', views.add_combo, name='add_combo'),
+    path('remove_combo/', views.remove_combo, name='remove_combo'),
+    path('plus_combo/', views.plus_combo, name='plus_combo'),
+    path('minus_combo/', views.minus_combo, name='minus_combo'),
 ]

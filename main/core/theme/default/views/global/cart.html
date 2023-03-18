@@ -168,6 +168,74 @@
                         {% endwith %}
                     {% endfor %}
 
+
+                   
+
+
+                    {% for combo in cart.get_combos %}
+                    
+                        <div class="cart__item">
+                            <a href="" class="combo__remove" data-token="{{ csrf_token }}" data-id="{{ combo.combo.id }},{% for item in combo.products %}{{ item.id }}{% if forloop.revcounter > 1 %},{% endif %}{% endfor %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                            </a>
+                            <div class="cart__item-inner">
+                                <div class="cart__img-wrap">
+            
+                                    
+                                        {% thumbnail combo.combo.thumb "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ combo.combo.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                    
+                                </div>
+
+                                <div class="cart__wrap">
+                                    <p class="cart__name">{{ combo.combo.name }}</p>
+                                    <div class="cart__name-option-wrap">
+                                    {% for item in combo.products %}
+
+                                    
+                                        <p class="cart__name-option">
+                                           {{ item.product.name }}{% if forloop.revcounter > 1 %}, {% endif %}<br>
+                                        </p>
+                                    {% endfor %}
+                                </div>
+
+                                </div>
+                                
+                               
+                            </div>
+
+                            
+                            <div class="cart__bottom">
+                                <p class="cart__total-price">{{ combo.price | floatformat:"2" }}₽</p>
+
+                                <div class="cart-plus-minus">
+                                                        
+                                    
+
+
+                                  
+                                        <button class="plus_combo" data-url="{% url 'cart:minus_combo' %}" data-token="{{ csrf_token }}" data-id="{{ combo.combo.id }},{% for item in combo.products %}{{ item.id }}{% if forloop.revcounter > 1 %},{% endif %}{% endfor %}">-</button>
+
+                                   
+                                    <input type="text" value="{{ combo.quantity }}" class="cart-input">
+                                   
+                                     
+                                    
+                                      
+                                        <button class="plus_combo" data-url="{% url 'cart:plus_combo' %}" data-token="{{ csrf_token }}" data-id="{{ combo.combo.id }},{% for item in combo.products %}{{ item.id }}{% if forloop.revcounter > 1 %},{% endif %}{% endfor %}">+</button>
+
+                                    </form>
+
+                                
+                                </div>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
                     {% if cart.get_free != 0 %}
                     <div class="cart__delivery cart__delivery--top">
                         Сумма заказа: {{ cart.get_total_price | floatformat:"2" }}₽
