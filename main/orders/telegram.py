@@ -25,20 +25,38 @@ def order_telegram(order):
     pr = []
                     
     for item in order.items.all():
-        pr_name = item.product.name
-        pr_quantity = item.quantity
-        pr_price = str(item.price)
+        if item.product:
+            pr_name = item.product.name
+            pr_quantity = item.quantity
+            pr_price = str(item.price)
 
-        pr_summ = pr_quantity * item.price
-        
-
-        pr.append({
+            pr_summ = pr_quantity * item.price
             
-            'Название':pr_name,
-            'Количество':pr_quantity,
-            'Цена':pr_price,
-            'Итого': str(pr_summ),
-        })
+
+            pr.append({
+                
+                'Название':pr_name,
+                'Количество':pr_quantity,
+                'Цена':pr_price,
+                'Итого': str(pr_summ),
+            })
+        else:
+            pr_name = item.combo.name
+            pr_sost = item.combo_items
+            pr_quantity = item.quantity
+            pr_price = str(item.price)
+
+            pr_summ = pr_quantity * item.price
+            
+
+            pr.append({
+                
+                'Название':pr_name,
+                'Состав':pr_sost,
+                'Количество':pr_quantity,
+                'Цена':pr_price,
+                'Итого': str(pr_summ),
+            })
 
     res = re.sub(r"[#%!@*{}]", "\n", str(pr))
     res = re.sub(r"[',]", "", res)

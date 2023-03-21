@@ -46,7 +46,10 @@ def create_payment(order, request):
     
     for item in items:
 
-        name = item.product.name
+        try:
+            name = item.product.name
+        except:
+            name = item.combo.name
         quantity = item.quantity
         quantity = quantity - item.free
 

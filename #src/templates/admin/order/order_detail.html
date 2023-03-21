@@ -140,6 +140,9 @@
 
             {% for product in order.items.all %}
 
+                {% if product.product %}
+
+
             
                 <li class="table-row">
                     <div class="col col-2" data-label="">
@@ -162,6 +165,34 @@
 
                     
                 </li>
+
+                {% elif product.combo %}
+
+                <li class="table-row">
+                    <div class="col col-2" data-label="">
+                        <img src="{{ product.combo.thumb.url }}" alt="">
+                    </div>
+                    <div class="col col-6" data-label="">
+                        {{ product.combo.name }} <br>
+                        {{ product.combo_items }} 
+                    </div>
+                    <div class="col col-2" data-label="">
+                        
+                        <p class="col__new">{{ product.get_cost }} руб.</p>
+                        
+
+                    </div>
+                    <div class="col col-2 col__center" data-label="">
+                        <div class="col__stock">
+                            {{ product.quantity }}
+                        </div>
+                    </div>
+
+                    
+                </li>
+
+
+                {% endif %}
             {% endfor %}
           </ul>
     

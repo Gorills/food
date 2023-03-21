@@ -6,7 +6,7 @@ from django.conf import settings
 from accounts.models import UserProfile
 
 # Create your models here.
-from shop.models import Product, ProductOption
+from shop.models import Combo, Product, ProductOption
 
 class Order(models.Model):
     # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
@@ -75,7 +75,9 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE, null=True, blank=True)
+    combo = models.ForeignKey(Combo, related_name='order_combo', on_delete=models.CASCADE, null=True, blank=True)
+    combo_items = models.TextField(null=True, blank=True)
     free = models.PositiveIntegerField(default=0, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
@@ -83,3 +85,5 @@ class OrderItem(models.Model):
    
     def get_cost(self):
         return (self.price * self.quantity) - (self.price * self.free)
+    
+

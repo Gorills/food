@@ -141,6 +141,7 @@ class Cart(object):
                 }
 
         else:
+            self.session['active_balls'] = '0.00'
             self.combos[combo]['quantity'] += int(quantity)
         
         self.session.modified = True
@@ -157,7 +158,7 @@ class Cart(object):
             self.save()
 
     def plus_combo(self, combo):
-
+        self.session['active_balls'] = '0.00'
         
         self.combos[combo]['quantity'] += 1
         self.save()
@@ -165,12 +166,23 @@ class Cart(object):
 
 
     def minus_combo(self, combo):
+        self.session['active_balls'] = '0.00'
         self.combos[combo]['quantity'] -= 1
 
         if self.combos[combo]['quantity'] == 0:
             del self.combos[combo]
         self.save()
 
+
+    def combo_clear(self):
+
+        items = self.combos.keys()
+
+        for item in list(items):
+            if item != 0:
+            
+                del self.combos[item]
+                self.save()
 
 
 

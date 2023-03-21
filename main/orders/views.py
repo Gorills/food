@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
-from shop.models import Product, ProductOption
+from shop.models import ComboItem, Product, ProductOption
 from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
@@ -119,6 +119,25 @@ def order_create(request):
 
                 pr.save()
 
+            combos = cart.get_combos()
+
+            for combo in combos:
+
+                combo_items = ''
+                for pr in combo['products']:
+                    combo_items = combo_items + pr.product.name + ', '
+
+                
+                combo_items = combo_items[:-1]
+
+                OrderItem.objects.create(
+                    order=order,
+                    combo=combo['combo'],
+                    price=combo['price'],
+                    combo_items = combo_items,
+                    quantity=combo['quantity']
+                    )
+
             
             if pay_method == 'Оплата картой на сайте':
 
@@ -201,6 +220,7 @@ def order_create(request):
                     
                     loyalty_card.save()
 
+                cart.combo_clear()
                 cart.clear()
 
                 return redirect('/?order=True')
@@ -287,7 +307,7 @@ def order_confirm(request, pk):
                 
                 loyalty_card.save()
 
-
+            cart.combo_clear()
             cart.clear()
             request.session['delivery'] = 1
             order.paid = True
@@ -405,7 +425,7 @@ def order_success(request):
             loyalty_card.save()
 
 
-
+        cart.combo_clear()
         cart.clear()
         request.session['delivery'] = 1
         order.paid = True
@@ -475,7 +495,7 @@ def paykeeper_success(request):
             loyalty_card.save()
 
 
-
+        cart.combo_clear()
         cart.clear()
         request.session['delivery'] = 1
         request.session['myorder_id'] = 0
@@ -495,6 +515,7 @@ def paykeeper_success(request):
 
 def tinkoff_success(request, pk):
     cart = Cart(request)
+    cart.combo_clear()
     cart.clear()
 
     order = Order.objects.get(id=pk)
