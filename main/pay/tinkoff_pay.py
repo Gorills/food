@@ -50,6 +50,7 @@ def create_payment(order, request):
             name = item.product.name
         except:
             name = item.combo.name
+            
         quantity = item.quantity
         quantity = quantity - item.free
 
