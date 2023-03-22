@@ -56,14 +56,16 @@ def create_payment(order, request):
 
 
         if order.balls :
-            price = item.product.price
+           
+            price = item.price
             discount = (price/100)*order.percent_pay
             price = price - discount
             price = str(price)
             price = price.replace('.', '')
 
         else:
-            price = item.product.price
+           
+            price = item.price
             price = str(price)
             price = price.replace('.', '')
 
