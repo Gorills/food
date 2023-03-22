@@ -1337,6 +1337,7 @@ class EmailSettingsForm(forms.ModelForm):
 
 
 class SetupForm(forms.ModelForm):
+    text = forms.CharField(label='Текст на главной странице', required=False, widget=CKEditorUploadingWidget())
     class Meta:
         model = BaseSettings
         fields = '__all__'
@@ -1359,7 +1360,7 @@ class SetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Телеграм бот TOKEN'
             }),
-             'telegram_group': forms.TextInput(attrs={
+            'telegram_group': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Группа в телеграме'
             }),
@@ -1385,6 +1386,11 @@ class SetupForm(forms.ModelForm):
             'address': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Адрес',
+                
+            }),
+            'meta_h1': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Заголовок H1',
                 
             }),
             'meta_title': forms.TextInput(attrs={
@@ -1431,6 +1437,7 @@ class SetupForm(forms.ModelForm):
             'time_zone': 'Часовой пояс',
 
             
+            'meta_h1': 'Заголовок H1',
             'meta_title': 'Мета заголовок',
             'meta_description': 'Мета описание',
             'meta_keywords': 'Ключевые слова',

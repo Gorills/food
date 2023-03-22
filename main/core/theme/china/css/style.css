@@ -1920,6 +1920,10 @@ a {
   word-wrap: break-word;
 }
 
+.about {
+  padding: 80px 0;
+}
+
 .header {
   box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
   align-items: center;

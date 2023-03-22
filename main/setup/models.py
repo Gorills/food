@@ -19,6 +19,8 @@ class BaseSettings(SingletonModel):
     meta_title = models.CharField(max_length=350, blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
     meta_keywords = models.CharField(max_length=350, blank=True, null=True)
+    meta_h1 = models.CharField(max_length=350, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
     social_image = models.FileField(upload_to="social_image", blank=True, null=True)
     logo_light = models.FileField(upload_to="logo", blank=True, null=True)
     logo_dark = models.FileField(upload_to="logo", blank=True, null=True)
