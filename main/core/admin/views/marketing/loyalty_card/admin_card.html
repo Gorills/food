@@ -124,32 +124,32 @@
 
         <ul class="responsive-table">
             <li class="table-header">
-                <a href="" class="col col-1">
+                <a href="" class="col col-5">
                     Код 
                 </a>
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'valid_from' %}-valid_from{% else %}valid_from{% endif %}">
+                <a href="" class="col col-2 sort" data-sort="{% if sort == 'valid_from' %}-valid_from{% else %}valid_from{% endif %}">
                     Телефон
 
                 </a>
 
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
+                <a href="" class="col col-2 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
                     Сумма покупок
 
                 </a>
                 {% if setting.status_down == True %}
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
+                <a href="" class="col col-2 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
                     Скидка
 
                 </a>
                 {% endif %}
 
                 {% if setting.status_up == True %}
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
+                <a href="" class="col col-2 sort" data-sort="{% if sort == 'discount' %}-discount{% else %}discount{% endif %}">
                     Накопление
 
                 </a>
                 {% endif %}
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'active' %}-active{% else %}active{% endif %}">
+                <a href="" class="col col-2 sort" data-sort="{% if sort == 'active' %}-active{% else %}active{% endif %}">
                     Статус
 
                 </a>
@@ -159,11 +159,11 @@
            {% for card in user_cards %}
             <li class="table-row">
                 
-                <div class="col col-1" data-label="">{{ card.id }}</div>
-                <div class="col col-5" data-label="">{{ card.user.phone }}</div>
-                <div class="col col-5" data-label="">{{ card.summ }}</div>
+                <div class="col col-5" data-label="">{{ card.id }}</div>
+                <div class="col col-2" data-label="">{{ card.user.phone }}</div>
+                <div class="col col-2" data-label="">{{ card.summ }}</div>
                 {% if setting.status_down == True %}
-                <div class="col col-5" data-label="">
+                <div class="col col-2" data-label="">
                     {% if card_statuses %}
 
                       {{ card.status.percent_down }} %
@@ -175,9 +175,9 @@
                 {% endif %}
 
                 {% if setting.status_up == True %}
-                <div class="col col-5" data-label="">{{ card.balls }}</div>
+                <div class="col col-2" data-label="">{{ card.balls }}</div>
                 {% endif %}
-                <div class="col col-5" data-label="">
+                <div class="col col-2" data-label="">
                     {% if card_statuses %}
 
                         {{ card.status.name }}
