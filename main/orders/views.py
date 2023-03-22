@@ -6,7 +6,7 @@ from shop.models import ComboItem, Product, ProductOption
 from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
-from setup.models import ThemeSettings
+from setup.models import ThemeSettings, BaseSettings
 from accounts.models import UserProfile
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_exempt
@@ -198,7 +198,7 @@ def order_create(request):
                 # очистка корзины
                 
                 
-                if LoyaltyCardSettings.objects.get().active == True:
+                if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
 
                     try:

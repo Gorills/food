@@ -461,6 +461,7 @@
                     <div class="wrap-delivery-address">
 
                         <div class="wrap-delivery-address__inner">
+                            
                             {% if request.session.delivery == 1 %}
                             <input  name="address" type="text" id="finaladress" required hidden>
                             {% else %}
@@ -471,7 +472,7 @@
                         </div>
 
                     </div>
-
+                    
 
                     <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
 

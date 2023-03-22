@@ -562,6 +562,7 @@ $(document).ready(function(){
             // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             $("#cart__select-drop").load(location.href + " #cart__select-drop-refresh");
 
+
             $('#suggest').attr('required', 'required')
             $('#finaladress').attr('required', 'required')
             $('#finaladress').attr('name', 'address')
@@ -569,6 +570,9 @@ $(document).ready(function(){
             $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
             $('.cart__pickup-row').removeClass('cart__pickup-row--active')
             $('#delivery_method').val('Доставка')
+
+            $(".wrap-delivery-address").load(location.href + " .wrap-delivery-address__inner");
+
             
 
         });
