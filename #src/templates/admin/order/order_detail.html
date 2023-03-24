@@ -72,7 +72,11 @@
         {% comment %} <p class="page-order__info">Статус оплаты: {% if order.paid == True %}Оплачен {% else %}Не оплачен{% endif %}</p> {% endcomment %}
         
         
-        <p class="page-order__info">Сумма заказа: {{ order.get_total_cost | floatformat:2 }} руб.</p>
+        <p class="page-order__info">Сумма заказа: {{ order.summ | floatformat:2 }} руб.</p>
+        {% if order.bonuses_pay %}
+        <p class="page-order__info">Оплачено баллами: {{ order.bonuses_pay | floatformat:2 }} руб.</p>
+        
+        {% endif %}
         {% if  order.delivery_method %}
         <p class="page-order__info">Способ доставки: {{ order.delivery_method }}</p>
         {% endif %}
