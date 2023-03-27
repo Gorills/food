@@ -45,7 +45,7 @@ def catalog(request):
         max_price = max_filter
 
 
-    product_list = Product.objects.filter(status=True, related=False, price__gte=min_price, price__lte=max_price).order_by(*sort)
+    product_list = Product.objects.filter(status=True, stock__gt=0, related=False, price__gte=min_price, price__lte=max_price).order_by(*sort)
     # product_list = Product.objects.filter(status=True, price__gte=min_price, price__lte=max_price).order_by(*sort)
 
     
@@ -96,7 +96,7 @@ def category_detail(request, slug):
 
     try:
 
-        products_list = Product.objects.filter(status=True, related=False, parent=category)
+        products_list = Product.objects.filter(status=True, stock__gt=0, related=False, parent=category)
         
         min_filter = products_list.order_by('price').first().price
         max_filter = products_list.order_by('-price').first().price
