@@ -2312,7 +2312,7 @@ import shutil
 from openpyxl import load_workbook
 from pytils.translit import slugify
 from PIL import Image
-import magic
+
 
 from django.core.files.images import ImageFile
 
