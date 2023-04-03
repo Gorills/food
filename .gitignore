@@ -40,3 +40,5 @@ passenger_wsgi.py
 **/migrations
 delivery.json
 
+main/csv_upload
+

@@ -95,7 +95,9 @@
                     {% endif %}
 
                 </div>
+                {% if product.short_description %}
                 <p class="product-detail__desc">{{ product.short_description }}</p>
+                {% endif %}
                 
                 {% if product.product_connect.count > 0 %}
                 <div class="product-detail__options">
@@ -160,12 +162,12 @@
                     </div>
                     {% endfor %}
 
-                </div>
+                </div> 
                 
 
                 
 
-                <form class="product-detail__form" action="{% if product.options.count > 1 %}{% url "cart:cart_add" option_second.id %}{% else %}{% url "cart:cart_add" product.options.first.id %}{% endif %}" method="post">
+                <form class="product-detail__form" action="{% url 'cart:cart_add' product.id %}" method="post">
                     {% csrf_token %}
 
 					
@@ -195,7 +197,7 @@
 
                     {% endif %}
 
-				</form>
+				</form> 
 
                 <div class="product-detail__chars">
                     {% if product.sku %}

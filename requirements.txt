@@ -12,3 +12,5 @@ whitenoise
 mysqlclient
 telepot
 yookassa
+openpyxl
+pytils

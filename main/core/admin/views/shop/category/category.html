@@ -62,7 +62,16 @@
                                 {% endif %}  
                             </div>
                             <div class="col col-3" data-label="">{{ category.name }}</div>
-                            <div class="col col-4" data-label="">{{ category.sort_order }}</div>
+
+                            <div class="col col-4" data-label="">
+                                
+                                <form action="{% url 'cat_orderby_edit' category.id %}" id="form_sort_order" method="post">
+                                    {% csrf_token %}
+                                    <input type="text" value="{{ category.sort_order }}" name="order">
+                                    <button>Ок</button>
+                                </form>
+                            
+                            </div>
 
                             <div class="col col-5" data-label="">
                                 <a target="_blank" href="{{ category.get_absolute_url }}" class="info">

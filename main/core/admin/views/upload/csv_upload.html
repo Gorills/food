@@ -1,0 +1,42 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Загрузка архива</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+
+            <li class="breadcrumb__item">Загрузка архива</li>
+          
+        </ol>
+
+
+        
+    </div>
+</div>
+
+
+{% comment %} <a href="{% url 'csv_work' %}">Обработать архив</a> {% endcomment %}
+
+
+
+<div class="page search">
+    <div class="page__inner search__inner">
+        <form action="." class="form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+             
+            <input type="file" class="input" name="file">
+
+            <button class="btn btn--success">Загрузить</button>
+
+        </form>
+        
+    </div>
+</div>
+
+{% endblock %}

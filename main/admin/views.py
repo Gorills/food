@@ -915,7 +915,7 @@ def admin_category(request):
     try:
         categorys = Category.objects.filter(Q(name__icontains=q)).order_by(*sort)
     except:
-        categorys = Category.objects.all().order_by(*sort)
+        categorys = Category.objects.all().order_by('sort_order')
     context = {
         # Разрешить поиск на странице
         'search': 'search',
@@ -992,6 +992,22 @@ def category_delete(request, pk):
     category = Category.objects.get(id=pk)
     category.delete()
     return redirect('admin_category')
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def cat_orderby_edit(request, pk):
+
+
+    category = Category.objects.get(id=pk)
+
+    if request.method == 'POST':
+        order_by = request.POST['order']
+        category.sort_order = order_by
+        category.save()
+    
+    
+        return redirect('admin_category')
 
 
 # Редкатирование категорий
@@ -2285,3 +2301,169 @@ def delete_combo_item(request, pk):
 
 
 # !!! Комбо !!!
+
+
+
+
+import zipfile
+from django.core.files.storage import FileSystemStorage
+import os
+import shutil
+from openpyxl import load_workbook
+from pytils.translit import slugify
+from PIL import Image
+import magic
+
+from django.core.files.images import ImageFile
+
+def product_upload():
+
+    # cat = Category.objects.all()
+    # prod = Product.objects.all()
+
+    # cat.delete()
+    # prod.delete()
+    
+    # file = 'csv_upload/upload/upload.xlsx'
+    file = 'csv_upload/upload.xlsx'
+    
+    wb = load_workbook(file)
+
+    
+    ws = wb.active
+    count = 0
+    connect = 0
+    for row in ws.iter_rows(min_row=1):
+        if count == 0 or count == 1:
+            pass
+        else:
+            name = row[1].value
+            slug = slugify(name)
+           
+            cat_name = row[2].value
+            cat_slug = slugify(cat_name)
+            
+            price = row[3].value
+            old_price = row[4].value
+
+            if old_price == '':
+                old_price = None
+            
+            filename = str(str(row[5].value).split('.')[0])
+
+            thumb = 'csv_upload/' + filename
+
+            files = os.listdir('csv_upload/')
+
+            if any(filename in f for f in files):
+                print(f"Изображение {filename} найдено")
+                formats = ['.jpg', ' .jpg', '.jpeg', ' .jpeg', '.webp', ' .webp', '.png', ' .png']
+                format = None
+                for ext in formats:
+                    try:
+                        with open('csv_upload/'+filename + ext, "rb") as f:
+                            format = ext.strip()
+                            break
+                    except:
+                        pass
+
+                if format:
+                    print("Формат файла: " + format)
+                else:
+                    print("Не удалось определить формат файла")
+
+            else:
+                print(f"Изображение {name} не найдено")
+
+            print(format)
+            
+            try:
+                thumb_path = 'csv_upload/'
+                thumb_for_format = thumb_path + filename + format
+                thumb_file = open(thumb_for_format, 'rb')
+                thumb_image = ImageFile(thumb_file)
+
+            
+                try:
+                    cat = Category.objects.get(slug=cat_slug)
+
+                except:
+                    cat = Category.objects.create(
+                        name=cat_name,
+                        slug=cat_slug,
+                        top=True
+                        )
+
+                try:
+                    product = Product.objects.get(slug=slug)
+  
+                    product.stock=1
+                    product.price=price
+                    product.old_price=old_price
+                    
+                    product.thumb=thumb_image
+                    product.parent=cat
+
+                    product.save()
+
+                except:
+                    product = Product.objects.create(
+                        name=name,
+                        slug=slug,
+                        
+                        stock=1,
+                        price=price,
+                        old_price=old_price,
+                      
+                        thumb=thumb_image,
+                        parent=cat
+                        )
+            except Exception as e:
+                print(e)
+
+        count += 1
+                
+# product_upload()
+
+
+                
+# !!!! Загрузка csv
+
+def csv_upload(request):
+
+    if request.method == 'POST':
+        file = request.FILES['file']
+
+        folder='csv_upload/' 
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        else:
+            shutil.rmtree('csv_upload')
+        
+        fs = FileSystemStorage(location=folder) #defaults to   MEDIA_ROOT  
+        filename = fs.save(file.name, file)
+        file_url = fs.url(filename)
+        
+        file_to_open = f'csv_upload/{file}'
+        fantasy_zip = zipfile.ZipFile(file_to_open)
+        fantasy_zip.extractall('csv_upload')
+        fantasy_zip.close()
+
+
+        os.remove(file_to_open)
+
+        product_upload()
+
+        shutil.rmtree('csv_upload')
+
+        return redirect('csv_upload')
+
+
+
+    return render(request, 'upload/csv_upload.html')
+
+
+
+
+# !!!! Загрузка csv

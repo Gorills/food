@@ -58,7 +58,9 @@ urlpatterns = [
     path('loyalty_card_status_delete/<int:pk>/', views.loyalty_card_status_delete, name='loyalty_card_status_delete'),
 
 
-
+    # CSV UPLOAD
+    path('csv_upload/', views.csv_upload, name='csv_upload'),
+    
     # zone file
     path('zone_file/', views.zone_file, name='zone_file'),
 
@@ -75,6 +77,7 @@ urlpatterns = [
     path('category/add/', views.category_add, name='category_add'),
     path('category/delete/<int:pk>/', views.category_delete, name='category_delete'),
     path('category/edit/<int:pk>/', views.category_edit, name='category_edit'),
+    path('category/orderby_edit/<int:pk>/', views.cat_orderby_edit, name='cat_orderby_edit'),
 
     path('product/', views.admin_product, name='admin_product'),
     path('product/add/', views.product_add, name='product_add'),
