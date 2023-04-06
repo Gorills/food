@@ -47,203 +47,208 @@ if pay_name == 'tinkoff':
 
 def order_create(request):
     cart = Cart(request)
-    if request.method == 'POST':
-        form = OrderCreateForm(request.POST)
+    
+    if cart:
 
-        pay_method = request.POST['pay_method']
-        phone = request.POST['phone']
+        if request.method == 'POST':
+            form = OrderCreateForm(request.POST)
 
-        try:
-            domofon = request.POST['domofon']
-            if domofon == '':
-                domofon = request.POST['flat']
-        except:
-            domofon = request.POST['flat']
-
-        if form.is_valid():
+            pay_method = request.POST['pay_method']
+            phone = request.POST['phone']
 
             try:
-                user_pr = UserProfile.objects.get(phone=phone)
+                domofon = request.POST['domofon']
+                if domofon == '':
+                    domofon = request.POST['flat']
             except:
-                user_pr = UserProfile.objects.create(phone=phone)
+                domofon = request.POST['flat']
+
+            if form.is_valid():
+
+                try:
+                    user_pr = UserProfile.objects.get(phone=phone)
+                except:
+                    user_pr = UserProfile.objects.create(phone=phone)
 
 
-            order = form.save(commit=False)
-            if cart.coupon:
-                order.coupon = cart.coupon
-                order.discount = cart.coupon.discount
+                order = form.save(commit=False)
+                if cart.coupon:
+                    order.coupon = cart.coupon
+                    order.discount = cart.coupon.discount
+                
+                if cart.active_balls:
+                    order.balls = cart.active_balls
             
-            if cart.active_balls:
-                order.balls = cart.active_balls
-          
-            order.user_pr = user_pr
-            order.summ = cart.get_total_price_after_discount()
-            order.delivery_price = Decimal(cart.get_delivery())
+                order.user_pr = user_pr
+                order.summ = cart.get_total_price_after_discount()
+                order.delivery_price = Decimal(cart.get_delivery())
 
-            # Бонусы сохраняем в заказ
-            if cart.active_balls > 0:
-                order.bonuses_pay = cart.active_balls
-                order.percent_pay = cart.percent_pay
-
-            
-            if order.flat:
-                order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
-
-            order.save()
-
-
-            for item in cart:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item['product'],
-                    price=item['price'],
-                    free=item['free'],
-                    quantity=item['quantity']
-                    )
-                
-                pr = Product.objects.get(id=item['product'].id)
-
-                # Добавляем продажу для учета хитов продаж
-                sales_old = pr.sales
-                sales_new = int(sales_old)+int(item['quantity'])
-                
-                pr.sales = sales_new
-
-                # Отнимаем количество, если указано в настройках
-                if pr.subtract == True:
-                    pr.stock = pr.stock - item['quantity']
-                    if pr.stock < 0:
-                        pr.stock = 0
-
-                    
-
-                pr.save()
-
-            combos = cart.get_combos()
-
-            for combo in combos:
-
-                combo_items = ''
-                for pr in combo['products']:
-                    combo_items = combo_items + pr.product.name + ', '
+                # Бонусы сохраняем в заказ
+                if cart.active_balls > 0:
+                    order.bonuses_pay = cart.active_balls
+                    order.percent_pay = cart.percent_pay
 
                 
-                combo_items = combo_items[:-1]
+                if order.flat:
+                    order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
 
-                OrderItem.objects.create(
-                    order=order,
-                    combo=combo['combo'],
-                    price=combo['price'],
-                    combo_items = combo_items,
-                    quantity=combo['quantity']
-                    )
-
-            
-            if pay_method == 'Оплата картой на сайте':
-
-                if pay_name == 'yookassa':
-                    data = create_payment(order, cart, request)
-                    payment_id = data['id']
-                    confirmation_url = data['confirmation_url']
-
-                    order.payment_id = payment_id
-                    order.payment_dop_info = confirmation_url
-                    order.save()
-                    print(data['path'])
-                    return redirect(confirmation_url)
-                    
-                if pay_name == 'alfabank':
-
-                    data = create_payment(order, cart, request)
-                    payment_id = data['id']
-                    confirmation_url = data['confirmation_url']
-
-                    order.payment_id = payment_id
-                    order.payment_dop_info = confirmation_url
-                    order.save()
-                    
-                    return redirect(confirmation_url)
-
-                if pay_name == 'paykeeper':
-
-                    data = create_payment(order, cart, request)
-                    payment_id = data['id']
-                    confirmation_url = data['confirmation_url']
-                   
-                    # session_url = 'http://' + request.META['HTTP_HOST']+'/orders/paykeeper/session/' + payment_id + '/'
-                    # requests.post(session_url)
-
-                    order.payment_id = payment_id
-                    order.payment_dop_info = confirmation_url
-                    order.save()
-                    
-                    print(confirmation_url)
-                    return redirect('/orders/paykeeper/session/' + payment_id + '/')
-                
-                if pay_name == 'tinkoff':
-                    data = create_payment(order, request)
-
-                    
-                    order.payment_dop_info = data
-                    order.save()
-
-                    return redirect(data)
-
-
-
-            else:
-                order_telegram(order)
-                text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-                send_sms(text, phone)
-                # очистка корзины
+                order.save()
                 
                 
-                if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
-                    user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
 
-                    try:
-                       
-                        loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                for item in cart:
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item['product'],
+                        price=item['price'],
+                        free=item['free'],
+                        quantity=item['quantity']
+                        )
                     
-                    except:
-                        loyalty_card = LoyaltyCard.objects.create(
-                            user=user_profile,
-                            summ=Decimal('0.00')
-                            )
+                    pr = Product.objects.get(id=item['product'].id)
 
-                    try:
-                        if order.bonuses_pay > 0:
-                            loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
-
-                    except:
-                        pass
+                    # Добавляем продажу для учета хитов продаж
+                    sales_old = pr.sales
+                    sales_new = int(sales_old)+int(item['quantity'])
                     
-                    loyalty_card.save()
+                    pr.sales = sales_new
 
-                cart.combo_clear()
-                cart.clear()
+                    # Отнимаем количество, если указано в настройках
+                    if pr.subtract == True:
+                        pr.stock = pr.stock - item['quantity']
+                        if pr.stock < 0:
+                            pr.stock = 0
 
-                return redirect('/?order=True')
-    else:
+                        
 
-        try:
-            user_profile = UserProfile.objects.get(user=request.user)
-            data = {
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'email': request.user.email,
+                    pr.save()
 
-                'phone': user_profile.phone,
-              
+                combos = cart.get_combos()
+
+                for combo in combos:
+
+                    combo_items = ''
+                    for pr in combo['products']:
+                        combo_items = combo_items + pr.product.name + ', '
+
+                    
+                    combo_items = combo_items[:-1]
+
+                    OrderItem.objects.create(
+                        order=order,
+                        combo=combo['combo'],
+                        price=combo['price'],
+                        combo_items = combo_items,
+                        quantity=combo['quantity']
+                        )
+
                 
-            }
-            form = OrderCreateForm(data)
+                if pay_method == 'Оплата картой на сайте':
 
-        except Exception as e:
-            print(e)
-            form = OrderCreateForm()
-    return render(request, 'orders/order/create.html',
-                  {'cart': cart, 'form': form})
+                    if pay_name == 'yookassa':
+                        data = create_payment(order, cart, request)
+                        payment_id = data['id']
+                        confirmation_url = data['confirmation_url']
+
+                        order.payment_id = payment_id
+                        order.payment_dop_info = confirmation_url
+                        order.save()
+                        print(data['path'])
+                        return redirect(confirmation_url)
+                        
+                    if pay_name == 'alfabank':
+
+                        data = create_payment(order, cart, request)
+                        payment_id = data['id']
+                        confirmation_url = data['confirmation_url']
+
+                        order.payment_id = payment_id
+                        order.payment_dop_info = confirmation_url
+                        order.save()
+                        
+                        return redirect(confirmation_url)
+
+                    if pay_name == 'paykeeper':
+
+                        data = create_payment(order, cart, request)
+                        payment_id = data['id']
+                        confirmation_url = data['confirmation_url']
+                    
+                        # session_url = 'http://' + request.META['HTTP_HOST']+'/orders/paykeeper/session/' + payment_id + '/'
+                        # requests.post(session_url)
+
+                        order.payment_id = payment_id
+                        order.payment_dop_info = confirmation_url
+                        order.save()
+                        
+                        print(confirmation_url)
+                        return redirect('/orders/paykeeper/session/' + payment_id + '/')
+                    
+                    if pay_name == 'tinkoff':
+                        data = create_payment(order, request)
+
+                        
+                        order.payment_dop_info = data
+                        order.save()
+
+                        return redirect(data)
+
+
+
+                else:
+                    order_telegram(order)
+                    text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
+                    send_sms(text, phone)
+                    # очистка корзины
+                    
+                    
+                    if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
+                        user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+
+                        try:
+                        
+                            loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                        
+                        except:
+                            loyalty_card = LoyaltyCard.objects.create(
+                                user=user_profile,
+                                summ=Decimal('0.00')
+                                )
+
+                        try:
+                            if order.bonuses_pay > 0:
+                                loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+
+                        except:
+                            pass
+                        
+                        loyalty_card.save()
+
+                    cart.combo_clear()
+                    cart.clear()
+
+                    return redirect('/?order=True')
+        else:
+            return redirect('home')
+
+        #     try:
+        #         user_profile = UserProfile.objects.get(user=request.user)
+        #         data = {
+        #             'first_name': request.user.first_name,
+        #             'last_name': request.user.last_name,
+        #             'email': request.user.email,
+
+        #             'phone': user_profile.phone,
+                
+                    
+        #         }
+        #         form = OrderCreateForm(data)
+
+        #     except Exception as e:
+        #         print(e)
+        #         form = OrderCreateForm()
+        # return render(request, 'orders/order/create.html',
+        #               {'cart': cart, 'form': form})
 
 
 

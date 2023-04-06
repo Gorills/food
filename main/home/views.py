@@ -118,6 +118,7 @@ from decimal import Decimal
 
 def home(request):
 
+
     if request.method == 'POST':
         get_cookie = request.POST['get_cookie']
         if get_cookie == 'ZcMWy~DhAiTo0@~':

@@ -13,6 +13,7 @@ class CallbackForm(forms.Form):
 
 
 class OrderCreateForm(forms.ModelForm):
+    captcha = ReCaptchaField()
     class Meta:
         model = Order
         fields = [
@@ -25,7 +26,7 @@ class OrderCreateForm(forms.ModelForm):
             'flat',
             'time',
             'order_conmment',
-            
+            'captcha',
             'delivery_method',
             'pay_method',
             'address',

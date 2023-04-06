@@ -1301,50 +1301,50 @@ def product_add(request):
 
             # Опции
 
-            opt = ProductOption(
-                parent = product,
-                option_sku=product.sku,
-                option_value = product.name,
-                option_stock = product.stock,
-                option_price = 0,
-                option_subtract = product.subtract,
-                image_status = False,
+            # opt = ProductOption(
+            #     parent = product,
+            #     option_sku=product.sku,
+            #     option_value = product.name,
+            #     option_stock = product.stock,
+            #     option_price = 0,
+            #     option_subtract = product.subtract,
+            #     image_status = False,
 
-            )
-            opt.save()
+            # )
+            # opt.save()
 
             
-            options = request.POST.getlist('type')
-            option_sku = request.POST.getlist('option_sku')
-            option_value = request.POST.getlist('option_value')
-            option_stock = request.POST.getlist('option_stock')
-            option_price = request.POST.getlist('option_price')
-            option_subtract = request.POST.getlist('option_subtract')
-            image_status = request.POST.getlist('image_status')
-            o_count = 0
-            for option in options:
-                opt = ProductOption(
-                    parent = product,
-                    type_id = option,
-                    option_sku = option_sku[o_count],
-                    option_value = option_value[o_count],
-                    option_stock = option_stock[o_count],
-                    option_price = option_price[o_count],
-                    option_subtract = option_subtract[o_count],
-                    image_status = image_status[o_count],
-                )
-                opt.save()
+            # options = request.POST.getlist('type')
+            # option_sku = request.POST.getlist('option_sku')
+            # option_value = request.POST.getlist('option_value')
+            # option_stock = request.POST.getlist('option_stock')
+            # option_price = request.POST.getlist('option_price')
+            # option_subtract = request.POST.getlist('option_subtract')
+            # image_status = request.POST.getlist('image_status')
+            # o_count = 0
+            # for option in options:
+            #     opt = ProductOption(
+            #         parent = product,
+            #         type_id = option,
+            #         option_sku = option_sku[o_count],
+            #         option_value = option_value[o_count],
+            #         option_stock = option_stock[o_count],
+            #         option_price = option_price[o_count],
+            #         option_subtract = option_subtract[o_count],
+            #         image_status = image_status[o_count],
+            #     )
+            #     opt.save()
                 
-                try:
-                    images_name = 'option_images-'+str(o_count)
-                    option_images = request.FILES.getlist(images_name)
-                    for image in option_images:
-                        o_image = OptionImage(parent=opt, src=image)
-                        o_image.save()
-                except:
-                    pass
+            #     try:
+            #         images_name = 'option_images-'+str(o_count)
+            #         option_images = request.FILES.getlist(images_name)
+            #         for image in option_images:
+            #             o_image = OptionImage(parent=opt, src=image)
+            #             o_image.save()
+            #     except:
+            #         pass
 
-                o_count += 1
+            #     o_count += 1
 
             # Характеристики
 
@@ -1444,104 +1444,104 @@ def product_edit(request, pk):
                 old_char_count += 1
             
             # Изменение старых опций
-            if product.options.all().count() == 1:
+            # if product.options.all().count() == 1:
 
-                product = Product.objects.get(id=pk)
-                first_opt_id = product.options.all().first().id
-                first_opt = ProductOption(
-                    id=first_opt_id,
-                    parent = product,
-                    option_sku = product.sku,
-                    option_value = product.name,
-                    option_stock = product.stock,
-                    option_price = 0,
-                    option_subtract = product.subtract,
-                    image_status = False,
+            #     product = Product.objects.get(id=pk)
+            #     first_opt_id = product.options.all().first().id
+            #     first_opt = ProductOption(
+            #         id=first_opt_id,
+            #         parent = product,
+            #         option_sku = product.sku,
+            #         option_value = product.name,
+            #         option_stock = product.stock,
+            #         option_price = 0,
+            #         option_subtract = product.subtract,
+            #         image_status = False,
 
-                )
-                first_opt.save()
+            #     )
+            #     first_opt.save()
 
-            else:
-                first_opt_id = product.options.all().first().id
-                first_opt = ProductOption(
-                    id=first_opt_id,
-                    parent = product,
-                    option_sku = product.sku,
-                    option_value = product.name,
-                    option_stock = product.stock,
-                    option_price = 0,
-                    option_subtract = product.subtract,
-                    image_status = False,
+            # else:
+            #     first_opt_id = product.options.all().first().id
+            #     first_opt = ProductOption(
+            #         id=first_opt_id,
+            #         parent = product,
+            #         option_sku = product.sku,
+            #         option_value = product.name,
+            #         option_stock = product.stock,
+            #         option_price = 0,
+            #         option_subtract = product.subtract,
+            #         image_status = False,
 
-                )
-                first_opt.save()
+            #     )
+            #     first_opt.save()
             
-                # Изменение старых опций
-                old_id = request.POST.getlist('old_id')
-                old_type = request.POST.getlist('old_type')
-                old_option_value = request.POST.getlist('old_option_value')
-                old_option_sku = request.POST.getlist('old_option_sku')
-                old_option_stock = request.POST.getlist('old_option_stock')
-                old_option_price = request.POST.getlist('old_option_price')
-                old_option_subtract = request.POST.getlist('old_option_subtract')
-                old_image_status = request.POST.getlist('old_image_status')
-                old_count = 0
-                for old in old_id:
-                    price = old_option_price[old_count]
-                    price = price.replace(',', '.')
-                    old_option = ProductOption.objects.get(id=old)
-                    old_option.type_id = old_type[old_count]
-                    old_option.option_sku = old_option_sku[old_count]
-                    old_option.option_value = old_option_value[old_count]
-                    old_option.option_stock = old_option_stock[old_count]
-                    old_option.option_price = price
-                    old_option.option_subtract = old_option_subtract[old_count]
-                    old_option.image_status = old_image_status[old_count]
-                    old_option.save()
-                    try:
-                        old_images = request.FILES.getlist('option_images_old-'+str(old_count))
-                        for im in old_images:
-                            image = OptionImage(src=im, parent=old_option)
-                            image.save()
-                    except Exception as e:
-                        print(e)
+            #     # Изменение старых опций
+            #     old_id = request.POST.getlist('old_id')
+            #     old_type = request.POST.getlist('old_type')
+            #     old_option_value = request.POST.getlist('old_option_value')
+            #     old_option_sku = request.POST.getlist('old_option_sku')
+            #     old_option_stock = request.POST.getlist('old_option_stock')
+            #     old_option_price = request.POST.getlist('old_option_price')
+            #     old_option_subtract = request.POST.getlist('old_option_subtract')
+            #     old_image_status = request.POST.getlist('old_image_status')
+            #     old_count = 0
+            #     for old in old_id:
+            #         price = old_option_price[old_count]
+            #         price = price.replace(',', '.')
+            #         old_option = ProductOption.objects.get(id=old)
+            #         old_option.type_id = old_type[old_count]
+            #         old_option.option_sku = old_option_sku[old_count]
+            #         old_option.option_value = old_option_value[old_count]
+            #         old_option.option_stock = old_option_stock[old_count]
+            #         old_option.option_price = price
+            #         old_option.option_subtract = old_option_subtract[old_count]
+            #         old_option.image_status = old_image_status[old_count]
+            #         old_option.save()
+            #         try:
+            #             old_images = request.FILES.getlist('option_images_old-'+str(old_count))
+            #             for im in old_images:
+            #                 image = OptionImage(src=im, parent=old_option)
+            #                 image.save()
+            #         except Exception as e:
+            #             print(e)
 
 
 
-                    old_count += 1
+            #         old_count += 1
 
-            # Опции
-            options = request.POST.getlist('type')
-            option_sku = request.POST.getlist('option_sku')
-            option_value = request.POST.getlist('option_value')
-            option_stock = request.POST.getlist('option_stock')
-            option_price = request.POST.getlist('option_price')
-            option_subtract = request.POST.getlist('option_subtract')
-            image_status = request.POST.getlist('image_status')
-            o_count = 0
-            for option in options:
-                opt = ProductOption(
-                    parent = product,
-                    type_id = option,
-                    option_sku = option_sku[o_count],
-                    option_value = option_value[o_count],
-                    option_stock = option_stock[o_count],
-                    option_price = Decimal(option_price[o_count]),
-                    option_subtract = option_subtract[o_count],
-                    image_status = image_status[o_count],
-                )
-                opt.save()
+            # # Опции
+            # options = request.POST.getlist('type')
+            # option_sku = request.POST.getlist('option_sku')
+            # option_value = request.POST.getlist('option_value')
+            # option_stock = request.POST.getlist('option_stock')
+            # option_price = request.POST.getlist('option_price')
+            # option_subtract = request.POST.getlist('option_subtract')
+            # image_status = request.POST.getlist('image_status')
+            # o_count = 0
+            # for option in options:
+            #     opt = ProductOption(
+            #         parent = product,
+            #         type_id = option,
+            #         option_sku = option_sku[o_count],
+            #         option_value = option_value[o_count],
+            #         option_stock = option_stock[o_count],
+            #         option_price = Decimal(option_price[o_count]),
+            #         option_subtract = option_subtract[o_count],
+            #         image_status = image_status[o_count],
+            #     )
+            #     opt.save()
                 
-                try:
-                    images_name = 'option_images-'+str(o_count)
-                    option_images = request.FILES.getlist(images_name)
-                    for image in option_images:
-                        o_image = OptionImage(parent=opt, src=image)
-                        o_image.save()
-                except:
-                    pass
+            #     try:
+            #         images_name = 'option_images-'+str(o_count)
+            #         option_images = request.FILES.getlist(images_name)
+            #         for image in option_images:
+            #             o_image = OptionImage(parent=opt, src=image)
+            #             o_image.save()
+            #     except:
+            #         pass
 
-                o_count += 1
+            #     o_count += 1
 
             return redirect('admin_product')
         else:

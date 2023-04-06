@@ -228,6 +228,7 @@ TEMPLATES = [
                 'accounts.context_processors.userprofile',
                 'accounts.context_processors.card_loyalty_settings',
                 'orders.context_processors.calback_form',
+                'orders.context_processors.order_cr_form',
                 'coupons.context_processors.coupon_form',
                 'pay.context_processors.cart_active',
                 'blog.context_processors.posts',

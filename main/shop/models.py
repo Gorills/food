@@ -221,7 +221,7 @@ class Product(models.Model):
     product_connect = models.ManyToManyField('self', related_name='connects', blank=True)
 
     # Маленькое изображение
-    thumb = models.ImageField(upload_to='products/thumb', verbose_name='Основное изображение')
+    thumb = models.FileField(upload_to='products/thumb', verbose_name='Основное изображение')
 
     
     
