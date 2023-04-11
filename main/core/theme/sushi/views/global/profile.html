@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+
+{% block title %} {% endblock %}
+{% block description %} {% endblock %}
+{% block keywords %} {% endblock %}
+{% block canonical %} {% endblock %}
+{% block og:title %}{% endblock %}
+{% block og:description %} {% endblock %}
+{% block og:url %} {% endblock %}
+{% block twitter:title %}{% endblock %}
+{% block twitter:description %}{% endblock %}
+
+
+
+{% block body %}
+{% load static %}
+{% load thumbnail %}
+
+
+<div class="account">
+    <div class="container">
+        <div class="account__content">
+            
+            {% include 'global/profile_top.html' %}
+
+            <div class="account__data">
+
+
+                <div class="account__content-wrapper">
+                    
+                </div>
+                <p class="account__content-welcome">Добро пожаловать!
+                    
+                </p>    
+
+               
+                
+                <div method="post" class="account__form">
+                   
+                    {% comment %} {% csrf_token %} {% endcomment %}
+                    <p class="account__phone">{{ userprofile.phone }}</p>
+
+                    <a href="{% url 'home_logout' %}" class="account__logout">Выйти</a>
+                    {% comment %} <button class="btn btn--full">Сохранить</button> {% endcomment %}
+
+                </div>
+                
+            </div>
+
+            {% if loyalty_card %}
+            <div class="loyalty-card">
+
+
+                {% if loyalty_card_settings.show_status %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Статус карты:</p>
+                    <p class="loyalty-card__text">{{ loyalty_card.status.name }}</p>
+                </div>
+
+                {% endif %}
+
+                {% if loyalty_card_settings.show_summ %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Сумма покупок:</p>
+                    <p class="loyalty-card__text">{{ loyalty_card.summ }}</p>
+                </div>
+                {% endif %}
+
+                
+
+                {% if loyalty_card_settings.status_down %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Персональная скидка:</p>
+                    <p class="loyalty-card__text"> {{ loyalty_card.status.percent_down }}%</p>
+                </div>
+                {% endif %}
+
+                {% if loyalty_card_settings.status_down %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Сколько % можно списать баллами:</p>
+                    <p class="loyalty-card__text"> {{ loyalty_card.status.percent_pay }}%</p>
+                </div>
+                {% endif %}
+
+                {% if loyalty_card_settings.status_up %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Сколько % копится с покупки:</p>
+                    <p class="loyalty-card__text">{{ loyalty_card.status.percent_up }}%</p>
+                </div>
+                {% endif %}
+
+
+
+                {% if loyalty_card_settings.status_up %}
+                <div class="loyalty-card__item">
+                    <p class="loyalty-card__text">Баллов на счету:</p>
+                    <p class="loyalty-card__text">{{ loyalty_card.balls }}</p>
+                </div>
+
+                {% endif %}
+
+            </div>
+            
+            {% endif %}
+            
+        </div>
+
+    </div>
+</div>
+{% endblock %}

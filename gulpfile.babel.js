@@ -82,6 +82,84 @@ const requireDir = require("require-dir"),
         //     src: "./#src/.htaccess",
         //     dist: "./main/core/"
         // },
+
+
+        // Тема sushi
+        sushi_views: {
+            src: [
+                "./#src/templates/theme/sushi/**/*.html",
+                "./#src/templates/theme/sushi/pages/*.html"
+            ],
+            dist: "./main/core/theme/sushi/views/",
+            watch: [
+                "./#src/templates/theme/sushi/**/*.html",
+                "./#src/templates/theme/sushi/pages/*.html"
+            ]
+        },
+        global_sushi_views: {
+            src: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ],
+            dist: "./main/core/theme/sushi/views/global/",
+            watch: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ]
+        },
+        sushi_js: {
+            src: [
+                "./#src/js/theme/global/**/*.js",
+                
+            ],
+            dist: "./main/core/theme/sushi/js/",
+            watch: [
+                "./#src/js/theme/global/**/*.js",
+            ]
+        },
+        sushi_styles: {
+            src: "./#src/scss/theme/sushi/style.{scss,sass}",
+            dist: "./main/core/theme/sushi/css/",
+            watch: [
+                "./#src/scss/theme/sushi/**/*.{scss,sass}",
+                "./#src/scss/theme/sushi/**/*.{scss,sass}",
+                "./#src/scss/theme/global/**/*.{scss,sass}"
+
+                
+            ]
+        },
+        sushi_scripts: {
+            src: "./#src/js/theme/sushi/app.js",
+            dist: "./main/core/theme/sushi/js/",
+            watch: [
+                "./#src/js/theme/sushi/**/*.js",
+                "./#src/js/theme/sushi/**/*.js",
+              
+            ]
+        },
+        sushi_images: {
+            src: [
+                "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,tiff,svg}",
+                "!./#src/images/theme/sushi/fav/*.{jpg,jpeg,png,gif,tiff}"
+            ],
+            dist: "./main/core/theme/sushi/images/",
+            watch: "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,svg,tiff}"
+        },
+        sushi_sprites: {
+            src: "./#src/images/theme/sushi/sprites/*.svg",
+            dist: "./main/core/theme/sushi/images/sprites/",
+            watch: "./#src/images/theme/sushi/sprites/*.svg"
+        },
+        sushi_fonts: {
+            src: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf}",
+            dist: "./main/core/theme/sushi/fonts/",
+            watch: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf}"
+        },
+        sushi_favicons: {
+            src: "./#src/img/theme/sushi/fav/*.{jpg,jpeg,png,gif}",
+            dist: "./main/core/img/fav/",
+        },
+
         // theme china
         chinaviews: {
             src: [
@@ -226,6 +304,16 @@ export const development = gulp.series("clean", "adminclean",
         "sprites", 
         "fonts", 
         "favicons",
+        "sushi_views",
+        "global_sushi_views",
+        "sushi_js",
+        "sushi_styles",
+        "sushi_scripts",
+        "sushi_webp", 
+        "sushi_images",
+        "sushi_sprites",
+        "sushi_fonts",
+        "sushi_favicons",
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',
@@ -251,16 +339,25 @@ export const development = gulp.series("clean", "adminclean",
 export const prod = gulp.series("clean", "adminclean",
     gulp.parallel([
         "views", 
-        "global_views",
+        'global_views',
+        'global_js',
         "styles", 
-        "global_js",
         "scripts", 
         "images", 
         "webp", 
         "sprites", 
         "fonts", 
-        "favicons", 
-        // "gzip",
+        "favicons",
+        "sushi_views",
+        "global_sushi_views",
+        "sushi_js",
+        "sushi_styles",
+        "sushi_scripts",
+        "sushi_webp", 
+        "sushi_images",
+        "sushi_sprites",
+        "sushi_fonts",
+        "sushi_favicons",
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',
@@ -270,8 +367,7 @@ export const prod = gulp.series("clean", "adminclean",
         "chinawebp", 
         "chinasprites", 
         "chinafonts", 
-        "chinafavicons", 
-        // "chinagzip",
+        "chinafavicons",
         "adminviews", 
         "adminstyles", 
         "adminscripts", 
@@ -279,7 +375,7 @@ export const prod = gulp.series("clean", "adminclean",
         "adminwebp", 
         "adminsprites", 
         "adminfonts", 
-        "adminfavicons",
+        "adminfavicons"
     ]));
 
 export default development;

@@ -35,6 +35,14 @@ gulp.task("global_js", () => {
 		.pipe(browsersync.stream());
 });
 
+gulp.task("chinascripts", () => {
+    return gulp.src(paths.chinascripts.src)
+		.pipe(gulp.dest(paths.chinascripts.dist))
+
+		.pipe(gulp.dest(paths.chinascripts.dist))
+		.pipe(browsersync.stream());
+});
+
 gulp.task("global_chinajs", () => {
     return gulp.src(paths.global_chinajs.src)
     
@@ -44,13 +52,24 @@ gulp.task("global_chinajs", () => {
 		.pipe(browsersync.stream());
 });
 
-gulp.task("chinascripts", () => {
-    return gulp.src(paths.chinascripts.src)
-		.pipe(gulp.dest(paths.chinascripts.dist))
+gulp.task("sushi_scripts", () => {
+    return gulp.src(paths.sushi_scripts.src)
+		.pipe(gulp.dest(paths.sushi_scripts.dist))
 
-		.pipe(gulp.dest(paths.chinascripts.dist))
+		.pipe(gulp.dest(paths.sushi_scripts.dist))
 		.pipe(browsersync.stream());
 });
+
+gulp.task("sushi_js", () => {
+    return gulp.src(paths.sushi_js.src)
+    
+		.pipe(gulp.dest(paths.sushi_js.dist))
+
+		.pipe(gulp.dest(paths.sushi_js.dist))
+		.pipe(browsersync.stream());
+});
+
+
 
 gulp.task("adminscripts", () => {
     return gulp.src(paths.adminscripts.src)

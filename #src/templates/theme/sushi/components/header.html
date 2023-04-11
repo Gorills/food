@@ -1,0 +1,171 @@
+{% load thumbnail %}
+<header class="header">
+    <div class="header__wrapper">
+        <div class="container">
+            <div class="header__inner">
+                <div class="header__top">
+                    <div class="header__left">
+                        {% if request.path == '/' %}
+                            {% if setup.logo_dark %}
+
+                                {% thumbnail setup.logo_dark  "200" format="WEBP" as im %}
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                {% endthumbnail %}
+                           
+
+                            {% else %}
+                            <div class="header__logo">{{ setup.name }}</div>
+                            {% endif %}
+                        {% else %}
+                            {% if setup.logo_dark %}
+                            <a href="{% url 'home' %}" class="header__logo-wrap">
+                                {% thumbnail setup.logo_dark  "200" format="WEBP" crop="center" as im %}
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                {% endthumbnail %}
+                            </a>
+                            {% else %}
+                            <a href="{% url 'home' %}" class="header__logo">{{ setup.name }}</a>
+                            {% endif %}
+                        {% endif %}
+
+                        <nav class="header__nav">
+
+                            <ul class="header__list" itemscope itemtype="http://www.schema.org/SiteNavigationElement">
+                                {% for page in pages %}
+                                    {% if page.top_link == True %}
+                                    <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                        <meta itemprop="name" content="{{ page.name }}" />
+                                        <a class="header__link" itemprop="url" href="{{ page.get_absolute_url }}">{{ page.name }}</a>
+
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            
+                                {% if posts %}
+                                <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                    <meta itemprop="name" content="Новости" />
+                                    <a class="header__link" itemprop="url" href="{% url 'blog' %}">Новости</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+
+                    
+                    <div class="header__contacts {% if shop_setup.work_time %}header__contacts--col{% endif %}">
+                        <a href="tel:{{ setup.get_phone }}" class="header__contacts-link">{{ setup.phone }}</a>
+
+                        {% if shop_setup.work_time %}
+                        <div class="header__work-time">
+                            <p class="header__work-title">Время работы:</p>
+                            <p class="header__work-data"> {{ shop_setup.work_time }}</p>
+                           
+                        </div>
+                        {% endif %}
+                        <a href="#" class="header__contacts-btn">Обратный звонок</a>
+                    </div>
+                    
+
+                    
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+  
+    <div class="header-bottom">
+        <div class="container">
+            <div class="header-bottom__inner">
+                <ul class="header-bottom__list" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+
+                    {% if combos %}
+                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                            <a class="header-bottom__link" itemprop="url" href="{% url 'home' %}#combo">Комбо</a>
+                            <meta itemprop="name" content="Комбо" />
+                        </li>
+                    
+                    
+                    {% endif %}
+                    
+                    {% for cat in categorys %}
+                        {% if cat.top == True %}
+                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                            <a class="header-bottom__link" itemprop="url" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
+                            <meta itemprop="name" content="{{ cat.name }}" />
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+        
+                </ul>
+
+                <div class="header__right">
+                    {% if setup.sms == True %}
+
+                                <a href="{% url 'home_login' %}" class="header__sign">
+                                                                    
+                                                                        
+                                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        <rect width="26" height="26" fill="url(#pattern0)"/>
+                                        <defs>
+                                        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                        <use xlink:href="#image0_102_7" transform="scale(0.00302115)"/>
+                                        </pattern>
+                                        <image id="image0_102_7" width="331" height="331" xlink:href="data:image/png;base64,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bnRJRD0iZ2ltcDpkb2NpZDpnaW1wOjdjOTE2ODczLWY5ODEtNDViNy05MDdmLWFiOTY0ZGVhZjdkYyIKICAgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNzA5YjVlZC04NTY0LTQ0NTQtODA4Zi03NjdhZmRmOTQwMTIiCiAgIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpjN2VmOWE3OS0zYWRlLTRmMTgtYmQzYS0zYTQ0NWViZTQzYzciCiAgIGRjOkZvcm1hdD0iaW1hZ2UvcG5nIgogICBHSU1QOkFQST0iMi4wIgogICBHSU1QOlBsYXRmb3JtPSJMaW51eCIKICAgR0lNUDpUaW1lU3RhbXA9IjE2NzEyNDY0MTA4NzI0NDMiCiAgIEdJTVA6VmVyc2lvbj0iMi4xMC4zMCIKICAgdGlmZjpPcmllbnRhdGlvbj0iMSIKICAgeG1wOkNyZWF0b3JUb29sPSJHSU1QIDIuMTAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJzYXZlZCIKICAgICAgc3RFdnQ6Y2hhbmdlZD0iLyIKICAgICAgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDpiM2FhOTc5MC1jMmQxLTRiZmQtYWY4NC0yMDNmYjBmMmVkNzEiCiAgICAgIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkdpbXAgMi4xMCAoTGludXgpIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTEyLTE3VDEwOjA2OjUwKzA3OjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg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"/>
+                                        </defs>
+                                    </svg>
+        
+        
+                                </a>
+                    {% endif %}
+
+                    <a href="#" class="header__search">
+                       
+                        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.75 21.75C17.2728 21.75 21.75 17.2728 21.75 11.75C21.75 6.22715 17.2728 1.75 11.75 1.75C6.22715 1.75 1.75 6.22715 1.75 11.75C1.75 17.2728 6.22715 21.75 11.75 21.75Z" stroke="#545454" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M24.25 24.25L18.8125 18.8125" stroke="#545454" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </a>
+                   
+                    
+
+                    <div class="header__cart-wrap">
+                        <a href="#" class="header__cart">
+
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.8333 10.0002V7.54183C20.8333 6.77578 20.6824 6.01724 20.3892 5.30951C20.0961 4.60178 19.6664 3.95871 19.1247 3.41704C18.583 2.87536 17.94 2.44568 17.2322 2.15253C16.5245 1.85938 15.766 1.7085 14.9999 1.7085C14.2339 1.7085 13.4753 1.85938 12.7676 2.15253C12.0599 2.44568 11.4168 2.87536 10.8751 3.41704C10.3335 3.95871 9.90377 4.60178 9.61062 5.30951C9.31747 6.01724 9.16658 6.77578 9.16658 7.54183V13.3752C9.16658 13.5962 9.25438 13.8081 9.41066 13.9644C9.56694 14.1207 9.7789 14.2085 9.99992 14.2085C10.2209 14.2085 10.4329 14.1207 10.5892 13.9644C10.7455 13.8081 10.8333 13.5962 10.8333 13.3752V11.6668H17.4999V10.0002H10.8333V7.54183C10.8333 6.43676 11.2722 5.37695 12.0536 4.59555C12.835 3.81415 13.8948 3.37516 14.9999 3.37516C16.105 3.37516 17.1648 3.81415 17.9462 4.59555C18.7276 5.37695 19.1666 6.43676 19.1666 7.54183V13.3335C19.1666 13.5545 19.2544 13.7665 19.4107 13.9228C19.5669 14.079 19.7789 14.1668 19.9999 14.1668C20.2209 14.1668 20.4329 14.079 20.5892 13.9228C20.7455 13.7665 20.8333 13.5545 20.8333 13.3335V11.6668H24.9999V26.6668H4.99992V11.6668H7.49992V10.0002H3.33325V26.7418C3.33325 27.164 3.50094 27.5688 3.79944 27.8673C4.09794 28.1658 4.50278 28.3335 4.92492 28.3335H25.0749C25.4971 28.3335 25.9019 28.1658 26.2004 27.8673C26.4989 27.5688 26.6666 27.164 26.6666 26.7418V10.0002H20.8333Z" fill="#545454"></path>
+                            </svg>
+                            
+
+                            <div class="header__cart-coutn">
+                                
+                                {% with total_items=cart|length %}
+                                    {% if cart|length > 0 %}
+                                        
+                                    {{ total_items }}
+                                            
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                {% endwith %}
+                                
+                                
+                            </div>
+                        </a>
+                    </div>
+                    <div class="toggle-menu" id="menu">
+						<div class="toggle-section">
+							<a href="#" class="menu-btn">
+								<span></span>
+							</a>
+						</div>
+					</div>
+                </div>
+
+
+            </div>
+        </div>
+    </div> 
+</header>
+

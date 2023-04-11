@@ -47,6 +47,27 @@ gulp.task("chinafavicons", () => {
         }));
 });
 
+gulp.task("sushi_favicons", () => {
+    return gulp.src(paths.sushi_favicons.src)
+        .pipe(favicons({
+            icons: {
+                appleIcon: true,
+                favicons: true,
+                online: false,
+                appleStartup: false,
+                android: false,
+                firefox: false,
+                yandex: false,
+                windows: false,
+                coast: false
+            }
+        }))
+        .pipe(gulp.dest(paths.sushi_favicons.dist))
+        .pipe(debug({
+            "title": "Favicons"
+        }));
+});
+
 gulp.task("adminfavicons", () => {
     return gulp.src(paths.adminfavicons.src)
         .pipe(favicons({

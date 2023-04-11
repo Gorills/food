@@ -1,0 +1,92 @@
+
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}{{ post.meta_title }}{% endblock %}
+{% block description %}{{ post.meta_description }}{% endblock %}
+{% block keywords %}{{ post.meta_keywords }}{% endblock %}
+{% block canonical %}{{ post.get_absolute_url }}{% endblock %}
+{% block og:title %}{{ post.meta_title }}{% endblock %}
+{% block og:description %}{{ post.meta_description }}{% endblock %}
+{% block og:url %}{{ post.get_absolute_url }}{% endblock %}
+{% block twitter:title %}{{ post.meta_title }}{% endblock %}
+{% block twitter:description %}{{ post.meta_description }}{% endblock %}
+{% block og:image %}{% if post.image %}{% thumbnail post.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if post.image %}{% thumbnail post.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if post.image %}{% thumbnail post.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+
+
+
+{% block body %}
+{% load static %}
+
+    
+
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="breadcrumbs__inner blog-detail__inner">
+            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'home' %}" title="Главная" itemprop="item">
+                        <span itemprop="name">Главная</span>
+                        <meta itemprop="position" content="0">
+                    </a>
+                </li>
+                
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'blog' %}" title="Статьи" itemprop="item">
+                        <span itemprop="name">Статьи</span>
+                        <meta itemprop="position" content="1">
+                    </a>
+                </li>
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ post.parent.get_absolute_url }}" title="{{ post.parent.name }}" itemprop="item">
+                        <span itemprop="name">{{ post.parent.name }}</span>
+                        <meta itemprop="position" content="2">
+                    </a>
+                </li>
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ post.get_absolute_url }}" title="{{ post.name }}" itemprop="item">
+                        <span itemprop="name">{{ post.name }}</span>
+                        <meta itemprop="position" content="3">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="blog-detail">
+    <div class="container">
+        <div class="blog-detail__inner">
+            <h1 class="blog-detail__title">{{ post.meta_h1 }}</h1>
+
+            <div class="blog-detail__content">
+                {% for block in post.blocks.all %}
+                    {% if block.type == 'image' %}
+                        <img src="{{ block.image.url }}" alt="{{ post.name }}" class="blog-detail__img">
+                    {% endif %}
+                    {% if block.type == 'video' %}
+                        <video class="blog-detail__video" controls="controls" src="{{ block.video.url }}"></video>
+                    {% endif %}
+                    {% if block.type == 'text' %}
+                        <p class="blog-detail__text">{{ block.text | safe }}</p>
+                    {% endif %}
+                    {% if block.type == 'title' %}
+                        <h2 class="blog-detail__subtitle">{{ block.title }}</h2>
+                    {% endif %}
+            
+            
+                {% endfor %}
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -95,6 +95,7 @@ class ThemeSettings(SingletonModel):
     THEME_CLASS = (
        ('default', 'Стандартная'),
        ('china', 'Китайский ресторан'),
+       ('sushi', 'Суши'),
        
     )
     name = models.CharField(max_length=250, choices=THEME_CLASS, default='default')

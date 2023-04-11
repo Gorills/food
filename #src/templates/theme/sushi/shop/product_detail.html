@@ -1,0 +1,303 @@
+
+{% extends 'base.html' %}
+
+{% load thumbnail %}
+{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
+{% block description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block keywords %}{{ product.meta_keywords }}{% endblock %}
+{% block canonical %}{{ product.get_absolute_url }}{% endblock %}
+{% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
+{% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block og:url %}{{ product.get_absolute_url }}{% endblock %}
+{% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
+{% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+
+{% block og:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+
+
+
+{% block body %}
+{% load static %}
+{% load thumbnail %}
+{% load l10n %}
+
+
+<div class="breadcrumbs breadcrumbs--gray">
+    <div class="container">
+        <div class="breadcrumbs__inner">
+            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'home' %}" title="Главная" itemprop="item">
+                        <span itemprop="name">Главная</span>
+                        <meta itemprop="position" content="0">
+                    </a>
+                </li>
+                
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
+                        <span itemprop="name">Меню</span>
+                        <meta itemprop="position" content="1">
+                    </a>
+                </li>
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ product.parent.get_absolute_url }}" title="{{ product.parent.name }}" itemprop="item">
+                        <span itemprop="name">{{ product.parent.name }}</span>
+                        <meta itemprop="position" content="2">
+                    </a>
+                </li>
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ product.get_absolute_url }}" title="{{ product.name }}" itemprop="item">
+                        <span itemprop="name">{{ product.name }}</span>
+                        <meta itemprop="position" content="3">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="product-detail">
+    <div class="container">
+        <div class="product-detail__inner">
+            <div class="product-detail__right">
+                <div class="product-detail__nav">
+                    {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
+                    {% endthumbnail %}
+                    {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
+                        <div data-image="{{ im.url }}"></div>
+                        {% endthumbnail %}
+                    {% for image in product.images.all %}
+                        {% thumbnail image.src "80x80" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
+                        {% endthumbnail %}
+                        {% thumbnail image.src "600x600" format="WEBP" crop="center" as im %}
+                        <div data-image="{{ im.url }}"></div>
+                        {% endthumbnail %}
+                    {% endfor %}
+                </div>
+              
+                {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
+                {% endthumbnail %}
+            </div>
+
+
+
+            <div class="product-detail__left">
+                <h1 class="product-detail__title">{{ product.name }}</h1>
+                <div class="product-detail__price-wrap">
+                    <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price }}₽</p>
+                    {% if product.old_price %}
+                    <p class="product-detail__price-old">{{ product.old_price }}₽</p>
+                    {% endif %}
+
+                </div>
+                {% if product.short_description %}
+                <p class="product-detail__desc">{{ product.short_description }}</p>
+                {% endif %}
+                
+                {% if product.product_connect.count > 0 %}
+                <div class="product-detail__options">
+                    <div class="product-detail__options-row">
+                       
+                        
+                        <div class="product-detail__option-link-wrap product-detail__option-link-wrap--active">
+                                            
+                            <a href="{{ product.get_absolute_url }}" class="product-detail__option-link product-detail__option-link--active">
+
+                                {{ product.weight }} {{ product.weight_class }} 
+
+                            </a>
+
+
+                        </div>
+                        {% for pr in product.product_connect.all %}
+
+                        <div class="product-detail__option-link-wrap">
+                                            
+                            <a href="{{ pr.get_absolute_url }}" class="product-detail__option-link">
+
+                                {{ pr.weight }} {{ product.weight_class }}                                
+
+                            </a>
+
+
+                        </div>
+                           
+                        {% endfor %}
+                    </div>
+                        
+                </div>
+                {% endif %}
+
+                <div class="product-detail__options">
+                    {% for type in types %}
+
+                    <div class="product-detail__options-row">
+                        <div class="product-detail__options-name">{{ type.name }}: </div>
+                        
+                        <div class="product-detail__options-wrap">                            
+
+                            {% for option in product_options %}
+                                {% if option.type == type %}
+                                    {% if option.option_value != product.name %}
+                                        <div class="product-detail__option">
+                                            
+                                            <div class="product-detail__option-value {% if forloop.counter == 2 %}product-detail__option-value--active{% endif %}" data-price="{{ option.option_price |unlocalize }}" data-action="{% url "cart:cart_add" option.id %}" {% if option.images.count > 0 %}{% thumbnail option.images.first.src "621x778" crop="center" as im %}data-image="{{ im.url }}"{% endthumbnail %}{% else %}{% thumbnail option.parent.thumb "621x778" crop="center" as im %}data-image="{{ im.url }}"{% endthumbnail %}{% endif %}>
+
+                                                {{ option.option_value }}
+
+                                            </div>
+
+
+                                        </div>
+                                        {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                           
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div> 
+                
+
+                
+
+                <form class="product-detail__form" action="{% url 'cart:cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+
+					
+
+                    {% if product.stock == 0 and shop_setup.status == 'out_of_stock' %}
+                        <div class="product-detail__of-stock">Нет в наличии</div>
+                        
+                    {% else %}
+                        <div class="product-detail__counter">
+                            <div class="product-detail__minus">
+                                <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
+                                </svg>
+                            </div>
+                            <input class="product-detail__input product-detail__count-inp" min="1" type="number" name="quantity" required="" id="id_quantity" value="1">
+                            <input type="hidden" name="update" value="False" id="id_update">
+                            <div class="product-detail__plus">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
+                                </svg>
+                            </div>
+                            
+                            
+                            
+                        </div>
+					    <button class="product-detail__button btn btn--full">В корзину</button>
+
+                    {% endif %}
+
+				</form> 
+
+                <div class="product-detail__chars">
+                    {% if product.sku %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Арт.:</div>
+                        <div class="product-detail__char-value">{{ product.sku }}</div>
+                    </div>
+                    {% endif %}
+                    {% comment %} {% if product.stock > 0 %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Наличие:</div>
+                        <div class="product-detail__char-value">в наличии</div>
+                    </div>
+                    {% endif %} {% endcomment %}
+                    {% if product.length %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Длина:</div>
+                        <div class="product-detail__char-value">{{ product.length }} {{ product.length_class }}</div>
+                    </div>
+                    {% endif %}
+                    {% if product.width %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Ширина:</div>
+                        <div class="product-detail__char-value">{{ product.width }} {{ product.length_class }}</div>
+                    </div>
+                    {% endif %}
+                    {% if product.height %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Высота:</div>
+                        <div class="product-detail__char-value">{{ product.height }} {{ product.length_class }}</div>
+                    </div>
+                    {% endif %}
+                    {% if product.weight %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Вес:</div>
+                        <div class="product-detail__char-value">{{ product.weight }} {{ product.weight_class }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% for char in product.chars.all %}
+
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">{{ char.char_name }}</div>
+                        <div class="product-detail__char-value">{{ char.char_value }}</div>
+                    </div>
+
+                    {% endfor %}
+
+                    {% if product.product_manufacturer %}
+                    <div class="product-detail__char">
+                        <div class="product-detail__char-name">Производитель:</div>
+                        <a href="{{ product.product_manufacturer.name }}" class="product-detail__char-value">{{ product.product_manufacturer.name }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="product-bottom">
+    <div class="container">
+        <div class="product-bottom__inner">
+
+            <p class="product-bottom__description">{{ product.description | safe }}</p>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="similar">
+    <div class="container">
+        <div class="similar__inner">
+
+            <h3 class="title">Вам может понравиться</h3>
+
+            {% include 'components/product_list.html' with slider='true' products=similars big='product-list__item--big' size='235x298' %}
+
+        </div>
+    </div>
+</div>
+
+<script type="application/ld+json">
+    {
+    "@context": "https://schema.org/", 
+    "@type": "Product", 
+    "name": "{{ product.name }}", 
+    "image": "{{ product.thumb.url }}", 
+    "description": "{{ product.description }}",
+    {% if product.product_manufacturer %}
+    "brand": "{{ product.product_manufacturer.name }}"
+    {% endif %}
+    }
+</script>
+
+
+
+{% endblock %}
