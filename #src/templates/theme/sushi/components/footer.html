@@ -1,5 +1,6 @@
-{% comment %} 
 {% load thumbnail %}
+{% comment %} 
+
 <footer class="footer">
     <div class="container">
         <div class="footer__inner">
@@ -21,14 +22,7 @@
                         {% endfor %}
                         <li class="footer__item"><a href="{% url 'blog' %}" class="footer__link">Новости</a></li>
 
-                        {% if setup.pay_image %}
-                        <div class="footer__payments">
-                            {% thumbnail setup.pay_image "400" format="WEBP" crop="center" as im %}
-                                <img src="{{ im.url }}" height="{{ im.height }}" alt="Способы оплаты">
-                            {% endthumbnail %}
-                           
-                        </div>
-                        {% endif %}
+                       
                     </ul>
                 </div>
                 <div class="footer__col">
@@ -131,6 +125,14 @@
            
            
          </ul>
+         {% if setup.pay_image %}
+         <div class="footer__payments">
+             {% thumbnail setup.pay_image "400" format="WEBP" crop="center" as im %}
+                 <img src="{{ im.url }}" height="{{ im.height }}" alt="Способы оплаты">
+             {% endthumbnail %}
+            
+         </div>
+         {% endif %}
        </div>
        <div class="footer-col">
          <h4>МЕНЮ</h4>

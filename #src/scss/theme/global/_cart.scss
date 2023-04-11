@@ -405,8 +405,8 @@
     // .cart__form-coupon-btn
 
     &__form-coupon-btn {
-        height: 46px;
-        max-height: 46px;
+        height: 41px;
+        max-height: 41px;
         margin-bottom: 10px;
         border: 1px solid #eaedff;
         background-color: var(--color-body);
@@ -563,8 +563,8 @@
         align-items: center;
         justify-content: center;
         padding: 0 15px;
-        height: 46px;
-        max-height: 46px;
+        height: 41px;
+        max-height: 41px;
 
     }
 
@@ -574,11 +574,12 @@
     &__input-phone-btn-wrap {
         cursor: pointer;
         
-        height: 46px;
+        height: 41px;
         
         align-items: center;
         justify-content: center;
         border: 1px solid #eaedff;
+        border-left: none;
         background-color: var(--color-body);
         color: var(--color-font);
         
