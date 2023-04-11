@@ -1426,7 +1426,7 @@ $(document).on('click','.open-combo',function(e){
 })
 
 $(document).on('click','.combo-popup__closer, .combo-popup__layout',function(e){
-
+    e.preventDefault();
     $('.combo-popup').removeClass('combo-popup--active')
 
 })
