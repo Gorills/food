@@ -7,77 +7,81 @@
     {% for product in products %}
     <div class="product-list__item {{ big }}">
 
-        <a href="{{ product.get_absolute_url }}" class="product-list__top">
-            
-            <div class="product-list__top-wrap">
-                {% if product.old_price %}
-                <div class="product-list__sale">
-                    -{{ product.get_sale | floatformat:0 }}%
+        <div class="product-list__top-top">
+            <a href="{{ product.get_absolute_url }}" class="product-list__top">
+                
+                <div class="product-list__top-wrap">
+                    {% if product.old_price %}
+                    <div class="product-list__sale">
+                        -{{ product.get_sale | floatformat:0 }}%
+                    </div>
+                    {% endif %}
+                    {% if product.new == True %}
+                    <div class="product-list__new">
+                        Новинка
+                    </div>
+                    {% endif %}
+                
+                    {% comment %} <div class="product-list__hit">
+                        Hit
+                    </div> {% endcomment %}
                 </div>
-                {% endif %}
-                {% if product.new == True %}
-                <div class="product-list__new">
-                    Новинка
-                </div>
-                {% endif %}
-               
-                {% comment %} <div class="product-list__hit">
-                    Hit
-                </div> {% endcomment %}
-            </div>
-           
             
+                
+                
             
-          
 
 
-            {% thumbnail product.thumb size format="WEBP" crop="center" as im %}
-                <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
-            {% endthumbnail %}
-
-            {% if product.images.first %}
-                {% thumbnail product.images.first.src size format="WEBP" crop="center" as im %}
-                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__image">
+                {% thumbnail product.thumb size format="WEBP" crop="center" as im %}
+                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
                 {% endthumbnail %}
-            {% endif %}
 
-           
+                {% if product.images.first %}
+                    {% thumbnail product.images.first.src size format="WEBP" crop="center" as im %}
+                        <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__image">
+                    {% endthumbnail %}
+                {% endif %}
 
             
 
-        </a>
+                
 
-        <div class="product-list__bottom">
-            <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+            </a>
+
+            <div class="product-list__bottom">
+                <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
 
 
 
-            {% if shop_setup.show_descrioption == True and product.short_description %}
-            
-            <div class="product-list__weight">{{ product.weight }}</div>
+                {% if shop_setup.show_descrioption == True and product.short_description %}
+                
+                {% if product.weight %}
+                <div class="product-list__weight">{{ product.weight }}</div>
+                {% endif %}
+                <div class="product-list__desc">
+                {{ product.short_description }}
 
-            <div class="product-list__desc">
-               {{ product.short_description }}
-
+                </div>
+                {% endif %}
+                
+                
             </div>
-            {% endif %}
+        </div>
+        <div class="product-list__bottom-wrap">
             <div class="product-list__prices">
                 <p class="product-list__price">{{ product.price }}₽</p>
                 {% if product.old_price %}
                     <p class="product-list__old">{{ product.old_price }}₽</p>
                 {% endif %}
             </div>
+            <form class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="quantity" hidden value="1">
+                <input type="hidden" name="update" value="False" id="id_update">
             
+                <button class="btn btn--primary">В Корзину</button>
+            </form>
         </div>
-
-        <form class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="quantity" hidden value="1">
-            <input type="hidden" name="update" value="False" id="id_update">
-           
-            <button class="btn btn--primary">В Корзину</button>
-        </form>
-
     </div>
     {% endfor %}
 
