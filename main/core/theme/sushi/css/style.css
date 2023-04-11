@@ -4388,6 +4388,10 @@ td.product-thumbnail img {
     grid-column: 6/span 4;
     grid-row: 4/span 1;
   }
+
+  .cat-home .cat-home__item:nth-child(7) {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
