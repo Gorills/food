@@ -9,7 +9,7 @@ try:
 except:
     sms = False
 
-sender = 'INFORM'
+sender = 'ProfitPLATF'
 apikey = 'BS0H0F27LS92CU4G3YVZQ693A1QGCTQT2DBOF2NDKMB99465LQSU8O7RPU084Y60'
 
 
