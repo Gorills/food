@@ -100,7 +100,11 @@
                     <h3 class="cat-home__title">{{ cat.name }}</h3>
 
                     {% if cat.image %}
-                    <img src="{{ cat.image.url }}" alt="" class="cat-home__img">
+                        {% thumbnail cat.image "296" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" class="cat-home__img">
+                        {% endthumbnail %}
+                    
+
                     {% endif %}
                 </a>
                 {% endif %}
