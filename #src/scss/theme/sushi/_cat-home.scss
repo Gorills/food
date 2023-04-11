@@ -12,7 +12,7 @@
         grid-template-rows: [row1-start] auto [row2-start] auto [row2-end];
         background-color: #fff;
 
-        @media screen and (max-width: 480px) {
+        @media screen and (max-width: 576px) {
             display: flex;
             flex-direction: column;
         }

@@ -4486,6 +4486,11 @@ td.product-thumbnail img {
     margin-right: 0;
     margin-bottom: 15px;
   }
+
+  .cat-home__inner {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 574px) {
@@ -4634,11 +4639,6 @@ td.product-thumbnail img {
 
   .sort__limit .d-none {
     display: none;
-  }
-
-  .cat-home__inner {
-    display: flex;
-    flex-direction: column;
   }
 
   .cat-home__item:nth-child(1) {
