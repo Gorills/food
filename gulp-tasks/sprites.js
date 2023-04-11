@@ -44,6 +44,25 @@ gulp.task("chinasprites", () => {
         .on("end", browsersync.reload);
 });
 
+gulp.task("sushi_sprites", () => {
+    return gulp.src(paths.sushi_sprites.src)
+        .pipe(svg({
+            shape: {
+                dest: "intermediate-svg"
+            },
+            mode: {
+                stack: {
+                    sprite: "../sprite.svg"
+                }
+            }
+        }))
+        .pipe(gulp.dest(paths.sushi_sprites.dist))
+        .pipe(debug({
+            "title": "Sprites"
+        }))
+        .on("end", browsersync.reload);
+});
+
 gulp.task("adminsprites", () => {
     return gulp.src(paths.adminsprites.src)
         .pipe(svg({

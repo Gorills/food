@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}{{ blog_settings.meta_title }}{% endblock %}
+{% block description %}{{ blog_settings.meta_description }}{% endblock %}
+{% block keywords %}{{ blog_settings.meta_keywords }}{% endblock %}
+{% block canonical %}{% url 'catalog' %}{% endblock %}
+{% block og:title %}{{ blog_settings.meta_title }}{% endblock %}
+{% block og:description %}{{ blog_settings.meta_description }}{% endblock %}
+{% block og:url %}{% url 'catalog' %}{% endblock %}
+{% block twitter:title %}{{ blog_settings.meta_title }}{% endblock %}
+{% block twitter:description %}{{ blog_settings.meta_description }}{% endblock %}
+
+{% block og:image %}{% if blog_settings.image %}{% thumbnail blog_settings.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if blog_settings.image %}{% thumbnail blog_settings.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if blog_settings.image %}{% thumbnail blog_settings.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+
+
+
+
+{% block body %}
+{% load static %}
+
+
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="breadcrumbs__inner">
+            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'home' %}" title="Главная" itemprop="item">
+                        <span itemprop="name">Главная</span>
+                        <meta itemprop="position" content="0">
+                    </a>
+                </li>
+                
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url 'blog' %}" title="Статьи" itemprop="item">
+                        <span itemprop="name">Статьи</span>
+                        <meta itemprop="position" content="1">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% if max_post.count > 0 %}
+    <div class="blog-top">
+        <div class="container">
+            
+                
+                <div class="blog-top__inner">
+                    <a href="{{ last.get_absolute_url }}" class="blog-top__image-wrap">
+                    
+                        
+                        <img src="{{ last.image.url }}" alt="" class="blog-top__image">
+
+                    </a>
+
+                    <div class="blog-top__wrap">
+                        <a href="{{ last.parent.get_absolute_url }}" class="blog-top__cat">{{ last.parent.name }}</a>
+                        <a href="{{ last.get_absolute_url }}" class="blog-top__title">{{ last.name }}</a>
+                        
+                            
+                            <p class="blog-top__description">
+                                {% for block in last.blocks.all %}
+                                    {% if block.type == 'text' and forloop.counter < 3 %}
+                                        {{ block.text }}
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                            
+                        
+                        <p class="blog-top__date">{{ last.create_at }}</p>
+                    </div>
+
+
+                </div>
+            
+        
+        </div>
+    </div>
+
+    <div class="blog-list">
+        <div class="container">
+            <div class="blog-list__inner">
+
+
+                <div class="blog-list__sidebar">
+                    {% for blog_category in blog_categorys %}
+                    <a href="{{ blog_category.get_absolute_url }}" class="blog-list__sidebar-item">
+                        {{ blog_category.name }}
+                    </a>
+                    {% endfor %}
+
+                </div>
+
+                <div class="blog-list__container">
+
+                    <div class="blog-list__row">
+                        {% if post %}
+                        <div class="blog-list__item">
+                            <a href="{{ post.get_absolute_url }}" class="blog-list__wrap">
+                                <img src="{{ post.image.url }}" alt="{{ post.name }}" class="blog-list__img">
+                            </a>
+                            <a href="{{ post.get_absolute_url }}" class="blog-list__link">
+                                <p class="blog-list__title">{{ post.name }}</p>
+                            </a>
+                            <p class="blog-list__description">
+                                {% for block in post.blocks.all %}
+                                    {% if block.type == 'text' and forloop.counter < 3 %}
+                                        {{ block.text }}
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="blog-list__date">{{ post.create_at }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="blog-list__col">
+                            {% for post in posts_trio %}
+                            <div class="blog-list__col-item">
+                                <a href="{{ post.get_absolute_url }}" class="blog-list__col-wrap">
+                                    <img src="{{ post.image.url }}" alt="{{ post.name }}" class="blog-list__col-img">
+                                </a>
+
+                                <div class="blog-list__col-right">
+                                    <a href="{{ post.get_absolute_url }}" class="blog-list__col-link">
+                                        <p class="blog-list__col-title">{{ post.name }}</p>
+                                    </a>
+                                    
+                                    <p class="blog-list__col-date">{{ post.create_at }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+
+
+                    </div>
+
+
+                    <div class="blog-list__all">
+
+                        {% for post in posts_all %}
+                        <div class="blog-list__item">
+                            <a href="{{ post.get_absolute_url }}" class="blog-list__wrap">
+                                <img src="{{ post.image.url }}" alt="{{ post.name }}" class="blog-list__img">
+                            </a>
+                            <a href="{{ post.get_absolute_url }}" class="blog-list__link">
+                                <p class="blog-list__title">{{ post.name }}</p>
+                            </a>
+                            <p class="blog-list__description">
+                                {% for block in post.blocks.all %}
+                                    {% if block.type == 'text' and forloop.counter < 3 %}
+                                        {{ block.text }}
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="blog-list__date">{{ post.create_at }}</p>
+                        </div>
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% else %}
+
+<div class="cart-top cart-top--empty">
+    <div class="container">
+        <div class="cart-top__inner">
+
+            <h1 class="cart-top__title">Новостей нет</h1>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+
+{% endblock %}

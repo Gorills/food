@@ -1,0 +1,392 @@
+
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}{{ setup.meta_title }}{% endblock %}
+{% block description %}{{ setup.meta_description }}{% endblock %}
+{% block keywords %}{{ setup.meta_keywords }}{% endblock %}
+{% block canonical %}{% url 'home' %}{% endblock %}
+{% block og:title %}{{ setup.meta_title }}{% endblock %}
+{% block og:description %}{{ setup.meta_description }}{% endblock %}
+{% block og:url %}{% url 'home' %}{% endblock %}
+{% block twitter:title %}{{ setup.meta_title }}{% endblock %}
+{% block twitter:description %}{{ setup.meta_description }}{% endblock %}
+{% block og:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block og:image:secure_url %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block twitter:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+
+
+
+
+{% block body %}
+{% load static %}
+{% load thumbnail %}
+{% load theme_static %}
+
+{% if sliders.count > 0 %}
+<div class="start">
+    
+    <div class="sl owl-carousel" data-speed="{{ slider_setup.speed }}" data-nav="{{ slider_setup.nav }}" data-dots="{{ slider_setup.dots }}" data-autoplay="{{ slider_setup.autoplay }}" >
+        
+        {% for slider in sliders %}
+            {% if slider.link %}
+
+                <a href="{{ slider.link }}" class="sl__item">
+                    
+                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
+                            <div class="sl__wrap-inner">
+                                {% if slider.title %}
+                                <h2 class="sl__title">{{ slider.title }}</h2>
+                                {% endif %}
+                                {% if slider.text %}
+                                <p class="sl__text">{{ slider.text | safe }}</p>
+                                {% endif %}
+                            </div>
+                            {% if slider.button_text %}
+                            <p class="btn btn--primary">{{ slider.button_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
+                        {% endthumbnail %}
+                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
+                        {% endthumbnail %}
+                        
+
+                    
+                </a>
+            {% else %}
+                <div class="sl__item">
+
+                   
+                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
+                            <div class="sl__wrap-inner">
+                                {% if slider.title %}
+                                <h2 class="sl__title">{{ slider.title }}</h2>
+                                {% endif %}
+                                {% if slider.text %}
+                                <p class="sl__text">{{ slider.text | safe }}</p>
+                                {% endif %}
+                            </div>
+                            {% if slider.button_text %}
+                            <p class="btn btn--primary">{{ slider.button_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
+                        {% endthumbnail %}
+
+                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
+                        {% endthumbnail %}
+                    
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+<div class="cat-home">
+    <div class="container">
+        <div class="cat-home__inner">
+
+            {% for cat in categorys %}
+                {% if cat.home and forloop.counter <= 9 %}
+                <a href="{{ cat.get_absolute_url }}" class="cat-home__item">
+                    <h3 class="cat-home__title">{{ cat.name }}</h3>
+
+                    {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="" class="cat-home__img">
+                    {% endif %}
+                </a>
+                {% endif %}
+            {% endfor %}
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% if combos %}
+    
+    <div class="block gray" id="combo">
+        <div class="container">
+            <div class="block__inner">
+                <h2 class="title">Комбо</h2>
+
+                                    
+                    <div class="product-list">
+
+
+                                
+                        {% for combo in combos %}
+                        <div class="product-list__item">
+
+
+
+                            <div class="combo-popup">
+
+
+                                
+                                <div class="combo-popup__layout"></div>
+
+
+                                <div class="combo-popup__inner">
+
+                                    <a href="#" class="combo-popup__closer">
+                                        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+
+                                    <p class="combo-popup__name">{{ combo.name }}</p>
+                                    <p class="combo-popup__desc">{{ combo.description }}</p>
+                                    
+                                    
+                                     
+
+                                    {% regroup combo.items.all by cat as parent_list %}
+
+                                    {% for parent in parent_list %}
+
+                                    <div class="combo-popup__parent_list" data-check="" data-price="0,00">
+                                        
+
+                                        <p class="combo-popup__item-group">{{ parent.grouper }} на выбор</p>
+
+
+                                            <div class="combo-popup__item-row" >
+
+                                            {% for item in parent.list %}
+
+                                                <div class="combo-popup__item-item" data-price="{{ item.price }}" data-id="{{ item.id }}"><div class="combo-popup__item-check"></div>{{ item.product.name }} + {{ item.price }}₽</div>
+
+                                            {% endfor %}
+                                            </div>
+                                    </div>
+                                    {% endfor %}
+
+                                    <div class="combo-popup__bottom">
+
+
+
+                                        
+                                        <div class="combo-popup__bottom-wrap">
+
+                                            <div class="counter">
+                                                <button class="counter__btn counter__btn--minus">
+                                                    <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
+                                                    </svg>
+                                                </button>
+                                                <input type="number" class="counter__input" value="1">
+                                                <button class="counter__btn counter__btn--plus">
+                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+
+                                            <div class="btn btn--primary combo-popup__btn" data-token="{{ csrf_token }}" data-id="{{ combo.id }}">Добавить</div>
+                                        </div>
+
+                                        <div class="combo-popup__summ" data-price="{{ combo.price }}" data-final="">{{ combo.price }}₽</div>
+
+
+                                    </div>
+
+                                </div>
+                                <div class="combo-popup__layout"></div>
+    
+                            </div>
+
+                            <div class="product-list__top">
+                                
+
+                                {% thumbnail combo.thumb "290x193" format="WEBP" crop="center" as im %}
+                                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
+                                {% endthumbnail %}
+
+                               
+
+                                
+                                
+                                
+
+                            </div>
+
+                            <div class="product-list__bottom">
+                                <h3 class="product-list__title">{{ combo.name }}</h3>
+                               
+                                <div class="product-list__desc">
+                                {{ combo.description }}
+
+                                </div>
+                               
+                                <div class="product-list__prices">
+                                    <p class="product-list__price">{{ combo.price }}₽</p>
+                                   
+                                </div>
+                                
+                            </div>
+
+                            <a href="#" class="btn btn--primary open-combo">Выбрать</a>
+
+                        </div>
+                        {% endfor %}
+
+                        
+                        
+
+                    </div>
+            </div>
+        </div>
+    </div>
+    
+
+{% endif %}
+
+
+
+
+
+
+{% if shop_setup.new_products == True %}
+    {% if new_products.count > 0 %}
+    <div class="block gray">
+        <div class="container">
+            <div class="block__inner">
+                <div class="block__justify">
+                    <h2 class="title">Новинки</h2>
+                    <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
+
+                </div>
+                {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='290x193' %}
+
+                
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% endif %}
+{% if shop_setup.action == True %}
+    {% if sale_products.count > 0 %}
+    <div class="block gray">
+        <div class="container">
+            <div class="block__inner">
+                <h2 class="title">Скидки</h2>
+                {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='290x193' %}
+            
+                <div class="block__center">
+                    {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% endif %}
+{% if shop_setup.sales_hits == True %}
+    {% if hit_products.count > 0 %}
+    <div class="block">
+        <div class="container">
+            <div class="block__inner">
+                <h2 class="title">Хиты продаж</h2>
+                {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='290x193' %}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+
+{% if news.count > 0 %}
+<div class="block">
+    <div class="container">
+        <div class="block__inner">
+            <h2 class="title">Недавиние новости</h2>
+            
+
+            <div class="news">
+                {% for new in news %}
+                    {% if new.draft == False %}
+                    <div class="news__item">
+                        <a href="{{ new.get_absolute_url }}" class="news__wrap">
+
+                     
+                        {% thumbnail new.image "321x201" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ new.name }}" class="news__image">
+                        {% endthumbnail %}
+
+                        </a>
+                        <a href="{{ new.parent.get_absolute_url }}" class="news__cat">
+                            {{ new.parent.name }}
+                        </a>
+                        <p class="news__date">{{ new.create_at }}</p>
+                        <a href="{{ new.get_absolute_url }}" class="news__title"><h3>{{ new.name }}</h3></a>
+
+                        <p class="news__desc">
+                            {% for block in new.blocks.all %}
+                                {% if block.type == 'text' and forloop.counter < 3 %}
+                                    {{ block.text }}
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+
+                        <a href="{{ new.get_absolute_url }}" class="btn btn--empty">Читать</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% include 'global/about.html' %}
+
+
+
+{% if manufacturers.count > 0 %}
+<div class="block">
+    <div class="container">
+        <div class="block__inner">
+            <h2 class="title">Бренды в нашем магазине</h2>
+            <div class="block__grid">
+
+                {% for man in manufacturers %}
+                <div class="block__grid-item">
+                    {% if man.image %}
+                    <img src="{{ man.image.url }}" alt="{{ man.name }}" class="block__grid-img">
+                    {% else %}
+                    <p class="block__grid-text">{{ man.name }}</p>
+
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+
+
+
+{% endblock %}

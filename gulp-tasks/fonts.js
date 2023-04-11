@@ -20,6 +20,14 @@ gulp.task("chinafonts", () => {
         }));
 });
 
+gulp.task("sushi_fonts", () => {
+    return gulp.src(paths.sushi_fonts.src)
+        .pipe(gulp.dest(paths.sushi_fonts.dist))
+        .pipe(debug({
+            "title": "Fonts"
+        }));
+});
+
 gulp.task("adminfonts", () => {
     return gulp.src(paths.adminfonts.src)
         .pipe(gulp.dest(paths.adminfonts.dist))

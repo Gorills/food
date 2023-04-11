@@ -1,0 +1,209 @@
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0px;
+}
+
+
+.gray {
+    background-color: #f1f2f2;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-body);
+    color: var(--color-font);
+    line-height: 1.6;
+    font-family: 'Roboto', sans-serif;
+    
+    font-size: 16px;
+
+}
+.body {
+    overflow: hidden;
+    height: 100vh;
+    @media screen and (max-width:768px) {
+        // height: fit-content;
+        // overflow: scroll;
+        
+    }
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+
+::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
+::-webkit-scrollbar{width:6px;background-color:var(--color-body)}
+
+textarea {
+
+    font-family: 'Circe', sans-serif;
+    color: var(--color-font);
+    &::placeholder {
+        font-family: 'Circe', sans-serif;
+        color: var(--color-font)
+    }
+
+}
+input {
+    font-family: 'Circe', sans-serif;
+    color: var(--color-font);
+    &::placeholder {
+        font-family: 'Circe', sans-serif;
+        color: var(--color-font)
+    }
+}
+
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+    
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+    
+button {
+    cursor: pointer;
+}
+    
+a   {
+    transition: all .5s ease;
+    text-decoration: none;
+    
+}
+
+.content {
+    margin-top: 153px;
+    position: relative;
+   
+
+    @media screen and (max-width:480px) {
+        margin-top: 148px;
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 1426px;
+    margin: 0 auto;
+    padding: 0 15px;
+    position: relative;
+    
+}
+.container-fluid {
+    padding: 0 50px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    @media screen and (max-width:768px) {
+        padding: 0 15px;
+    }
+}
+
+.title {
+    font-size: 28px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.basket__minus {
+    color: var(--color-font);
+}
+.btn {
+
+    font-weight: 600;
+    border: 2px solid var(--color-btn-border);
+    display: inline-block;
+    transition: all 0.3s linear 0s;
+    padding: 16px 75px;
+    height: 50px;
+    line-height: 1;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border-radius: 8px;
+    &--primary {
+
+        background: none;
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+        &:hover {
+            background-color: var(--color-primary);
+            color: #fff;
+        }
+    }
+    &--empty {
+        background: none;
+        color: var(--color-btn-font-light);
+        &:hover {
+            background-color: var(--color-body);
+            border-color: var(--color-font);
+            color: var(--color-font);
+        }
+    }
+    &--full {
+        background-color: var(--color-btn-bg);
+        color: var(--color-btn-font);
+
+        &:hover {
+            background: none;
+            color: var(--color-font);
+        }
+    }
+    
+    &--success {
+        background-color: var(--color-success);
+        border-color: var(--color-success);
+        color: #fff;
+
+    }
+
+    &--gray {
+        background: #f6f6f6;
+        color: #222;
+        border-color: #e1e1e1;
+        
+        &:hover {
+            background-color: var(--color-body);
+            border-color: var(--color-font);
+            color: var(--color-font);
+        }
+    }
+}
+
+
+.grecaptcha-badge {
+    display: none!important;
+}
+
+.ymaps-2-1-79-search__suggest {
+    top: 40px !important;
+    left: 0 !important;
+    right: -2px!important;
+    width: 100%!important;
+    border: 1px solid var(--color-body)!important;
+
+}
+
+.ymaps-2-1-79-search__suggest {
+    // background-color: var(--color-body)!important;
+    color: #222;
+    border: 1px solid var(--color-body)!important;
+    box-shadow: 0px 5px 10px 2px rgb(34 60 80 / 20%);
+}
+
+// .ymaps-2-1-79-map-copyrights-promo, .ymaps-2-1-79-controls__control_toolbar, .ymaps-2-1-79-copyright, .ymaps-2-1-79-controls__control {
+//     display: none!important;
+// }

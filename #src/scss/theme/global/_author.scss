@@ -2,12 +2,13 @@
 .author {
     background-color: var(--color-bg-dark);
     color: #fff;
-    padding: 20px 0;
+    
     text-align: center;
     // .author__inner
 
     &__inner {
-
+        text-align: center;
+        padding: 20px 0;
         a {
             text-decoration: underline;
             color: #fff;
