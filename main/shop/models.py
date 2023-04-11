@@ -82,6 +82,7 @@ class Category(models.Model):
     
     image = models.ImageField(upload_to='catalog', null=True, blank=True)
     top = models.BooleanField()
+    home = models.BooleanField(default=False, verbose_name='Отображать на главной странице (для темы Суши)')
     column = models.PositiveIntegerField(default=1)
     sort_order = models.PositiveIntegerField(default=0)
     status = models.BooleanField(default=True)

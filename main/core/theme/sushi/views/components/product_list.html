@@ -41,13 +41,7 @@
                 {% endthumbnail %}
             {% endif %}
 
-            <form class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
-                {% csrf_token %}
-                <input type="text" name="quantity" hidden value="1">
-                <input type="hidden" name="update" value="False" id="id_update">
-               
-                <button class="btn btn--primary">В Корзину</button>
-            </form>
+           
 
             
 
@@ -55,7 +49,13 @@
 
         <div class="product-list__bottom">
             <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+
+
+
             {% if shop_setup.show_descrioption == True and product.short_description %}
+            
+            <div class="product-list__weight">{{ product.weight }}</div>
+
             <div class="product-list__desc">
                {{ product.short_description }}
 
@@ -70,7 +70,13 @@
             
         </div>
 
-
+        <form class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="quantity" hidden value="1">
+            <input type="hidden" name="update" value="False" id="id_update">
+           
+            <button class="btn btn--primary">В Корзину</button>
+        </form>
 
     </div>
     {% endfor %}

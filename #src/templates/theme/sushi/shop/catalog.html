@@ -21,79 +21,81 @@
 {% load thumbnail %}
 
 
-<div class="banner">
-    <div class="container">
-        <div class="banner__inner">
+<div class="gray">
 
-            <h1 class="banner__title">{% if shop_setup.meta_h1 %}{{ shop_setup.meta_h1 }}{% else %}Меню{% endif %}</h1>
-
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="breadcrumbs__inner">
+                <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                    <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="breadcrumbs__link" href="{% url 'home' %}" title="Главная" itemprop="item">
+                            <span itemprop="name">Главная</span>
+                            <meta itemprop="position" content="0">
+                        </a>
+                    </li>
+                    
+                    <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
+                            <span itemprop="name">Меню</span>
+                            <meta itemprop="position" content="1">
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    {% if shop_setup.image %}<img src="{{ shop_setup.image.url }}" alt="каталог" class="banner__bg">{% endif %}
-</div>
 
+    <div class="banner">
+        <div class="container">
+            <div class="banner__inner">
 
-
-
-<div class="breadcrumbs">
-    <div class="container">
-        <div class="breadcrumbs__inner">
-            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
-                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a class="breadcrumbs__link" href="{% url 'home' %}" title="Главная" itemprop="item">
-                        <span itemprop="name">Главная</span>
-                        <meta itemprop="position" content="0">
-                    </a>
-                </li>
-                
-                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
-                        <span itemprop="name">Меню</span>
-                        <meta itemprop="position" content="1">
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="catalog">
-    
-    <div class="container">
-        <div class="catalog__inner">
-
-            {% include 'components/catalog__sidebar.html'  %}
-
-            
-            <div class="catalog__list">
-                <div class="catalog__refresh">
-                    {% include 'components/sort.html'  %}
-                    {% include 'components/product_list.html' with products=products big='' size='235x235' %}
-                    {% include 'global/pagination.html'  %}
-                </div>
+                <h1 class="banner__title">{% if shop_setup.meta_h1 %}{{ shop_setup.meta_h1 }}{% else %}Меню{% endif %}</h1>
 
             </div>
         </div>
     </div>
-    
-</div>
 
 
 
 
 
 
-{% if shop_setup.description %}
-<div class="cat-desc">
-    <div class="container">
-        <div class="cat-desc__inner">
-            {{ shop_setup.description | safe }}
 
+    <div class="catalog">
+        
+        <div class="container">
+            <div class="catalog__inner">
+
+                {% comment %} {% include 'components/catalog__sidebar.html'  %} {% endcomment %}
+
+                
+                <div class="catalog__list">
+                    <div class="catalog__refresh">
+                        {% include 'components/sort.html'  %}
+                        {% include 'components/product_list.html' with products=products big='' size='290x193' %}
+                        {% include 'global/pagination.html'  %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+
+
+
+
+
+    {% if shop_setup.description %}
+    <div class="cat-desc">
+        <div class="container">
+            <div class="cat-desc__inner">
+                {{ shop_setup.description | safe }}
+
+            </div>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
-
 {% endblock %}

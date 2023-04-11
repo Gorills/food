@@ -31,7 +31,7 @@
             {% if slider.link %}
 
                 <a href="{{ slider.link }}" class="sl__item">
-                    
+                    <div class="container">
                         <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
                             <div class="sl__wrap-inner">
                                 {% if slider.title %}
@@ -53,7 +53,7 @@
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
                         
-
+                    </div>
                     
                 </a>
             {% else %}

@@ -1,6 +1,6 @@
 .catalog {
     width: 100%;
-    margin: 40px auto;
+    padding: 40px 0;
     
     // .catalog__inner
 
@@ -50,5 +50,10 @@
     // .catalog__list
     &__list {
         width: 100%;
+    }
+
+    .pagination_area {
+        font-size: 12px;
+        color: rgb(102, 102, 102);
     }
 }

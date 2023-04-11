@@ -15,7 +15,7 @@
         @media screen and (max-width:768px) {
             padding-right: 0;
             justify-content: flex-end;
-            padding: 15px 0;
+            padding: 0;
         }
 
     }
@@ -27,6 +27,8 @@
         list-style: none;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        width: 100%;
 
         @media screen and (max-width: 768px) {
             position: fixed;
@@ -69,6 +71,11 @@
             }
             
         }
+        &:last-child {
+            a {
+                padding-right: 0;
+            }
+        }
     }
 
     // .header-bottom__link
@@ -76,8 +83,9 @@
     &__link {
         color: var(--color-font);
         padding: 20px 20px;
+        font-size: 14px;
         display: inline-block;
-
+        text-transform: uppercase;
         
         &:hover {
             color: var(--color-primary);

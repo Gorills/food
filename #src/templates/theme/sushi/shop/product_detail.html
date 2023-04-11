@@ -66,20 +66,20 @@
                     {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
                     {% endthumbnail %}
-                    {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
+                    {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% for image in product.images.all %}
                         {% thumbnail image.src "80x80" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
-                        {% thumbnail image.src "600x600" format="WEBP" crop="center" as im %}
+                        {% thumbnail image.src "750x500" format="WEBP" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% endfor %}
                 </div>
               
-                {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
+                {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
                     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
                 {% endthumbnail %}
             </div>
@@ -193,7 +193,7 @@
                             
                             
                         </div>
-					    <button class="product-detail__button btn btn--full">В корзину</button>
+					    <button class="product-detail__button btn btn--primary">В корзину</button>
 
                     {% endif %}
 
@@ -273,13 +273,13 @@
 </div>
 
 
-<div class="similar">
+<div class="similar gray">
     <div class="container">
         <div class="similar__inner">
 
             <h3 class="title">Вам может понравиться</h3>
 
-            {% include 'components/product_list.html' with slider='true' products=similars big='product-list__item--big' size='235x298' %}
+            {% include 'components/product_list.html' with slider='true' products=similars big='product-list__item--big' size='290x193' %}
 
         </div>
     </div>

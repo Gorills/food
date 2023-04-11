@@ -100,6 +100,8 @@ $(document).ready(function(){
         loop:true,
         animateOut: 'fadeOut',
         autoplay:true,
+        margin:20,
+        
         autoplayTimeout:5000,
         autoplayHoverPause:false,
         nav:false,
@@ -1419,7 +1421,7 @@ $(document).on('click','.cookie__btn',function(e){
 
 $(document).on('click','.open-combo',function(e){
     e.preventDefault();
-    $(this).parent().prev('.combo-popup').addClass('combo-popup--active')
+    $(this).prev().prev().prev('.combo-popup').addClass('combo-popup--active')
 
 })
 

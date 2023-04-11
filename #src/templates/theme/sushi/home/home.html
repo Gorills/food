@@ -46,7 +46,7 @@
                             {% endif %}
                         </div>
                         
-                        {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
+                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
                         {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
@@ -59,7 +59,7 @@
             {% else %}
                 <div class="sl__item">
 
-                    <div class="container">
+                   
                         <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
                             <div class="sl__wrap-inner">
                                 {% if slider.title %}
@@ -74,14 +74,14 @@
                             {% endif %}
                         </div>
                         
-                        {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
+                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
 
                         {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
                         {% endthumbnail %}
-                    </div>
+                    
                 </div>
             {% endif %}
         {% endfor %}
@@ -90,9 +90,34 @@
 {% endif %}
 
 
+<div class="cat-home">
+    <div class="container">
+        <div class="cat-home__inner">
+
+            {% for cat in categorys %}
+                {% if cat.home and forloop.counter <= 9 %}
+                <a href="{{ cat.get_absolute_url }}" class="cat-home__item">
+                    <h3 class="cat-home__title">{{ cat.name }}</h3>
+
+                    {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="" class="cat-home__img">
+                    {% endif %}
+                </a>
+                {% endif %}
+            {% endfor %}
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
 {% if combos %}
     
-    <div class="block" id="combo">
+    <div class="block gray" id="combo">
         <div class="container">
             <div class="block__inner">
                 <h2 class="title">Комбо</h2>
@@ -187,14 +212,14 @@
                             <div class="product-list__top">
                                 
 
-                                {% thumbnail combo.thumb "326x326" format="WEBP" crop="center" as im %}
+                                {% thumbnail combo.thumb "290x193" format="WEBP" crop="center" as im %}
                                     <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
                                 {% endthumbnail %}
 
                                
 
                                 
-                                <a href="#" class="btn btn--primary open-combo">Выбрать</a>
+                                
                                 
 
                             </div>
@@ -214,7 +239,7 @@
                                 
                             </div>
 
-
+                            <a href="#" class="btn btn--primary open-combo">Выбрать</a>
 
                         </div>
                         {% endfor %}
@@ -237,16 +262,17 @@
 
 {% if shop_setup.new_products == True %}
     {% if new_products.count > 0 %}
-    <div class="block">
+    <div class="block gray">
         <div class="container">
             <div class="block__inner">
-                <h2 class="title">Новинки</h2>
+                <div class="block__justify">
+                    <h2 class="title">Новинки</h2>
+                    <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
 
-                {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='326x326' %}
-
-                <div class="block__center">
-                    <a href="/catalog/?sort=-new" class="btn btn--empty">Смотреть все</a>
                 </div>
+                {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='290x193' %}
+
+                
             </div>
         </div>
     </div>
@@ -255,11 +281,11 @@
 {% endif %}
 {% if shop_setup.action == True %}
     {% if sale_products.count > 0 %}
-    <div class="block">
+    <div class="block gray">
         <div class="container">
             <div class="block__inner">
                 <h2 class="title">Скидки</h2>
-                {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='326x326' %}
+                {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='290x193' %}
             
                 <div class="block__center">
                     {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
@@ -276,7 +302,7 @@
         <div class="container">
             <div class="block__inner">
                 <h2 class="title">Хиты продаж</h2>
-                {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='326x326' %}
+                {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='290x193' %}
 
             </div>
         </div>

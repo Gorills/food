@@ -13,6 +13,27 @@
         justify-content: space-between;
     }
 
+  
+
+    // .block__justify
+
+    &__justify {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    // .block__seeall
+
+    &__seeall {
+        color: var(--color-primary);
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+
+
+
     // .block__grid-item
 
     &__grid-item {
