@@ -263,7 +263,7 @@ class Cart(object):
 
         
         
-        related = Product.objects.filter(related=True)
+        related = Product.objects.filter(related=True, parent=None)
         for rel in related:
             rel_id = str(rel.id)
             if rel_id not in self.cart:

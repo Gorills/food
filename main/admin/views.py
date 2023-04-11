@@ -1264,9 +1264,9 @@ def admin_product(request):
     except:
         sort_t = sort
     try:
-        product = Product.objects.filter(Q(name__icontains=q)).order_by(*sort)
+        product = Product.objects.filter(Q(name__icontains=q)).exclude(related=True).order_by(*sort)
     except:
-        product = Product.objects.all().order_by(*sort)
+        product = Product.objects.all().exclude(related=True).order_by(*sort)
     context = {
         # Разрешить поиск на странице
         'search': 'search',
@@ -2205,7 +2205,7 @@ def add_combo(request):
         else:
             return render(request, 'shop/combo/edit_combo.html', {'form':form})
     
-    products = Product.objects.all()
+    products = Product.objects.all().exclude(related=True)
 
 
     context = {
