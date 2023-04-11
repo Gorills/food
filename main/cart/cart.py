@@ -348,14 +348,15 @@ class Cart(object):
         
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
-            item['total_price'] = (item['price'] * item['quantity']) - (item['price'] * item['free'])
-           
 
+            free_item = (item['price'] * item['free'])
+            if item['quantity'] < item['free']:
+                free_item = (item['free'] - item['quantity']) * item['price']
+
+            item['total_price'] = (item['price'] * item['quantity']) - free_item
             yield item
 
         
-        
-
 
 
     def __len__(self):
@@ -399,7 +400,20 @@ class Cart(object):
         """
         Подсчет стоимости товаров в корзине.
         """
-        total_pr = sum((Decimal(item['price']) * item['quantity']) - (Decimal(item['price']) * item['free']) for item in self.cart.values())
+        res = Decimal('0')
+
+        for item in self.cart.values():
+
+            free_item = (Decimal(item['price']) * item['free'])
+            if item['quantity'] < item['free']:
+                free_item = (item['free'] - item['quantity']) * Decimal(item['price'])
+
+
+            item_price = Decimal(item['price']) * item['quantity']
+
+            res += item_price - free_item
+
+        total_pr = Decimal(res)
 
         return total_pr + self.combo_summ()
 
