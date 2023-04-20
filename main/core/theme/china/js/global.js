@@ -151,11 +151,58 @@ $(document).on('click','.search__closer',function(e){
 
 
 
+var dataLayer = window.dataLayer || [];
+function addCart(id, name, price, category, quantity) {
+    
+    dataLayer.push({
+        "ecommerce": {
+            "currencyCode": "RUB",
+            "add": {
+                "products": [
+                    {
+                        "id": id,
+                        "name": name,
+                        "price": price,
+                        "category": category,
+                        "quantity": quantity
+                    }
+                ]
+            }
+        }
+    })
+}
+
+function removeCart(id, name, price, category, quantity) {
+    dataLayer.push({
+        "ecommerce": {
+            "currencyCode": "RUB",
+            "remove": {
+                "products": [
+                    {
+                        "id": id,
+                        "name": name,
+                        "price": price,
+                        "category": category,
+                        "quantity": quantity
+                    }
+                ]
+            }
+        }
+    })
+}
 
 // Добавление в корзину product-list__form
 $(function() {
     $(document).on('submit','.product-list__form, .product-detail__form',function(e){
       var $form = $(this);
+      var id = $(this).attr('data-id')
+      var name = $(this).attr('data-name')
+      var price = $(this).attr('data-price')
+      var category = $(this).attr('data-category')
+      var quantity = $(this).attr('data-quantity')
+
+      
+
       
 
       $.ajax({
@@ -211,13 +258,27 @@ $(function() {
         console.log('fail');
       });
       e.preventDefault();
+
+      if (dataLayer) {
+        addCart(id, name, price, category, quantity)
+      }
+      
     });
+
+    
 });
 
 
 $(function() {
     $(document).on('submit','.qtybutton',function(e){
       var $form = $(this);
+      
+      var id = $(this).attr('data-id')
+      var name = $(this).attr('data-name')
+      var price = $(this).attr('data-price')
+      var category = $(this).attr('data-category')
+      var quantity = $(this).attr('data-quantity')
+
       $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
@@ -246,11 +307,21 @@ $(function() {
             $form.children('button').html('В корзину')
         }
         setTimeout(uxplode, 5000);
+
+        if (dataLayer) {
+            if ($form.attr('action').indexOf('minus') > -1) {
+                removeCart(id, name, price, category, quantity)
+            } else if ($form.attr('action').indexOf('plus') > -1) {
+                addCart(id, name, price, category, quantity)
+            }
+            
+        }
         
       }).fail(function() {
         console.log('fail');
       });
       e.preventDefault();
+
     });
 });
 
@@ -281,6 +352,12 @@ $(function() {
 //   Удаление из корзины
 $(document).on('click','.cart__remove, .product-remove a',function(e){
     e.preventDefault();
+    var id = $(this).attr('data-id')
+    var name = $(this).attr('data-name')
+    var price = $(this).attr('data-price')
+    var category = $(this).attr('data-category')
+    var quantity = $(this).attr('data-quantity')
+
     var url = $(this).attr('href')
     $.get(url, function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
@@ -289,6 +366,7 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
 
+        removeCart(id, name, price, category, quantity) 
         
     });
 
@@ -474,24 +552,31 @@ $(document).on('keyup','.filter__input',function(){
 // счетчик
 
 function calculate() {
-	let inpt = document.querySelector('.product-detail__count-inp')
-	let plus = document.querySelector('.product-detail__plus')
-	let minus = document.querySelector('.product-detail__minus')
-	if (plus) {
-		plus.addEventListener('click', function () {
-			inpt.value++
-		})
-	}
-	if (minus) {
-		minus.addEventListener('click', function () {
-			inpt.value--
-			if (inpt.value < 2) {
-				inpt.value = 1
-			}
-		})
-	}
+    const inpt = document.querySelector('.product-detail__count-inp');
+    const plus = document.querySelector('.product-detail__plus');
+    const minus = document.querySelector('.product-detail__minus');
+    const quantity = document.querySelector('.product-detail__form');
+    
+    if (plus) {
+        plus.addEventListener('click', function() {
+            inpt.value++;
+            quantity.setAttribute('data-quantity', inpt.value);
+        });
+    }
+
+    if (minus) {
+        minus.addEventListener('click', function() {
+            inpt.value--;
+            if (inpt.value < 1) {
+                inpt.value = 1;
+            }
+            quantity.setAttribute('data-quantity', inpt.value);
+        });
+    }
 }
-calculate()
+
+calculate();
+
 
 
 
@@ -1426,7 +1511,7 @@ $(document).on('click','.open-combo',function(e){
 })
 
 $(document).on('click','.combo-popup__closer, .combo-popup__layout',function(e){
-    e.preventDefault();
+
     $('.combo-popup').removeClass('combo-popup--active')
 
 })
@@ -1458,6 +1543,7 @@ $(document).ready(function() {
       itemSumm += summPrice;
       var res = itemSumm*quantity + ',00₽';
       comboPopup.find('.combo-popup__summ').text(res);
+      comboPopup.find('.combo-popup__btn').attr('data-price', itemSumm*quantity + ',00');
       comboPopup.find('.combo-popup__summ').attr('data-final', itemSumm);
       if (dataCheck == count) {
         comboPopup.find('.combo-popup__btn').addClass('combo-popup__btn--active');
@@ -1513,6 +1599,7 @@ $(document).ready(function() {
     var comboPopup = $(this).closest('.combo-popup');
     var price = comboPopup.find('.combo-popup__summ').attr('data-final');
     var quantity = comboPopup.find('.counter__input').val();
+    var name = $(this).attr('data-name');
     
 
     
@@ -1524,8 +1611,6 @@ $(document).ready(function() {
     comboPopup.find('.combo-popup__parent_list').each(function() {
     if($(this).attr('data-check') != '') {
             dataCheck ++;
-            
-            
             
         } 
         count++;
@@ -1545,7 +1630,7 @@ $(document).ready(function() {
     }
 
     if (dataCheck == count) {
-        console.log(data)
+        // console.log(data)
         $.post( "/cart/add_combo/", data)
             .done(function( ) {
             
@@ -1557,6 +1642,8 @@ $(document).ready(function() {
                 $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
                 $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
 
+
+                addCart(combo, name, price, 'Комбо', quantity)
             });
     }
 })
@@ -1566,6 +1653,10 @@ $(document).on('click','.combo__remove',function(e){
     e.preventDefault();
     var csrfToken = $(this).attr('data-token')
     var combo = $(this).attr('data-id')
+    var id = $(this).attr('data-meta')
+    var name = $(this).attr('data-name')
+    var price = $(this).attr('data-price')
+    var quantity = $(this).attr('data-quantity')
     data = {
         combo: combo, 
         csrfmiddlewaretoken: csrfToken
@@ -1577,6 +1668,7 @@ $(document).on('click','.combo__remove',function(e){
             $(".header__cart-wrap").load(location.href + " .header__cart");
             $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
             $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            removeCart(id, name, price, 'Комбо', quantity)
         });
 })
 
@@ -1586,6 +1678,9 @@ $(document).on('click','.plus_combo',function(e){
     var csrfToken = $(this).attr('data-token')
     var combo = $(this).attr('data-id')
     var url = $(this).attr('data-url')
+    var id = $(this).attr('data-meta')
+    var name = $(this).attr('data-name')
+    var price = $(this).attr('data-price')
     data = {
         combo: combo, 
         csrfmiddlewaretoken: csrfToken
@@ -1597,6 +1692,13 @@ $(document).on('click','.plus_combo',function(e){
             $(".header__cart-wrap").load(location.href + " .header__cart");
             $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
             $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+            
+            if (url.indexOf('plus_combo') > -1) {
+                addCart(combo, name, price, 'Комбо', 1)
+            } else if (url.indexOf('minus_combo') > -1) {
+                removeCart(id, name, price, 'Комбо', 1)
+            }
         });
 })
   

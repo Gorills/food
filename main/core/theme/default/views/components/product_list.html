@@ -41,7 +41,7 @@
                 {% endthumbnail %}
             {% endif %}
 
-            <form class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
+            <form data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
                 {% csrf_token %}
                 <input type="text" name="quantity" hidden value="1">
                 <input type="hidden" name="update" value="False" id="id_update">
