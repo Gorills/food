@@ -590,6 +590,7 @@ a {
   border: 1px solid #eaedff;
   border-radius: 0;
   padding: 12px 20px;
+  height: 41px;
   width: 100%;
   outline: none;
   box-shadow: none;
@@ -655,6 +656,11 @@ a {
   color: var(--color-font);
   white-space: nowrap;
   transition: all 0.5s ease;
+}
+
+.cart__input-phone-btn-wrap small {
+  line-height: 1;
+  font-size: 10px;
 }
 
 .cart__input-phone-btn-wrap:hover {
