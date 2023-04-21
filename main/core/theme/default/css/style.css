@@ -58,6 +58,11 @@ body {
   height: 100vh;
 }
 
+.open-combo {
+  width: 100%;
+  margin-top: 10px;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   /* display: none; <- Crashes Chrome on hover */
