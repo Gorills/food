@@ -90,12 +90,13 @@
 {% endif %}
 
 
+{% if home_cats.count > 0 %}
 <div class="cat-home">
     <div class="container">
         <div class="cat-home__inner">
 
-            {% for cat in categorys %}
-                {% if cat.home and forloop.counter <= 9 %}
+            {% for cat in home_cats %}
+                
                 <a href="{{ cat.get_absolute_url }}" class="cat-home__item">
                     <h3 class="cat-home__title">{{ cat.name }}</h3>
 
@@ -107,7 +108,7 @@
 
                     {% endif %}
                 </a>
-                {% endif %}
+               
             {% endfor %}
 
 
@@ -115,7 +116,7 @@
     </div>
 </div>
 
-
+{% endif %}
 
 
 

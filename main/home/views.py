@@ -2,7 +2,7 @@ import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
-from shop.models import Manufacturer, ShopSetup, Product
+from shop.models import Category, Manufacturer, ShopSetup, Product
 from setup.models import BaseSettings
 from .models import SliderSetup, Slider, Page
 from blog.models import Post
@@ -133,7 +133,7 @@ def home(request):
     # cart = Cart(request)
     # cart.clear()
     order_get = request.GET.getlist('order')
-    
+    home_cats = Category.objects.filter(home=True)[:9]
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
     sliders = Slider.objects.all()
@@ -144,7 +144,7 @@ def home(request):
 
 
     context = {
-       
+        'home_cats': home_cats,
         'slider_setup': slider_setup,
         'sliders': sliders,
         'shop_setup': shop_setup,
