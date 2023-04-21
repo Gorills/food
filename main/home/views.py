@@ -133,7 +133,7 @@ def home(request):
     # cart = Cart(request)
     # cart.clear()
     order_get = request.GET.getlist('order')
-    home_cats = Category.objects.filter(home=True)[:9]
+    home_cats = Category.objects.filter(home=True)[:7]
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
     sliders = Slider.objects.all()
