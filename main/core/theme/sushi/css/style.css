@@ -2124,6 +2124,10 @@ a {
   height: 22px;
 }
 
+.header__sign svg path {
+  fill: var(--color-header-font);
+}
+
 .header__login {
   color: var(--color-font);
 }
@@ -2143,6 +2147,10 @@ a {
   width: 20px;
 }
 
+.header__search svg path {
+  stroke: var(--color-header-font);
+}
+
 .header__cart {
   position: relative;
   display: flex;
@@ -2154,6 +2162,10 @@ a {
 .header__cart svg {
   width: 26px;
   height: 26px;
+}
+
+.header__cart svg path {
+  fill: var(--color-header-font);
 }
 
 .header__cart-coutn {
@@ -2256,7 +2268,7 @@ a {
   width: 20px;
   height: 2px;
   border-radius: 30px;
-  background-color: #000;
+  background-color: var(--color-header-font);
 }
 
 .menu-btn span::after {

@@ -39,7 +39,7 @@
     width: 20px;
     height: 2px;
     border-radius: 30px;
-    background-color: #000;
+    background-color: var(--color-header-font);
 }
 .menu-btn span::after {
     width: 20px;

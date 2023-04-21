@@ -265,6 +265,10 @@
         cursor: pointer;
         svg {
             height: 22px;
+
+            path {
+                fill: var(--color-header-font);
+            }
         }
     }
 
@@ -290,6 +294,9 @@
         align-self: center;
         svg {
             width: 20px;
+            path {
+                stroke: var(--color-header-font);
+            }
         }
     }
 
@@ -318,6 +325,9 @@
         svg {
             width: 26px;
             height: 26px;
+            path {
+                fill: var(--color-header-font);
+            }
         }
     }
 
