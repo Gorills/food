@@ -90,9 +90,10 @@
 {% endif %}
 
 
+
 {% if combos %}
     
-    <div class="block" id="combo">
+    <div class="block gray" id="combo">
         <div class="container">
             <div class="block__inner">
                 <h2 class="title">Комбо</h2>
@@ -187,14 +188,14 @@
                             <div class="product-list__top">
                                 
 
-                                {% thumbnail combo.thumb "326x326" format="WEBP" crop="center" as im %}
+                                {% thumbnail combo.thumb "290x193" format="WEBP" crop="center" as im %}
                                     <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
                                 {% endthumbnail %}
 
                                
 
                                 
-                                <a href="#" class="btn btn--primary open-combo">Выбрать</a>
+                                
                                 
 
                             </div>
@@ -214,7 +215,7 @@
                                 
                             </div>
 
-
+                            <a href="#" class="btn btn--primary open-combo">Выбрать</a>
 
                         </div>
                         {% endfor %}
