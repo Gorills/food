@@ -656,6 +656,11 @@ a {
   border-color: var(--color-success);
 }
 
+.cart textarea {
+  resize: none;
+  height: 100px;
+}
+
 .cart__input-sms {
   display: none;
   width: 110px;

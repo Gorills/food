@@ -518,6 +518,11 @@
         
     }
 
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+
     &__input.phone {
         // width: 250px;
     }
