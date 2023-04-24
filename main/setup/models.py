@@ -9,8 +9,13 @@ class BaseSettings(SingletonModel):
     phone = models.CharField(max_length=250, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     email_for_order = models.EmailField(blank=True, null=True)
+
     telegram_bot = models.CharField(blank=True, null=True, max_length=350)
     telegram_group = models.CharField(blank=True, null=True, max_length=350)
+
+    sms_pilot_apikey = models.CharField(blank=True, null=True, max_length=350)
+    sms_text = models.CharField(blank=True, null=True, max_length=350)
+
     copy_year = models.CharField(max_length=350, blank=True, null=True)
     copy = models.CharField(max_length=350, blank=True, null=True)
     city = models.CharField(max_length=350, blank=True, null=True)

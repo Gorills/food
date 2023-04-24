@@ -1419,7 +1419,16 @@ class SetupForm(forms.ModelForm):
                 'type': 'color'
                 
             }),
-           
+           'sms_pilot_apikey': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ключевые слова',
+                
+            }),
+            'sms_text': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ключевые слова',
+                
+            }),
            
            
         }
@@ -1430,6 +1439,8 @@ class SetupForm(forms.ModelForm):
             'email_for_order': 'Email для заявок',
             'telegram_bot': 'Телеграм бот TOKEN',
             'telegram_group': 'Группа в телеграм',
+            'sms_pilot_apikey': 'API ключ от smspilot.ru',
+            'sms_text': 'Текст сообщения (используйте {order}, для указания номера заказа)',
             'copy_year': 'Год копирайта',
             'copy': 'Копирайт',
             'city': 'Город',

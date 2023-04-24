@@ -16,6 +16,20 @@ try:
 except:
     theme_address = 'default'
 
+try:
+    sms_text = BaseSettings.objects.get().sms_text
+except:
+    sms_text = 'Ваш заказ принят в обработку'
+
+def sms_text(order_id):
+    try:
+        text = BaseSettings.objects.get().sms_text
+        text = text.replace('{order}', str(order_id))
+
+    except:
+        text = f'Ваш заказ принят. Ему присвоен № {order_id}.'
+    return text
+
 
 from .telegram import order_telegram, send_message
 from sms.views import send_sms
@@ -197,8 +211,8 @@ def order_create(request):
 
                 else:
                     order_telegram(order)
-                    text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-                    send_sms(text, phone)
+                    
+                    send_sms(sms_text(order.id), phone)
                     # очистка корзины
                     
                     
@@ -290,8 +304,8 @@ def order_confirm(request, pk):
 
         if status == 'succeeded':
             order_telegram(order)
-            text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-            send_sms(text, order.phone)
+            
+            send_sms(sms_text(order.id), order.phone)
 
             if LoyaltyCardSettings.objects.get().active == True:
                 user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -359,8 +373,8 @@ def order_webhook(request):
             if status == 'succeeded':
                 
                 order_telegram(order)
-                text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-                send_sms(text, order.phone)
+                
+                send_sms(sms_text(order.id), order.phone)
                 order.paid = True
                 order.save()
 
@@ -407,8 +421,8 @@ def order_success(request):
 
         order_telegram(order)
         
-        text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-        send_sms(text, order.phone)
+        
+        send_sms(sms_text(order.id), order.phone)
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -477,8 +491,8 @@ def paykeeper_success(request):
         order = data['order']
 
         order_telegram(order)
-        text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-        send_sms(text, order.phone)
+        
+        send_sms(sms_text(order.id), order.phone)
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -527,7 +541,7 @@ def tinkoff_success(request, pk):
     order.paid = True
     order.save()
     order_telegram(order)
-    text = f'Ваш заказ принят. Ему присвоен № {order.id}.'
-    send_sms(text, order.phone)
+    
+    send_sms(sms_text(order.id), order.phone)
     
     return redirect('/?order=True')

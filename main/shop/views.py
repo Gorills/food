@@ -45,7 +45,7 @@ def catalog(request):
         max_price = max_filter
 
 
-    product_list = Product.objects.filter(status=True, stock__gt=0, related=False, price__gte=min_price, price__lte=max_price).order_by(*sort)
+    product_list = Product.objects.filter(status=True, related=False, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
     # product_list = Product.objects.filter(status=True, price__gte=min_price, price__lte=max_price).order_by(*sort)
 
     
@@ -116,7 +116,7 @@ def category_detail(request, slug):
         max_price = max_filter
 
 
-    products_all = Product.objects.filter(status=True, parent=category, price__gte=min_price, price__lte=max_price).order_by(*sort)
+    products_all = Product.objects.filter(status=True, parent=category, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
 
     if limit:
         paginator = Paginator(products_all, *limit)

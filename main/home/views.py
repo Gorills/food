@@ -137,9 +137,9 @@ def home(request):
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
     sliders = Slider.objects.all()
-    new_products = Product.objects.filter(new=True, status=True, stock__gt=0).order_by('-id')[:8]
-    sale_products = Product.objects.filter(status=True, stock__gt=0).exclude(old_price=None)[:8]
-    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True)[:8]
+    new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
+    sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]
+    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
 
 
