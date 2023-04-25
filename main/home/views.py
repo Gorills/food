@@ -140,7 +140,7 @@ def home(request):
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
 
-    sliders = Slider.objects.filter(day__in=[0, current_day])
+    sliders = Slider.objects.filter(day__in=[7, current_day])
 
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
     sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]
