@@ -1351,6 +1351,31 @@ class SetupForm(forms.ModelForm):
                 'placeholder': 'Название сайта',
                 
             }),
+            'vk': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на VK',
+                
+            }),
+            'whatsapp': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на WhatsApp',
+                
+            }),
+            'telegram': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на Telegram',
+                
+            }),
+            'viber': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на Viber',
+                
+            }),
+            'ok': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на OK',
+                
+            }),
             'phone': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Телефон',
