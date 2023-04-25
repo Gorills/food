@@ -113,16 +113,19 @@ def home_logout(request):
 
 
 from cart.cart import Cart
+from datetime import datetime
 
 from decimal import Decimal
 
 def home(request):
 
-
+    current_day = datetime.today().weekday()
     if request.method == 'POST':
         get_cookie = request.POST['get_cookie']
         if get_cookie == 'ZcMWy~DhAiTo0@~':
             request.session['get_cookie'] = 'True'
+
+    print(current_day)
 
     # payment = PaymentSet.objects.get()
     # payment.delete()
@@ -136,7 +139,9 @@ def home(request):
     home_cats = Category.objects.filter(home=True)[:7]
     slider_setup = SliderSetup.objects.get()
     shop_setup = ShopSetup.objects.get()
-    sliders = Slider.objects.all()
+
+    sliders = Slider.objects.filter(day__in=[0, current_day])
+
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
     sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]
     hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
@@ -144,6 +149,7 @@ def home(request):
 
 
     context = {
+        'current_day': current_day,
         'home_cats': home_cats,
         'slider_setup': slider_setup,
         'sliders': sliders,

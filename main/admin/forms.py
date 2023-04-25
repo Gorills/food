@@ -376,6 +376,10 @@ class SliderForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Ссылка (не обязательно)',
             }),
+            'day': forms.Select(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка (не обязательно)',
+            }),
         }
 
 

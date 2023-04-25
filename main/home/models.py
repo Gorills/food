@@ -20,6 +20,17 @@ class Slider(models.Model):
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
     link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка (не обязательно)')
+    DAY_CLASS = (
+       (7, 'Все дни'),
+       (0, 'Понедельник'),
+       (1, 'Вторник'),
+       (2, 'Среда'),
+       (3, 'Четверг'),
+       (4, 'Пятница'),
+       (5, 'Суббота'),
+       (6, 'Воскресенье'),
+    )
+    day = models.PositiveIntegerField(default=7, verbose_name='День недели для показа', choices=DAY_CLASS)
 
     def __str__(self):
         return self.name

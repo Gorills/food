@@ -20,7 +20,13 @@ class BaseSettings(SingletonModel):
     copy = models.CharField(max_length=350, blank=True, null=True)
     city = models.CharField(max_length=350, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
-    
+
+    vk = models.CharField(max_length=350, blank=True, null=True)
+    whatsapp = models.CharField(max_length=350, blank=True, null=True)
+    telegram = models.CharField(max_length=350, blank=True, null=True)
+    viber = models.CharField(max_length=350, blank=True, null=True)
+    ok = models.CharField(max_length=350, blank=True, null=True)
+        
     meta_title = models.CharField(max_length=350, blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)
     meta_keywords = models.CharField(max_length=350, blank=True, null=True)

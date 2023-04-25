@@ -33,17 +33,19 @@
                 <a href="{{ slider.link }}" class="sl__item">
                     
                         <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
-                            <div class="sl__wrap-inner">
-                                {% if slider.title %}
-                                <h2 class="sl__title">{{ slider.title }}</h2>
-                                {% endif %}
-                                {% if slider.text %}
-                                <p class="sl__text">{{ slider.text | safe }}</p>
+                            <div class="container">
+                                <div class="sl__wrap-inner">
+                                    {% if slider.title %}
+                                    <h2 class="sl__title">{{ slider.title }}</h2>
+                                    {% endif %}
+                                    {% if slider.text %}
+                                    <p class="sl__text">{{ slider.text | safe }}</p>
+                                    {% endif %}
+                                </div>
+                                {% if slider.button_text %}
+                                <p class="btn btn--primary">{{ slider.button_text }}</p>
                                 {% endif %}
                             </div>
-                            {% if slider.button_text %}
-                            <p class="btn btn--primary">{{ slider.button_text }}</p>
-                            {% endif %}
                         </div>
                         
                         {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}
@@ -59,17 +61,21 @@
 
                     
                         <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
-                            <div class="sl__wrap-inner">
-                                {% if slider.title %}
-                                <h2 class="sl__title">{{ slider.title }}</h2>
-                                {% endif %}
-                                {% if slider.text %}
-                                <p class="sl__text">{{ slider.text | safe }}</p>
+                            <div class="container">
+
+                                <div class="sl__wrap-inner">
+                                    {% if slider.title %}
+                                    <h2 class="sl__title">{{ slider.title }}</h2>
+                                    {% endif %}
+                                    {% if slider.text %}
+                                    <p class="sl__text">{{ slider.text | safe }}</p>
+                                    {% endif %}
+                                </div>
+                                {% if slider.button_text %}
+                                <p class="btn btn--primary">{{ slider.button_text }}</p>
                                 {% endif %}
                             </div>
-                            {% if slider.button_text %}
-                            <p class="btn btn--primary">{{ slider.button_text }}</p>
-                            {% endif %}
+
                         </div>
                         
                         {% thumbnail slider.image "1280x374" format="WEBP" crop="center" as im %}

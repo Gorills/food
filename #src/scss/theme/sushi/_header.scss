@@ -369,6 +369,11 @@
         text-align: center;
     }
 
+    // .header__contacts-wrapper-inner
+    &__contacts-wrapper-inner {
+        display: flex;
+        align-items: center;
+    }
     // .header__contacts
 
     &__contacts {
@@ -408,6 +413,30 @@
         &:hover {
             color: var(--color-primary);
         }
+    }
+    // .header__contacts-soc
+    &__contacts-soc {
+        height: fit-content;
+        display: inline-block;
+        height: 26px;
+        svg {
+            width: 26px;
+            height: 26px;
+            path {
+                fill: var(--color-header-font);
+            }
+        }
+        
+        &:last-child {
+            margin-right: 20px;
+
+            @media screen and (max-width:480px) {
+                margin-right: 0;
+            }
+        }
+    }
+    .header__contacts-soc + .header__contacts-soc {
+        margin-left: 10px;
     }
 
     // .header__contacts-btn

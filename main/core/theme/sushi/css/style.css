@@ -2203,6 +2203,11 @@ a {
   text-align: center;
 }
 
+.header__contacts-wrapper-inner {
+  display: flex;
+  align-items: center;
+}
+
 .header__contacts {
   display: flex;
   align-items: center;
@@ -2217,6 +2222,29 @@ a {
 
 .header__contacts-link:hover {
   color: var(--color-primary);
+}
+
+.header__contacts-soc {
+  height: fit-content;
+  display: inline-block;
+  height: 26px;
+}
+
+.header__contacts-soc svg {
+  width: 26px;
+  height: 26px;
+}
+
+.header__contacts-soc svg path {
+  fill: var(--color-header-font);
+}
+
+.header__contacts-soc:last-child {
+  margin-right: 20px;
+}
+
+.header .header__contacts-soc + .header__contacts-soc {
+  margin-left: 10px;
 }
 
 .header__contacts-btn {
@@ -4575,6 +4603,10 @@ td.product-thumbnail img {
 
   .header__contacts--col .header__contacts-btn {
     display: none;
+  }
+
+  .header__contacts-soc:last-child {
+    margin-right: 0;
   }
 
   .sl__img {
