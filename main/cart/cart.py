@@ -43,7 +43,7 @@ class Cart(object):
             
 
         except Exception as e:
-            print(e)
+            # print(e)
             user_profile = None
             loyalty_card = None
 
@@ -371,30 +371,35 @@ class Cart(object):
 
 
     def get_delivery(self):
-        if del_zones:
-            if self.get_d == 1:
-                if self.get_sum:
+        if self.get_total_price() != 0:
+            if del_zones:
+                if self.get_d == 1:
+                    if self.get_sum:
+                        if Decimal(self.get_total_price()) >= Decimal(free_delivery):
+                            summ = Decimal(0)
+                            return summ
+                        else:
+                            return Decimal(self.get_sum)
+                    else:
+                        summ = Decimal(0)
+                        return summ
+                else:
+                    summ = Decimal(0)
+                    return summ
+            else:
+                if self.get_d == 1:
                     if Decimal(self.get_total_price()) >= Decimal(free_delivery):
                         summ = Decimal(0)
                         return summ
                     else:
-                        return Decimal(self.get_sum)
+                        return Decimal(price_delivery)
                 else:
                     summ = Decimal(0)
                     return summ
-            else:
-                summ = Decimal(0)
-                return summ
+                
         else:
-            if self.get_d == 1:
-                if Decimal(self.get_total_price()) >= Decimal(free_delivery):
-                    summ = Decimal(0)
-                    return summ
-                else:
-                    return Decimal(price_delivery)
-            else:
-                summ = Decimal(0)
-                return summ
+            summ = Decimal(0)
+            return summ
 
     def get_total_price(self):
         """

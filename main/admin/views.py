@@ -724,35 +724,28 @@ def order_status_change(request, pk):
                 status = request.POST['status']
 
                 if status == 'Выполнен':
-
-                    
-
                     user = order.user_pr
                     card = LoyaltyCard.objects.get(user=user)
-                    
                     # Накапливаем сумму на карту лояльности
                     card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
-                    
 
                     if loyalty_settings.status_up == True:
-
                         card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
-
 
                     card.save()
 
                 if status == 'Отказ':
 
+                    
                     user = order.user_pr
                     card = LoyaltyCard.objects.get(user=user)
                     
-                    # Накапливаем сумму на карту лояльности
-                    card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                    
-
-                    if loyalty_settings.status_up == True:
-
-                        card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                    if order.status == 'Выполнен':
+                        # Накапливаем сумму на карту лояльности
+                        card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                        
+                        if loyalty_settings.status_up == True:
+                            card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
 
 
                     card.save()

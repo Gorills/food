@@ -13,7 +13,7 @@ except:
 
 
 def send_sms(text, phone):
-    url = "http://smspilot.ru/api.php?send="+text+"&to="+phone+"&apikey="+apikey+"&format=json"
+    url = "http://smspilot.ru/api.php?send="+text+"&to="+str(phone)+"&apikey="+str(apikey)+"&format=json"
     if sms == True:
-        # pass
-        result = requests.get(url)
+        pass
+        # result = requests.get(url)
