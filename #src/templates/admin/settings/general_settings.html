@@ -15,7 +15,28 @@
 
 </div>
 
+{% if request.user.username == 'gorills' %}
+
+    <form action="{% url 'general_settings_block' %}" class="form" method="post">
+        {% csrf_token %}
+        <div class="form__title">Блокировка</div>
+        <label for="">
+
+         
+            <input type="checkbox" name="block" {% if setup.block == True %}checked{% else %}{% endif %}>
+            Заблокировать
+        </label>
+        <button class="btn btn--primary">Сохранить</button>
+
+    </form>
+
+
+{% endif %}
+
+
 <div class="page">
+
+    
 
     
 

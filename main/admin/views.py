@@ -105,7 +105,22 @@ def admin(request):
 
     return render(request, 'pages/index.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
+def general_settings_block(request):
 
+    if request.method == 'POST':
+        setup = BaseSettings.objects.get()
+        block=request.POST.get('block')
+        if block == 'on':
+            setup.block = True
+            
+        else:
+            setup.block = False
+
+        
+        setup.save()
+        return redirect('general_settings')
+    
 
 @user_passes_test(lambda u: u.is_superuser)
 def general_settings(request):

@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path('', views.admin, name='admin'),
     path('general_settings/', views.general_settings, name='general_settings'),
+    path('general_settings/block/', views.general_settings_block, name='general_settings_block'),
     path('general_settings/email/', views.email_settings, name='email_settings'),
     path('general_settings/recaptcha/', views.recaptcha_settings, name='recaptcha_settings'),
     path('codes/', views.codes_settings, name='codes_settings'),

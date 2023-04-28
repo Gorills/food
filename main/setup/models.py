@@ -42,10 +42,13 @@ class BaseSettings(SingletonModel):
     theme_color = models.CharField(max_length=250, blank=True, null=True)
     time_zone = models.CharField(max_length=250, blank=True, null=True, default='UTC')
     active = models.BooleanField(default=False)
+    block = models.BooleanField(default=False)
     sms = models.BooleanField(default=False)
     debugging_mode = models.BooleanField(default=True)
     create_at = models.DateField(auto_now_add=True)
     update_at = models.DateField(auto_now=True)
+
+    
 
     def get_phone(self):
 
