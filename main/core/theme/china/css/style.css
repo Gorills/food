@@ -375,14 +375,6 @@ a {
   margin-bottom: 20px;
 }
 
-.cart .opt-wrap {
-  display: flex;
-}
-
-.cart .opt-inner {
-  margin-left: 10px;
-}
-
 .cart__name-option {
   font-size: 11px;
 }
@@ -390,6 +382,7 @@ a {
 .cart__name-option b {
   width: 45px;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .cart__price {

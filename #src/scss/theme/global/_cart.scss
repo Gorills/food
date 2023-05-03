@@ -199,11 +199,11 @@
         margin-bottom: 20px;
     }
     .opt-wrap {
-        display: flex;
+        // display: flex;
     }
   
     .opt-inner {
-        margin-left: 10px;
+        // margin-left: 10px;
     }
     
     // .cart__name-option
@@ -213,6 +213,7 @@
         b {
             width: 45px;
             display: inline-block;
+            white-space: nowrap;
         }
         
     }
