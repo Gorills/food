@@ -29,21 +29,21 @@ def order_telegram(order):
             pr_name = item.product.name
             pr_quantity = item.quantity
             pr_price = str(item.price)
-            if item.options:
-                pr_opt = item.options
-            else:
-                pr_opt = ''
-            pr_summ = pr_quantity * item.price
-            
+            pr_opt = item.options
+                    
+            pr_summ = (pr_quantity - item.free) * item.price
 
-            pr.append({
-                
-                'Название':pr_name,
-                'Количество':pr_quantity,
-                'Опции':pr_opt,
-                'Цена':pr_price,
+            pr_dict = {
+                'Название': pr_name,
+                'Количество': pr_quantity,
+                'Цена': pr_price,
                 'Итого': str(pr_summ),
-            })
+            }
+            if pr_opt is not None:
+                pr_dict['Опции'] = pr_opt
+            
+            pr.append(pr_dict)
+            
         else:
             pr_name = item.combo.name
             pr_sost = item.combo_items
