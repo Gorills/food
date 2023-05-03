@@ -74,6 +74,8 @@
                     <p class="product-list__old">{{ product.old_price }}₽</p>
                 {% endif %}
             </div>
+
+            {% if product.options.count <= 0 %}
             <form data-id="{{ product.id }}" data-quantity="1" data-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
                 {% csrf_token %}
                 <input type="text" name="quantity" hidden value="1">
@@ -81,6 +83,9 @@
             
                 <button class="btn btn--primary">В Корзину</button>
             </form>
+            {% else %}
+            <a href="{{ product.get_absolute_url }}" class="btn btn--primary">Выбрать опции</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

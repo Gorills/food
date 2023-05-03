@@ -279,8 +279,9 @@ class ProductImage(models.Model):
 class OptionType(models.Model):
     OPTION_CLASS = (
      
-       ('radio', 'Переключатель'),
-       ('radio', 'Переключатель'),
+    #    ('radio', 'Переключатель'),
+       ('checkbox', 'Флажки'),
+       ('select', 'Выпадающий список'),
       
     )
     name = models.CharField(max_length=250)

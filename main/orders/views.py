@@ -155,6 +155,28 @@ def order_create(request):
                         combo_items = combo_items,
                         quantity=combo['quantity']
                         )
+                    
+                options = cart.get_options()
+                for option in options:
+
+                    text_opt = option['options']
+                    options_str_list = []
+                    for key, value in text_opt.items():
+                        options_str = f"{key.name}: "
+                        if key.name == 'Размер':
+                            options_str += f"{value[0].option_value}см"
+                        else:
+                            options_str += ", ".join([opt.option_value for opt in value])
+                        options_str_list.append(options_str)
+                    options_str = "; ".join(options_str_list)
+
+                    OrderItem.objects.create(
+                        order=order,
+                        product=option['products'],
+                        price=option['price'],
+                        options=options_str,
+                        quantity=option['quantity']
+                    )
 
                 
                 if pay_method == 'Оплата картой на сайте':
@@ -238,6 +260,7 @@ def order_create(request):
                         
                         loyalty_card.save()
 
+                    cart.options_clear()
                     cart.combo_clear()
                     cart.clear()
 

@@ -23,10 +23,16 @@ def cart_add(request, product_id):
 
     form = CartAddProductForm(request.POST)
     if form.is_valid():
+
+       
+        
+
         cd = form.cleaned_data
         cart.add(product=product,
                  quantity=cd['quantity'],
-                 update_quantity=cd['update'])
+                 update_quantity=cd['update'],
+                 
+                 )
     return redirect('home')
 
 
@@ -102,11 +108,13 @@ def set_delivery(request, value):
     return redirect('home')
 
 
-def delivery_summ(request, value): 
-    request.session['delivery_summ'] = value
-    return redirect('home')
+def delivery_summ(request):
+    if request.method == 'POST':
+        price = request.POST['price'] 
+        request.session['delivery_summ'] = price
+        return redirect('home')
 
-from accounts.models import LoyaltyCard, UserProfile
+
 
 def active_balls(request):
     cart = Cart(request)
@@ -137,6 +145,10 @@ def add_combo(request):
     return redirect('/')
 
 
+
+
+
+
 def remove_combo(request):
     cart = Cart(request)
     if request.method == 'POST':
@@ -150,6 +162,7 @@ def remove_combo(request):
 
     
     return redirect('/')
+
 
 
 def plus_combo(request):
@@ -174,3 +187,63 @@ def minus_combo(request):
 
     
     return redirect('/')
+
+
+def add_options(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        
+        options_id = request.POST['options_id']
+        options = request.POST['options']
+        products = request.POST['products']
+        quantity = request.POST['quantity']
+        price = request.POST['price']
+
+        
+        
+       
+        cart.add_options(options_id, options, products, quantity, price)
+        
+
+    
+    return redirect('/')
+
+def remove_options(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        id = request.POST['id']
+
+        cart.remove_options(id)
+        
+
+    
+    return redirect('/')
+
+def plus_options(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        id = request.POST['id']
+       
+        cart.plus_options(id)
+        
+
+    
+    return redirect('/')
+
+
+def minus_options(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        id = request.POST['id']
+       
+        cart.minus_options(id)
+        
+
+    
+    return redirect('/')
+
+
+
+

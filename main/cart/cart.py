@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Category, Combo, ComboItem, Product, Product, ShopSetup
+from shop.models import Category, Combo, ComboItem, Product, Product, ProductOption, ShopSetup
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 import decimal
@@ -106,11 +106,8 @@ class Cart(object):
             product = str(em)
             self.remove(product)
 
-
+        # Инициализируем пустой комбо
         combos = request.session.get('combos')
-
-        
-
         if not combos:
             combos = self.session['combos'] = {
                 '0': { 
@@ -121,11 +118,101 @@ class Cart(object):
                     'products': None
                 }
             }
-
         self.combos = combos
 
+
+        # Инициализируем пустой товар с опциями
+        options = request.session.get('options')
+        if not options:
+            options = self.session['options'] = {
+                '0': { 
+                    'id': '',
+                    'quantity': int(0),
+                    'price': str(0),
+                    'products': None,
+                    'options': ''
+                    
+                }
+            }
+        self.options = options
+    
+    def add_options(self, options_id, options, products, quantity, price):
+        self.session['active_balls'] = '0.00'
+        if options_id not in self.options:
+            self.options[options_id] = {
+                'id': options_id,
+                'quantity': int(quantity),
+                'price': str(price),
+                'products': products,
+                'options': options
+                }
+        else:
+            self.options[options_id]['quantity'] += int(quantity)
+        self.session.modified = True
+      
+    def remove_options(self, options_id):
+        self.session['active_balls'] = '0.00'
+        if options_id in self.options:
+            del self.options[options_id]
+            self.save()
+
+    def plus_options(self, options_id):
+        self.session['active_balls'] = '0.00'
         
-        
+        self.options[options_id]['quantity'] += 1
+        self.save()
+       
+
+
+    def minus_options(self, options_id):
+        self.session['active_balls'] = '0.00'
+        self.options[options_id]['quantity'] -= 1
+
+        if self.options[options_id]['quantity'] == 0:
+            del self.options[options_id]
+        self.save()
+
+
+    def options_clear(self):
+        items = self.options.keys()
+        for item in list(items):
+            if item != 0:
+                del self.options[item]
+                self.save()  
+
+
+    def get_options(self):
+        options_list = []
+        for item in self.options.values():
+            try:
+                product = Product.objects.get(id=str(item['products']))
+                options_spisok = item['options'].split(',')
+                options_res_by_type = {}
+
+                for option in options_spisok:
+                    product_option = ProductOption.objects.get(option_value=option, parent=product)
+                    option_type = product_option.type
+
+                    if option_type not in options_res_by_type:
+                        options_res_by_type[option_type] = []
+
+                    options_res_by_type[option_type].append(product_option)
+
+                
+                
+
+                options_list.append({
+                    'id': item['id'],
+                    'quantity': int(item['quantity']),
+                    'price': Decimal(item['price']),
+                    'products': product,
+                    'options': options_res_by_type,
+                })
+            except:
+                pass
+
+        return options_list
+
         
 
     def add_combo(self, combo, combo_id,  products, quantity, price):
@@ -151,8 +238,6 @@ class Cart(object):
 
     def remove_combo(self, combo):
         self.session['active_balls'] = '0.00'
-       
-
         if combo in self.combos:
             del self.combos[combo]
             self.save()
@@ -175,12 +260,9 @@ class Cart(object):
 
 
     def combo_clear(self):
-
         items = self.combos.keys()
-
         for item in list(items):
             if item != 0:
-            
                 del self.combos[item]
                 self.save()
 
@@ -228,13 +310,21 @@ class Cart(object):
         return sum((Decimal(item['price']) * item['quantity']) for item in self.combos.values())
 
 
+    def options_summ(self):
+        
+        
+        return sum((Decimal(item['price']) * item['quantity']) for item in self.options.values())
+
 
 
     def count_combos(self):
         combo_len = sum(int(item['quantity']) for item in self.combos.values())
         return combo_len
     
-
+    def count_options(self):
+        combo_len = sum(int(item['quantity']) for item in self.options.values())
+        return combo_len
+    
 
     def add(self, product, quantity=1, update_quantity=False):
         """
@@ -283,6 +373,7 @@ class Cart(object):
                                     'price': str(rel.price),
                                     }
         self.save()
+
 
   
 
@@ -367,39 +458,27 @@ class Cart(object):
         all_len = sum(item['quantity'] for item in self.cart.values())
         
 
-        return all_len + self.count_combos()
+        return all_len + self.count_combos() + self.count_options()
 
 
     def get_delivery(self):
-        if self.get_total_price() != 0:
-            if del_zones:
-                if self.get_d == 1:
-                    if self.get_sum:
-                        if Decimal(self.get_total_price()) >= Decimal(free_delivery):
-                            summ = Decimal(0)
-                            return summ
-                        else:
-                            return Decimal(self.get_sum)
-                    else:
-                        summ = Decimal(0)
-                        return summ
-                else:
-                    summ = Decimal(0)
-                    return summ
-            else:
-                if self.get_d == 1:
-                    if Decimal(self.get_total_price()) >= Decimal(free_delivery):
-                        summ = Decimal(0)
-                        return summ
-                    else:
-                        return Decimal(price_delivery)
-                else:
-                    summ = Decimal(0)
-                    return summ
-                
-        else:
-            summ = Decimal(0)
-            return summ
+        total_price = self.get_total_price()
+        if total_price == 0:
+            return Decimal(0)
+
+        if not del_zones:
+            if self.get_d != 1:
+                return Decimal(0)
+            return Decimal(price_delivery) if total_price < Decimal(free_delivery) else Decimal(0)
+
+        if self.get_d != 1:
+            return Decimal(0)
+
+        if self.get_sum:
+            return Decimal(self.get_sum) if total_price < Decimal(free_delivery) else Decimal(0)
+
+        return Decimal(0) 
+
 
     def get_total_price(self):
         """
@@ -420,7 +499,7 @@ class Cart(object):
 
         total_pr = Decimal(res)
 
-        return total_pr + self.combo_summ()
+        return total_pr + self.combo_summ() + self.options_summ()
 
 
     def clear(self):

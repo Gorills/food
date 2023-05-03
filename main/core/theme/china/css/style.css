@@ -372,16 +372,24 @@ a {
 }
 
 .cart__name-option-wrap {
+  margin-bottom: 20px;
+}
+
+.cart .opt-wrap {
   display: flex;
-  flex-wrap: wrap;
+}
+
+.cart .opt-inner {
+  margin-left: 10px;
 }
 
 .cart__name-option {
   font-size: 11px;
 }
 
-.cart__name-option + .cart__name-option {
-  margin-left: 5px;
+.cart__name-option b {
+  width: 45px;
+  display: inline-block;
 }
 
 .cart__price {
@@ -415,7 +423,8 @@ a {
   fill: rgb(117, 117, 117);
 }
 
-.cart .combo__remove {
+.cart .combo__remove,
+.cart .options_remove {
   position: absolute;
   top: 20px;
   right: 0;
@@ -428,21 +437,25 @@ a {
   cursor: pointer;
 }
 
-.cart .combo__remove:hover svg path {
+.cart .combo__remove:hover svg path,
+.cart .options_remove:hover svg path {
   fill: var(--color-font);
 }
 
-.cart .combo__remove svg {
+.cart .combo__remove svg,
+.cart .options_remove svg {
   width: 6px;
   transition: all 0.5s ease;
 }
 
-.cart .combo__remove svg path {
+.cart .combo__remove svg path,
+.cart .options_remove svg path {
   transition: all 0.5s ease;
   fill: rgb(117, 117, 117);
 }
 
-.cart .plus_combo {
+.cart .plus_combo,
+.cart .plus_options {
   background: none;
   border: none;
   color: var(--color-font);

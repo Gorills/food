@@ -169,8 +169,8 @@ def product_detail(request, parent, slug):
     filter_types = OptionType.objects.filter(id__in=new_x)
 
     
-    similars = Product.objects.order_by("?").filter(parent_id=product.parent.id)[:8]
-
+    similars = Product.objects.order_by("?").filter(parent_id=product.parent.id, related=False)[:8]
+    
     try:
         option_second = ProductOption.objects.filter(parent=product)[1]
     except:

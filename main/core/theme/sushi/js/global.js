@@ -561,6 +561,7 @@ function calculate() {
         plus.addEventListener('click', function() {
             inpt.value++;
             quantity.setAttribute('data-quantity', inpt.value);
+            $('.options_btn').attr('data-quantity', inpt.value);
         });
     }
 
@@ -571,6 +572,8 @@ function calculate() {
                 inpt.value = 1;
             }
             quantity.setAttribute('data-quantity', inpt.value);
+            $('.options_btn').attr('data-quantity', inpt.value);
+
         });
     }
 }
@@ -579,42 +582,146 @@ calculate();
 
 
 
+// Options
 
-// Замена картинки
-// .product-detail__nav-image
-$(document).on('click','.product-detail__nav-image',function(){
-    var image = $(this).next('div').attr('data-image');
-    $('.product-detail__image').attr('src', image)
-    $('.product-detail__nav-image').removeClass('product-detail__nav-image--active')
-    $(this).addClass('product-detail__nav-image--active')
-});
+$(document).ready(function() {
+    var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+    var optionsIds = '';
+    var options = '';
+    var quantity = parseInt($('#id_quantity').val());
+    
+    $('select option:selected').each(function() {
+        var price = parseFloat($(this).attr('data-price'));
+        totalPrice += price;
+        optionsIds += $(this).attr('data-id') + ',';
+        options += $(this).val().split(',')[0] + ',';
+    });
+    
+    $('input[type=checkbox]:checked').each(function() {
+        var price = parseFloat($(this).attr('data-price'));
+        totalPrice += price;
+        optionsIds += $(this).attr('data-id') + ',';
+        options += $(this).val().split(',')[0] + ',';
+    });
+    
+    optionsIds = optionsIds.slice(0, -1);
+    options = options.slice(0, -1);
+    
+    $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
+    $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+    
+    
+    $('input, select').change(function() {
+      var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+      var optionsIds = '';
+      var options = '';
+      var quantity = parseInt($('#id_quantity').val());
+      
+      $('select option:selected').each(function() {
+        var price = parseFloat($(this).attr('data-price'));
+        totalPrice += price;
+        optionsIds += $(this).attr('data-id') + ',';
+        options += $(this).val().split(',')[0] + ',';
+      });
+      
+      $('input[type=checkbox]:checked').each(function() {
+        var price = parseFloat($(this).attr('data-price'));
+        totalPrice += price;
+        optionsIds += $(this).attr('data-id') + ',';
+        options += $(this).val().split(',')[0] + ',';
+      });
+      
+      optionsIds = optionsIds.slice(0, -1);
+      options = options.slice(0, -1);
+      
+      $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
+      $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+    });
+  });
+  
+  
 
+  $('.options_btn').click(function(e) {
+    e.preventDefault();
+    var options_id = $(this).attr('data-options-id');
+    var options = $(this).attr('data-options');
+    var products = $(this).attr('data-product');
+    var quantity = parseInt($(this).attr('data-quantity'));
+    var price = parseFloat($(this).attr('data-price'));
 
-
-
-// Замена опции при выборе
-
-$(document).on('click','.product-detail__option-value',function(){
-    var image = $(this).attr('data-image');
-    $('.product-detail__image').attr('src', image)
-
-    $('.product-detail__option-value').removeClass('product-detail__option-value--active')
-    $(this).addClass('product-detail__option-value--active')
-
-    var oldPrice = parseFloat($('.product-detail__price').attr('data-price'))
-    var newPrice = parseFloat($(this).attr('data-price'))
-    var res = oldPrice + newPrice
-
-    console.log(res)
-    $('.product-detail__price').html(String(res)+',00₽')
+    var csrfToken = $(this).attr('data-csrf');
 
     
-    var newAction = $(this).attr('data-action')
-    $('.product-detail__form').attr('action', newAction)
-    $('.product-detail__option-value-reset').show()
-    
-});
 
+    data = {
+        options_id: options_id, 
+        options: options,
+        products: products,
+        quantity:quantity, 
+        price:price,
+        csrfmiddlewaretoken: csrfToken
+    }
+
+    $.post( "/cart/add_options/", data)
+    .done(function( ) {
+    
+        
+        $(".cart__inner").load(location.href + " .cart__refresh");
+    
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+
+
+        
+    });
+
+  });
+  
+
+  $(document).on('click','.options_remove',function(e){
+    e.preventDefault();
+    var csrfToken = $(this).attr('data-token')
+   
+    var id = $(this).attr('data-id')
+    
+    
+    data = {
+        id: id, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( "/cart/remove_options/", data)
+        .done(function( ) {      
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            
+        });
+})
+
+
+$(document).on('click','.plus_options',function(e){
+    e.preventDefault();
+    var csrfToken = $(this).attr('data-token')
+    var id = $(this).attr('data-id')
+    var url = $(this).attr('data-url')
+    
+    data = {
+        id: id, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( url, data)
+        .done(function( ) {      
+            $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        });
+})
 
 
 // cart
@@ -956,6 +1063,7 @@ function init() {
 
     var city = $('#suggest').attr('data-city')
     var zones = $('#suggest').attr('data-zones')
+    var csrf = $('#suggest').attr('data-csrf')
 
     var suggestView=new ymaps.SuggestView(
         'suggest', {
@@ -1080,19 +1188,24 @@ function init() {
                                     var deliveryText = item.properties._data.hintContent
                                     var deliveryPrice = item.properties._data.balloonContentFooter
                                     var sd=parseInt(deliveryPrice);
-                                    $.get( "/cart/delivery_summ/"+sd+'/', function() { 
+                                    
+
+                                    data = {
+                                        price: sd,
+                                        csrfmiddlewaretoken: csrf,
+                                    }                                    
+
+                                    $.post('/cart/delivery_summ/', data)
+                                    .done(function( ) {      
                                         $(".cart__inner").load(location.href + " .cart__refresh");
-                                        
                                         $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
                                         $(".header__cart-wrap").load(location.href + " .header__cart");
                                         $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
                                         $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-                            
+
                                         
-                                
+                                        
                                     });
-
-
 
                                     // console.log(deliveryPrice)
                                     // console.log(deliveryText)

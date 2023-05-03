@@ -418,16 +418,24 @@ a {
 }
 
 .cart__name-option-wrap {
+  margin-bottom: 20px;
+}
+
+.cart .opt-wrap {
   display: flex;
-  flex-wrap: wrap;
+}
+
+.cart .opt-inner {
+  margin-left: 10px;
 }
 
 .cart__name-option {
   font-size: 11px;
 }
 
-.cart__name-option + .cart__name-option {
-  margin-left: 5px;
+.cart__name-option b {
+  width: 45px;
+  display: inline-block;
 }
 
 .cart__price {
@@ -461,7 +469,8 @@ a {
   fill: rgb(117, 117, 117);
 }
 
-.cart .combo__remove {
+.cart .combo__remove,
+.cart .options_remove {
   position: absolute;
   top: 20px;
   right: 0;
@@ -474,21 +483,25 @@ a {
   cursor: pointer;
 }
 
-.cart .combo__remove:hover svg path {
+.cart .combo__remove:hover svg path,
+.cart .options_remove:hover svg path {
   fill: var(--color-font);
 }
 
-.cart .combo__remove svg {
+.cart .combo__remove svg,
+.cart .options_remove svg {
   width: 6px;
   transition: all 0.5s ease;
 }
 
-.cart .combo__remove svg path {
+.cart .combo__remove svg path,
+.cart .options_remove svg path {
   transition: all 0.5s ease;
   fill: rgb(117, 117, 117);
 }
 
-.cart .plus_combo {
+.cart .plus_combo,
+.cart .plus_options {
   background: none;
   border: none;
   color: var(--color-font);
@@ -3484,6 +3497,11 @@ a {
   margin-bottom: 40px;
 }
 
+.product-detail__options-checkbox-row {
+  display: flex;
+  flex-direction: column;
+}
+
 .product-detail__options {
   margin-bottom: 40px;
 }
@@ -3506,13 +3524,13 @@ a {
 
 .product-detail__options-row {
   display: flex;
-  align-items: center;
   margin-bottom: 20px;
 }
 
 .product-detail__options-name {
   margin-right: 20px;
   min-width: 70px;
+  font-weight: 700;
 }
 
 .product-detail__options-wrap {
@@ -3539,6 +3557,11 @@ a {
   border: 1px solid var(--color-primary);
 }
 
+.product-detail select {
+  padding: 8px 20px;
+  outline: none;
+}
+
 .product-detail__option-value-reset {
   padding: 5px 10px;
   display: none;
@@ -3547,9 +3570,12 @@ a {
 }
 
 .product-detail__form {
-  display: flex;
   align-items: center;
   margin-bottom: 40px;
+}
+
+.product-detail .wrapper_to_count {
+  display: flex;
 }
 
 .product-detail__counter {

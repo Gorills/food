@@ -76,6 +76,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE, null=True, blank=True)
+    options = models.TextField(null=True, blank=True)
     combo = models.ForeignKey(Combo, related_name='order_combo', on_delete=models.CASCADE, null=True, blank=True)
     combo_items = models.TextField(null=True, blank=True)
     free = models.PositiveIntegerField(default=0, null=True, blank=True)

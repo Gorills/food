@@ -52,7 +52,8 @@
 
                                     <div class="cart__wrap">
                                         <a href="{{ product.get_absolute_url }}" class="cart__name">{{ product.name }}</a>
-                                        
+
+                                        {% for opt in item.options %}{{ opt }}{% endfor %}
                                         
                                     </div>
                                     
@@ -97,78 +98,80 @@
                         {% endwith %}
                     {% endfor %}
 
-                    {% for item in cart %}
-                        {% with product=item.product %}
+                    
 
-
-                            {% if product.related == True %}
-                            <div class="cart__item">
-                                <div class="cart__item-inner">
-                                    <div class="cart__img-wrap">
-
-                                        {% if product.images.first %}
-                                        
-                                            {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
-                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                            {% endthumbnail %}
-
-                                        {% else %}
-                                        
-                                            {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
-                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                            {% endthumbnail %}
-
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="cart__wrap">
-                                        <p class="cart__name">{{ product.name }}</p>
-                                        
-                                        
-                                    </div>
-                                    
-                                    <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
-                                    </a>
-                                </div>
-                                <div class="cart__bottom">
-                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }}₽</p>
-
-                                    <div class="cart-plus-minus">
-                                                            
-                                        
-
-
-                                        <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
-                                            {% csrf_token %}
-                                        
-                                            <input type="number" name="quantity" value="1" hidden required="">
-                                            <input type="hidden" name="update" value="False" hidden>
-                                            <button class="basket__minus">-</button>
-
-                                        </form>
-                                        <input type="text" value="{{ item.quantity }}" class="cart-input">
-                                        <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
-                                            {% csrf_token %}
-                                        
-                                            <input type="number" name="quantity" value="1" hidden required="">
-                                            <input type="hidden" name="update" value="False" hidden>
-                                            <button class="basket__minus">+</button>
-
-                                        </form>
-
-                                    
-                                    </div>
+                    {% for option in cart.get_options %}
+                    
+                    <div class="cart__item">
+                        <a href="#" class="options_remove"  data-id="{{ option.id }}" data-token="{{ csrf_token }}" >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                        </a>
+                        <div class="cart__item-inner">
+                            <div class="cart__img-wrap">
         
-                                </div>
+                                
+                                    {% thumbnail option.products.thumb "55x55" format="WEBP" crop="center" as im %}
+                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ option.products.name }}" class="cart__img">
+                                    {% endthumbnail %}
+
+                
+                            </div>
+
+                            <div class="cart__wrap">
+                                <p class="cart__name">{{ option.products.name }}</p>
+                                <div class="cart__name-option-wrap">
+                                         
+                                    
+                            
+                                {% for type, options in option.options.items %}
+                                    <div class="opt-wrap">
+                                        <p class="cart__name-option"><b>{{ type }}:</b></p>
+                                        <div class="opt-inner">
+                                            {% for opt in options %}
+                                            <p class="cart__name-option"> {{ opt.option_value }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                            
+                                     
+                                        
+                              
+                            </div>
+
                             </div>
                             
-                            {% endif %}
-                       
-                        {% endwith %}
-                    {% endfor %}
+                           
+                        </div>
+
+                        
+                        <div class="cart__bottom">
+                            <p class="cart__total-price">{{ option.price | floatformat:"2" }}₽</p>
+
+                            <div class="cart-plus-minus">
+                                                    
+                                
 
 
+                              
+                                <button class="plus_options" data-url="{% url 'cart:minus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">-</button>
+
+                               
+                                <input type="text" value="{{ option.quantity }}" class="cart-input">
+                               
+                                 
+                                
+                                  
+                                <button class="plus_options" data-url="{% url 'cart:plus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">+</button>
+
+                                
+                            
+                            </div>
+
+                        </div>
+                    </div>
+
+                {% endfor %}
                    
 
 
@@ -233,6 +236,78 @@
                             </div>
                         </div>
 
+                    {% endfor %}
+
+                    {% for item in cart %}
+                        {% with product=item.product %}
+
+
+                            {% if product.related == True %}
+                            <div class="cart__item">
+                                <div class="cart__item-inner">
+                                    <div class="cart__img-wrap">
+
+                                        {% if product.images.first %}
+                                        
+                                            {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
+
+                                        {% else %}
+                                        
+                                            {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
+                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                            {% endthumbnail %}
+
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="cart__wrap">
+                                        <p class="cart__name">{{ product.name }}</p>
+                                        
+                                        
+                                        
+                                    </div>
+                                    
+                                    <a href="{% url "cart:cart_remove" product.id %}" class="cart__remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                                    </a>
+                                </div>
+                                <div class="cart__bottom">
+                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }}₽</p>
+
+                                    <div class="cart-plus-minus">
+                                                            
+                                        
+
+
+                                        <form action="{% url "cart:cart_minus" product.id %}" method="post" class="dec qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">-</button>
+
+                                        </form>
+                                        <input type="text" value="{{ item.quantity }}" class="cart-input">
+                                        <form action="{% url "cart:cart_plus" product.id %}" method="post" class="inc qtybutton">
+                                            {% csrf_token %}
+                                        
+                                            <input type="number" name="quantity" value="1" hidden required="">
+                                            <input type="hidden" name="update" value="False" hidden>
+                                            <button class="basket__minus">+</button>
+
+                                        </form>
+
+                                    
+                                    </div>
+        
+                                </div>
+                            </div>
+                            
+                            {% endif %}
+                       
+                        {% endwith %}
                     {% endfor %}
 
                     {% if cart.get_free != 0 %}
@@ -357,7 +432,7 @@
                         <div class="cart__form-refresh-delivery-inner">
                             
                             <div class="cart__input-address-wrap">
-                                <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" class="cart__input" placeholder="Улица, дом" id="suggest">
+                                <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" data-csrf="{{ csrf_token }}" class="cart__input" placeholder="Улица, дом" id="suggest">
                                 <div id="addressError" class="address-error"></div>
                                 
                             </div>

@@ -29,7 +29,10 @@ def order_telegram(order):
             pr_name = item.product.name
             pr_quantity = item.quantity
             pr_price = str(item.price)
-
+            if item.options:
+                pr_opt = item.options
+            else:
+                pr_opt = ''
             pr_summ = pr_quantity * item.price
             
 
@@ -37,6 +40,7 @@ def order_telegram(order):
                 
                 'Название':pr_name,
                 'Количество':pr_quantity,
+                'Опции':pr_opt,
                 'Цена':pr_price,
                 'Итого': str(pr_summ),
             })

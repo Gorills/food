@@ -194,18 +194,31 @@
 
     // .cart__name-option-wrap
     &__name-option-wrap {
-        display: flex;
-        flex-wrap: wrap;
+        // display: flex;
+        // flex-wrap: wrap;
+        margin-bottom: 20px;
     }
-
+    .opt-wrap {
+        display: flex;
+    }
+  
+    .opt-inner {
+        margin-left: 10px;
+    }
+    
     // .cart__name-option
     &__name-option {
         font-size: 11px;
+
+        b {
+            width: 45px;
+            display: inline-block;
+        }
         
     }
 
     &__name-option + &__name-option {
-        margin-left: 5px;
+        // margin-left: 5px;
     }
     // .cart__price
 
@@ -249,7 +262,7 @@
     }
 
     // .combo__remove
-    .combo__remove {
+    .combo__remove, .options_remove {
         position: absolute;
         top: 20px;
         right: 0;
@@ -281,7 +294,7 @@
         }
     }
 
-    .plus_combo {
+    .plus_combo, .plus_options {
         background: none;
         border: none;
         
