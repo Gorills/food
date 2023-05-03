@@ -3524,6 +3524,7 @@ a {
   margin-right: 20px;
   min-width: 70px;
   font-weight: 700;
+  max-width: 120px;
 }
 
 .product-detail__options-wrap {
