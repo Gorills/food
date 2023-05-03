@@ -1322,42 +1322,38 @@ def product_add(request):
             # opt.save()
 
 
-            try:
-            
-                options = request.POST.getlist('type')
-                option_sku = request.POST.getlist('option_sku')
-                option_value = request.POST.getlist('option_value')
-                option_stock = request.POST.getlist('option_stock')
-                option_price = request.POST.getlist('option_price')
-                option_subtract = request.POST.getlist('option_subtract')
-                image_status = request.POST.getlist('image_status')
-                o_count = 0
-                for option in options:
-                    opt = ProductOption(
-                        parent = product,
-                        type_id = option,
-                        option_sku = option_sku[o_count],
-                        option_value = option_value[o_count],
-                        option_stock = option_stock[o_count],
-                        option_price = option_price[o_count],
-                        option_subtract = option_subtract[o_count],
-                        image_status = image_status[o_count],
-                    )
-                    opt.save()
-                    
-                    try:
-                        images_name = 'option_images-'+str(o_count)
-                        option_images = request.FILES.getlist(images_name)
-                        for image in option_images:
-                            o_image = OptionImage(parent=opt, src=image)
-                            o_image.save()
-                    except:
-                        pass
+            options = request.POST.getlist('type')
+            option_sku = request.POST.getlist('option_sku')
+            option_value = request.POST.getlist('option_value')
+            option_stock = request.POST.getlist('option_stock')
+            option_price = request.POST.getlist('option_price')
+            option_subtract = request.POST.getlist('option_subtract')
+            image_status = request.POST.getlist('image_status')
+            o_count = 0
+            for option in options:
+                opt = ProductOption(
+                    parent = product,
+                    type_id = option,
+                    option_sku = option_sku[o_count],
+                    option_value = option_value[o_count],
+                    option_stock = option_stock[o_count],
+                    option_price = Decimal(option_price[o_count]),
+                    option_subtract = option_subtract[o_count],
+                    image_status = image_status[o_count],
+                )
+                opt.save()
+                
+                try:
+                    images_name = 'option_images-'+str(o_count)
+                    option_images = request.FILES.getlist(images_name)
+                    for image in option_images:
+                        o_image = OptionImage(parent=opt, src=image)
+                        o_image.save()
+                except:
+                    pass
 
-                    o_count += 1
+                o_count += 1
 
-            except:
-                pass
 
             # Характеристики
 
