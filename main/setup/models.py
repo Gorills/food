@@ -51,13 +51,18 @@ class BaseSettings(SingletonModel):
     
 
     def get_phone(self):
-
         try:
             res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
         except:
             res = '899999999'
-
         return res
+
+   
+
+
+
+    
+
 
 
 

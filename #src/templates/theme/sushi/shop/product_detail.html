@@ -2,19 +2,19 @@
 {% extends 'base.html' %}
 
 {% load thumbnail %}
-{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 {% block keywords %}{{ product.meta_keywords }}{% endblock %}
 {% block canonical %}{{ product.get_absolute_url }}{% endblock %}
-{% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 {% block og:url %}{{ product.get_absolute_url }}{% endblock %}
-{% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 
-{% block og:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
-{% block og:image:secure_url %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
-{% block twitter:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
 
 
 
