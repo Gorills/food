@@ -148,6 +148,8 @@
         display: flex;
         // align-items: center;
         margin-bottom: 20px;
+        flex-direction: column;
+
 
         @media screen and (max-width:480px) {
             flex-direction: column;
@@ -159,8 +161,10 @@
         margin-right: 20px;
         min-width: 70px;
         font-weight: 700;
-        max-width: 120px;
+        max-width: 100%;
         min-width: 120px;
+        margin-bottom: 10px;
+
         @media screen and (max-width:480px) {
             max-width: 100%;
             margin-bottom: 10px;
