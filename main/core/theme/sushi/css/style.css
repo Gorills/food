@@ -4658,6 +4658,10 @@ td.product-thumbnail img {
     margin-top: 150px;
   }
 
+  .btn {
+    padding: 16px 30px;
+  }
+
   .cart__inner {
     padding: 20px;
   }
