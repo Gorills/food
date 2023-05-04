@@ -593,6 +593,7 @@ $(document).on('click','.select-wrap__checked',function(){
 $(document).on('click','.select-wrap__item',function(){
     
     var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+    var oldPrice = parseFloat($('.product-detail__price-old').attr('data-price'));
     var optionsIds = '';
     var options = '';
     var quantity = parseInt($('#id_quantity').val());
@@ -611,12 +612,14 @@ $(document).on('click','.select-wrap__item',function(){
     $('select option:selected').each(function() {
       var price = parseFloat($(this).attr('data-price'));
       totalPrice += price;
+      oldPrice += price;
       optionsIds += $(this).attr('data-id') + ',';
       options += $(this).val().split(',')[0] + ',';
     });
     $('.select-wrap__input').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
       });
@@ -624,6 +627,7 @@ $(document).on('click','.select-wrap__item',function(){
     $('input[type=checkbox]:checked').each(function() {
       var price = parseFloat($(this).attr('data-price'));
       totalPrice += price;
+      oldPrice += price;
       optionsIds += $(this).attr('data-id') + ',';
       options += $(this).val().split(',')[0] + ',';
     });
@@ -632,13 +636,14 @@ $(document).on('click','.select-wrap__item',function(){
     
     optionsIds = optionsIds.slice(0, -1);
     options = options.slice(0, -1);
-    
+    $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
     $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
     $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
   });
 
 $(document).ready(function() {
     var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+    var oldPrice = parseFloat($('.product-detail__price-old').attr('data-price'));
     var optionsIds = '';
     var options = '';
     var quantity = parseInt($('#id_quantity').val());
@@ -646,12 +651,14 @@ $(document).ready(function() {
     $('select option:selected').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
     });
     $('.select-wrap__input').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
     });
@@ -659,6 +666,7 @@ $(document).ready(function() {
     $('input[type=checkbox]:checked').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
     });
@@ -668,12 +676,15 @@ $(document).ready(function() {
     optionsIds = optionsIds.slice(0, -1);
     options = options.slice(0, -1);
     
+    $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
     $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
     $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
     
     $(document).on('change','input, select',function(){
     
       var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+      var oldPrice = parseFloat($('.product-detail__price-old').attr('data-price'));
+
       var optionsIds = '';
       var options = '';
       var quantity = parseInt($('#id_quantity').val());
@@ -681,18 +692,21 @@ $(document).ready(function() {
       $('select option:selected').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
       });
       $('.select-wrap__input').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
     });
       $('input[type=checkbox]:checked').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
+        oldPrice += price;
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
       });
@@ -701,7 +715,8 @@ $(document).ready(function() {
       
       optionsIds = optionsIds.slice(0, -1);
       options = options.slice(0, -1);
-      
+
+      $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
       $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
       $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
     });

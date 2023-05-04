@@ -91,7 +91,7 @@
                 <div class="product-detail__price-wrap">
                     <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price |unlocalize }}₽</p>
                     {% if product.old_price %}
-                    <p class="product-detail__price-old">{{ product.old_price |unlocalize }}₽</p>
+                    <p class="product-detail__price-old" data-price="{{ product.old_price |unlocalize }}">{{ product.old_price |unlocalize }}₽</p>
                     {% endif %}
 
                 </div>
