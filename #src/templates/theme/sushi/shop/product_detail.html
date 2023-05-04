@@ -89,9 +89,9 @@
             <div class="product-detail__left">
                 <h1 class="product-detail__title">{{ product.name }}</h1>
                 <div class="product-detail__price-wrap">
-                    <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price }}₽</p>
+                    <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price |unlocalize }}₽</p>
                     {% if product.old_price %}
-                    <p class="product-detail__price-old">{{ product.old_price }}₽</p>
+                    <p class="product-detail__price-old">{{ product.old_price |unlocalize }}₽</p>
                     {% endif %}
 
                 </div>
@@ -158,14 +158,32 @@
                                     {% endif %}
                                 {% endfor %}
                             </div>
+
                             {% elif type.option_class == 'select' %}
-                            <select name="select" id="">
+                            {% comment %} <select name="select" id="">
                                 {% for option in product_options %}
                                     {% if option.type == type %}
                                         <option {% if forloop.counter == 1 %}selected{% endif %} data-id="{{ option.id }}" data-price={{ option.option_price |unlocalize }} value="{{ option.option_value }}">{{ option.option_value }} +{{ option.option_price }}₽ </option>
                                     {% endif %}
                                 {% endfor %}
-                            </select>
+                            </select> {% endcomment %}
+
+                            <div class="select-wrap">
+
+                                <div class="select-wrap__checked">{{ product_options.first.option_value }}</div>
+
+                                <div class="select-wrap__row">
+                                    {% for option in product_options %}
+                                        {% if option.type == type %}
+                                        <div class="select-wrap__item" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" data-value="{{ option.option_value }}">{{ option.option_value }} <small>(+{{ option.option_price }}₽)</small> </div>
+
+
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <input hidden type="text" class="select-wrap__input" name="select" id="" data-id="{{ product_options.first.id }}" data-price="{{ product_options.first.option_price |unlocalize }}" value="{{ product_options.first.option_value }}">
+                            
                             {% elif type.option_class == 'checkbox' %}
                             <div class="product-detail__options-checkbox-row">
                                 {% for option in product_options %}
