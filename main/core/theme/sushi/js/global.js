@@ -1274,12 +1274,14 @@ function init() {
                                 if (item.geometry.contains(obj.geometry._coordinates)) {
 
                                     var deliveryText = item.properties._data.hintContent
-                                    var deliveryPrice = item.properties._data.balloonContentFooter
-                                    var sd=parseInt(deliveryPrice);
-                                    
+                                    var deliveryPrice = item.properties._data.balloonContentBody
+                                    var deliveryFree = item.properties._data.balloonContentFooter
+                                    var sd=parseInt(deliveryPrice.match(/\d+/)[0]);
+                                    var fd=parseInt(deliveryFree.match(/\d+/)[0]);
 
                                     data = {
                                         price: sd,
+                                        free: fd,
                                         csrfmiddlewaretoken: csrf,
                                     }                                    
 

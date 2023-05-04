@@ -81,8 +81,9 @@ class Cart(object):
             self.get_d = 1
         self.get_d = get_d
 
-
-        
+        self.free_delivery = request.session.get('free_delivery')
+        if not self.free_delivery:
+            self.free_delivery = free_delivery
        
         if not cart:
             # save an empty cart in the session
@@ -469,13 +470,13 @@ class Cart(object):
         if not del_zones:
             if self.get_d != 1:
                 return Decimal(0)
-            return Decimal(price_delivery) if total_price < Decimal(free_delivery) else Decimal(0)
+            return Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
 
         if self.get_d != 1:
             return Decimal(0)
 
         if self.get_sum:
-            return Decimal(self.get_sum) if total_price < Decimal(free_delivery) else Decimal(0)
+            return Decimal(self.get_sum) if total_price < Decimal(self.free_delivery) else Decimal(0)
 
         return Decimal(0) 
 
@@ -557,7 +558,7 @@ class Cart(object):
 
     def get_free(self):
         
-        return free_delivery
+        return self.free_delivery
 
     @property
     def coupon(self):

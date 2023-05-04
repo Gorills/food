@@ -805,8 +805,11 @@ def zone_file(request):
                 hintContent = 'Зона платной доставки'
                 balloonContent = 'Платная доставка'
                 balloonContentHeader = 'Зона платной доставки'
-                balloonContentBody = 'Стоимость доставки'
-                balloonContentFooter = d['properties']['description'] + ' рублей'
+                try:
+                    balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'].split(':')[0] + ' рублей'
+                    balloonContentFooter = 'Бесплатная доставка от - ' + d['properties']['description'].split(':')[1]  + ' рублей'
+                except:
+                    balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'] + ' рублей'
             coords = []
             for i in d['geometry']['coordinates']:
                 for l in i:
@@ -824,7 +827,7 @@ def zone_file(request):
                 "strokeColor": d['properties']['stroke'],
                 "opacity": d['properties']['fill-opacity'],
             })
-        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
+        with open('core/libs/delivery.json', 'w', encoding='utf-8') as f:
             json.dump(new_file, f, ensure_ascii=False, indent=4)
         return redirect('shop_settings')
 

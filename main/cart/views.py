@@ -111,7 +111,12 @@ def set_delivery(request, value):
 def delivery_summ(request):
     if request.method == 'POST':
         price = request.POST['price'] 
+        free = request.POST['free'] 
+        
+
         request.session['delivery_summ'] = price
+        request.session['free_delivery'] = free
+
         return redirect('home')
 
 
