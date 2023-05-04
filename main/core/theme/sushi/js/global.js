@@ -585,8 +585,9 @@ calculate();
 // Options
 $(document).on('click','.select-wrap__checked',function(){
 
-    $('.select-wrap__row').addClass('select-wrap__row--active')
-    $('.select-wrap').addClass('select-wrap--active')
+    $(this).next('.select-wrap__row').toggleClass('select-wrap__row--active')
+    $(this).parent('.select-wrap').toggleClass('select-wrap--active')
+    
 });
 
 
@@ -601,10 +602,14 @@ $(document).on('click','.select-wrap__item',function(){
     var res = $(this).attr('data-value')
     var id = $(this).attr('data-id')
     var price = $(this).attr('data-price')
-    $('.select-wrap__input').val(res)
-    $('.select-wrap__input').attr('data-id', id)
-    $('.select-wrap__input').attr('data-price', price)
-    $('.select-wrap__checked').html(res)
+    
+
+    $(this).parent().parent().next('.select-wrap__input').val(res)
+    $(this).parent().parent().next('.select-wrap__input').attr('data-id', id)
+    $(this).parent().parent().next('.select-wrap__input').attr('data-price', price)
+
+
+    $(this).parent().prev('.select-wrap__checked').html(res)
     $('.select-wrap__row').removeClass('select-wrap__row--active')
     $('.select-wrap').removeClass('select-wrap--active')
 
