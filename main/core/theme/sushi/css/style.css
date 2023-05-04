@@ -4806,5 +4806,14 @@ td.product-thumbnail img {
   .sort__limit .d-none {
     display: none;
   }
+
+  .product-detail__options-row {
+    flex-direction: column;
+  }
+
+  .product-detail__options-name {
+    max-width: 100%;
+    margin-bottom: 10px;
+  }
 }
 /*# sourceMappingURL=maps/style.css.map */
