@@ -4815,5 +4815,9 @@ td.product-thumbnail img {
     max-width: 100%;
     margin-bottom: 10px;
   }
+
+  .product-detail .wrapper_to_count {
+    justify-content: space-between;
+  }
 }
 /*# sourceMappingURL=maps/style.css.map */
