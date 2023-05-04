@@ -134,6 +134,12 @@ a   {
     justify-content: center;
     width: fit-content;
     border-radius: 8px;
+
+    @media screen and (max-width:480px) {
+        padding: 16px 30px;
+    }
+        
+    }
     &--primary {
 
         background: none;
