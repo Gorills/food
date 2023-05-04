@@ -827,7 +827,7 @@ def zone_file(request):
                 "strokeColor": d['properties']['stroke'],
                 "opacity": d['properties']['fill-opacity'],
             })
-        with open('core/libs/delivery.json', 'w', encoding='utf-8') as f:
+        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
             json.dump(new_file, f, ensure_ascii=False, indent=4)
         return redirect('shop_settings')
 
