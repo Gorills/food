@@ -160,17 +160,11 @@
                             </div>
 
                             {% elif type.option_class == 'select' %}
-                            {% comment %} <select name="select" id="">
-                                {% for option in product_options %}
-                                    {% if option.type == type %}
-                                        <option {% if forloop.counter == 1 %}selected{% endif %} data-id="{{ option.id }}" data-price={{ option.option_price |unlocalize }} value="{{ option.option_value }}">{{ option.option_value }} +{{ option.option_price }}₽ </option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select> {% endcomment %}
+                            
 
                             <div class="select-wrap">
 
-                                <div class="select-wrap__checked">{{ product_options.first.option_value }}</div>
+                                <div class="select-wrap__checked"></div>
 
                                 <div class="select-wrap__row">
                                     {% for option in product_options %}
@@ -181,8 +175,9 @@
                                         {% endif %}
                                     {% endfor %}
                                 </div>
+                                <input hidden type="text" class="select-wrap__input" name="select" id="" data-id="" data-price="" value="">
+                            
                             </div>
-                            <input hidden type="text" class="select-wrap__input" name="select" id="" data-id="{{ product_options.first.id }}" data-price="{{ product_options.first.option_price |unlocalize }}" value="{{ product_options.first.option_value }}">
                             
                             {% elif type.option_class == 'checkbox' %}
                             <div class="product-detail__options-checkbox-row">

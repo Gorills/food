@@ -583,6 +583,34 @@ calculate();
 
 
 // Options
+
+$(document).ready(function() {
+  // Для каждого блока с классом select-wrap на странице
+  $('.select-wrap').each(function() {
+        // Получаем первый элемент с классом select-wrap__item внутри текущего блока
+        var firstOption = $(this).find('.select-wrap__item').first();
+    
+        // Получаем значение атрибута data-value первого элемента
+        var optionValue = firstOption.attr('data-value');
+    
+        // Получаем значение атрибута data-price первого элемента
+        var optionPrice = firstOption.attr('data-price');
+
+        console.log(optionValue)
+    
+        // Находим элемент select-wrap__input внутри текущего блока и устанавливаем его значение и атрибуты data-id и data-price
+        $(this).find('.select-wrap__input').val(optionValue);
+        $(this).find('.select-wrap__input').attr('data-id', firstOption.attr('data-id')).attr('data-price', optionPrice);
+        $(this).find('.select-wrap__checked').html(optionValue);
+    });
+});
+
+
+
+
+
+
+
 $(document).on('click','.select-wrap__checked',function(){
 
     $(this).next('.select-wrap__row').toggleClass('select-wrap__row--active')
@@ -604,9 +632,9 @@ $(document).on('click','.select-wrap__item',function(){
     var price = $(this).attr('data-price')
     
 
-    $(this).parent().parent().next('.select-wrap__input').val(res)
-    $(this).parent().parent().next('.select-wrap__input').attr('data-id', id)
-    $(this).parent().parent().next('.select-wrap__input').attr('data-price', price)
+    $(this).parent().next('.select-wrap__input').val(res)
+    $(this).parent().next('.select-wrap__input').attr('data-id', id)
+    $(this).parent().next('.select-wrap__input').attr('data-price', price)
 
 
     $(this).parent().prev('.select-wrap__checked').html(res)
