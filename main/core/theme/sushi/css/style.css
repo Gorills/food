@@ -2208,6 +2208,7 @@ a {
 
 .header__cart {
   position: relative;
+  color: var(--color-header-font);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2221,6 +2222,13 @@ a {
 
 .header__cart svg path {
   fill: var(--color-header-font);
+}
+
+.header__cart-price {
+  margin-left: 5px;
+  line-height: 1;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .header__cart-coutn {

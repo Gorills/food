@@ -315,6 +315,7 @@
     &__cart {
         position: relative;
         
+        color: var(--color-header-font);
         
         display: flex;
         align-items: center;
@@ -331,6 +332,13 @@
         }
     }
 
+    // .header__cart-price
+    &__cart-price {
+        margin-left: 5px;
+        line-height: 1;
+        font-size: 12px;
+        font-weight: 700;
+    }
     
     
 

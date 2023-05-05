@@ -256,20 +256,23 @@
                                     </svg>
                                     
         
-                                    <div class="header__cart-coutn">
+                                    {% comment %} <div class="header__cart-coutn">
                                         
                                         {% with total_items=cart|length %}
                                             {% if cart|length > 0 %}
                                                 
                                             {{ total_items }}
-                                                    
+                                            
                                             {% else %}
                                                 0
                                             {% endif %}
                                         {% endwith %}
                                         
                                         
-                                    </div>
+                                    </div> {% endcomment %}
+
+                                    <div class="header__cart-price">{{ cart.get_total | floatformat:"0" }} ₽</div>
+
                                 </a>
                             </div>
                             <div class="toggle-menu" id="menu">
