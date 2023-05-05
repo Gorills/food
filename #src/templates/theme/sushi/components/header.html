@@ -28,9 +28,9 @@
                             {% endif %}
                         {% endif %}
 
-                        <nav class="header__nav">
+                        <nav class="header__nav" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
 
-                            <ul class="header__list" itemscope itemtype="http://www.schema.org/SiteNavigationElement">
+                            <ul class="header__list" itemprop="about" itemscope itemtype="http://schema.org/ItemList">
                                 {% for page in pages %}
                                     {% if page.top_link == True %}
                                     <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
