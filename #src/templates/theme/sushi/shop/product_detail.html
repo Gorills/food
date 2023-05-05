@@ -183,10 +183,10 @@
                             <div class="product-detail__options-checkbox-row">
                                 {% for option in product_options %}
                                     {% if option.type == type %}
-                                        <label>
-                                            <input name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
-                                            {{ option.option_value }} +{{ option.option_price }}₽
-                                        </label>
+                                        
+                                            <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                            
+                                            <label for="cb{{ option.id }}">{{ option.option_value }} +{{ option.option_price }}₽</label>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -194,7 +194,8 @@
                         </div>
                         {% endfor %}
                     </div>  
-
+                  
+                        
                     {% if not types %}
                         <div class="wrapper_to_count">
 

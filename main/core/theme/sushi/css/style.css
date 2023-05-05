@@ -3568,6 +3568,7 @@ a {
   position: absolute;
   display: none;
   top: 42px;
+  z-index: 100;
   left: 0;
   min-width: 100%;
   background-color: #fff;
@@ -3689,6 +3690,91 @@ a {
   padding: 8px 15px;
   border: 1px solid var(--color-danger);
   color: var(--color-danger);
+}
+
+.product-detail label {
+  margin-bottom: 10px;
+}
+
+.product-detail input[type=checkbox]:checked,
+.product-detail input[type=checkbox]:not(:checked),
+.product-detail input[type=radio]:checked,
+.product-detail input[type=radio]:not(:checked) {
+  position: absolute;
+  left: -9999px;
+}
+
+.product-detail input[type=checkbox]:checked + label,
+.product-detail input[type=checkbox]:not(:checked) + label,
+.product-detail input[type=radio]:checked + label,
+.product-detail input[type=radio]:not(:checked) + label {
+  display: inline-block;
+  position: relative;
+  padding-left: 28px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.product-detail input[type=checkbox]:checked + label:before,
+.product-detail input[type=checkbox]:not(:checked) + label:before,
+.product-detail input[type=radio]:checked + label:before,
+.product-detail input[type=radio]:not(:checked) + label:before {
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #dddddd;
+  background-color: #ffffff;
+  border-radius: 100%;
+}
+
+.product-detail input[type=radio]:checked + label:before,
+.product-detail input[type=radio]:not(:checked) + label:before {
+  border-radius: 100%;
+}
+
+.product-detail input[type=checkbox]:checked + label:after,
+.product-detail input[type=checkbox]:not(:checked) + label:after,
+.product-detail input[type=radio]:checked + label:after,
+.product-detail input[type=radio]:not(:checked) + label:after {
+  content: "";
+  position: absolute;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.product-detail input[type=checkbox]:checked + label:after,
+.product-detail input[type=checkbox]:not(:checked) + label:after {
+  left: 0px;
+  top: 0px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+.product-detail input[type=radio]:checked + label:after,
+.product-detail input[type=radio]:not(:checked) + label:after {
+  left: 5px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background-color: var(--color-primary);
+}
+
+.product-detail input[type=checkbox]:not(:checked) + label:after,
+.product-detail input[type=radio]:not(:checked) + label:after {
+  opacity: 0;
+}
+
+.product-detail input[type=checkbox]:checked + label:after,
+.product-detail input[type=radio]:checked + label:after {
+  opacity: 1;
 }
 
 .product-bottom {
