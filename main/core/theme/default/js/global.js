@@ -767,31 +767,57 @@ $(document).ready(function() {
 
     var csrfToken = $(this).attr('data-csrf');
 
-    
+    console.log(options_id, options, products, quantity, price);
 
-    data = {
-        options_id: options_id, 
-        options: options,
-        products: products,
-        quantity:quantity, 
-        price:price,
-        csrfmiddlewaretoken: csrfToken
+    if (options && options_id && products && quantity && price) { 
+        data = {
+            options_id: options_id, 
+            options: options,
+            products: products,
+            quantity:quantity, 
+            price:price,
+            csrfmiddlewaretoken: csrfToken
+        }
+    
+        $.post( "/cart/add_options/", data)
+        .done(function( ) {
+        
+            
+            $(".cart__inner").load(location.href + " .cart__refresh");
+        
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+    
+    
+            
+        });
+    } else {
+
+        data = {
+            csrfmiddlewaretoken: csrfToken,
+            
+            quantity:quantity
+        }
+
+        $.post( "/cart/add/"+products+'/', data)
+        .done(function( ) {
+        
+            
+            $(".cart__inner").load(location.href + " .cart__refresh");
+        
+            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+    
+    
+            
+        });
+
     }
-
-    $.post( "/cart/add_options/", data)
-    .done(function( ) {
     
-        
-        $(".cart__inner").load(location.href + " .cart__refresh");
-    
-        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-
-
-        
-    });
 
   });
   

@@ -35,19 +35,13 @@
                                 <div class="cart__item-inner">
                                     <a href="{{ product.get_absolute_url }}" class="cart__img-wrap">
 
-                                        {% if product.images.first %}
                                         
-                                            {% thumbnail product.images.first.src "55x55" format="WEBP" crop="center" as im %}
-                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                            {% endthumbnail %}
-
-                                        {% else %}
                                         
-                                            {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
-                                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
-                                            {% endthumbnail %}
+                                        {% thumbnail product.thumb "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="cart__img">
+                                        {% endthumbnail %}
 
-                                        {% endif %}
+                                       
                                     </a>
 
                                     <div class="cart__wrap">
@@ -97,7 +91,9 @@
                        
                         {% endwith %}
                     {% endfor %}
+                        
 
+                    
                     
 
                     {% for option in cart.get_options %}
@@ -119,25 +115,28 @@
 
                             <div class="cart__wrap">
                                 <p class="cart__name">{{ option.products.name }}</p>
-                                <div class="cart__name-option-wrap">
-                                         
-                                    
-                            
-                                {% for type, options in option.options.items %}
-                                    <div class="opt-wrap">
-                                        <p class="cart__name-option cart__name-option--name"><b>{{ type }}:</b></p>
-                                        <div class="opt-inner">
-                                            {% for opt in options %}
-                                            <p class="cart__name-option"> {{ opt.option_value }}</p>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
+
+                                {% if option.options %}
+                                    <div class="cart__name-option-wrap">
                                             
-                                     
                                         
-                              
-                            </div>
+                                
+                                    {% for type, options in option.options.items %}
+                                        <div class="opt-wrap">
+                                            <p class="cart__name-option cart__name-option--name"><b>{{ type }}:</b></p>
+                                            <div class="opt-inner">
+                                                {% for opt in options %}
+                                                <p class="cart__name-option"> {{ opt.option_value }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                                
+                                        
+                                            
+                                
+                                    </div>
+                                {% endif %}
 
                             </div>
                             

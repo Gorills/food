@@ -187,11 +187,11 @@ class Cart(object):
         for item in self.options.values():
             try:
                 product = Product.objects.get(id=str(item['products']))
-                options_spisok = item['options'].split(',')
+                options_spisok = item['id'].split(',')
                 options_res_by_type = {}
 
                 for option in options_spisok:
-                    product_option = ProductOption.objects.get(option_value=option, parent=product)
+                    product_option = ProductOption.objects.get(id=option, parent=product)
                     option_type = product_option.type
 
                     if option_type not in options_res_by_type:
@@ -199,8 +199,8 @@ class Cart(object):
 
                     options_res_by_type[option_type].append(product_option)
 
-                
-                
+
+
 
                 options_list.append({
                     'id': item['id'],
@@ -209,7 +209,8 @@ class Cart(object):
                     'products': product,
                     'options': options_res_by_type,
                 })
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
         return options_list
