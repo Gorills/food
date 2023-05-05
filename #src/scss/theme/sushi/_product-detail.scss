@@ -75,6 +75,7 @@
 
         @media screen and (max-width:768px) {
             max-width: 100%;
+            width: 100%;
             
         }
 
@@ -85,6 +86,10 @@
     &__title {
         margin-bottom: 15px;
         font-size: 26px;
+        @media screen and (max-width:768px) {
+            margin-top: 20px;
+            
+        }
     }
 
     // .product-detail__price-wrap
@@ -93,7 +98,21 @@
         display: flex;
         font-size: 20px;
         margin-bottom: 20px;
-        
+        @media screen and (max-width:480px) {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            z-index: 98;
+            bottom: 75px;
+            background-color: #fff;
+            text-align: center;
+            justify-content: center;
+            padding: 5px;
+            font-size: 28px;
+            border-top: 1px solid #e1e1e1;
+            // box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
     }
 
     // .product-detail__price
@@ -290,7 +309,16 @@
     .wrapper_to_count {
         display: flex;
         @media screen and (max-width:480px) {
+            position: fixed;
+            z-index: 98;
+            background-color: #fff;
+            bottom: 0;
+            left: 0;
+            right: 0;
             justify-content: space-between;
+            padding: 20px;
+            border-top: 1px solid #e1e1e1;
+            box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
         }
     }
 
