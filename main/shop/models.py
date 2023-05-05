@@ -260,7 +260,20 @@ class Product(models.Model):
         persent = (razn/old)*100
         return persent
 
+    def get_option(self):
+
+        op_type = OptionType.objects.filter(option_class='select').first()
+
         
+        option = self.options.filter(type_id=op_type)
+
+        if not option:
+            return None
+        
+        else:
+            return option
+        
+
 
     class Meta:
         verbose_name = 'Товар'
@@ -285,7 +298,7 @@ class OptionType(models.Model):
       
     )
     name = models.CharField(max_length=250)
-    option_class = models.CharField(max_length=200, choices=OPTION_CLASS, default='radio')
+    option_class = models.CharField(max_length=200, choices=OPTION_CLASS, default='select')
 
     def __str__(self):
         return self.name

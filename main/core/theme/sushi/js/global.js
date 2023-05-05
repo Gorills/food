@@ -757,7 +757,7 @@ $(document).ready(function() {
   
   
 
-  $('.options_btn').click(function(e) {
+  $('.options_btn, .product-options__btn').click(function(e) {
     e.preventDefault();
     var options_id = $(this).attr('data-options-id');
     var options = $(this).attr('data-options');
@@ -838,6 +838,39 @@ $(document).on('click','.plus_options',function(e){
             $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         });
 })
+
+
+
+$(document).on('click','.product-options__item',function(e){
+    var id = $(this).attr('data-id')
+    var price = parseFloat($(this).attr('data-price'))
+    var value = $(this).attr('data-value')
+    var product_id = $(this).attr('data-product-id')
+
+    var pr_price = parseFloat($('#price-'+product_id).attr('data-price'))
+    var old_price = parseFloat($('#old_price-'+product_id).attr('data-price'))
+    console.log(pr_price)
+
+    $(this).prev().removeClass('product-options__item--active')
+    $(this).next().removeClass('product-options__item--active')
+    $(this).addClass('product-options__item--active')
+
+    
+
+    var res_price = price + pr_price;
+    var res_old_price = old_price + price;
+
+    $(this).parent().prev('.product-options__btn').attr('data-price', res_price).attr('data-options', value).attr('data-options-id', id)
+
+    console.log(res_price)
+    $('#price-'+product_id).html(res_price + ',00₽');
+    $('#old_price-'+product_id).html(res_old_price + ',00₽');
+    $('.product-options__span-'+product_id).html(value);
+
+});
+
+
+
 
 
 // cart

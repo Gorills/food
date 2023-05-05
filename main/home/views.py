@@ -135,6 +135,10 @@ def home(request):
     # AlfaBank.delete()
     # cart = Cart(request)
     # cart.clear()
+    # cart.options_clear()
+    # cart.combo_clear()
+
+
     order_get = request.GET.getlist('order')
     home_cats = Category.objects.filter(home=True)[:7]
     slider_setup = SliderSetup.objects.get()

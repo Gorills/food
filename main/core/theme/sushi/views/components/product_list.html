@@ -28,8 +28,6 @@
                 </div>
             
                 
-                
-            
 
 
                 {% thumbnail product.thumb size format="WEBP" crop="center" as im %}
@@ -49,7 +47,21 @@
             </a>
 
             <div class="product-list__bottom">
-                <h3 class="product-list__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                <h3 class="product-list__title">
+                    <a href="{{ product.get_absolute_url }}">
+                    
+                    {{ product.name }}
+                    <span class="product-options__span-{{ product.id }}">
+                    {% if product.get_option %}
+                        {% for option in product.get_option %}
+                            {% if forloop.counter == 1 %}
+                                {{ option.option_value }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    </span>
+                    </a>
+                </h3>
 
 
 
@@ -69,9 +81,9 @@
         </div>
         <div class="product-list__bottom-wrap">
             <div class="product-list__prices">
-                <p class="product-list__price">{{ product.price }}₽</p>
+                <p class="product-list__price" id="price-{{ product.id }}" data-price="{{ product.price }}">{{ product.price }}₽</p>
                 {% if product.old_price %}
-                    <p class="product-list__old">{{ product.old_price }}₽</p>
+                    <p class="product-list__old" id="old_price-{{ product.id }}" data-price="{{ product.old_price }}">{{ product.old_price }}₽</p>
                 {% endif %}
             </div>
 
@@ -83,9 +95,24 @@
             
                 <button class="btn btn--primary">В Корзину</button>
             </form>
+            {% elif product.get_option %}
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
             {% else %}
+           
+            
             <a href="{{ product.get_absolute_url }}" class="btn btn--primary">Выбрать опции</a>
             {% endif %}
+            
+            <div class="product-options">
+            {% if product.get_option %}
+                {% for option in product.get_option %}
+                <div data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
+                    {{ option.option_value }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+
         </div>
     </div>
     {% endfor %}
