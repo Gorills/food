@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<div class="product-detail">
+<div class="product-detail" itemscope itemtype="https://schema.org/Product">
     <div class="container">
         <div class="product-detail__inner">
             <div class="product-detail__right">
@@ -81,23 +81,28 @@
                 </div>
                 {% endif %}
                 {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
-                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
+                    <img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
                 {% endthumbnail %}
             </div>
 
 
 
             <div class="product-detail__left">
-                <h1 class="product-detail__title">{{ product.name }}</h1>
-                <div class="product-detail__price-wrap">
+                <h1 class="product-detail__title" itemprop="name">{{ product.name }}</h1>
+                <div class="product-detail__price-wrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                     <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price |unlocalize }}₽</p>
                     {% if product.old_price %}
                     <p class="product-detail__price-old" data-price="{{ product.old_price |unlocalize }}">{{ product.old_price |unlocalize }}₽</p>
                     {% endif %}
-
+                    
+                    <meta itemprop="price" content="{{ product.price |unlocalize }}">
+                    
+                    <meta itemprop="priceCurrency" content="RUB">
+                   
+                    <link itemprop="availability" href="http://schema.org/InStock">
                 </div>
                 {% if product.short_description %}
-                <p class="product-detail__desc">{{ product.short_description }}</p>
+                <p class="product-detail__desc" itemprop="description">{{ product.short_description }}</p>
                 {% endif %}
                 
                 {% if product.product_connect.count > 0 %}
@@ -147,6 +152,9 @@
                         {% for type in types %}
                         <div class="product-detail__options-row">
                             <div class="product-detail__options-name">{{ type.name }}: </div>
+
+
+
                             {% if type.option_class == 'radio' %}
                             <div class="product-detail__options-wrap">            
                                 {% for option in product_options %}
@@ -338,18 +346,7 @@
     </div>
 </div>
 
-<script type="application/ld+json">
-    {
-    "@context": "https://schema.org/", 
-    "@type": "Product", 
-    "name": "{{ product.name }}", 
-    "image": "{{ product.thumb.url }}", 
-    "description": "{{ product.description }}",
-    {% if product.product_manufacturer %}
-    "brand": "{{ product.product_manufacturer.name }}"
-    {% endif %}
-    }
-</script>
+
 
 
 

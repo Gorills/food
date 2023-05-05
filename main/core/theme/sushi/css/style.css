@@ -4358,6 +4358,12 @@ td.product-thumbnail img {
   }
 }
 
+@media screen and (max-width: 996px) {
+  .header-bottom__link {
+    padding: 8px;
+  }
+}
+
 @media screen and (max-width: 992px) {
   .product-list {
     grid-template-columns: repeat(2, 1fr);
