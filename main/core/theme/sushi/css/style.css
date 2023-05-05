@@ -3693,7 +3693,7 @@ a {
 }
 
 .product-detail label {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .product-detail input[type=checkbox]:checked,
@@ -4559,6 +4559,10 @@ td.product-thumbnail img {
     margin-right: 0;
     order: 2;
     margin-top: 20px;
+  }
+
+  .product-detail__left {
+    max-width: 100%;
   }
 
   .product-thumbnail {

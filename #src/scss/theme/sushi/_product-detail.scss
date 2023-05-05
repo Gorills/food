@@ -72,6 +72,12 @@
 
     &__left {
         max-width: 560px;
+
+        @media screen and (max-width:768px) {
+            max-width: 100%;
+            
+        }
+
     }
 
     // .product-detail__title
@@ -385,7 +391,7 @@
     }
 
     label {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
 
     input[type="checkbox"]:checked, 
