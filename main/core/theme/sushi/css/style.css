@@ -4846,10 +4846,6 @@ td.product-thumbnail img {
     margin-top: 10px;
   }
 
-  .header__work-time {
-    display: flex;
-  }
-
   .header__contacts {
     flex-direction: column;
   }
