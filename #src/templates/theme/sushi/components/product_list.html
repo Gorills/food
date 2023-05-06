@@ -68,7 +68,7 @@
                 {% if shop_setup.show_descrioption == True and product.short_description %}
                 
                 {% if product.weight %}
-                <div class="product-list__weight">{{ product.weight }}</div>
+                <div class="product-list__weight product-list__weight-{{ product.id }}">{{ product.weight }}</div>
                 {% endif %}
                 <div class="product-list__desc">
                 {{ product.short_description }}
@@ -81,9 +81,9 @@
         </div>
         <div class="product-list__bottom-wrap">
             <div class="product-list__prices">
-                <p class="product-list__price" id="price-{{ product.id }}" data-price="{{ product.price }}">{{ product.price }}₽</p>
+                <p class="product-list__price" id="price-{{ product.id }}" data-price="{{ product.price }}">{{ product.price | floatformat:0 }} ₽</p>
                 {% if product.old_price %}
-                    <p class="product-list__old" id="old_price-{{ product.id }}" data-price="{{ product.old_price }}">{{ product.old_price }}₽</p>
+                    <p class="product-list__old" id="old_price-{{ product.id }}" data-price="{{ product.old_price }}">{{ product.old_price | floatformat:0 }}₽</p>
                 {% endif %}
             </div>
 
@@ -106,7 +106,7 @@
             <div class="product-options">
             {% if product.get_option %}
                 {% for option in product.get_option %}
-                <div data-image="{% if forloop.counter == 1 %}{% thumbnail product.thumb size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
+                <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if forloop.counter == 1 %}{% thumbnail product.thumb size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
                     {{ option.option_value }}
                 </div>
                 {% endfor %}

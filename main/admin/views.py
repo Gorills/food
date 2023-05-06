@@ -1326,7 +1326,7 @@ def product_add(request):
 
 
             options = request.POST.getlist('type')
-            option_sku = request.POST.getlist('option_sku')
+            option_weight = request.POST.getlist('option_weight')
             option_value = request.POST.getlist('option_value')
             option_stock = request.POST.getlist('option_stock')
             option_price = request.POST.getlist('option_price')
@@ -1337,7 +1337,7 @@ def product_add(request):
                 opt = ProductOption(
                     parent = product,
                     type_id = option,
-                    option_sku = option_sku[o_count],
+                    option_weight = option_weight[o_count],
                     option_value = option_value[o_count],
                     option_stock = option_stock[o_count],
                     option_price = Decimal(option_price[o_count]),
@@ -1464,7 +1464,7 @@ def product_edit(request, pk):
             old_id = request.POST.getlist('old_id')
             old_type = request.POST.getlist('old_type')
             old_option_value = request.POST.getlist('old_option_value')
-            old_option_sku = request.POST.getlist('old_option_sku')
+            old_option_weight = request.POST.getlist('old_option_weight')
             old_option_stock = request.POST.getlist('old_option_stock')
             old_option_price = request.POST.getlist('old_option_price')
             old_option_subtract = request.POST.getlist('old_option_subtract')
@@ -1475,7 +1475,7 @@ def product_edit(request, pk):
                 price = price.replace(',', '.')
                 old_option = ProductOption.objects.get(id=old)
                 old_option.type_id = old_type[old_count]
-                old_option.option_sku = old_option_sku[old_count]
+                old_option.option_weight = old_option_weight[old_count]
                 old_option.option_value = old_option_value[old_count]
                 old_option.option_stock = old_option_stock[old_count]
                 old_option.option_price = price
@@ -1496,7 +1496,7 @@ def product_edit(request, pk):
 
             # Опции
             options = request.POST.getlist('type')
-            option_sku = request.POST.getlist('option_sku')
+            option_weight = request.POST.getlist('option_weight')
             option_value = request.POST.getlist('option_value')
             option_stock = request.POST.getlist('option_stock')
             option_price = request.POST.getlist('option_price')
@@ -1507,7 +1507,7 @@ def product_edit(request, pk):
                 opt = ProductOption(
                     parent = product,
                     type_id = option,
-                    option_sku = option_sku[o_count],
+                    option_weight = option_weight[o_count],
                     option_value = option_value[o_count],
                     option_stock = option_stock[o_count],
                     option_price = Decimal(option_price[o_count]),

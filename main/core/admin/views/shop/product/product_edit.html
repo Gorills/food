@@ -228,10 +228,7 @@
                                     {% endfor %}
                                 </select>
                             </p>
-                            <p>
-                                <label for="id_value">Артикул:</label>
-                                <input type="text" name="old_option_sku" class="input" placeholder="Значение" maxlength="250" required="required" id="id_option_sku" value="{% if option.option_sku %}{{ option.option_sku }}{% endif %}">
-                            </p>
+                            
                             <p>
                                 <label for="id_value">Значение:</label>
                                 <input type="text" name="old_option_value" class="input" placeholder="Значение" maxlength="250" required="required" id="id_value" value="{{ option.option_value }}">
@@ -243,6 +240,10 @@
                             <p>
                                 <label for="id_price">Добавить стоимость:</label>
                                 <input type="text" name="old_option_price" class="input input-price" placeholder="Добавить стоимость" required="required" step="0.10" id="id_price" value="{{ option.option_price | floatformat:2  }}"> 
+                            </p>
+                            <p>
+                                <label for="id_value">Вес позиции:</label>
+                                <input type="text" name="old_option_weight" class="input" placeholder="Значение" maxlength="250" required="required" id="id_option_weightu" value="{% if option.option_weight %}{{ option.option_weight }}{% endif %}">
                             </p>
                             <p>
                                 <label for="id_subtract">Вычитать со склада:</label>

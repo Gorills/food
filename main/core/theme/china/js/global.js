@@ -691,9 +691,9 @@ $(document).on('click','.select-wrap__item',function(){
     
     optionsIds = optionsIds.slice(0, -1);
     options = options.slice(0, -1);
-    $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
-    $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
-    $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+    $('.product-detail__price-old').html(oldPrice + '₽');
+    $('.product-detail__price').html(totalPrice + '₽');
+    $('.options_btn').attr('data-price', totalPrice).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
   });
 
 $(document).ready(function() {
@@ -731,9 +731,9 @@ $(document).ready(function() {
     optionsIds = optionsIds.slice(0, -1);
     options = options.slice(0, -1);
     
-    $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
-    $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
-    $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+    $('.product-detail__price-old').html(oldPrice + '₽');
+    $('.product-detail__price').html(totalPrice + '₽');
+    $('.options_btn').attr('data-price', totalPrice).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
     
     $(document).on('change','input, select',function(){
     
@@ -771,9 +771,9 @@ $(document).ready(function() {
       optionsIds = optionsIds.slice(0, -1);
       options = options.slice(0, -1);
 
-      $('.product-detail__price-old').html(oldPrice.toFixed(2) + '₽');
-      $('.product-detail__price').html(totalPrice.toFixed(2) + '₽');
-      $('.options_btn').attr('data-price', totalPrice.toFixed(2)).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+      $('.product-detail__price-old').html(oldPrice + '₽');
+      $('.product-detail__price').html(totalPrice + '₽');
+      $('.options_btn').attr('data-price', totalPrice).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
     });
   });
   
@@ -908,6 +908,11 @@ $(document).on('click','.product-options__item',function(e){
     var value = $(this).attr('data-value')
     var product_id = $(this).attr('data-product-id')
     var image = $(this).attr('data-image')
+    var weight = $(this).attr('data-weight')
+
+    if (weight != '') {
+        $('.product-list__weight-'+product_id).html(weight)
+    }
 
     if (image != '') {
         $('.product-list__thumb-'+product_id).attr('src', image)
@@ -1842,7 +1847,7 @@ $(document).on('click','.open-combo',function(e){
 })
 
 $(document).on('click','.combo-popup__closer, .combo-popup__layout',function(e){
-
+    e.preventDefault();
     $('.combo-popup').removeClass('combo-popup--active')
 
 })
@@ -1872,7 +1877,7 @@ $(document).ready(function() {
       var summPrice = parseFloat(comboPopup.find('.combo-popup__summ').attr('data-price'));
       var quantity = parseFloat(comboPopup.find('.counter__input').val());
       itemSumm += summPrice;
-      var res = itemSumm*quantity + ',00₽';
+      var res = itemSumm*quantity + '₽';
       comboPopup.find('.combo-popup__summ').text(res);
       comboPopup.find('.combo-popup__btn').attr('data-price', itemSumm*quantity + ',00');
       comboPopup.find('.combo-popup__summ').attr('data-final', itemSumm);

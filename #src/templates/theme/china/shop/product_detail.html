@@ -1,19 +1,20 @@
 
 {% extends 'base.html' %}
+
 {% load thumbnail %}
-{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 {% block keywords %}{{ product.meta_keywords }}{% endblock %}
 {% block canonical %}{{ product.get_absolute_url }}{% endblock %}
-{% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block og:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block og:description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 {% block og:url %}{{ product.get_absolute_url }}{% endblock %}
-{% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }}{% endif %}{% endblock %}
-{% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% endif %}{% endblock %}
+{% block twitter:title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} заказать с доставкой{% endif %}{% endblock %}
+{% block twitter:description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}Заказать {{ product.name }} с доставкой по городу от {{ setup.name }}{% endif %}{% endblock %}
 
-{% block og:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
-{% block og:image:secure_url %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
-{% block twitter:image %}{% if product.image %}{% thumbnail product.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if product.thumb %}{% thumbnail product.thumb "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
 
 
 
@@ -57,49 +58,62 @@
     </div>
 </div>
 
-
-<div class="product-detail">
+<div class="product-detail" itemscope itemtype="https://schema.org/Product">
     <div class="container">
         <div class="product-detail__inner">
             <div class="product-detail__right">
+                {% if product.images.count != 0 %}
                 <div class="product-detail__nav">
                     {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
                     {% endthumbnail %}
-                    {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
+                    {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% for image in product.images.all %}
                         {% thumbnail image.src "80x80" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
-                        {% thumbnail image.src "600x600" format="WEBP" crop="center" as im %}
+                        {% thumbnail image.src "750x500" format="WEBP" crop="center" as im %}
                         <div data-image="{{ im.url }}"></div>
                         {% endthumbnail %}
                     {% endfor %}
                 </div>
-              
-                {% thumbnail product.thumb "600x600" format="WEBP" crop="center" as im %}
-                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
+                {% endif %}
+                {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
+                    <img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
                 {% endthumbnail %}
             </div>
 
 
 
             <div class="product-detail__left">
-                <h1 class="product-detail__title">{{ product.name }}</h1>
-                <div class="product-detail__price-wrap">
-                    <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price }}₽</p>
+                <h1 class="product-detail__title" itemprop="name">{{ product.name }}</h1>
+                
+                <div class="product-detail__price-wrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price | floatformat:0 }} ₽</p>
                     {% if product.old_price %}
-                    <p class="product-detail__price-old">{{ product.old_price }}₽</p>
+                    <p class="product-detail__price-old" data-price="{{ product.old_price |unlocalize }}">{{ product.old_price | floatformat:0 }} ₽</p>
                     {% endif %}
-
+                    
+                    <meta itemprop="price" content="{{ product.price |unlocalize }}">
+                    
+                    <meta itemprop="priceCurrency" content="RUB">
+                   
+                    <link itemprop="availability" href="http://schema.org/InStock">
                 </div>
+                {% if product.weight %}
+                    
+                        <div class="product-detail__weight">{{ product.weight }}</div>
+                    
+                    {% endif %}
                 {% if product.short_description %}
-                <p class="product-detail__desc">{{ product.short_description }}</p>
+                <p class="product-detail__desc" itemprop="description">{{ product.short_description }}</p>
                 {% endif %}
+                
                 {% if product.product_connect.count > 0 %}
                 <div class="product-detail__options">
+
                     <div class="product-detail__options-row">
                        
                         
@@ -132,49 +146,103 @@
                 </div>
                 {% endif %}
 
-                {% comment %} <div class="product-detail__options">
-                    {% for type in types %}
 
-                    <div class="product-detail__options-row">
-                        <div class="product-detail__options-name">{{ type.name }}: </div>
-                        
-                        <div class="product-detail__options-wrap">                            
-
-                            {% for option in product_options %}
-                                {% if option.type == type %}
-                                    {% if option.option_value != product.name %}
-                                        <div class="product-detail__option">
-                                            
-                                            <div class="product-detail__option-value {% if forloop.counter == 2 %}product-detail__option-value--active{% endif %}" data-price="{{ option.option_price |unlocalize }}" data-action="{% url "cart:cart_add" option.id %}" {% if option.images.count > 0 %}{% thumbnail option.images.first.src "621x778" crop="center" as im %}data-image="{{ im.url }}"{% endthumbnail %}{% else %}{% thumbnail option.parent.thumb "621x778" crop="center" as im %}data-image="{{ im.url }}"{% endthumbnail %}{% endif %}>
-
-                                                {{ option.option_value }}
-
-                                            </div>
-
-
-                                        </div>
-                                        {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                           
-                        </div>
-                    </div>
-                    {% endfor %}
-
-                </div> {% endcomment %}
-                
+               
 
                 
 
                 <form data-id="{{ product.id }}" data-quantity="1" data-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-detail__form" action="{% url 'cart:cart_add' product.id %}" method="post">
-                        {% csrf_token %}
+                    
+                    {% csrf_token %}
+                    <div class="product-detail__options">
+                        {% for type in types %}
+                        <div class="product-detail__options-row">
+                            <div class="product-detail__options-name">{{ type.name }}: </div>
 
-					
 
-                    {% if product.stock == 0 and shop_setup.status == 'out_of_stock' %}
-                        <div class="product-detail__of-stock">Нет в наличии</div>
+
+                            {% if type.option_class == 'radio' %}
+                            <div class="product-detail__options-wrap">            
+                                {% for option in product_options %}
+                                    {% if option.type == type %}
+                                        <div class="product-detail__option">
+                                            <div class="product-detail__option-value" data-price="{{ option.option_price |unlocalize }}" data-action="{% url "cart:cart_add" option.id %}" >
+                                                {{ option.option_value }}
+                                            </div>
+                                        </div>    
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            {% elif type.option_class == 'select' %}
+                            
+
+                            <div class="select-wrap">
+
+                                <div class="select-wrap__checked"></div>
+
+                                <div class="select-wrap__row">
+                                    {% for option in product_options %}
+                                        {% if option.type == type %}
+                                        <div class="select-wrap__item" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" data-value="{{ option.option_value }}">{{ option.option_value }} <small>(+{{ option.option_price }}₽)</small> </div>
+
+
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <input hidden type="text" class="select-wrap__input" name="select" id="" data-id="" data-price="" value="">
+                            
+                            </div>
+                            
+                            {% elif type.option_class == 'checkbox' %}
+                            <div class="product-detail__options-checkbox-row">
+                                {% for option in product_options %}
+                                    {% if option.type == type %}
+                                        
+                                            <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                            
+                                            <label for="cb{{ option.id }}">{{ option.option_value }} +{{ option.option_price }}₽</label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>  
+                  
                         
+                    {% if not types %}
+                        <div class="wrapper_to_count">
+
+                            {% if product.stock == 0 and shop_setup.status == 'out_of_stock' %}
+                                <div class="product-detail__of-stock">Нет в наличии</div>
+                                
+                            {% else %}
+                                <div class="product-detail__counter">
+                                    <div class="product-detail__minus">
+                                        <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
+                                        </svg>
+                                    </div>
+                                    <input class="product-detail__input product-detail__count-inp" min="1" type="number" name="quantity" required="" id="id_quantity" value="1">
+                                    <input type="hidden" name="update" value="False" id="id_update">
+                                    <div class="product-detail__plus">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                                <button class="product-detail__button btn btn--primary">В корзину</button>
+
+                            {% endif %}
+                        </div>
+                    </form> 
                     {% else %}
+                </form> 
+                    <div class="wrapper_to_count">
                         <div class="product-detail__counter">
                             <div class="product-detail__minus">
                                 <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -192,11 +260,11 @@
                             
                             
                         </div>
-					    <button class="product-detail__button btn btn--full">В корзину</button>
+                        <button class="options_btn btn btn--primary" data-csrf={{ csrf_token }} data-price="" data-options-id="" data-options="" data-quantity="" data-product="{{ product.id }}">В корзину</button>
+                    </div>
 
                     {% endif %}
-
-				</form>
+				
 
                 <div class="product-detail__chars">
                     {% if product.sku %}
@@ -229,12 +297,7 @@
                         <div class="product-detail__char-value">{{ product.height }} {{ product.length_class }}</div>
                     </div>
                     {% endif %}
-                    {% if product.weight %}
-                    <div class="product-detail__char">
-                        <div class="product-detail__char-name">Вес:</div>
-                        <div class="product-detail__char-value">{{ product.weight }} {{ product.weight_class }}</div>
-                    </div>
-                    {% endif %}
+                    
 
                     {% for char in product.chars.all %}
 
@@ -272,30 +335,19 @@
 </div>
 
 
-<div class="similar">
+<div class="similar gray">
     <div class="container">
         <div class="similar__inner">
 
             <h3 class="title">Вам может понравиться</h3>
 
-            {% include 'components/product_list.html' with slider='true' products=similars big='product-list__item--big' size='235x298' %}
+            {% include 'components/product_list.html' with slider='true' products=similars big='product-list__item--big' size='290x193' %}
 
         </div>
     </div>
 </div>
 
-<script type="application/ld+json">
-    {
-    "@context": "https://schema.org/", 
-    "@type": "Product", 
-    "name": "{{ product.name }}", 
-    "image": "{{ product.thumb.url }}", 
-    "description": "{{ product.description }}",
-    {% if product.product_manufacturer %}
-    "brand": "{{ product.product_manufacturer.name }}"
-    {% endif %}
-    }
-</script>
+
 
 
 

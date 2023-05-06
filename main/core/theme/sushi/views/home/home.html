@@ -178,7 +178,7 @@
 
                                             {% for item in parent.list %}
 
-                                                <div class="combo-popup__item-item" data-price="{{ item.price }}" data-id="{{ item.id }}"><div class="combo-popup__item-check"></div>{{ item.product.name }} + {{ item.price }}₽</div>
+                                                <div class="combo-popup__item-item" data-price="{{ item.price }}" data-id="{{ item.id }}"><div class="combo-popup__item-check"></div>{{ item.product.name }} + {{ item.price | floatformat:0  }} ₽</div>
 
                                             {% endfor %}
                                             </div>
@@ -210,7 +210,7 @@
                                             <div class="btn btn--primary combo-popup__btn" data-name="{{ combo.name }}" data-price="{{ combo.price }}" data-token="{{ csrf_token }}" data-id="{{ combo.id }}">Добавить</div>
                                         </div>
 
-                                        <div class="combo-popup__summ" data-price="{{ combo.price }}" data-final="">{{ combo.price }}₽</div>
+                                        <div class="combo-popup__summ" data-price="{{ combo.price }}" data-final="">{{ combo.price | floatformat:0 }} ₽</div>
 
 
                                     </div>
@@ -244,7 +244,7 @@
                                 </div>
                                
                                 <div class="product-list__prices">
-                                    <p class="product-list__price">{{ combo.price }}₽</p>
+                                    <p class="product-list__price">{{ combo.price | floatformat:0 }} ₽</p>
                                    
                                 </div>
                                 

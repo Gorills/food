@@ -316,6 +316,8 @@ class ProductOption(models.Model):
     option_sku = models.CharField(max_length=350, null=True, blank=True)
     # значение опции. Например #F64E60
     option_value = models.CharField(max_length=250)
+    # Вес позиции
+    option_weight = models.CharField(max_length=250, null=True, blank=True)
     # Количество товара с опцией. Необязательное значение
     option_stock = models.PositiveIntegerField(null=True, blank=True)
     # Наценка
