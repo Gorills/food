@@ -184,7 +184,7 @@
                                 <div class="select-wrap__row">
                                     {% for option in product_options %}
                                         {% if option.type == type %}
-                                        <div class="select-wrap__item" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" data-value="{{ option.option_value }}">{{ option.option_value }} <small>(+{{ option.option_price }}₽)</small> </div>
+                                        <div class="select-wrap__item" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" data-value="{{ option.option_value }}">{{ option.option_value }} <small>(+{{ option.option_price | floatformat:0 }} ₽)</small> </div>
 
 
                                         {% endif %}
