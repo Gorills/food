@@ -446,7 +446,7 @@ $(document).on('change','.id_image_old',function(){
   if (paste.val() == 'False') {
     paste.val('True')
     var count = $(this).parent().parent().children('.old_count').val()
-    var res = count - 1
+    var res = count
     $(this).parent().parent().next('.option__images').append('<input type="file" multiple="multiple" name="option_images_old-' + res + '">')
 
   } else {

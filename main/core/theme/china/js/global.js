@@ -907,13 +907,19 @@ $(document).on('click','.product-options__item',function(e){
     var price = parseFloat($(this).attr('data-price'))
     var value = $(this).attr('data-value')
     var product_id = $(this).attr('data-product-id')
+    var image = $(this).attr('data-image')
+
+    if (image != '') {
+        $('.product-list__thumb-'+product_id).attr('src', image)
+    }
 
     var pr_price = parseFloat($('#price-'+product_id).attr('data-price'))
     var old_price = parseFloat($('#old_price-'+product_id).attr('data-price'))
-    
 
-    $(this).prev().removeClass('product-options__item--active')
-    $(this).next().removeClass('product-options__item--active')
+    
+    $(this).parent().find('.product-options__item').removeClass('product-options__item--active')
+
+   
     $(this).addClass('product-options__item--active')
 
     

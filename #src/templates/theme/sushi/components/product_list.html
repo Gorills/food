@@ -31,14 +31,14 @@
 
 
                 {% thumbnail product.thumb size format="WEBP" crop="center" as im %}
-                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
+                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb product-list__thumb-{{ product.id }}">
                 {% endthumbnail %}
 
-                {% if product.images.first %}
+                {% comment %} {% if product.images.first %}
                     {% thumbnail product.images.first.src size format="WEBP" crop="center" as im %}
                         <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__image">
                     {% endthumbnail %}
-                {% endif %}
+                {% endif %} {% endcomment %}
 
             
 
@@ -106,18 +106,19 @@
             <div class="product-options">
             {% if product.get_option %}
                 {% for option in product.get_option %}
-                <div data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
+                <div data-image="{% if forloop.counter == 1 %}{% thumbnail product.thumb size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
                     {{ option.option_value }}
                 </div>
                 {% endfor %}
             {% endif %}
             </div>
-
+            
         </div>
     </div>
     {% endfor %}
 
        
     
+                    
 
 </div>
