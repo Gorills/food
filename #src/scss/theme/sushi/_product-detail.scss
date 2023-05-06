@@ -147,6 +147,10 @@
     &__options-checkbox-row {
         display: flex;
         flex-direction: column;
+
+        small {
+            color: #666;
+        }
     }
 
     // .product-detail__options

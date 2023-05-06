@@ -201,7 +201,7 @@
                                         
                                             <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
                                             
-                                            <label for="cb{{ option.id }}">{{ option.option_value }} +{{ option.option_price }}₽</label>
+                                            <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
                                     {% endif %}
                                 {% endfor %}
                             </div>

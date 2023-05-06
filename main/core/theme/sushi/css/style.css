@@ -3546,6 +3546,10 @@ a {
   flex-direction: column;
 }
 
+.product-detail__options-checkbox-row small {
+  color: #666;
+}
+
 .product-detail__options {
   margin-bottom: 40px;
 }
