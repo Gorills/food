@@ -18,5 +18,5 @@ def feed(request):
         'products': products
     }
 
-    return render(request, 'yafeed/feed.html', context, content_type="application/xhtml+xml")
+    return render(request, 'yafeed/feed.html', context, content_type="application/xml")
 
