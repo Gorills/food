@@ -935,8 +935,8 @@ $(document).on('click','.product-options__item',function(e){
     $(this).parent().prev('.product-options__btn').attr('data-price', res_price).attr('data-options', value).attr('data-options-id', id)
 
     console.log(res_price)
-    $('#price-'+product_id).html(res_price + ',00₽');
-    $('#old_price-'+product_id).html(res_old_price + ',00₽');
+    $('#price-'+product_id).html(res_price + ' ₽');
+    $('#old_price-'+product_id).html(res_old_price + ' ₽');
     $('.product-options__span-'+product_id).html(value);
 
 });
