@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 {% load l10n %}
-<yml_catalog date="{% now 'Y-m-d h:i' %}"> 
-  <shop>
-    <name>{{ setup.name }}</name>
-    <company>{{ setup.name }}</company>
-    <url></url>
-    
-    <version>1.0</version>
-    
-    <email>{{ setup.email }}</email>
-    <currencies>
-      <currency id="RUR" rate="1"/>
-      <currency id="USD" rate="60"/>
-    </currencies>
-    <categories>
-        {% for cat in cats %}
-        <category id="{{ cat.id }}">{{ cat.name }}</category>
-        {% endfor %}
-      </categories>
-    
-    <offers>
-
-        {% for product in products %}
+<yml_catalog date="{% now 'Y-m-dTh:i' %}">
+    <shop>
+        <name>{{ setup.name }}</name>
+        <company>{{ setup.name }}</company>
+        <url>http://best.seller.ru</url>
+        <platform>ProfIT Platform</platform>
+        <categories>
+          {% for cat in cats %}
+          <category id="{{ cat.id }}">{{ cat.name }}</category>
+          {% endfor %}
+        </categories>
+        
+        
+        <offers>
+            {% for product in products %}
             <offer id="{{ product.id }}">
                 <name>{{ product.name }}</name>
                 {% if profuct.product_manufacturer %}
@@ -37,9 +30,9 @@
                 <categoryId>{{ product.parent.id }}</categoryId>
                 <picture>{{ product.thumb.url }}</picture>
                 
-                <pickup>false</pickup>
+                <pickup>true</pickup>
                 <delivery>true</delivery>
-               
+              
                 <adult>true</adult>
                 <description>
                 <![CDATA[
@@ -47,7 +40,7 @@
                 <p>{{ product.description | safe }}</p>
                 ]]>
                 </description>
-               
+              
                 
                 {% if product.lenght %}
                 <param name="Длина">{{ product.lenght }}</param>
@@ -65,12 +58,9 @@
                 <sales_notes>Необходима предоплата.</sales_notes>
                 <manufacturer_warranty>true</manufacturer_warranty>
                 
-               
+              
             </offer>
           {% endfor %}
-    </offers>
-    
-  </shop>
-
-
+        </offers>
+    </shop>
 </yml_catalog>
