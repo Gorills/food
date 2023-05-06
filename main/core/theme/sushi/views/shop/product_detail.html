@@ -89,6 +89,7 @@
 
             <div class="product-detail__left">
                 <h1 class="product-detail__title" itemprop="name">{{ product.name }}</h1>
+                
                 <div class="product-detail__price-wrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                     <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price |unlocalize }}₽</p>
                     {% if product.old_price %}
@@ -101,6 +102,11 @@
                    
                     <link itemprop="availability" href="http://schema.org/InStock">
                 </div>
+                {% if product.weight %}
+                    
+                        <div class="product-detail__weight">{{ product.weight }}</div>
+                    
+                    {% endif %}
                 {% if product.short_description %}
                 <p class="product-detail__desc" itemprop="description">{{ product.short_description }}</p>
                 {% endif %}
@@ -291,12 +297,7 @@
                         <div class="product-detail__char-value">{{ product.height }} {{ product.length_class }}</div>
                     </div>
                     {% endif %}
-                    {% if product.weight %}
-                    <div class="product-detail__char">
-                        <div class="product-detail__char-name">Вес:</div>
-                        <div class="product-detail__char-value">{{ product.weight }} {{ product.weight_class }}</div>
-                    </div>
-                    {% endif %}
+                    
 
                     {% for char in product.chars.all %}
 

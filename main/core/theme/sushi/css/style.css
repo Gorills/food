@@ -3513,6 +3513,13 @@ a {
   font-size: 26px;
 }
 
+.product-detail__weight {
+  margin-bottom: 20px;
+  font-size: 12px;
+  line-height: 14px;
+  color: #b5b5b5;
+}
+
 .product-detail__price-wrap {
   display: flex;
   font-size: 20px;
