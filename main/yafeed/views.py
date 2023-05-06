@@ -8,7 +8,7 @@ from shop.models import Category, Product
 
 def feed(request):
    
-    products = Product.objects.filter(status=True)[:20]
+    products = Product.objects.filter(status=True)
 
     cat = Category.objects.filter(status=True)
     
