@@ -142,7 +142,11 @@ def home(request):
 
     order_get = request.GET.getlist('order')
     home_cats = Category.objects.filter(home=True)[:7]
-    slider_setup = SliderSetup.objects.get()
+
+    try:
+        slider_setup = SliderSetup.objects.get()
+    except:
+        slider_setup = SliderSetup.objects.create()
 
     try:
         loyal = LoyaltyCardSettings.objects.get()
