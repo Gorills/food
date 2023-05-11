@@ -2,6 +2,7 @@ import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
+from accounts.models import LoyaltyCardSettings
 from shop.models import Category, Manufacturer, ShopSetup, Product
 from setup.models import BaseSettings
 from .models import SliderSetup, Slider, Page
@@ -142,7 +143,16 @@ def home(request):
     order_get = request.GET.getlist('order')
     home_cats = Category.objects.filter(home=True)[:7]
     slider_setup = SliderSetup.objects.get()
-    shop_setup = ShopSetup.objects.get()
+
+    try:
+        loyal = LoyaltyCardSettings.objects.get()
+    except:
+        loyal = LoyaltyCardSettings.objects.create()
+
+    try:
+        shop_setup = ShopSetup.objects.get()
+    except:
+        shop_setup = ShopSetup.objects.create()
 
     sliders = Slider.objects.filter(day__in=[7, current_day])
 
