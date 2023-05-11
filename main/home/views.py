@@ -4,9 +4,9 @@ from django.views.decorators.http import require_GET
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
 from shop.models import Category, Manufacturer, ShopSetup, Product
-from setup.models import BaseSettings
+from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page
-from blog.models import Post
+from blog.models import BlogSetup, Post
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
@@ -138,6 +138,28 @@ def home(request):
     # cart.clear()
     # cart.options_clear()
     # cart.combo_clear()
+
+
+    try:
+        setup = BaseSettings.objects.get()
+        shop_setup = ShopSetup.objects.get()
+        blog_setup = BlogSetup.objects.get()
+        email = EmailSettings.objects.get()
+        theme = ThemeSettings.objects.get()
+        colors = Colors.objects.get()
+    except:
+        setup = BaseSettings()
+        shop_setup = ShopSetup()
+        blog_setup = BlogSetup()
+        email = EmailSettings()
+        theme = ThemeSettings()
+        colors = Colors()
+        colors.save()
+        theme.save()
+        email.save()
+        setup.save()
+        shop_setup.save()
+        blog_setup.save()
 
 
     order_get = request.GET.getlist('order')
