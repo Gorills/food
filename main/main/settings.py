@@ -191,7 +191,7 @@ try:
     theme_name = 'core/theme/'+ name +'/views'
 
 except:
-    name = 'default'
+    name = 'sushi'
     theme_name = 'core/theme/'+ name +'/views'
 
 

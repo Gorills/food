@@ -14,7 +14,7 @@ from decimal import Decimal
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
-    theme_address = 'default'
+    theme_address = 'sushi'
 
 try:
     sms_text = BaseSettings.objects.get().sms_text

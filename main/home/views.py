@@ -11,7 +11,7 @@ from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
-    theme_address = 'default'
+    theme_address = 'sushi'
 
 from django.views.generic import TemplateView, ListView
 
