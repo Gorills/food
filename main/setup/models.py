@@ -141,8 +141,8 @@ class Colors(SingletonModel):
 
     bg_btn = models.CharField(max_length=50, default='#222222')
     border_btn = models.CharField(max_length=50, default='#222222')
-    color_btn = models.CharField(max_length=50, default='#222222')
-    color_btn_light = models.CharField(max_length=50, default='#fff')
+    color_btn = models.CharField(max_length=50, default='#ffffff')
+    color_btn_light = models.CharField(max_length=50, default='#222222')
 
 
 
