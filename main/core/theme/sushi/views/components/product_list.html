@@ -1,5 +1,5 @@
 {% load thumbnail %}
-
+{% load l10n %}
 <div class="product-list {% if slider == 'true' %}product-list--slider owl-carousel{% endif %}">
     
         
@@ -80,14 +80,46 @@
             </div>
         </div>
         <div class="product-list__bottom-wrap">
+
+
             <div class="product-list__prices">
-                <p class="product-list__price" id="price-{{ product.id }}" data-price="{{ product.price }}">{{ product.price | floatformat:0 }} ₽</p>
-                {% if product.old_price %}
-                    <p class="product-list__old" id="old_price-{{ product.id }}" data-price="{{ product.old_price }}">{{ product.old_price | floatformat:0 }}₽</p>
+
+                <div class="product-list__prices-inner">
+                    <p class="product-list__price price-{{ product.id }}" id="" data-price="{{ product.price }}">{{ product.price | floatformat:0 }} ₽</p>
+                    {% if product.old_price %}
+                        <p class="product-list__old old_price-{{ product.id }}" id="" data-price="{{ product.old_price }}">{{ product.old_price | floatformat:0 }}₽</p>
+                    {% endif %}
+                </div>
+
+                {% if product.get_all_options %}
+                <a href="#" class="option_setup">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14.91" height="14.288" viewBox="0 0 14.91 14.288">
+                        <g id="adjust_1_" data-name="adjust (1)" transform="translate(0 -10.667)">
+                        <g id="Group_2337" data-name="Group 2337" transform="translate(0 20.607)">
+                            <g id="Group_2336" data-name="Group 2336">
+                            <path id="Path_936" data-name="Path 936" d="M14.288,353.553H12.634a2.16,2.16,0,0,0-4.146,0H.621a.621.621,0,0,0,0,1.242H8.488a2.16,2.16,0,0,0,4.146,0h1.654a.621.621,0,0,0,0-1.242Zm-3.727,1.553a.932.932,0,1,1,.932-.932A.933.933,0,0,1,10.561,355.106Z" transform="translate(0 -352)" fill="#40547b"></path>
+                            </g>
+                        </g>
+                        <g id="Group_2339" data-name="Group 2339" transform="translate(0 10.667)">
+                            <g id="Group_2338" data-name="Group 2338">
+                            <path id="Path_937" data-name="Path 937" d="M14.288,12.22H12.634a2.16,2.16,0,0,0-4.146,0H.621a.621.621,0,1,0,0,1.242H8.488a2.16,2.16,0,0,0,4.146,0h1.654a.621.621,0,0,0,0-1.242Zm-3.727,1.553a.932.932,0,1,1,.932-.932A.933.933,0,0,1,10.561,13.773Z" transform="translate(0 -10.667)" fill="#40547b"></path>
+                            </g>
+                        </g>
+                        <g id="Group_2341" data-name="Group 2341" transform="translate(0 15.637)">
+                            <g id="Group_2340" data-name="Group 2340">
+                            <path id="Path_938" data-name="Path 938" d="M14.288,182.887H6.422a2.16,2.16,0,0,0-4.146,0H.621a.621.621,0,0,0,0,1.242H2.276a2.16,2.16,0,0,0,4.146,0h7.867a.621.621,0,0,0,0-1.242Zm-9.94,1.553a.932.932,0,1,1,.932-.932A.933.933,0,0,1,4.349,184.44Z" transform="translate(0 -181.334)" fill="#40547b"></path>
+                            </g>
+                        </g>
+                        </g>
+                    </svg>
+            
+                    
+                </a>
                 {% endif %}
             </div>
 
-            {% if product.options.count == 0 %}
+            {% if product.options.count <= 0 %}
             <form data-id="{{ product.id }}" data-quantity="1" data-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
                 {% csrf_token %}
                 <input type="text" name="quantity" hidden value="1">
@@ -95,23 +127,106 @@
             
                 <button class="btn btn--primary">В Корзину</button>
             </form>
-            {% elif product.get_option %}
+            {% elif product.get_first_select %}
             <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
             {% else %}
            
             
-            <a href="{{ product.get_absolute_url }}" class="btn btn--primary">Выбрать опции</a>
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
+
             {% endif %}
+           
             
             <div class="product-options">
-            {% if product.get_option %}
-                {% for option in product.get_option %}
+            {% if product.get_first_select %}
+                {% for option in product.get_first_select %}
                 <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if forloop.counter == 1 %}{% thumbnail product.thumb size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
                     {{ option.option_value }}
                 </div>
                 {% endfor %}
             {% endif %}
             </div>
+            
+            
+
+            {% if product.get_all_options %}
+            <div class="product-options-popup">
+
+                <div class="product-options-popup__layout"></div>
+                
+                <div class="product-options-popup__inner">
+                    <a href="#" class="product-options-popup__closer">
+                        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </a>
+
+                    <div class="product-options-popup__options-row-wrap">
+
+                        {% for type in product.get_all_options %}
+                            {% if type.option_class == 'checkbox' %}
+                            <div class="product-options-popup__options-row">
+                                <div class="product-options-popup__options-name">{{ type.name }}: </div>
+
+
+
+                            
+                                {% if type.option_class == 'checkbox' %}
+                                <div class="product-options-popup__options-checkbox-row">
+                                    {% for option in product.options.all %}
+                                        {% if option.type == type %}
+                                            
+                                                <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                                
+                                                <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+                    
+
+                    <div class="product-options-popup__row">
+                        
+
+
+                        <div class="product-options-popup__counter">
+
+                            <div class="product-options-popup__minus">
+                                <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
+                                </svg>
+                            </div>
+
+                            <input class="product-options-popup__input product-options-popup__count-inp" min="1" type="number" name="quantity" required="" id="id_quantity" value="1">
+                            
+
+                            <div class="product-options-popup__plus">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
+                                </svg>
+                            </div>
+                            
+                            
+                            
+                        </div>
+                        <div class="product-options-popup__price-wrap">
+                            <div class="product-options-popup__price" data-price="{{ product.price | floatformat:0 }}">{{ product.price | floatformat:0 }} ₽</div>
+                            <div class="product-options-popup__old-price" data-price="{{ product.old_price | floatformat:0 }}">{{ product.old_price | floatformat:0 }} ₽</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn--primary product-options-popup_btn" data-csrf="{{ csrf_token }}" data-product="{{ product.id }}" data-price="{{ product.price }}" data-quantity="1">В корзину</a>
+
+                </div>
+                
+
+            </div>
+            {% endif %}
+
             
         </div>
     </div>

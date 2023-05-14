@@ -604,6 +604,28 @@ calculate();
 
 
 
+$(document).on('click','.product-options-popup__minus',function(){
+    var $parent = $(this).closest('.product-options-popup__inner');
+    var value = $parent.find('.product-options-popup__count-inp').val();
+    
+    value--;
+    if (value < 1) {
+        value = 1;
+    }
+    $parent.find('.product-options-popup__count-inp').val(value);
+    $parent.find('.product-options-popup_btn').attr('data-quantity', value);
+});
+$(document).on('click','.product-options-popup__plus',function(){
+    var $parent = $(this).closest('.product-options-popup__inner');
+    var value = $parent.find('.product-options-popup__count-inp').val();
+    
+    value++;
+    
+    $parent.find('.product-options-popup__count-inp').val(value);
+    $parent.find('.product-options-popup_btn').attr('data-quantity', value);
+});
+
+
 // Options
 
 $(document).ready(function() {
@@ -694,7 +716,7 @@ $(document).on('click','.select-wrap__item',function(){
     $('.product-detail__price-old').html(oldPrice + '₽');
     $('.product-detail__price').html(totalPrice + '₽');
     $('.options_btn').attr('data-price', totalPrice).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
-  });
+});
 
 $(document).ready(function() {
     var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
@@ -779,7 +801,7 @@ $(document).ready(function() {
   
   
 
-  $('.options_btn, .product-options__btn').click(function(e) {
+  $('.options_btn, .product-options__btn, .product-options-popup_btn').click(function(e) {
     e.preventDefault();
     var options_id = $(this).attr('data-options-id');
     var options = $(this).attr('data-options');
@@ -790,6 +812,9 @@ $(document).ready(function() {
     var csrfToken = $(this).attr('data-csrf');
 
     console.log(options_id, options, products, quantity, price);
+
+    var parent_get = $(this).closest('.product-options-popup');
+    var btn_get = parent_get.find('.product-options-popup_btn')
 
     if (options && options_id && products && quantity && price) { 
         data = {
@@ -816,6 +841,12 @@ $(document).ready(function() {
             $('.options_btn').removeClass('btn--primary')
             $('.options_btn').html('Добавлен')
             $('.options_btn').addClass('btn--success')
+
+            btn_get.html('Добавлен')
+            
+
+            
+            
             
             function explode(){
 
@@ -823,6 +854,10 @@ $(document).ready(function() {
                 $('.options_btn').addClass('btn--primary')
                 $('.options_btn').html('В корзину')
                 $('.options_btn').removeClass('btn--success')
+
+
+                btn_get.html('В корзину')
+               
             }
             setTimeout(explode, 1000);
     
@@ -846,8 +881,15 @@ $(document).ready(function() {
             $(".header__cart-wrap").load(location.href + " .header__cart");
             $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
             $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-    
-    
+            
+            btn_get.html('Добавлен')
+            function explode() {
+
+
+                btn_get.html('В корзину')
+               
+            }
+            setTimeout(explode, 1000);
             
         });
 
@@ -909,18 +951,23 @@ $(document).on('click','.product-options__item',function(e){
     var product_id = $(this).attr('data-product-id')
     var image = $(this).attr('data-image')
     var weight = $(this).attr('data-weight')
+    var $productItem = $(this).closest('.product-list__item');
 
     if (weight != '') {
-        $('.product-list__weight-'+product_id).html(weight)
+        $productItem.find('.product-list__weight-'+product_id).html(weight)
+
     }
 
     if (image != '') {
-        $('.product-list__thumb-'+product_id).attr('src', image)
+      
+        $productItem.find('.product-list__thumb-'+product_id).attr('src', image)
+
     }
 
-    var pr_price = parseFloat($('#price-'+product_id).attr('data-price'))
-    var old_price = parseFloat($('#old_price-'+product_id).attr('data-price'))
+    var pr_price = parseFloat($('.price-'+product_id).attr('data-price'))
+    var old_price = parseFloat($('.old_price-'+product_id).attr('data-price'))
 
+    
     
     $(this).parent().find('.product-options__item').removeClass('product-options__item--active')
 
@@ -932,15 +979,76 @@ $(document).on('click','.product-options__item',function(e){
     var res_price = price + pr_price;
     var res_old_price = old_price + price;
 
-    $(this).parent().prev('.product-options__btn').attr('data-price', res_price).attr('data-options', value).attr('data-options-id', id)
+    $productItem.find('.product-options__btn').attr('data-price', res_price).attr('data-options', value).attr('data-options-id', id)
 
-    console.log(res_price)
-    $('#price-'+product_id).html(res_price + ' ₽');
-    $('#old_price-'+product_id).html(res_old_price + ' ₽');
-    $('.product-options__span-'+product_id).html(value);
+    $productItem.find('.product-list__price').html(res_price + ' ₽')
+    $productItem.find('.product-list__old').html(res_old_price + ' ₽')
+    
+    
+    $productItem.find('.product-options__span-'+product_id).html(value)
 
 });
 
+
+
+// Дополнительные опции
+$(document).ready(function() {
+    $('input[type="checkbox"]').change(function() {
+        
+            
+        // Найти родительский элемент всех выбранных checkbox
+        var $parent = $(this).parents('.product-options-popup__inner');
+        
+        // Обновить сумму всех выбранных чекбоксов
+        var sum = 0;
+        $parent.find('input[type="checkbox"]:checked').each(function() {
+            sum += parseFloat($(this).data('price'));
+        });
+        var price = $parent.find('.product-options-popup__price').attr('data-price');
+        var old_price = $parent.find('.product-options-popup__old-price').attr('data-price');
+        var new_price = parseFloat(price) + sum;
+        var new_old_price = parseFloat(old_price) + sum;
+
+        
+        // Записать новую цену в атрибут data-price кнопки .btn
+        $parent.find('.btn').attr('data-price', new_price.toFixed(2));
+        $parent.find('.product-options-popup__price').html(new_price + ' ₽');
+        $parent.find('.product-options-popup__old-price').html(new_old_price + ' ₽');
+        
+        // Собрать значения data-id всех выбранных чекбоксов через запятую
+        var ids = [];
+        $parent.find('input[type="checkbox"]:checked').each(function() {
+            ids.push($(this).data('id'));
+        });
+        
+        // Записать значения data-id через запятую в атрибут data-options-id кнопки .btn
+        $parent.find('.btn').attr('data-options-id', ids.join(','));
+        
+        // Собрать названия выбранных значений через запятую
+        var options = [];
+        $parent.find('input[type="checkbox"]:checked').each(function() {
+            options.push($(this).val());
+        });
+        
+        // Записать названия выбранных значений через запятую в атрибут data-options кнопки .btn
+        $parent.find('.btn').attr('data-options', options.join(', '));
+    });
+  });
+  
+
+$(document).on('click','.option_setup',function(e){
+    e.preventDefault();
+    var $parent = $(this).parents('.product-list__item');
+
+    var popup = $parent.find('.product-options-popup');
+    popup.toggleClass('product-options-popup--active')
+})
+
+
+$(document).on('click','.product-options-popup__closer, .product-options-popup__layout',function(e){
+    e.preventDefault();
+    $(this).parents('.product-options-popup').removeClass('product-options-popup--active')
+})
 
 
 
@@ -2038,3 +2146,5 @@ $(document).on('click','.plus_combo',function(e){
         });
 })
   
+
+

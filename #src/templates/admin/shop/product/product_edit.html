@@ -199,11 +199,11 @@
                 {{ form.parent }}
                 {{ form.parent.errors }}
             </p>
-            <p>
+            {% comment %} <p>
                 <span class="required">*</span> {{ form.product_connect.label_tag }}
                 {{ form.product_connect }}
                 {{ form.product_connect.errors }}
-            </p>
+            </p> {% endcomment %}
             {% comment %} <p>
                 {{ form.product_manufacturer.label_tag }}
                 {{ form.product_manufacturer }}

@@ -210,7 +210,7 @@ class Cart(object):
                     'options': options_res_by_type,
                 })
             except Exception as e:
-                print(e)
+                # print(e)
                 pass
 
         return options_list

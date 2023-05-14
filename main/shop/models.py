@@ -146,6 +146,7 @@ class Manufacturer(models.Model):
         verbose_name = 'Производитель'
         verbose_name_plural = 'Производители'
 
+from itertools import groupby
 
 
 class Product(models.Model):
@@ -261,7 +262,7 @@ class Product(models.Model):
         return persent
 
         
-    def get_option(self):
+    def get_first_select(self):
         select_parent = None
         
         for option in self.options.all():
@@ -278,6 +279,64 @@ class Product(models.Model):
             return None
         
         return select_option
+
+    def get_all_options(self):
+
+        first_select = self.get_first_select()
+
+        if first_select is not None:
+            
+            # Получить список идентификаторов опций, находящихся в `first_select`
+            first_select_ids = first_select.values_list('id', flat=True)
+
+            # Исключить опции с указанными идентификаторами
+            select_option = self.options.exclude(id__in=first_select_ids)
+
+
+            products_op = []
+            for pr in select_option:
+                products_op.append(pr.id)
+
+        
+
+            types = OptionType.objects.filter(t_options__in=select_option)
+
+            options_type = []
+            for t in types:
+                options_type.append(t.id)
+            
+            new_x = [el for el, _ in groupby(options_type)]
+
+            filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
+
+
+            return filter_types
+        
+
+
+        else:
+            select_option = self.options.all()
+            
+            products_op = []
+            for pr in select_option:
+                products_op.append(pr.id)
+
+        
+
+            types = OptionType.objects.filter(t_options__in=select_option)
+
+            options_type = []
+            for t in types:
+                options_type.append(t.id)
+            
+            new_x = [el for el, _ in groupby(options_type)]
+
+            filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
+
+
+            return filter_types
+        
+            
 
 
     class Meta:

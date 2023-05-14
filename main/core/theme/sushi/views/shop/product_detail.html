@@ -111,40 +111,7 @@
                 <p class="product-detail__desc" itemprop="description">{{ product.short_description }}</p>
                 {% endif %}
                 
-                {% if product.product_connect.count > 0 %}
-                <div class="product-detail__options">
-
-                    <div class="product-detail__options-row">
-                       
-                        
-                        <div class="product-detail__option-link-wrap product-detail__option-link-wrap--active">
-                                            
-                            <a href="{{ product.get_absolute_url }}" class="product-detail__option-link product-detail__option-link--active">
-
-                                {{ product.weight }} {{ product.weight_class }} 
-
-                            </a>
-
-
-                        </div>
-                        {% for pr in product.product_connect.all %}
-
-                        <div class="product-detail__option-link-wrap">
-                                            
-                            <a href="{{ pr.get_absolute_url }}" class="product-detail__option-link">
-
-                                {{ pr.weight }} {{ product.weight_class }}                                
-
-                            </a>
-
-
-                        </div>
-                           
-                        {% endfor %}
-                    </div>
-                        
-                </div>
-                {% endif %}
+                
 
 
                

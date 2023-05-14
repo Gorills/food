@@ -126,7 +126,7 @@ def home(request):
         if get_cookie == 'ZcMWy~DhAiTo0@~':
             request.session['get_cookie'] = 'True'
 
-    print(current_day)
+    # print(current_day)
 
     # payment = PaymentSet.objects.get()
     # payment.delete()
