@@ -260,19 +260,24 @@ class Product(models.Model):
         persent = (razn/old)*100
         return persent
 
-    def get_option(self):
-
-        op_type = OptionType.objects.filter(option_class='select').first()
-
         
-        option = self.options.filter(type_id=op_type)
-
-        if not option:
+    def get_option(self):
+        select_parent = None
+        
+        for option in self.options.all():
+            if option.type.option_class == 'select':
+                select_parent = option.type
+                break
+        
+        if not select_parent:
             return None
         
-        else:
-            return option
+        select_option = select_parent.t_options.filter(type__option_class='select', parent=self)
         
+        if not select_option:
+            return None
+        
+        return select_option
 
 
     class Meta:
