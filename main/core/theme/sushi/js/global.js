@@ -422,9 +422,7 @@ $(document).on('click','.cart__order-line__balls-link',function(e){
         
         $(".cart__inner").load(location.href + " .cart__refresh");
         $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-        // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        
     
     });
 
@@ -832,10 +830,10 @@ $(document).ready(function() {
             
             $(".cart__inner").load(location.href + " .cart__refresh");
         
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             
 
             $('.options_btn').removeClass('btn--primary')
@@ -877,10 +875,10 @@ $(document).ready(function() {
             
             $(".cart__inner").load(location.href + " .cart__refresh");
         
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             
             btn_get.html('Добавлен')
             function explode() {
@@ -913,10 +911,10 @@ $(document).ready(function() {
     $.post( "/cart/remove_options/", data)
         .done(function( ) {      
             $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             
         });
 })
@@ -934,11 +932,11 @@ $(document).on('click','.plus_options',function(e){
     }
     $.post( url, data)
         .done(function( ) {      
-            $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__inner").load(location.href + " .cart__refresh");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         });
 })
 
@@ -1814,14 +1812,14 @@ $(document).on('click', '.cart__input-sms-btn' ,function(e){
         $('#phone').removeAttr('readonly');
         $(".phone_refresh").load(location.href + " .phone_refresh__inner");
 
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        
-        $(".cart__inner").load(location.href + " .cart__refresh");
-        $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+        // $(".header__cart-wrap").load(location.href + " .header__cart");
+        // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
         // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        $(".header__cart-wrap").load(location.href + " .header__cart");
+        
+        // $(".cart__inner").load(location.href + " .cart__refresh");
+        // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+        // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        // $(".header__cart-wrap").load(location.href + " .header__cart");
         // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
 
         function getPause() {
@@ -2081,10 +2079,10 @@ $(document).ready(function() {
                 comboPopup.removeClass('combo-popup--active');
                 $(".cart__inner").load(location.href + " .cart__refresh");
             
-                $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+                // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
                 $(".header__cart-wrap").load(location.href + " .header__cart");
-                $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-                $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+                // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+                // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
 
 
                 addCart(combo, name, price, 'Комбо', quantity)
@@ -2108,10 +2106,10 @@ $(document).on('click','.combo__remove',function(e){
     $.post( "/cart/remove_combo/", data)
         .done(function( ) {      
             $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
             removeCart(id, name, price, 'Комбо', quantity)
         });
 })
@@ -2132,10 +2130,10 @@ $(document).on('click','.plus_combo',function(e){
     $.post( url, data)
         .done(function( ) {      
             $(".cart__inner").load(location.href + " .cart__refresh");
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
+            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
 
             
             if (url.indexOf('plus_combo') > -1) {
