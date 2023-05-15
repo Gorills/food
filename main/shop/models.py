@@ -263,22 +263,25 @@ class Product(models.Model):
 
         
     def get_first_select(self):
-        select_parent = None
-        
-        for option in self.options.all():
-            if option.type.option_class == 'select':
-                select_parent = option.type
-                break
-        
-        if not select_parent:
+        try:
+            select_parent = None
+            
+            for option in self.options.all():
+                if option.type.option_class == 'select':
+                    select_parent = option.type
+                    break
+            
+            if not select_parent:
+                return None
+            
+            select_option = select_parent.t_options.filter(type__option_class='select', parent=self)
+            
+            if not select_option:
+                return None
+            
+            return select_option
+        except:
             return None
-        
-        select_option = select_parent.t_options.filter(type__option_class='select', parent=self)
-        
-        if not select_option:
-            return None
-        
-        return select_option
 
     def get_all_options(self):
 
