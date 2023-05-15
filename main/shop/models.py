@@ -282,59 +282,63 @@ class Product(models.Model):
 
     def get_all_options(self):
 
-        first_select = self.get_first_select()
+        try:
 
-        if first_select is not None:
+            first_select = self.get_first_select()
+
+            if first_select is not None:
+                
+                # Получить список идентификаторов опций, находящихся в `first_select`
+                first_select_ids = first_select.values_list('id', flat=True)
+
+                # Исключить опции с указанными идентификаторами
+                select_option = self.options.exclude(id__in=first_select_ids)
+
+
+                products_op = []
+                for pr in select_option:
+                    products_op.append(pr.id)
+
             
-            # Получить список идентификаторов опций, находящихся в `first_select`
-            first_select_ids = first_select.values_list('id', flat=True)
 
-            # Исключить опции с указанными идентификаторами
-            select_option = self.options.exclude(id__in=first_select_ids)
+                types = OptionType.objects.filter(t_options__in=select_option)
+
+                options_type = []
+                for t in types:
+                    options_type.append(t.id)
+                
+                new_x = [el for el, _ in groupby(options_type)]
+
+                filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
 
 
-            products_op = []
-            for pr in select_option:
-                products_op.append(pr.id)
-
-        
-
-            types = OptionType.objects.filter(t_options__in=select_option)
-
-            options_type = []
-            for t in types:
-                options_type.append(t.id)
+                return filter_types
             
-            new_x = [el for el, _ in groupby(options_type)]
-
-            filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
 
 
-            return filter_types
-        
+            else:
+                select_option = self.options.all()
+                
+                products_op = []
+                for pr in select_option:
+                    products_op.append(pr.id)
 
-
-        else:
-            select_option = self.options.all()
             
-            products_op = []
-            for pr in select_option:
-                products_op.append(pr.id)
 
-        
+                types = OptionType.objects.filter(t_options__in=select_option)
 
-            types = OptionType.objects.filter(t_options__in=select_option)
+                options_type = []
+                for t in types:
+                    options_type.append(t.id)
+                
+                new_x = [el for el, _ in groupby(options_type)]
 
-            options_type = []
-            for t in types:
-                options_type.append(t.id)
-            
-            new_x = [el for el, _ in groupby(options_type)]
-
-            filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
+                filter_types = OptionType.objects.filter(id__in=new_x).exclude(option_class='select')
 
 
-            return filter_types
+                return filter_types
+        except:
+            return None
         
             
 
