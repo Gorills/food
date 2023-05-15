@@ -12,10 +12,12 @@ def feed(request):
 
     cat = Category.objects.filter(status=True)
     
+    site = 'https://' + str(request.META['HTTP_HOST'])
 
     context = {
         'cats': cat, 
-        'products': products
+        'products': products,
+        'site': site
     }
 
     return render(request, 'global/feed.html', context, content_type="application/xml")

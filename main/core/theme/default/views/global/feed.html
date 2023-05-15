@@ -4,7 +4,7 @@
     <shop>
         <name>{{ setup.name }}</name>
         <company>{{ setup.name }}</company>
-        <url>http://best.seller.ru</url>
+        <url>{{site}}</url>
         <platform>ProfIT Platform</platform>
         <categories>
           {% for cat in cats %}
@@ -28,7 +28,7 @@
                 {% endif %}
                 <currencyId>RUR</currencyId>
                 <categoryId>{{ product.parent.id }}</categoryId>
-                <picture>{{ product.thumb.url }}</picture>
+                <picture>{{site}}{{ product.thumb.url }}</picture>
                 
                 <pickup>true</pickup>
                 <delivery>true</delivery>
