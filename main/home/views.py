@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_GET
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
+from orders.models import Order
 from shop.models import Category, Manufacturer, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page
@@ -188,8 +189,60 @@ def home(request):
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
 
 
+    try:
+        order_id = request.GET.get('id')
+        order = Order.objects.get(id=order_id)
+
+        products = []
+        for item in order.items.all():
+            if item.product:
+                if not item.product.related:
+                    item_one = {
+                        "id": item.product.id,
+                        "name": item.product.name,
+                        "price": str(item.price),
+                    
+                        "category": item.product.parent.name,
+                        
+                        "quantity": item.quantity
+                    }
+                    products.append(item_one)
+            elif item.combo:
+                
+                item_one = {
+                    "id": item.combo.id,
+                    "name": item.combo.name,
+                    "price": str(item.price),
+                
+                    "category": 'Комбо',
+                    
+                    "quantity": item.quantity
+                }
+                products.append(item_one)
+
+
+        order_object = {
+            "ecommerce": {
+                "currencyCode": "RUB",
+                "purchase": {
+                    "actionField": {
+                        "id" : f"{order.id}"
+                    },
+                    "products": products
+                }
+            }
+        }
+    except Exception as e:
+        print(e)
+        order_object = {}
+    
+
+    print(order_object)
+
+
     context = {
         'current_day': current_day,
+        'order': order_object,
         'home_cats': home_cats,
         'slider_setup': slider_setup,
         'sliders': sliders,

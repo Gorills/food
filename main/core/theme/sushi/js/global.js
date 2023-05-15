@@ -203,6 +203,13 @@ function removeCart(id, name, price, category, quantity) {
     })
 }
 
+function orderSuccess(order) {
+    dataLayer.push(
+        order
+    )
+}
+
+
 // Добавление в корзину product-list__form
 $(function() {
     $(document).on('submit','.product-list__form, .product-detail__form',function(e){
@@ -804,12 +811,15 @@ $(document).ready(function() {
     var options_id = $(this).attr('data-options-id');
     var options = $(this).attr('data-options');
     var products = $(this).attr('data-product');
+    var products_name = $(this).attr('data-product-name');
+    var category = $(this).attr('data-category');
     var quantity = parseInt($(this).attr('data-quantity'));
     var price = parseFloat($(this).attr('data-price'));
 
     var csrfToken = $(this).attr('data-csrf');
 
     console.log(options_id, options, products, quantity, price);
+    addCart(products, products_name, price, category, quantity)
 
     var parent_get = $(this).closest('.product-options-popup');
     var btn_get = parent_get.find('.product-options-popup_btn')
@@ -1908,21 +1918,37 @@ jQuery(document).ready(function ($) {
 jQuery(document).ready(function () {
     var pathname = window.location.href; 
     var origin   = window.location.origin;
+    var order = $('.odred-done').attr('data-order')
 
-
+    
     res = pathname.replace(origin, '')
     
 
-    if(res == '/?order=True') {
+    if(res.indexOf('/?order=True') > -1) {
         $('.odred-done').show()
+        
+        // Преобразуем объект в строку JSON-формата
+        var jsonString = JSON.stringify(order);
 
+        // Заменяем символы в строке
+        jsonString = jsonString.replace(/'/g, '"'); 
+        var newStr = jsonString.slice(1, -1);
+
+
+        // Преобразуем строку JSON-формата обратно в объект
+        var newObj = JSON.parse(newStr);
+
+       
+        dataLayer.push(newObj)
+        
+        
         $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
+            
             window.location.href = '/'
+
         })
     }
 
-
-    
 })
 
 

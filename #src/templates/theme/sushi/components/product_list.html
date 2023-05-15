@@ -120,7 +120,7 @@
             </div>
 
             {% if product.options.count <= 0 %}
-            <form data-id="{{ product.id }}" data-quantity="1" data-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
+            <form data-id="{{ product.id }}" data-quantity="1" data-name="{{ product.name }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-category="{{ product.parent.name }}" class="product-list__form" action="{% url "cart:cart_add" product.id %}" method="post">
                 {% csrf_token %}
                 <input type="text" name="quantity" hidden value="1">
                 <input type="hidden" name="update" value="False" id="id_update">
@@ -128,11 +128,11 @@
                 <button class="btn btn--primary">В Корзину</button>
             </form>
             {% elif product.get_first_select %}
-            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
             {% else %}
            
             
-            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
 
             {% endif %}
            

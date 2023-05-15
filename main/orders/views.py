@@ -264,7 +264,7 @@ def order_create(request):
                     cart.combo_clear()
                     cart.clear()
 
-                    return redirect('/?order=True')
+                    return redirect(f'/?order=True&id={order.id}')
         else:
             return redirect('home')
 
@@ -355,7 +355,7 @@ def order_confirm(request, pk):
             order.paid = True
             order.save()
 
-            return redirect('/?order=True')
+            return redirect(f'/?order=True&id={order.id}')
 
         context = {
             'order': order,
@@ -474,7 +474,7 @@ def order_success(request):
         
         order.save()
 
-        return redirect('/?order=True')
+        return redirect(f'/?order=True&id={order.id}')
 
     else:
         return redirect('orders:order_error')
@@ -546,7 +546,7 @@ def paykeeper_success(request):
         
         order.save()
 
-        return redirect('/?order=True')
+        return redirect(f'/?order=True&id={order.id}')
 
     else:
         return redirect('orders:paykeeper_error')
@@ -567,4 +567,4 @@ def tinkoff_success(request, pk):
     
     send_sms(sms_text(order.id), order.phone)
     
-    return redirect('/?order=True')
+    return redirect(f'/?order=True&id={order.id}')
