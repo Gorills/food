@@ -840,10 +840,8 @@ $(document).ready(function() {
             
             $(".cart__inner").load(location.href + " .cart__refresh");
         
-            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+            
             
 
             $('.options_btn').removeClass('btn--primary')
@@ -852,6 +850,7 @@ $(document).ready(function() {
 
             btn_get.html('Добавлен')
             
+            $('.product-options-popup').removeClass('product-options-popup--active')
 
             
             
@@ -885,16 +884,17 @@ $(document).ready(function() {
             
             $(".cart__inner").load(location.href + " .cart__refresh");
         
-            // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+         
             $(".header__cart-wrap").load(location.href + " .header__cart");
-            // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            // $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
+        
+            $('.product-options-popup').removeClass('product-options-popup--active')
             
             btn_get.html('Добавлен')
             function explode() {
 
 
                 btn_get.html('В корзину')
+
                
             }
             setTimeout(explode, 1000);
@@ -942,7 +942,7 @@ $(document).on('click','.plus_options',function(e){
     }
     $.post( url, data)
         .done(function( ) {      
-            // $(".cart__inner").load(location.href + " .cart__refresh");
+            $(".cart__inner").load(location.href + " .cart__refresh");
             // $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
             $(".header__cart-wrap").load(location.href + " .header__cart");
             // $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
