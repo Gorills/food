@@ -97,7 +97,7 @@ def cart_detail(request):
         'cart': cart,
         'coupon_apply_form': coupon_apply_form
     }
-    return render(request, 'cart/detail.html', context)
+    return render(request, 'global/detail.html', context)
 
 
 

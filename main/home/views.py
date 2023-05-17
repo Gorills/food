@@ -233,7 +233,7 @@ def home(request):
             }
         }
     except Exception as e:
-        print(e)
+        # print(e)
         order_object = {}
     
 

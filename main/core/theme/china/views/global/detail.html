@@ -547,7 +547,7 @@
                     </div>
                     
 
-                    <input type="text" name="delivery_method" hidden value="Доставка" id="delivery_method">
+                    <input type="text" name="delivery_method" hidden value="{% if request.session.delivery == 1 %}Доставка{% else %}Самовывоз{% endif %}" id="delivery_method">
 
 
                     <div class="cart__select" id="order_time" data-value="0">
