@@ -203,99 +203,68 @@ function removeCart(id, name, price, category, quantity) {
     })
 }
 
-function orderSuccess(order) {
-    dataLayer.push(
-        order
-    )
-}
 
 
 // Добавление в корзину product-list__form
 $(function() {
-    $(document).on('submit','.product-list__form, .product-detail__form',function(e){
+    $(document).on('submit', '.product-list__form, .product-detail__form', function(e) {
+      e.preventDefault();
+  
       var $form = $(this);
-      var id = $(this).attr('data-id')
-      var name = $(this).attr('data-name')
-      var price = $(this).attr('data-price')
-      var category = $(this).attr('data-category')
-      var quantity = $(this).attr('data-quantity')
-
-      
-
-      
-
+      var id = $form.data('id');
+      var name = $form.data('name');
+      var price = $form.data('price');
+      var category = $form.data('category');
+      var quantity = $form.data('quantity');
+  
       $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
         data: $form.serialize()
-      }).done(function() {
-
-        $.get( "/cart/set_delivery/1/", function() { 
-            $(".cart__inner").load(location.href + " .cart__refresh");
-            
-            $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-            $(".header__cart-wrap").load(location.href + " .header__cart");
-            $(".cart__deliv-method-wrap").load(location.href + " .cart__deliv-method");
-            $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-
-            $('#suggest').attr('required', 'required')
-            $('#finaladress').attr('required', 'required')
-            $('#finaladress').attr('name', 'address')
-            $('#pickupInput').removeAttr('name')
-            $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active')
-            $('.cart__pickup-row').removeClass('cart__pickup-row--active')
-            $('#delivery_method').val('Доставка')
-    $('.product-detail__button').addClass('btn--success')
+      })
+      .done(function() {
+        $.get("/cart/set_delivery/1/", function() {
+          refreshElements();
+          $('#suggest').attr('required', 'required');
+          $('#finaladress').attr('required', 'required').attr('name', 'address');
+          $('#pickupInput').removeAttr('name');
+          $('.cart__form-refresh-delivery').addClass('cart__form-refresh-delivery--active');
+          $('.cart__pickup-row').removeClass('cart__pickup-row--active');
+          $('#delivery_method').val('Доставка');
+          $('.product-detail__button').addClass('btn--success');
         });
-
-
-        $(".cart__inner").load(location.href + " .cart__refresh");
+  
         
-        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        $(".cart-detail-wrap").load(location.href + " .cart-detail-wrap__refresh");
-        
-
-        $form.children('button').removeClass('btn--primary')
-        $form.children('button').addClass('btn--success')
-        $form.children('button').html('Добавлен')
-
-        $('.product-detail__button').removeClass('btn--primary')
-        $('.product-detail__button').html('Добавлен')
-        $('.product-detail__button').addClass('btn--success')
-        
-        function explode(){
-
-            $form.children('button').addClass('btn--primary')
-            $form.children('button').removeClass('btn--success')
-            $form.children('button').html('Еще')
-
-            $('.product-detail__button').addClass('btn--primary')
-            $('.product-detail__button').html('В корзину')
-            $('.product-detail__button').removeClass('btn--success')
+  
+        $form.children('button').removeClass('btn--primary').addClass('btn--success').html('Добавлен');
+        $('.product-detail__button').removeClass('btn--primary').addClass('btn--success').html('Добавлен');
+  
+        setTimeout(function() {
+          $form.children('button').addClass('btn--primary').removeClass('btn--success').html('Еще');
+          $('.product-detail__button').addClass('btn--primary').removeClass('btn--success').html('В корзину');
+        }, 1000);
+  
+        setTimeout(function() {
+          $form.children('button').html('В корзину');
+        }, 5000);
+  
+        if (dataLayer) {
+          addCart(id, name, price, category, quantity);
         }
-        setTimeout(explode, 1000);
-
-        function uxplode(){
-            $form.children('button').html('В корзину')
-
-            
-        }
-        setTimeout(uxplode, 5000);
-        
-      }).fail(function() {
+      })
+      .fail(function() {
         console.log('fail');
       });
-      e.preventDefault();
-
-      if (dataLayer) {
-        addCart(id, name, price, category, quantity)
+  
+      function refreshElements() {
+        $(".cart__inner").load(location.href + " .cart__refresh");
+        $(".cart__order-create-wrapper").load(location.href + " .cart__order-create-wrapper-inner");
+        $(".header__cart-wrap").load(location.href + " .header__cart");
+        
       }
-      
     });
-
-    
-});
+  });
+  
 
 
 $(function() {

@@ -237,7 +237,7 @@ def home(request):
         order_object = {}
     
 
-    print(order_object)
+    # print(order_object)
 
 
     context = {
