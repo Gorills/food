@@ -52,8 +52,9 @@
                     
                     {{ product.name }}
                     <span class="product-options__span-{{ product.id }}">
-                    {% if product.get_option %}
-                        {% for option in product.get_option %}
+                    {% if product.get_first_select %}
+                    
+                        {% for option in product.get_first_select %}
                             {% if forloop.counter == 1 %}
                                 {{ option.option_value }}
                             {% endif %}
@@ -128,11 +129,11 @@
                 <button class="btn btn--primary">В Корзину</button>
             </form>
             {% elif product.get_first_select %}
-            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
             {% else %}
            
             
-            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_option %}{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_option %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
+            <button class="product-options__btn btn btn--primary" data-csrf="{{ csrf_token }}" data-category="{{ product.parent.name }}" data-product-name="{{ product.name }}" data-price="{{ product.price }}" data-options-id="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-options="{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.option_value }}{% endif %}{% endfor %}" data-quantity="1" data-product="{{ product.id }}">В корзину</button>
 
             {% endif %}
            

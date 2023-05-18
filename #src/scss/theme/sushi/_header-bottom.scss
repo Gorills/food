@@ -76,6 +76,11 @@
                 padding-right: 0;
             }
         }
+
+        @media screen and (max-width:768px) {
+            width: 100%;
+            text-align: center;
+        }
     }
 
     // .header-bottom__link
@@ -89,6 +94,11 @@
 
         @media screen and (max-width:996px) {
             padding: 8px;
+        }
+
+        @media screen and (max-width:768px) {
+            width: 100%;
+            text-align: center;
         }
         
         &:hover {

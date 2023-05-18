@@ -1,0 +1,8 @@
+<div class="option_autofield_detail">
+    {% for field in option.autofield.all %}
+    <div data-name="{{ field.name }}" data-price="{{ field.price }}" data-value="{{ field.value }}" data-weight="{% if field.weight %}{{ field.weight }}{% endif %}" class="option_autofield_detail__item">
+        {{ field.value }}, {{ field.price }}{% if field.weight %}, {{ field.weight }}{% endif %}
+    </div>
+    {% endfor %}
+
+</div>

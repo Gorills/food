@@ -606,3 +606,26 @@ label {
 
     }
 }
+
+
+.option_autofield_detail {
+    position: absolute;
+    
+    background-color: #fff;
+    z-index: 9999;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+    width: 100%;
+    height: fit-content;
+    max-height: 450px;
+    overflow-y: scroll;
+    &__item {
+        padding: 10px;
+        cursor: pointer;
+    }
+}
+
+.option__old-row, .option__row {
+    p {
+        position: relative;
+    }
+}
