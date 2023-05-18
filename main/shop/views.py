@@ -121,7 +121,7 @@ def category_detail(request, slug):
     if limit:
         paginator = Paginator(products_all, *limit)
     else:
-        paginator = Paginator(products_all, 16)
+        paginator = Paginator(products_all, 32)
 
 
     page_number = request.GET.get('page')
