@@ -1095,7 +1095,7 @@ $(document).ready(function(){
     $(document).on('click','.header__cart',function(e){
         e.preventDefault()
         
-        $('#cartData').load('/cart/', function() {
+        $('#cartData').load('/cart/ .cart', function() {
            
             $(this).find('.cart').addClass('cart--active');
             ymaps.ready(init);
