@@ -6,13 +6,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 
 from orders.models import Order
-from shop.models import Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -1188,6 +1188,61 @@ def admin_char(request):
         'chars': CharName.objects.filter(group=None)
     }
     return render(request, 'shop/char/char.html', context)
+
+
+# Автозаполнение для опций
+
+@user_passes_test(lambda u: u.is_superuser)
+def option_autofield_add(request):
+    if request.method == 'POST':
+        form_new = AutoFieldOptionsForm(request.POST)
+        if form_new.is_valid():
+            form_new.save()
+            return redirect('admin_option_type')
+        else:
+            return render(request, 'shop/option_type/option_autofield_add.html', {'form': form_new})
+
+    form = AutoFieldOptionsForm()
+    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/option_type/option_autofield_add.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def option_autofield_edit(request, pk):
+    option_autofield = AutoFieldOptions.objects.get(id=pk)
+    if request.method == 'POST':
+        form_new = AutoFieldOptionsForm(request.POST, instance=option_autofield)
+        if form_new.is_valid():
+            form_new.save()
+            return redirect('admin_option_type')
+        else:
+            return render(request, 'shop/option_type/option_autofield_edit.html', {'form': form_new})
+    
+    form = AutoFieldOptionsForm(instance=option_autofield)
+    context = {
+       'form': form,
+    }
+    return render(request, 'shop/option_type/option_autofield_edit.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def option_autofield_delete(request, pk):
+    option_autofield = AutoFieldOptions.objects.get(id=pk)
+    option_autofield.delete()
+    return redirect('admin_option_type')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def option_autofield_detail(request, pk):
+    option = OptionType.objects.get(id=pk)
+    context = {
+        'option': option,
+    }
+    return render(request, 'shop/option_type/option_autofield_detail.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def char_group_add(request):

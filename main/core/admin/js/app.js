@@ -722,3 +722,119 @@ $(document).on('click','.remove_item',function(e){
   $(this).parent().remove()
 
 });
+
+
+
+$(document).ready(function() {
+  // При изменении значения в инпуте с именем "old_option_value"
+  $(document).on('input','input[name="old_option_value"]',function(){
+
+
+    // Получаем значение выбранного варианта в селекте "old_type"
+
+    var parent = $(this).closest('.option__old-row');
+
+    var selectedOption = parent.find('select[name="old_type"]').val();
+
+    // Формируем URL запроса на основе выбранного значения
+    var url = '/admin/option_autofield/detail/' + selectedOption + '/';
+
+    // Отправляем AJAX-запрос на сервер для получения HTML-содержимого страницы
+    $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(response) {
+        // Вставляем полученный HTML после инпута
+        // parent.find('.option_autofield_detail').remove();
+        // parent.find('input[name="old_option_value"]').after(response);
+       
+        var html = $(response);
+        var optionItems = html.find('.option_autofield_detail__item');
+        var inputValue = $('input[name="old_option_value"]').val();
+        
+        var filteredItems = optionItems.filter(function() {
+          var itemName = $(this).data('value');
+          return itemName.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1;
+        });
+        
+        parent.find('input[name="old_option_value"]').next('.option_autofield_detail').remove();
+        parent.find('input[name="old_option_value"]').after('<div class="option_autofield_detail"></div>');
+        
+        parent.find('.option_autofield_detail').append(filteredItems);
+        
+      },
+      error: function(xhr, status, error) {
+        // Обрабатываем ошибку, если не удалось получить HTML
+        console.error('Ошибка при запросе страницы: ' + error);
+      }
+    });
+  });
+});
+
+
+$(document).ready(function() {
+  // При изменении значения в инпуте с именем "old_option_value"
+  $(document).on('input','input[name="option_value"]',function(){
+
+
+    // Получаем значение выбранного варианта в селекте "old_type"
+
+    var parent = $(this).closest('.option__row');
+
+    var selectedOption = parent.find('select[name="type"]').val();
+
+    // Формируем URL запроса на основе выбранного значения
+    var url = '/admin/option_autofield/detail/' + selectedOption + '/';
+
+    // Отправляем AJAX-запрос на сервер для получения HTML-содержимого страницы
+    $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(response) {
+        // Вставляем полученный HTML после инпута
+        // parent.find('.option_autofield_detail').remove();
+        // parent.find('input[name="old_option_value"]').after(response);
+       
+        var html = $(response);
+        var optionItems = html.find('.option_autofield_detail__item');
+        var inputValue = $('input[name="option_value"]').val();
+        
+        var filteredItems = optionItems.filter(function() {
+          var itemName = $(this).data('value');
+          return itemName.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1;
+        });
+        
+        parent.find('input[name="option_value"]').next('.option_autofield_detail').remove();
+        parent.find('input[name="option_value"]').after('<div class="option_autofield_detail"></div>');
+        
+        parent.find('.option_autofield_detail').append(filteredItems);
+        
+      },
+      error: function(xhr, status, error) {
+        // Обрабатываем ошибку, если не удалось получить HTML
+        console.error('Ошибка при запросе страницы: ' + error);
+      }
+    });
+  });
+});
+$(document).on('click','.option_autofield_detail__item',function(){
+    var old_parent = $(this).closest('.option__old-row');
+    var parent = $(this).closest('.option__row');
+    
+    var price = $(this).data('price');
+    var weight = $(this).data('weight');
+    var value = $(this).data('value');
+
+    old_parent.find('input[name="old_option_value"]').val(value)
+    old_parent.find('input[name="old_option_price"]').val(parseInt(price))
+    old_parent.find('input[name="old_option_weight"]').val(weight)
+
+    parent.find('input[name="option_value"]').val(value)
+    parent.find('input[name="option_price"]').val(parseInt(price))
+    parent.find('input[name="option_weight"]').val(weight)
+
+    $(this).closest('.option_autofield_detail').remove();
+
+
+});
+

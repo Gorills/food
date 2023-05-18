@@ -221,8 +221,7 @@
                             <p>
                                 <label for="id_type">Тип опции:</label>
                                 <select name="old_type" class="input" placeholder="Тип опции" id="">
-                                    <option value="{{ option.type.id }}">{{ option.type.name }}</option>
-
+                                    
                                     {% for op in all_options %}
                                         <option value="{{ op.id }}">{{ op.name }}</option>
                                     {% endfor %}

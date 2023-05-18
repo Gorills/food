@@ -414,6 +414,23 @@ class OptionImage(models.Model):
         verbose_name_plural = 'Изображения опций товаров'
 
 
+class AutoFieldOptions(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    value = models.CharField(max_length=250, verbose_name='Значение')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена', default=0)
+    weight = models.CharField(max_length=250, verbose_name='Вес', null=True, blank=True)
+
+    parent = models.ForeignKey(OptionType, on_delete=models.CASCADE, related_name='autofield', verbose_name='Опция')
+
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = 'Автоопция'
+        verbose_name_plural = 'Автоопции'
+
+
 
 class CharGroup(models.Model):
     name = models.CharField(max_length=250)

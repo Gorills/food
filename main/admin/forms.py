@@ -2,13 +2,37 @@ from django import forms
 from coupons.models import Coupon
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings
-from shop.models import Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 
+
+
+class AutoFieldOptionsForm(forms.ModelForm):
+    class Meta:
+        model = AutoFieldOptions
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'value' : forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'price' : forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'weight' : forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'input',
+            })
+        }
 
 
 

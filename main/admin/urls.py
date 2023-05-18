@@ -115,6 +115,11 @@ urlpatterns = [
     path('option_type/edit/<int:pk>/', views.option_type_edit, name='option_type_edit'),
     path('option_type/delete/<int:pk>/', views.option_type_delete, name='option_type_delete'),
 
+    path('option_autofield/add/', views.option_autofield_add, name='option_autofield_add'),
+    path('option_autofield/edit/<int:pk>/', views.option_autofield_edit, name='option_autofield_edit'),
+    path('option_autofield/remove/<int:pk>/', views.option_autofield_delete, name='option_autofield_delete'),
+    path('option_autofield/detail/<int:pk>/', views.option_autofield_detail, name='option_autofield_detail'),
+
 
     path('char/', views.admin_char, name='admin_char'),
     path('char/group/add', views.char_group_add, name='char_group_add'),
