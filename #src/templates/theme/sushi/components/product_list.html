@@ -216,7 +216,9 @@
                         </div>
                         <div class="product-options-popup__price-wrap">
                             <div class="product-options-popup__price" data-price="{{ product.price | floatformat:0 }}">{{ product.price | floatformat:0 }} ₽</div>
-                            <div class="product-options-popup__old-price" data-price="{{ product.old_price | floatformat:0 }}">{{ product.old_price | floatformat:0 }} ₽</div>
+                            {% if product.old_price %}
+                                <div class="product-options-popup__old-price" data-price="{{ product.old_price | floatformat:0 }}">{{ product.old_price | floatformat:0 }} ₽</div>
+                            {% endif %}
                         </div>
                     </div>
                     <a href="#" class="btn btn--primary product-options-popup_btn" data-csrf="{{ csrf_token }}" data-product="{{ product.id }}" data-price="{{ product.price }}" data-quantity="1">В корзину</a>
