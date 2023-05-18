@@ -221,9 +221,11 @@
                             <p>
                                 <label for="id_type">Тип опции:</label>
                                 <select name="old_type" class="input" placeholder="Тип опции" id="">
-                                    
+                                    <option value="{{ option.id }}">{{ option.name }}</option>
                                     {% for op in all_options %}
-                                        <option value="{{ op.id }}">{{ op.name }}</option>
+                                        {% if option.id != op.id %}
+                                            <option value="{{ op.id }}">{{ op.name }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </p>
