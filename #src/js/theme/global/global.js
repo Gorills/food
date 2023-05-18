@@ -27,7 +27,7 @@ function loadCartData() {
         cart_form = 'true'
     }
     
-    $('#cartData').load('/cart/', function() {
+    $('#cartData').load('/cart/ .cart', function() {
         if (cart_active == 'true') {
             $(this).find('.cart').addClass('cart--active');
         }
