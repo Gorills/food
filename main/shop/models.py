@@ -415,7 +415,7 @@ class OptionImage(models.Model):
 
 
 class AutoFieldOptions(models.Model):
-    name = models.CharField(max_length=250, verbose_name='Название')
+    
     value = models.CharField(max_length=250, verbose_name='Значение')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена', default=0)
     weight = models.CharField(max_length=250, verbose_name='Вес', null=True, blank=True)
