@@ -1,3 +1,10 @@
+
+
+jQuery(document).ready(function () {
+    $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+});
+
+
 function loadCartData() {
     var cart_form = 'false'
     var map_show = 'false';
@@ -303,7 +310,7 @@ $(function() {
   
       function refreshElements() {
         
-        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
       }
     });
@@ -326,10 +333,12 @@ $(function() {
         url: $form.attr('action'),
         data: $form.serialize()
       }).done(function() {
-        loadCartData()
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+
         
        
-        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
        
         
 
@@ -375,11 +384,12 @@ $(function() {
         url: $form.attr('action'),
         data: $form.serialize()
       }).done(function() {
-        $(".cart__inner").load(location.href + " .cart__refresh");
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+
         
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        loadCartData()
         
         
         
@@ -404,8 +414,9 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
     $.get(url, function() {
      
         
-        $(".header__cart-wrap").load(location.href + " .header__cart");
-        loadCartData()
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
 
         removeCart(id, name, price, category, quantity) 
         
@@ -435,7 +446,7 @@ $(document).on('click','.cart__order-line__balls-link',function(e){
     $.get(url, function() {
         $(".cart__inner").load(location.href + " .cart__refresh");
         
-        $(".header__cart-wrap").load(location.href + " .header__cart");
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         loadCartData()
         
     
@@ -849,7 +860,7 @@ $(document).ready(function() {
             $('.options_btn').removeClass('btn--primary')
             $('.options_btn').html('Добавлен')
             $('.options_btn').addClass('btn--success')
-            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
 
             btn_get.html('Добавлен')
             
@@ -886,7 +897,7 @@ $(document).ready(function() {
             
         
          
-            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
             $('.product-options-popup').removeClass('product-options-popup--active')
             
@@ -921,8 +932,9 @@ $(document).ready(function() {
     }
     $.post( "/cart/remove_options/", data)
         .done(function( ) {      
-            loadCartData()
-            $(".header__cart-wrap").load(location.href + " .header__cart");
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
            
             
         });
@@ -942,8 +954,9 @@ $(document).on('click','.plus_options',function(e){
     $.post( url, data)
         .done(function( ) {      
             
-            $(".header__cart-wrap").load(location.href + " .header__cart");
-            loadCartData()
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         });
 })
 
@@ -1482,7 +1495,7 @@ function init() {
                                     $.post('/cart/delivery_summ/', data)
                                     .done(function( ) {      
 
-                                        $(".header__cart-wrap").load(location.href + " .header__cart");
+                                        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
 
 
                                         
@@ -2048,7 +2061,7 @@ $(document).ready(function() {
             
                 comboPopup.removeClass('combo-popup--active');
                 
-                $(".header__cart-wrap").load(location.href + " .header__cart");
+                $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
             
 
 
@@ -2073,8 +2086,9 @@ $(document).on('click','.combo__remove',function(e){
     $.post( "/cart/remove_combo/", data)
         .done(function( ) {      
             
-            $(".header__cart-wrap").load(location.href + " .header__cart");
-            loadCartData()
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             removeCart(id, name, price, 'Комбо', quantity)
         });
 })
@@ -2095,8 +2109,9 @@ $(document).on('click','.plus_combo',function(e){
     $.post( url, data)
         .done(function( ) {      
             
-            $(".header__cart-wrap").load(location.href + " .header__cart");
-            loadCartData()
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             
             if (url.indexOf('plus_combo') > -1) {
                 addCart(combo, name, price, 'Комбо', 1)
