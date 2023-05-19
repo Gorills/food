@@ -265,6 +265,10 @@ def order_create(request):
                     cart.clear()
 
                     return redirect(f'/?order=True&id={order.id}')
+                
+
+            else:
+                print(form)
         else:
             return redirect('home')
 

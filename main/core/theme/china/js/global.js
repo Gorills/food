@@ -41,6 +41,19 @@ function loadCartData() {
             ymaps.ready(init);
         } 
 
+        grecaptcha.ready(function() {
+            var grecaptcha_execute = function() {
+                grecaptcha.execute('6LfRKycbAAAAAEjQi1qQlqSWSJe1FYX_cXNgMNVf', {action: 'homepage'}).then(function(token) {
+                    document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function(value) {
+                        value.value = token;
+                    });
+                    // Перезагрузка страницы
+                    // location.reload();
+                });
+            };
+            grecaptcha_execute();
+            setInterval(grecaptcha_execute, 120000);
+        });
     });
 }
 
