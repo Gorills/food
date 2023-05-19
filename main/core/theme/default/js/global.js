@@ -1296,12 +1296,7 @@ $(document).on('click','.cart__form-btn',function(e){
     $('.cart__form-btn').removeClass('cart__form-btn--active')
     $(this).addClass('cart__form-btn--active')
 
-    var url = $(this).attr('href')
-
-    $.get( url, function() {
-        loadCartData()
-        
-    });
+    
 
 
 })
@@ -1322,6 +1317,13 @@ $(document).on('click','#pickup',function(e){
     $('#pickupInput').attr('name', 'address')
     $('#delivery_method').val('Самовывоз')
 
+    var url = $(this).attr('href')
+
+    $.get( url, function() {
+        loadCartData()
+        
+    });
+
 })
 
 $(document).on('click','#delivery',function(e){
@@ -1340,7 +1342,12 @@ $(document).on('click','#delivery',function(e){
     $('.cart__pickup-row').removeClass('cart__pickup-row--active')
     $('#delivery_method').val('Доставка')
     $('#get_area').val('')
-    
+    var url = $(this).attr('href')
+
+    $.get( url, function() {
+        loadCartData()
+        
+    });
 
 })
 
