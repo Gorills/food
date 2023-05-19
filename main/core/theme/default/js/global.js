@@ -460,7 +460,9 @@ $(document).on('click','.cart__order-line__balls-link',function(e){
         $(".cart__inner").load(location.href + " .cart__refresh");
         
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-        loadCartData()
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         
     
     });
@@ -478,7 +480,9 @@ $(function() {
         data: $form.serialize()
       }).done(function() {
         
-        loadCartData()
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         
 
         
