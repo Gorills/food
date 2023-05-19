@@ -5,7 +5,7 @@ from snowpenguin.django.recaptcha3.fields import ReCaptchaField
 
 
 class CallbackForm(forms.Form):
-    # captcha = ReCaptchaField()
+    captcha = ReCaptchaField()
     name = forms.CharField(label='', widget=forms.TextInput(attrs={'class': 'popup__input', 'placeholder': 'Имя'}))
     phone = forms.CharField(label='',widget=forms.TextInput(attrs={'class': 'popup__input phone', 'placeholder': 'Телефон'}))
     messages = forms.CharField(label='',widget=forms.Textarea(attrs={'class': 'popup__input', 'placeholder': 'Сообщение'}))
@@ -13,7 +13,7 @@ class CallbackForm(forms.Form):
 
 
 class OrderCreateForm(forms.ModelForm):
-    captcha = ReCaptchaField()
+    # captcha = ReCaptchaField()
     class Meta:
         model = Order
         fields = [
@@ -26,7 +26,7 @@ class OrderCreateForm(forms.ModelForm):
             'flat',
             'time',
             'order_conmment',
-            'captcha',
+            
             'delivery_method',
             'pay_method',
             'address',
