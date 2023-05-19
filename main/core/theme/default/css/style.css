@@ -4116,7 +4116,8 @@ td.product-thumbnail img {
   }
 
   #map {
-    display: none !important;
+    left: -100%;
+    z-index: 0;
   }
 
   .order-detail__inner {
