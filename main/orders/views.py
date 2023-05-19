@@ -268,7 +268,8 @@ def order_create(request):
                 
 
             else:
-                print(form)
+                pass
+                # print(form)
         else:
             return redirect('home')
 
