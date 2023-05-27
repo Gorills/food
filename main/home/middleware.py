@@ -10,7 +10,7 @@ class SubdomainRedirectMiddleware:
     def __call__(self, request):
         subdomains = Subdomain.objects.all()
 
-        if subdomains.exists() and not get_subdomain(request) and not self.is_home_page(request) and not request.path.startswith('/admin/') and not request.path.startswith('/core/') and not request.path.startswith('/media/') and not request.path.startswith('/accounts/'):
+        if subdomains.exists() and not get_subdomain(request) and not self.is_home_page(request) and not request.path.startswith('/yafeed.xml') and not request.path.startswith('/sitemap.xml') and not request.path.startswith('/robots.txt') and not request.path.startswith('/admin/') and not request.path.startswith('/core/') and not request.path.startswith('/media/') and not request.path.startswith('/accounts/'):
             # Проверка наличия субдомена и отсутствия запроса к главной странице или административной странице
             return redirect('/') 
 
