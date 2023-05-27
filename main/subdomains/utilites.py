@@ -32,9 +32,12 @@ def get_subdomain(request):
     # Если их меньше или равно 3, то это не субдомен четвертого уровня
     if len(subdomain_parts) <= 2:
         subdomain = str(subdomain_parts[0]).replace('www.', '').replace('http://', '').replace('https://', '')
-        return Subdomain.objects.filter(subdomain=subdomain).first()
+        return Subdomain.objects.get(subdomain=subdomain)
     
-    # Если количество частей субдомена больше 3, то игнорируем его
-    return None
+    else: 
+        subdomain = str(subdomain_parts[0]).replace('www.', '').replace('http://', '').replace('https://', '')
+        return subdomain
+    
+   
 
 
