@@ -25,7 +25,7 @@ def get_domain(request):
     return domain
 
 def get_subdomain(request):
-    hostname = get_hostname(request)
+    hostname = request.build_absolute_uri()
     subdomain_parts = hostname.split('.')
     
     # Проверяем количество частей субдомена.
