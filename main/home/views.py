@@ -255,7 +255,7 @@ def home(request):
         'news': news,
         'hit_products': hit_products,
         'order_get': order_get,
-        'get_domain': get_domain(),
+        'get_domain': get_domain(request),
     }
     
     return render(request, 'home/home.html', context)
