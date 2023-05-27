@@ -21,7 +21,7 @@ def get_domain(request):
     domain_list = hostname.split('.')[1:]
 
     domain = '.'.join(domain_list)
-
+    domain = domain.replace('www.', '').replace('http://', '').replace('https://', '')
     return domain
 
 def get_subdomain(request):
