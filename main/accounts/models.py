@@ -66,8 +66,11 @@ class LoyaltyCard(models.Model):
             SUMM_LIST.append(status.summ)
 
         
-        result = max([x for x in SUMM_LIST if x <= summ])
-
+        if SUMM_LIST:
+            result = max([x for x in SUMM_LIST if x <= summ])
+            # Дополнительный код, использующий переменную result
+        else:
+            result=0
 
         card_status = LoyaltyCardStatus.objects.get(summ=result)
         return card_status
