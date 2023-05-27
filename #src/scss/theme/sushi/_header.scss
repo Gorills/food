@@ -109,6 +109,9 @@
         display: flex;
         font-weight: 500;
         align-items: center;
+        @media screen and (max-width: 480px) {
+            margin-bottom: 5px;
+        }
     }
 
     // .header__subdomain

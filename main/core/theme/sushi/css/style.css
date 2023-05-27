@@ -5206,6 +5206,10 @@ td.product-thumbnail img {
     margin-bottom: 10px;
   }
 
+  .header__subdomain-check {
+    margin-bottom: 5px;
+  }
+
   .header__right {
     justify-content: space-between;
     width: 100%;
