@@ -99,6 +99,8 @@
     
     
 <body>
+
+
    
     {% if not subdomains or subdomain or request.path == '/accounts/login/' %}
     {% include 'components/header.html' %}
@@ -122,7 +124,7 @@
     {% else %}
     
     <div class="global-subdomain">
-
+        {{ subdomain }}
         <div class="global-subdomain__inner">
 
             {% thumbnail setup.logo_dark  "300" format="WEBP" as im %}
