@@ -12,7 +12,7 @@ def get_protocol(request):
 
 
 def get_hostname(request):
-    return request.build_absolute_uri()
+    return request.get_host()
 
 
 def get_domain(request):
@@ -21,7 +21,7 @@ def get_domain(request):
     domain_list = hostname.split('.')[1:]
 
     domain = '.'.join(domain_list)
-    domain = domain.replace('www.', '').replace('http://', '').replace('https://', '')
+
     return domain
 
 def get_subdomain(request):
@@ -31,7 +31,7 @@ def get_subdomain(request):
     # Проверяем количество частей субдомена.
     # Если их меньше или равно 3, то это не субдомен четвертого уровня
     if len(subdomain_parts) <= 2:
-        subdomain = subdomain_parts[0]
+        subdomain = str(subdomain_parts[0]).replace('www.', '').replace('http://', '').replace('https://', '')
         return Subdomain.objects.filter(subdomain=subdomain).first()
     
     # Если количество частей субдомена больше 3, то игнорируем его
