@@ -119,6 +119,8 @@ from cart.cart import Cart
 from datetime import datetime
 
 from decimal import Decimal
+from subdomains.utilites import get_domain
+
 
 def home(request):
 
@@ -252,7 +254,8 @@ def home(request):
         'sale_products': sale_products,
         'news': news,
         'hit_products': hit_products,
-        'order_get': order_get
+        'order_get': order_get,
+        'get_domain': get_domain(),
     }
     
     return render(request, 'home/home.html', context)
