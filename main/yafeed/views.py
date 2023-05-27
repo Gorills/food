@@ -1,6 +1,7 @@
 import datetime
 from django.shortcuts import render
 
+from subdomains.utilites import get_protocol
 
 from shop.models import Category, Product
 
@@ -13,14 +14,14 @@ def feed(request):
 
     cat = Category.objects.filter(status=True)
     
-    site = 'https://' + str(request.META['HTTP_HOST'])
+    
     now = datetime.datetime.now()
     formatted_date = now.strftime("%Y-%m-%dT%H:%M")
 
     context = {
         'cats': cat, 
         'products': products,
-        'site': site,
+        
         'formatted_date': formatted_date
     }
 

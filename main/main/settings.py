@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'yafeed',
     'pay',
     'sms',
+    'subdomains'
 
     
 ]
@@ -90,7 +91,8 @@ LOGOUT_REDIRECT_URL = '/'
 # ACCOUNT_SIGNUP_FORM_CLASS = 'myaccount.forms.NewSignupForm'
 
 
-from .whitenoise import *
+from .whitenoise import MIDDLEWARE
+MIDDLEWARE.append('home.middleware.SubdomainRedirectMiddleware',)
 
 
 
@@ -232,6 +234,11 @@ TEMPLATES = [
                 'coupons.context_processors.coupon_form',
                 'pay.context_processors.cart_active',
                 'blog.context_processors.posts',
+                'subdomains.context_processors.subdomain',
+                'subdomains.context_processors.subdomains',
+                'subdomains.context_processors.domain',
+                'subdomains.context_processors.protocol',
+                'subdomains.context_processors.get_site',
             ],
         },
     },

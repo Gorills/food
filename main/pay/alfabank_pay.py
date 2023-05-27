@@ -17,11 +17,12 @@ except:
 gateway_url = ''
 
 
+from subdomains.utilites import get_protocol
 
 def create_payment(order, cart, request):
 
-    returnUrl = 'https://' + request.META['HTTP_HOST']+'/orders/success/'
-    failUrl = 'https://' + request.META['HTTP_HOST']+'/orders/error/'
+    returnUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST']+'/orders/success/'
+    failUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST']+'/orders/error/'
 
     def dec_to_cop(price):
 

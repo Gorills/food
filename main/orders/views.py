@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
+from subdomains.utilites import get_subdomain
 from shop.models import ComboItem, Product, ProductOption
 from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
@@ -29,6 +30,14 @@ def sms_text(order_id):
     except:
         text = f'Ваш заказ принят. Ему присвоен № {order_id}.'
     return text
+
+try:
+    telegram_bot = BaseSettings.objects.get().telegram_bot
+    telegram_group = BaseSettings.objects.get().telegram_group
+except Exception as e:
+    print(e)
+    telegram_bot = ''
+    telegram_group = ''
 
 
 from .telegram import order_telegram, send_message
@@ -61,9 +70,14 @@ if pay_name == 'tinkoff':
 
 def order_create(request):
     cart = Cart(request)
+    subdomain = get_subdomain(request)
+
+    if subdomain and subdomain.telegram_group:
+        telegram_group = subdomain.telegram_group
+    else:
+        telegram_group = BaseSettings.objects.get().telegram_group
     
     if cart:
-
         if request.method == 'POST':
             form = OrderCreateForm(request.POST)
 
@@ -232,7 +246,7 @@ def order_create(request):
 
 
                 else:
-                    order_telegram(order)
+                    order_telegram(telegram_bot, telegram_group, order)
                     
                     send_sms(sms_text(order.id), phone)
                     # очистка корзины
@@ -307,7 +321,7 @@ def order_callback(request):
         message = "Заказ обратного звонка:" + "\n" + "*ИМЯ*: " +str(name) + "\n" + "*ТЕЛЕФОН*: " + str(tel) + "\n" + "*СООБЩЕНИЕ*: " +str(messages)
         
         if form.is_valid():
-            send_message(message)
+            send_message(telegram_bot, telegram_group, message)
 
             
             return redirect('orders:thank')
@@ -323,7 +337,16 @@ def thank(request):
 from yookassa import Payment
 def order_confirm(request, pk):
     cart = Cart(request)
-    
+    subdomain = get_subdomain(request)
+    try:
+        telegram_bot = subdomain.telegram_bot
+    except:
+        pass
+    try:
+        telegram_group = subdomain.telegram_group
+    except:
+        pass
+
     try:
         order = Order.objects.get(id=pk, paid=False, pay_method='Оплата картой на сайте')
         payment = Payment.find_one(order.payment_id)
@@ -331,7 +354,7 @@ def order_confirm(request, pk):
         
 
         if status == 'succeeded':
-            order_telegram(order)
+            order_telegram(telegram_bot, telegram_group, order)
             
             send_sms(sms_text(order.id), order.phone)
 
@@ -382,6 +405,16 @@ from django.views.decorators.csrf import csrf_exempt
 from yookassa.domain.notification import WebhookNotification
 @csrf_exempt
 def order_webhook(request):
+    subdomain = get_subdomain(request)
+    try:
+        telegram_bot = subdomain.telegram_bot
+    except:
+        pass
+    try:
+        telegram_group = subdomain.telegram_group
+    except:
+        pass
+
     if request.method == 'POST':
         event_json = json.loads(request.body)
             
@@ -400,7 +433,7 @@ def order_webhook(request):
             status = payment.status
             if status == 'succeeded':
                 
-                order_telegram(order)
+                order_telegram(telegram_bot, telegram_group, order)
                 
                 send_sms(sms_text(order.id), order.phone)
                 order.paid = True
@@ -438,6 +471,16 @@ def order_error(request):
 
 
 def order_success(request):
+    subdomain = get_subdomain(request)
+    try:
+        telegram_bot = subdomain.telegram_bot
+    except:
+        pass
+    try:
+        telegram_group = subdomain.telegram_group
+    except:
+        pass
+
     cart = Cart(request)
 
     pay_id = request.GET['orderId']
@@ -447,7 +490,7 @@ def order_success(request):
     if data['status'] == '0':
         order = data['order']
 
-        order_telegram(order)
+        order_telegram(telegram_bot, telegram_group, order)
         
         
         send_sms(sms_text(order.id), order.phone)
@@ -510,6 +553,15 @@ def paykeeper_success(request):
     cart = Cart(request)
 
     pay_id = request.session['myorder_id']
+    subdomain = get_subdomain(request)
+    try:
+        telegram_bot = subdomain.telegram_bot
+    except:
+        pass
+    try:
+        telegram_group = subdomain.telegram_group
+    except:
+        pass
     
     print(pay_id)
 
@@ -518,7 +570,7 @@ def paykeeper_success(request):
     if data['status'] == 'paid':
         order = data['order']
 
-        order_telegram(order)
+        order_telegram(telegram_bot, telegram_group, order)
         
         send_sms(sms_text(order.id), order.phone)
 
@@ -561,6 +613,16 @@ def paykeeper_success(request):
 
 
 def tinkoff_success(request, pk):
+    subdomain = get_subdomain(request)
+    try:
+        telegram_bot = subdomain.telegram_bot
+    except:
+        pass
+    try:
+        telegram_group = subdomain.telegram_group
+    except:
+        pass
+
     cart = Cart(request)
     cart.combo_clear()
     cart.clear()
@@ -568,7 +630,7 @@ def tinkoff_success(request, pk):
     order = Order.objects.get(id=pk)
     order.paid = True
     order.save()
-    order_telegram(order)
+    order_telegram(telegram_bot, telegram_group, order)
     
     send_sms(sms_text(order.id), order.phone)
     

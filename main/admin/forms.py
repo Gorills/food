@@ -1,5 +1,6 @@
 from django import forms
 from coupons.models import Coupon
+from subdomains.models import Subdomain
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod
@@ -8,6 +9,96 @@ from home.models import SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
+
+
+
+
+class SubdomainsForm(forms.ModelForm):
+    text = forms.CharField(label='Текст', required=False, widget=CKEditorUploadingWidget())
+   
+    class Meta:
+        model = Subdomain
+        fields = [
+            'name',
+            'subdomain',
+            
+            'telegram_group',
+
+            'phone',
+            'email',
+            'telegram',
+            'city',
+            'address',
+            'vk',
+            'whatsapp',
+            'viber',
+            'ok',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'meta_h1',
+            'text',
+            
+            
+        ]
+        widgets = {
+           'name': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'subdomain': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'phone': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'email': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'telegram_bot': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'city': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'address': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'vk': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'whatsapp': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'telegram': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'telegram_group': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'viber': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'ok': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'meta_title': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'meta_description': forms.Textarea(attrs={
+               'class': 'input',
+           }),
+           'meta_keywords': forms.TextInput(attrs={
+               'class': 'input',
+           }),
+           'meta_h1': forms.TextInput(attrs={
+               'class': 'input',
+           })
+           
+            
+        }
+
+
+
 
 
 
@@ -209,6 +300,9 @@ class PickupAreasForm(forms.ModelForm):
                 'class': 'input',
             }),
             'dop_info': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'city': forms.Select(attrs={
                 'class': 'input',
             }),
         }

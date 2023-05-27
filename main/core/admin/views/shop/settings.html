@@ -37,6 +37,15 @@
 
                 <input type="file" name="file">
                 {% csrf_token %}
+
+                {% if subdomains %}
+                <select name="subdomain" id="" class="input">
+                    {% for subdomain in subdomains %}
+                    <option value="{{ subdomain.id }}">{{ subdomain.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                {% endif %}
                 
                 <button class="btn btn--primary">Сохранить</button>
 
