@@ -1383,7 +1383,8 @@ function init() {
     var city = $('#suggest').attr('data-city')
     var zones = $('#suggest').attr('data-zones')
     var csrf = $('#suggest').attr('data-csrf')
-
+    var flickerAPI = $('#suggest').attr('data-file-zones');
+    
     var suggestView=new ymaps.SuggestView(
         'suggest', {
             provider: {
@@ -1418,7 +1419,7 @@ function init() {
 
 
             function getzones() {
-                var flickerAPI = "/core/libs/delivery.json";
+                
                 $.getJSON( flickerAPI, {
                     tags: "mount rainier",
                     tagmode: "any",
@@ -2147,3 +2148,16 @@ $(document).on('click','.plus_combo',function(e){
   
 
 
+
+
+// header__subdomain-check
+
+$(document).on('click','.header__subdomain-check',function(e){
+    e.preventDefault();
+    $('.header__subdomain-drop').toggleClass('header__subdomain-drop--active');
+})
+
+$(document).on('click','.content',function(){
+   
+    $('.header__subdomain-drop').removeClass('header__subdomain-drop--active');
+})

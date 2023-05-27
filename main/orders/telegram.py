@@ -5,23 +5,19 @@ import telepot
 
 from setup.models import BaseSettings
 
-try:
-    token = BaseSettings.objects.get().telegram_bot
-    my_id = BaseSettings.objects.get().telegram_group
-except:
-    token = ''
-    my_id = ''
-
-
-telegramBot = telepot.Bot(token)
-
-def send_message(text):
-    telegramBot.sendMessage(my_id, text, parse_mode="Markdown")
 
 
 
 
-def order_telegram(order):
+
+def send_message(telegram_bot, telegram_group, message):
+    telegramBot = telepot.Bot(telegram_bot)
+    telegramBot.sendMessage(telegram_group, message, parse_mode="Markdown")
+
+
+
+
+def order_telegram(telegram_bot, telegram_group, order):
     pr = []
                     
     for item in order.items.all():
@@ -110,7 +106,7 @@ def order_telegram(order):
         message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
     
     try:
-        send_message(message)
+        send_message(telegram_bot, telegram_group, message)
     except Exception as e:
         # print(e)
         pass

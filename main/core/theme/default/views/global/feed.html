@@ -20,7 +20,7 @@
                 {% if profuct.product_manufacturer %}
                 <vendor>{{ product.product_manufacturer.name }}</vendor>
                 {% endif %}
-                <url>{{ product.get_absolute_url }}</url>
+                <url>{{site}}{{ product.get_absolute_url }}</url>
 
                 <price>{{ product.price |unlocalize }}</price>
                 {% if product.old_price %}

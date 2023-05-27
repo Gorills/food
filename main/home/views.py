@@ -20,6 +20,7 @@ from pay.models import AlfaBank, PaymentSet, Yookassa
 
 
 from pay.paykeeper_pay import get_status
+from subdomains.utilites import get_protocol
 # get_status()
 
 
@@ -28,7 +29,7 @@ from pay.paykeeper_pay import get_status
 def robots_txt(request):
     try:
         setup = BaseSettings.objects.get()
-        sitemap_txt = 'Sitemap: https://' + str(request.META['HTTP_HOST'])+'/sitemap.xml'
+        sitemap_txt = f'Sitemap: {get_protocol(request)}://{request.META["HTTP_HOST"]}/sitemap.xml'
         if setup.active == True:
             lines = [
                 "User-Agent: *",

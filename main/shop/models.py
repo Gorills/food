@@ -3,6 +3,7 @@ from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 from admin.singleton_model import SingletonModel
+from subdomains.models import Subdomain
 # Create your models here.
 
 
@@ -50,6 +51,7 @@ class PickupAreas(models.Model):
     dop_info = models.CharField(max_length=250, null=True, blank=True, verbose_name='Дополнительные условия работы (выходные)')
     show_to_contacts = models.BooleanField(default=False, verbose_name='Показывать в контактах (не обязательно)')
     phone = models.CharField(max_length=18, null=True, blank=True, verbose_name='Телефон (не обязательно)')
+    city = models.ForeignKey(Subdomain, on_delete=models.CASCADE, verbose_name='Город', null=True, blank=True)
 
     def __str__(self):
         return self.name

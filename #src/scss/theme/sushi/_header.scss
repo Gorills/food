@@ -90,6 +90,60 @@
 
     }
 
+    // .header__subdomain-wrap
+    &__subdomain-wrap {
+        position: relative;
+        margin-right: 20px;
+        svg {
+            margin-left: 5px;
+            path {
+                fill: var(--color-primary);
+            }
+        }
+        
+    }
+
+    // .header__subdomain-check
+    &__subdomain-check {
+        cursor: pointer;
+        display: flex;
+        font-weight: 500;
+        align-items: center;
+    }
+
+    // .header__subdomain
+    &__subdomain {
+        color: var(--color-primary);
+        font-weight: 500;
+        margin-left: 10px;
+        
+    }
+
+    // .header__subdomain-drop
+    &__subdomain-drop {
+        border-radius: 8px;
+        position: absolute;
+        background-color: #fff;
+        z-index: 99999999;
+        top: 30px;
+        width: 100%;
+        min-width: fit-content;
+        box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+        display: none;
+        white-space: nowrap;
+
+        &--active {
+            display: block;
+        }
+    }
+
+    // .header__subdomain-item
+    &__subdomain-item {
+        padding: 15px 40px;
+        color: var(--color-font);
+        display: block;
+    }
+
     // .header__logo-wrap
 
     &__logo-wrap {

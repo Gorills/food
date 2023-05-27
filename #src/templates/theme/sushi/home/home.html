@@ -1,15 +1,15 @@
 
 {% extends 'base.html' %}
 {% load thumbnail %}
-{% block title %}{{ setup.meta_title }}{% endblock %}
-{% block description %}{{ setup.meta_description }}{% endblock %}
+{% block title %}{% if subdomain and subdomain.meta_title %}{{ subdomain.meta_title }}{% else %}{{ setup.meta_title }}{% endif %}{% endblock %}
+{% block description %}{% if subdomain and subdomain.meta_description %}{{ subdomain.meta_description }}{% else %}{{ setup.meta_description }}{% endif %}{% endblock %}
 {% block keywords %}{{ setup.meta_keywords }}{% endblock %}
-{% block canonical %}{% url 'home' %}{% endblock %}
-{% block og:title %}{{ setup.meta_title }}{% endblock %}
-{% block og:description %}{{ setup.meta_description }}{% endblock %}
-{% block og:url %}{% url 'home' %}{% endblock %}
-{% block twitter:title %}{{ setup.meta_title }}{% endblock %}
-{% block twitter:description %}{{ setup.meta_description }}{% endblock %}
+{% block canonical %}{% endblock %}
+{% block og:title %}{% if subdomain and subdomain.meta_title %}{{ subdomain.meta_title }}{% else %}{{ setup.meta_title }}{% endif %}{% endblock %}
+{% block og:description %}{% if subdomain and subdomain.meta_description %}{{ subdomain.meta_description }}{% else %}{{ setup.meta_description }}{% endif %}{% endblock %}
+{% block og:url %}{% endblock %}
+{% block twitter:title %}{% if subdomain and subdomain.meta_title %}{{ subdomain.meta_title }}{% else %}{{ setup.meta_title }}{% endif %}{% endblock %}
+{% block twitter:description %}{% if subdomain and subdomain.meta_description %}{{ subdomain.meta_description }}{% else %}{{ setup.meta_description }}{% endif %}{% endblock %}
 {% block og:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
 {% block og:image:secure_url %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
 {% block twitter:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
@@ -370,31 +370,7 @@
 
 
 
-{% if manufacturers.count > 0 %}
-<div class="block">
-    <div class="container">
-        <div class="block__inner">
-            <h2 class="title">Бренды в нашем магазине</h2>
-            <div class="block__grid">
 
-                {% for man in manufacturers %}
-                <div class="block__grid-item">
-                    {% if man.image %}
-                    <img src="{{ man.image.url }}" alt="{{ man.name }}" class="block__grid-img">
-                    {% else %}
-                    <p class="block__grid-text">{{ man.name }}</p>
-
-                    {% endif %}
-                </div>
-                {% endfor %}
-
-            </div>
-
-
-        </div>
-    </div>
-</div>
-{% endif %}
 
 
 

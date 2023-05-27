@@ -431,7 +431,7 @@
                         <div class="cart__form-refresh-delivery-inner">
                             
                             <div class="cart__input-address-wrap">
-                                <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-city="{{ setup.city }}" data-csrf="{{ csrf_token }}" class="cart__input" placeholder="Улица, дом" id="suggest">
+                                <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-file-zones="{% if subdomain %}{{ subdomain.zone_file.url }}{% else %}/core/libs/delivery.json{% endif %}" data-city="{% if subdomain %}{{ subdomain.city }}{% else %}{{ setup.city }}{% endif %}" data-csrf="{{ csrf_token }}" class="cart__input" placeholder="Улица, дом" id="suggest">
                                 <div id="addressError" class="address-error"></div>
                                 
                             </div>
@@ -461,44 +461,39 @@
                     {% if pickup_areas %}
 
                         <div class="cart__pickup-row {% if request.session.delivery == 0 %}cart__pickup-row--active{% endif %}">
-
-                        
-
                             <div class="cart__select" id="pickup_areas" data-value="{% if request.session.delivery == 1 %}1{% else %}0{% endif %}">
                                 <div class="cart__select-active" id="pickup_areas_refresh">
                                     <div class="cart__select-active-inner">
-                                        
-                                        
                                         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M23 12C23 19 14 25 14 25C14 25 5 19 5 12C5 9.61305 5.94821 7.32387 7.63604 5.63604C9.32387 3.94821 11.6131 3 14 3C16.3869 3 18.6761 3.94821 20.364 5.63604C22.0518 7.32387 23 9.61305 23 12Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
                                             <path d="M14 15C15.6569 15 17 13.6569 17 12C17 10.3431 15.6569 9 14 9C12.3431 9 11 10.3431 11 12C11 13.6569 12.3431 15 14 15Z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
-    
                                         <span id="pickup_text">Пункт самовывоза</span>
-                                       
                                     </div>
                                     <div class="cart__select-error">Выберите пункт самовывоза</div>
-                                    
                                 </div>
-        
-                                
                                 <div class="cart__select-drop" id="">
-                                   
-
+                                    {% if subdomains %}
                                         {% for area in pickup_areas %}
+                                            {% if area.city == subdomain %}
+                                           
+                                                <div class="cart__select-item cart__select-item--pickup">{{ area.address }}</div>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    {% else %}
+                                        {% for area in pickup_areas %}
+                                            
+                                        
                                             <div class="cart__select-item cart__select-item--pickup">{{ area.address }}</div>
                                           
-                                            
                                         {% endfor %}
-                                    
-                                  
-                                    
+                                    {% endif %}
+                                
                                 </div>
-        
                             </div>
                                     
                         </div> 
-                    
                     {% else %}
                        
 

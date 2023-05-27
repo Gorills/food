@@ -3,6 +3,7 @@ from django.shortcuts import render
 
 from .models import PaymentSet, Yookassa
 from shop.models import Product
+from subdomains.utilites import get_protocol
 
 # Create your views here.
 from yookassa import Configuration, Payment
@@ -16,7 +17,7 @@ except:
 
 def create_payment(order, cart, request):
 
-    path = 'https://' + request.META['HTTP_HOST']
+    path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
     
     items = []
 

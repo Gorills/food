@@ -183,7 +183,11 @@ urlpatterns = [
     # FAQ
     path('faq/', views.faq, name='faq'),
 
-
+    # SUBDOMAINS
+    path('admin_subdomain/', views.admin_subdomain, name='admin_subdomain'),
+    path('admin_subdomain/add/', views.add_subdomain, name='add_subdomain'),
+    path('admin_subdomain/edit/<int:pk>/', views.edit_subdomain, name='edit_subdomain'),
+    path('admin_subdomain/delete/<int:pk>/', views.delete_subdomain, name='delete_subdomain'),
 ]
 
 

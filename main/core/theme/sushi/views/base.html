@@ -9,7 +9,7 @@
     <title> {% block title %}{% endblock %}</title>
     <meta name="description" content="{% block description %}{% endblock %}" />
     <meta name="keywords" content="{% block keywords %}{% endblock %}" />
-    <link rel="canonical" href="{% block canonical %}{% endblock %}" />
+    <link rel="canonical" href="{{ site }}{% block canonical %}{% endblock %}" />
     <meta name="theme-color" content="{{ setup.theme_color }}">
     {% if setup.active == True %}<meta name="robots" content="index,follow" />{% else %}<meta name="robots" content="noindex,nofollow" />{% endif %}
     <!-- base -->
@@ -19,7 +19,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="{% block og:title %}{% endblock %}" />
     <meta property="og:description" content="{% block og:description %}{% endblock %}" />
-    <meta property="og:url" content="{% block og:url %}{% endblock %}" />
+    <meta property="og:url" content="{{ site }}{% block og:url %}{% endblock %}" />
     <meta property="og:image" content="{% block og:image %}{% endblock %}" />
     <meta property="og:image:secure_url" content="{% block og:image:secure_url %}{% endblock %}" />
     <meta property="og:image:width" content="537" />
@@ -85,9 +85,9 @@
     <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">
 
     {% for code in codes %}
-        {% if code.h_f == True %}
-            {{ code.code | safe }}
-        {% endif %}
+    {% if code.h_f == True %}
+    {{ code.code | safe }}
+    {% endif %}
     {% endfor %}
     
 
@@ -99,37 +99,47 @@
     
     
 <body>
-
+   
+    {% if not subdomains or subdomain or request.path == '/accounts/login/' %}
     {% include 'components/header.html' %}
-    
-
     <div class="content">
         <div class="content__inner">
-
             {% block body %}
-
-
                 {% block content %}
                 {% endblock %}
-                
             {% endblock %}
-            
         </div>
-
-
     </div>
 
     {% block extra_body %}{% endblock %}
-
-
     {% include 'components/footer.html' %}
-
-    
     {% include 'global/popup.html' %}
     {% include 'global/order-done.html' %}
     {% include 'global/cart.html' %}
     {% include 'global/search.html' %}
     {% include 'global/blocked.html' %}
+    
+    {% else %}
+    
+    <div class="global-subdomain">
+
+        <div class="global-subdomain__inner">
+
+            {% thumbnail setup.logo_dark  "300" format="WEBP" as im %}
+                <img class="global-subdomain__logo" src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="global-subdomain__inner__logo">
+            {% endthumbnail %}
+
+            <p class="global-subdomain__text">Выберите город</p>
+            <div class="global-subdomain__row">
+                {% for sub in subdomains %}
+                <a href="{{ protocol }}://{{ sub.subdomain }}.{{ request.get_host }}" class="global-subdomain__item">{{ sub.name }}</a>
+                
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e&amp;{% now "H:i:s" %}" type="text/javascript"></script>
     <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
@@ -138,11 +148,11 @@
     <script src="{% get_static 'js/global.js' %}?v{% now "H:i:s" %}"></script>
     <script src="{% get_static 'js/app.js' %}?v{% now "H:i:s" %}"></script>
 
-    
+        
     {% for code in codes %}
-        {% if code.h_f == False %}
-            {{ code.code | safe }}
-        {% endif %}
+    {% if code.h_f == False %}
+    {{ code.code | safe }}
+    {% endif %}
     {% endfor %}
     {% recaptcha_init %}
     {% recaptcha_ready action_name='homepage' %}

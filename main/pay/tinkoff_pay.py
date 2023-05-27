@@ -23,6 +23,7 @@ try:
 
 except:
     email = ''
+from subdomains.utilites import get_protocol
 
 import decimal
 from decimal import Decimal
@@ -32,7 +33,7 @@ def create_payment(order, request):
     items_arr = []
     
     
-    success_url = f'https://{request.META["HTTP_HOST"]}/orders/tinkoff_success/{order.id}/'
+    success_url = f'{get_protocol(request)}://{request.META["HTTP_HOST"]}/orders/tinkoff_success/{order.id}/'
 
     items = OrderItem.objects.filter(order=order)
     

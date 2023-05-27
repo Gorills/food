@@ -6,10 +6,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
+from subdomains.models import Subdomain
 
 from orders.models import Order
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
@@ -827,8 +828,19 @@ def zone_file(request):
                 "strokeColor": d['properties']['stroke'],
                 "opacity": d['properties']['fill-opacity'],
             })
-        with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
-            json.dump(new_file, f, ensure_ascii=False, indent=4)
+
+        subdomains = Subdomain.objects.all()
+
+        if subdomains.exists():
+            from django.core.files.base import ContentFile
+            subdomain_id = request.POST['subdomain']
+            subdomain = Subdomain.objects.get(id=subdomain_id)
+            subdomain.zone_file.save(f'{subdomain.subdomain}.json', ContentFile(json.dumps(new_file)))
+            subdomain.save()
+
+        else:
+            with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
+                json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         subprocess.call(["touch", RESET_FILE])
         return redirect('shop_settings')
@@ -945,50 +957,7 @@ def category_add(request):
     if request.method == 'POST':
         form_new = CategoryForm(request.POST, request.FILES)
         if form_new.is_valid():
-            name = request.POST['name']
-            description = request.POST['description']
-            meta_title = request.POST['meta_title']
-            meta_description = request.POST['meta_description']
-            meta_keywords = request.POST['meta_keywords']
-            # parent = request.POST['parent']
-            try:
-                # Пытаемся получить изображение
-                image = request.FILES['image']
-            except:
-                # Если не выходит, ставим что его нет
-                image = None
-            try:
-                # Пытаемся получить положительное значение чекбокса "Отображение в меню"
-                top = request.POST['top']
-                top = True
-            except:
-                # Если не выходит, ставим отрицательное
-                top = False
-            column = request.POST['column']
-            sort_order = request.POST['sort_order']
-            try:
-                # Пытаемся получить положительное значение чекбокса "Статус"
-                status = request.POST['status']
-                status = True
-            except:
-                # Если не выходит, ставим отрицательное
-                status = False
-            slug = request.POST['slug']
-            cat = Category(
-                name=name,
-                description=description,
-                meta_title=meta_title,
-                meta_description=meta_description,
-                meta_keywords=meta_keywords,
-               
-                image=image,
-                top=top,
-                column=column,
-                sort_order=sort_order,
-                status=status,
-                slug=slug,
-            )
-            cat.save()
+            form_new.save()
             return redirect('admin_category')
         else:
             return render(request, 'shop/category/category_add.html', {'form': form_new})
@@ -2508,3 +2477,81 @@ def csv_upload(request):
 
 
 # !!!! Загрузка csv
+
+
+
+
+
+
+# !!! Субдомены !!!
+def admin_subdomain(request):
+
+    context = {
+        'subdomains': Subdomain.objects.all()
+    }
+
+    return render(request, 'subdomain/admin_subdomain.html', context)
+
+
+def add_subdomain(request):
+
+    if request.method == 'POST':
+        form = SubdomainsForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_subdomain')
+
+        else:
+            return render(request, 'subdomain/add_subdomain.html', {'form': form})
+
+
+
+
+    form = SubdomainsForm()
+
+    context = {
+        'form' : form
+    }
+
+    return render(request, 'subdomain/add_subdomain.html', context)
+
+
+def edit_subdomain(request, pk):
+
+    subdomain = Subdomain.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = SubdomainsForm(request.POST, request.FILES, instance=subdomain)
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('admin_subdomain')
+
+        else:
+            return render(request, 'subdomain/edit_subdomain.html', {'form': form})
+
+
+
+
+    form = SubdomainsForm(instance=subdomain)
+
+    context = {
+        'form' : form
+    }
+
+    return render(request, 'subdomain/edit_subdomain.html', context)
+
+
+def delete_subdomain(request, pk):
+
+    subdomain = Subdomain.objects.get(id=pk)
+    subdomain.delete()
+
+    return redirect('admin_subdomain')
+
+
+
+# !!! Субдомены !!!
