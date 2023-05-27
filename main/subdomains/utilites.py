@@ -9,12 +9,10 @@ def get_protocol(request):
         protocol = 'http'
 
     return protocol
-from django.http import HttpRequest
 
 
-
-def get_hostname(request: HttpRequest):
-    return request.get_full_path()
+def get_hostname(request):
+    return request.get_host()
 
 
 def get_domain(request):
