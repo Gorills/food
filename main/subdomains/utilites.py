@@ -12,7 +12,7 @@ def get_protocol(request):
 
 
 def get_hostname(request):
-    return request.get_host()
+    return request.build_absolute_uri()
 
 
 def get_domain(request):
