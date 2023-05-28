@@ -4,25 +4,27 @@ jQuery(document).ready(function () {
     $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
 });
 
-$(document).ready(function() {
-    // Функция для обновления отступа сверху у .content
-    function updateContentMargin() {
-      var headerHeight = $('header').outerHeight(); // Получаем высоту header
-      $('.content').css('margin-top', headerHeight); // Задаем отступ сверху для .content
-    }
-  
-    function updateVideoHeigth() {
-      var headerHeight = $('.sl__img').outerHeight(); // Получаем высоту header
+
+// Функция для обновления отступа сверху у .content
+function updateContentMargin() {
+    var headerHeight = $('header').outerHeight(); // Получаем высоту header
+    $('.content').css('margin-top', headerHeight); // Задаем отступ сверху для .content
+  }
+
+  function updateVideoHeigth() {
+    var headerHeight = $('.sl__img').outerHeight(); // Получаем высоту header
+    $('.sl__video').css('height', headerHeight); // Задаем высоту для .video
+  }
+
+  function updateVideoHeigthMobile() {
+    if ($(window).width() <= 480) {
+      var headerHeight = $('.sl__img-mobile').outerHeight(); // Получаем высоту header
       $('.sl__video').css('height', headerHeight); // Задаем высоту для .video
     }
-  
-    function updateVideoHeigthMobile() {
-      if ($(window).width() <= 480) {
-        var headerHeight = $('.sl__img-mobile').outerHeight(); // Получаем высоту header
-        $('.sl__video').css('height', headerHeight); // Задаем высоту для .video
-      }
-    }
-  
+  }
+
+
+$(document).ready(function() {
     // Вызываем функцию при загрузке страницы и при изменении размеров окна
     $(window).on('load resize', function() {
       updateContentMargin();
@@ -534,7 +536,7 @@ $(window).scroll(function() {
     } else{
         /*Если меньше 100px удаляем класс для header*/
         $('.header').removeClass('header--hide');
-              
+        updateContentMargin();
     }
     if(height > 200){
         $('.header').addClass('header--fixed');
