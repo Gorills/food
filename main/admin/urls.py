@@ -11,6 +11,7 @@ urlpatterns = [
     path('general_settings/recaptcha/', views.recaptcha_settings, name='recaptcha_settings'),
     path('codes/', views.codes_settings, name='codes_settings'),
     path('codes/edit/<int:pk>/', views.codes_settings_edit, name='codes_settings_edit'),
+    path('codes/delete/<int:pk>/', views.codes_settings_delete, name='codes_settings_delete'),
 
     path('color_settings/', views.color_settings, name='color_settings'),
     path('theme_settings/', views.theme_settings, name='theme_settings'),

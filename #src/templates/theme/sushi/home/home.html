@@ -28,72 +28,87 @@
     <div class="sl owl-carousel" data-speed="{{ slider_setup.speed }}" data-nav="{{ slider_setup.nav }}" data-dots="{{ slider_setup.dots }}" data-autoplay="{{ slider_setup.autoplay }}" >
         
         {% for slider in sliders %}
+            {% if slider.file_format == 'photo' %}
             {% if slider.link %}
-
-                <a href="{{ slider.link }}" class="sl__item">
-                    
-                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
-                            <div class="container">
-                                <div class="sl__wrap-inner">
-                                    {% if slider.title %}
-                                    <h2 class="sl__title">{{ slider.title }}</h2>
-                                    {% endif %}
-                                    {% if slider.text %}
-                                    <p class="sl__text">{{ slider.text | safe }}</p>
-                                    {% endif %}
-                                </div>
-                                {% if slider.button_text %}
-                                <p class="btn btn--primary">{{ slider.button_text }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
-                        {% endthumbnail %}
-                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
-                        {% endthumbnail %}
-                        
-
-                    
-                </a>
+            <a href="{{ slider.link }}" class="sl__item">
+            <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
+            <div class="container">
+            <div class="sl__wrap-inner">
+            {% if slider.title %}
+            <h2 class="sl__title">{{ slider.title }}</h2>
+            {% endif %}
+            {% if slider.text %}
+            <p class="sl__text">{{ slider.text | safe }}</p>
+            {% endif %}
+            </div>
+            {% if slider.button_text %}
+            <p class="btn btn--primary">{{ slider.button_text }}</p>
+            {% endif %}
+            </div>
+            </div>
+            {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            {% endthumbnail %}
+            {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            {% endthumbnail %}
+            </a>
             {% else %}
-                <div class="sl__item">
-
-                   
-                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %} ">
-                            <div class="container">
-
-                                <div class="sl__wrap-inner">
-                                    {% if slider.title %}
-                                    <h2 class="sl__title">{{ slider.title }}</h2>
-                                    {% endif %}
-                                    {% if slider.text %}
-                                    <p class="sl__text">{{ slider.text | safe }}</p>
-                                    {% endif %}
-                                </div>
-                                {% if slider.button_text %}
-                                <p class="btn btn--primary">{{ slider.button_text }}</p>
-                                {% endif %}
-                            </div>
-
-                        </div>
-                        
-                        {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
-                        {% endthumbnail %}
-
-                        {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" >
-                        {% endthumbnail %}
-                    
-                </div>
+            <div class="sl__item">
+            <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
+            <div class="container">
+            <div class="sl__wrap-inner">
+            {% if slider.title %}
+            <h2 class="sl__title">{{ slider.title }}</h2>
+            {% endif %}
+            {% if slider.text %}
+            <p class="sl__text">{{ slider.text | safe }}</p>
+            {% endif %}
+            </div>
+            {% if slider.button_text %}
+            <p class="btn btn--primary">{{ slider.button_text }}</p>
+            {% endif %}
+            </div>
+            </div>
+            {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            {% endthumbnail %}
+            {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            {% endthumbnail %}
+            </div>
+            {% endif %}
+            {% elif slider.file_format == 'video' %}
+            <div class="sl__item">
+            <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
+            <div class="container">
+            <div class="sl__wrap-inner">
+            {% if slider.title %}
+            <h2 class="sl__title">{{ slider.title }}</h2>
+            {% endif %}
+            {% if slider.text %}
+            <p class="sl__text">{{ slider.text | safe }}</p>
+            {% endif %}
+            </div>
+            {% if slider.button_text %}
+            <p class="btn btn--primary">{{ slider.button_text }}</p>
+            {% endif %}
+            </div>
+            </div>
+            <video class="sl__video-mobile" muted autoplay loop class="sl__video-mobile" >
+                <source src="{{ slider.image_mob.url }}"  type="video/mp4">
+            </video>
+            <video class="sl__video" muted autoplay loop>
+                <source src="{{ slider.image.url }}"  type="video/mp4">
+            </video>
+            </div>
             {% endif %}
         {% endfor %}
     </div>
 </div>
 {% endif %}
+
+
 
 
 {% if home_cats.count > 0 %}

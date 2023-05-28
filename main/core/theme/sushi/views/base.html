@@ -86,10 +86,13 @@
 
     {% for code in codes %}
     {% if code.h_f == True %}
+    {% if subdomain and code.subdomain == subdomain %}
+    {{ code.code | safe }}
+    {% elif not code.subdomain %}
     {{ code.code | safe }}
     {% endif %}
+    {% endif %}
     {% endfor %}
-    
 
     
 </head>
@@ -153,7 +156,11 @@
         
     {% for code in codes %}
     {% if code.h_f == False %}
+    {% if subdomain and code.subdomain == subdomain %}
     {{ code.code | safe }}
+    {% elif not code.subdomain %}
+    {{ code.code | safe }}
+    {% endif %}
     {% endif %}
     {% endfor %}
     {% recaptcha_init %}

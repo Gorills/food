@@ -212,7 +212,7 @@ $(document).on('click','#save',function(e){
 
 
 // Удаление модели
-$(document).on('click','.remove',function(e){
+$(document).on('click','.remove, .code-remove',function(e){
   var href = $(this).attr('href')
   return confirm("Данное действие необратимо. Вы уверены?");
 })

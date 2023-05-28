@@ -1,6 +1,7 @@
 from venv import create
 from django.db import models
 from admin.singleton_model import SingletonModel
+from subdomains.models import Subdomain
 
 # Create your models here.
 
@@ -103,9 +104,15 @@ class EmailSettings(SingletonModel):
 
 
 class CustomCode(models.Model):
-    name = models.CharField(max_length=250)
-    code = models.TextField()
-    h_f = models.BooleanField()
+    name = models.CharField(max_length=250, verbose_name='Название')
+    code = models.TextField(verbose_name='Код')
+    h_f = models.BooleanField(verbose_name='Шапка/Подвал')
+    subdomain = models.ForeignKey(Subdomain, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Город')
+
+
+    def __str__(self):
+        return self.name
+    
 
 
 

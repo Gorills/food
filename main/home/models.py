@@ -15,8 +15,8 @@ class SliderSetup(SingletonModel):
 class Slider(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
     title = models.CharField(max_length=250, null=True, blank=True, verbose_name='Заголовок (не обязательно)')
-    image = models.ImageField(upload_to='slider', verbose_name='Изображение')
-    image_mob = models.ImageField(upload_to='slider', verbose_name='Изображение для мобильного', null=True, blank=True)
+    image = models.FileField(upload_to='slider', verbose_name='Изображение/видео')
+    image_mob = models.FileField(upload_to='slider', verbose_name='Изображение/видео для мобильного', null=True, blank=True)
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
     link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка (не обязательно)')
@@ -34,6 +34,43 @@ class Slider(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+    def file_format(self):
+        video = [
+            'webm',
+            'mp4',
+            'ogv',
+            'ogg',
+            'mpg',
+            'mp2',
+            'mp3',
+            'wav',
+            'aac',
+            'flac',
+            'aiff',
+            'wma',
+        ]
+        photo = [
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'bmp',
+            'tif',
+            'tiff',
+            'psd',
+            'ico',
+            'webp',
+        ]
+        format = self.image.url.split('.')[-1]
+
+        if format in video:
+            return 'video'
+        elif format in photo:
+            return 'photo'
+
+        
 
     class Meta:
        

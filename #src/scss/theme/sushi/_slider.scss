@@ -43,6 +43,30 @@
         }
     }
 
+    // .sl__video
+
+    &__video {
+        width: 100%;
+        height: 598px;
+        object-fit: cover;
+        @media screen and (max-width: 480px) {
+            display: none;
+        
+            
+        }
+    }
+
+    // .sl__video-mobile
+    &__video-mobile {
+        display: none!important;
+        width: 100%;
+        object-fit: cover;
+
+        @media screen and (max-width: 480px) {
+            display: block!important;
+        }
+
+    }
     // .slider__wrap
 
     &__wrap {

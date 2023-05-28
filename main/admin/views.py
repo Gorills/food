@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -373,57 +373,47 @@ def recaptcha_settings(request):
 @user_passes_test(lambda u: u.is_superuser)
 def codes_settings(request):
     if request.method == 'POST':
-        name = request.POST['name']
-        code = request.POST['code']
-        
-        try:
-            h_f = request.POST['h_f']
-            header = True
-        except:
-            header = False
-
-        code = CustomCode(name=name, code=code, h_f=header)
-        code.save()
-
-        return redirect('codes_settings')
-
-
+        form = CustomCodeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('codes_settings')
+        else:
+            return render(request, 'settings/codes_settings.html', { 'form': form })
     codes = CustomCode.objects.all()
+    form = CustomCodeForm()
     context = {
         'codes': codes,
+        'form': form
     }
-
-
     return render(request, 'settings/codes_settings.html', context)
 
 
-# Удаление счетчиков. 
-# !!! Редактирование пока убрал (нет формы в темплейте), потому что какой-то косяк в TextField при сохранении. По возможности поправить !!!
 @user_passes_test(lambda u: u.is_superuser)
 def codes_settings_edit(request, pk):
-    if request.method =='POST':
-        name = request.POST['name']
-        code = request.POST['code']
-        print(code)
-        try:
-            h_f = request.POST['h_f']
-            header = True
-        except:
-            header = False
-        code = CustomCode.objects.get(id=pk)
-        code.name = name
-        code.code = code
-        code.h_f = header
-        code.save()
+    codes = CustomCode.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = CustomCodeForm(request.POST, instance=codes)
+        if form.is_valid():
+            form.save()
+            return redirect('codes_settings')
+        else:
+            return render(request, 'settings/codes_edit.html', { 'form': form })
+    
+    form = CustomCodeForm(instance=codes)
+    context = {
+        'form': form
+    }
 
 
-        return redirect('codes_settings')
+    return render(request, 'settings/codes_edit.html', context)
 
-    else:
-        code = CustomCode.objects.get(id=pk)
-        code.delete()
 
-        return redirect('codes_settings')
+
+@user_passes_test(lambda u: u.is_superuser)
+def codes_settings_delete(request, pk):
+    codes = CustomCode.objects.get(pk=pk)
+    codes.delete()
+    return redirect('codes_settings')
 
 
 # Настройки цвета

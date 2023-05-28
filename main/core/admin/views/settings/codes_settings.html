@@ -26,26 +26,24 @@
             <label for="">Код скрипта</label>
             <p class="form__static">{{ code.code }}</p>
             <p class="form__static">Размещение: {% if code.h_f == True %}<b>в шапке сайта</b>{% else %}<b>в подвале сайта</b>{% endif %}</p>
+            {% if code.subdomain %}
+            <label for="">Поддомен</label>
+            <p class="form__static">{{ code.subdomain }}</p>
             
+            {% endif %}
             
-            
-            <a href="{% url 'codes_settings_edit' code.id %}" class="btn btn--danger">Удалить</a>
-            
-
+            <div class="page__row">
+                <a href="{% url 'codes_settings_edit' code.id %}" class="btn btn--warning">Изменить</a>
+                <a href="{% url 'codes_settings_delete' code.id %}" class="btn btn--danger code-remove">Удалить</a>
+                
+            </div>
         </form>
         {% endfor %}
         <form action="." class="form" method="post">
             {% csrf_token %}
-            <label for="">Название скрипта</label>
-            <input type="text" class="input" name="name" value="{{ code.name }}">
-            <label for="">Код скрипта</label>
-            <textarea name="code" id="" cols="30" rows="10" class="input"></textarea>
+            {{ form.as_p }}
 
-            <div class="form__wrap">
-                <label for="">Размещение в шапке сайта, если выбрано. В подвале, если нет.</label>
-                <input type="checkbox" name="h_f" value="True">
-            </div>
-
+            
             <button class="btn btn--primary">Добавить</button>
         </form>
     </div>
