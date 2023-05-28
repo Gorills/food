@@ -9,7 +9,7 @@
                             {% if setup.logo_dark %}
 
                                 {% thumbnail setup.logo_dark  "200" format="WEBP" as im %}
-                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo">
                                 {% endthumbnail %}
                            
 

@@ -35,6 +35,10 @@ class BaseSettings(SingletonModel):
     text = models.TextField(blank=True, null=True)
     social_image = models.FileField(upload_to="social_image", blank=True, null=True)
     logo_light = models.FileField(upload_to="logo", blank=True, null=True)
+
+    logo_height = models.CharField(max_length=250, blank=True, null=True)
+    logo_width = models.CharField(max_length=250, blank=True, null=True)
+    
     logo_dark = models.FileField(upload_to="logo", blank=True, null=True)
     icon_ico = models.FileField(upload_to="fav", blank=True, null=True)
     icon_png = models.FileField(upload_to="fav", blank=True, null=True)

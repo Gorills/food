@@ -2091,6 +2091,7 @@ a {
 .header__logo {
   max-height: 60px;
   min-height: 60px;
+  object-fit: contain;
   margin-right: 55px;
 }
 

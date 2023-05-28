@@ -1597,6 +1597,12 @@ class SetupForm(forms.ModelForm):
                 'placeholder': 'Ключевые слова',
                 
             }),
+            'logo_height': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'logo_width': forms.TextInput(attrs={
+                'class': 'input',
+            }),
            
            
         }
@@ -1622,6 +1628,8 @@ class SetupForm(forms.ModelForm):
             'meta_keywords': 'Ключевые слова',
             'social_image': 'Изображение для соц.сетей',
             'logo_dark': 'Логотип в шапке',
+            'logo_height': 'Высота логотипа (по умолчанию 60px)',
+            'logo_width': 'Ширина логотипа',
             'logo_light': 'Логотип в подвале',
             
             'icon_ico': 'Иконка .ico',
