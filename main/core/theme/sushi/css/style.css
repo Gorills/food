@@ -2495,12 +2495,6 @@ a {
   object-fit: cover;
 }
 
-.sl__video-mobile {
-  display: none !important;
-  width: 100%;
-  object-fit: cover;
-}
-
 .sl__wrap {
   position: absolute;
   width: 100%;
@@ -5245,14 +5239,6 @@ td.product-thumbnail img {
   }
 
   .sl__img-mobile {
-    display: block !important;
-  }
-
-  .sl__video {
-    display: none;
-  }
-
-  .sl__video-mobile {
     display: block !important;
   }
 

@@ -10,26 +10,27 @@ $(document).ready(function() {
       var headerHeight = $('header').outerHeight(); // Получаем высоту header
       $('.content').css('margin-top', headerHeight); // Задаем отступ сверху для .content
     }
-
+  
     function updateVideoHeigth() {
       var headerHeight = $('.sl__img').outerHeight(); // Получаем высоту header
-      $('.sl__video').css('height', headerHeight); // Задаем отступ сверху для .video
-      $('.sl__video-mobile').css('height', headerHeight); // Задаем отступ сверху для .video
+      $('.sl__video').css('height', headerHeight); // Задаем высоту для .video
     }
-    function updateVideoHeigth() {
+  
+    function updateVideoHeigthMobile() {
+      if ($(window).width() <= 480) {
         var headerHeight = $('.sl__img-mobile').outerHeight(); // Получаем высоту header
-        
-        $('.sl__video-mobile').css('height', headerHeight); // Задаем отступ сверху для .video
+        $('.sl__video').css('height', headerHeight); // Задаем высоту для .video
       }
-
+    }
   
     // Вызываем функцию при загрузке страницы и при изменении размеров окна
     $(window).on('load resize', function() {
       updateContentMargin();
       updateVideoHeigth();
-      updateVideoHeigth();
+      updateVideoHeigthMobile();
     });
   });
+  
   
 
   
