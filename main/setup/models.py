@@ -2,7 +2,7 @@ from venv import create
 from django.db import models
 from admin.singleton_model import SingletonModel
 from subdomains.models import Subdomain
-
+from sorl.thumbnail import get_thumbnail
 # Create your models here.
 
 class BaseSettings(SingletonModel):
@@ -54,6 +54,22 @@ class BaseSettings(SingletonModel):
     update_at = models.DateField(auto_now=True)
 
     
+    def get_logo(self):
+        res = None
+        try:
+            if self.logo_height and not self.logo_width:
+                res = get_thumbnail(self.logo_dark, f'x{self.logo_height}', format="WEBP", crop='center', quality=100)
+            elif self.logo_width and not self.logo_height:
+                res = get_thumbnail(self.logo_dark, f'{self.logo_width}x', format="WEBP", crop='center', quality=100)
+            elif self.logo_height and self.logo_width:
+                res = get_thumbnail(self.logo_dark, f'{self.logo_width}x{self.logo_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.logo_dark, 'x60', crop='center', format="WEBP", quality=100)
+
+        except:
+            pass
+
+        return res
 
     def get_phone(self):
         try:

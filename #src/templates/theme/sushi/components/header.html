@@ -7,21 +7,26 @@
                     <div class="header__left">
                         {% if request.path == '/' %}
                             {% if setup.logo_dark %}
+                                
+                               
+                                    <img src="{{ setup.get_logo.url }}" 
+                                        alt="{{ setup.name }}" 
+                                        style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                        class="header__logo">
 
-                                {% thumbnail setup.logo_dark  "200" format="WEBP" as im %}
-                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo">
-                                {% endthumbnail %}
-                           
-
+                               
                             {% else %}
                             <div class="header__logo">{{ setup.name }}</div>
                             {% endif %}
                         {% else %}
                             {% if setup.logo_dark %}
                             <a href="{% url 'home' %}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
-                                {% thumbnail setup.logo_dark  "200" format="WEBP" crop="center" as im %}
-                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo">
-                                {% endthumbnail %}
+                               
+                                    <img 
+                                        src="{{ setup.get_logo.url }}" 
+                                        alt="{{ setup.name }}" 
+                                        style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                        class="header__logo">
                             </a>
                             {% else %}
                             <a href="{% url 'home' %}" class="header__logo">{{ setup.name }}</a>
