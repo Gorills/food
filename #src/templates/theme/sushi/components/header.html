@@ -18,9 +18,9 @@
                             {% endif %}
                         {% else %}
                             {% if setup.logo_dark %}
-                            <a href="{% url 'home' %}" class="header__logo-wrap">
+                            <a href="{% url 'home' %}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
                                 {% thumbnail setup.logo_dark  "200" format="WEBP" crop="center" as im %}
-                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="header__logo">
+                                    <img src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo">
                                 {% endthumbnail %}
                             </a>
                             {% else %}
