@@ -2068,6 +2068,10 @@ a {
   display: none;
 }
 
+.header--fixed .header__logo-wrap {
+  display: none;
+}
+
 .header--fixed .header__top {
   padding: 8px 0;
 }
