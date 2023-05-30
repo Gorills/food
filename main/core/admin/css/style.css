@@ -635,16 +635,18 @@ label span {
   padding: 24px;
   background-color: #f3f6f9;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .sidebar__logo {
-  width: 215px;
+  height: 30px;
 }
 
 .sidebar__mini-logo {
   display: none;
   width: 100%;
-  max-width: 40px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .sidebar__link {
