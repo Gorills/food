@@ -327,10 +327,12 @@
                     
                     {% endif %}
                     
+                    
+
                     {% for cat in categorys %}
                         {% if cat.top == True %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                            <a class="header-bottom__link" itemprop="url" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
+                            <a class="header-bottom__link" itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
                             <meta itemprop="name" content="{{ cat.name }}" />
                         </li>
                         {% endif %}

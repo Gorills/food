@@ -40,6 +40,8 @@ class ShopSetup(SingletonModel):
     new_products = models.BooleanField(default=True, verbose_name='Включить новинки')
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
 
+    all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
+
 
 
 class PickupAreas(models.Model):
@@ -95,6 +97,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+    def all_active_products(self):
+        return self.products.filter(status=True, stock__gt=0)
 
     # def get_parent_path(self, list=None):
     #     parenturl = []

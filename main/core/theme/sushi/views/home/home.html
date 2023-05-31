@@ -116,7 +116,7 @@
 
             {% for cat in home_cats %}
                 
-                <a href="{{ cat.get_absolute_url }}" class="cat-home__item">
+                <a href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item">
                     <h3 class="cat-home__title">{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -136,6 +136,9 @@
 </div>
 
 {% endif %}
+
+
+
 
 
 
@@ -280,59 +283,81 @@
 {% endif %}
 
 
+{% if shop_setup.all_menus %}
+    {% for cat in categorys %}
+        {% if cat.all_active_products.count > 0 %}
+        <div class="block gray" id="{{ cat.id }}">
+            <div class="container">
+                <div class="block__inner">
+                    <div class="block__justify">
+                        <h2 class="title">{{ cat.name }}</h2>
+                        
 
+                    </div>
+                    {% include 'components/product_list.html' with slider='false' products=cat.all_active_products big='product-list__item--big' size='290x193' %}
 
-
-
-{% if shop_setup.new_products == True %}
-    {% if new_products.count > 0 %}
-    <div class="block gray">
-        <div class="container">
-            <div class="block__inner">
-                <div class="block__justify">
-                    <h2 class="title">Новинки</h2>
-                    <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
-
+                    
                 </div>
-                {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='290x193' %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% else %}
 
+
+    {% if shop_setup.new_products == True %}
+        {% if new_products.count > 0 %}
+        <div class="block gray">
+            <div class="container">
+                <div class="block__inner">
+                    <div class="block__justify">
+                        <h2 class="title">Новинки</h2>
+                        <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
+
+                    </div>
+                    {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='290x193' %}
+
+                    
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    {% endif %}
+    {% if shop_setup.action == True %}
+        {% if sale_products.count > 0 %}
+        <div class="block gray">
+            <div class="container">
+                <div class="block__inner">
+                    <h2 class="title">Скидки</h2>
+                    {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='290x193' %}
                 
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-{% endif %}
-{% if shop_setup.action == True %}
-    {% if sale_products.count > 0 %}
-    <div class="block gray">
-        <div class="container">
-            <div class="block__inner">
-                <h2 class="title">Скидки</h2>
-                {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='290x193' %}
-            
-                <div class="block__center">
-                    {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
+                    <div class="block__center">
+                        {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        {% endif %}
+
     {% endif %}
+    {% if shop_setup.sales_hits == True %}
+        {% if hit_products.count > 0 %}
+        <div class="block gray">
+            <div class="container">
+                <div class="block__inner">
+                    <h2 class="title">Хиты продаж</h2>
+                    {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='290x193' %}
 
-{% endif %}
-{% if shop_setup.sales_hits == True %}
-    {% if hit_products.count > 0 %}
-    <div class="block gray">
-        <div class="container">
-            <div class="block__inner">
-                <h2 class="title">Хиты продаж</h2>
-                {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='290x193' %}
-
+                </div>
             </div>
         </div>
-    </div>
+        {% endif %}
     {% endif %}
+
 {% endif %}
+
+
 
 {% if news.count > 0 %}
 <div class="block">

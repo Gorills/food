@@ -90,7 +90,9 @@ function loadCartData() {
 }
 
 
-
+$(document).on('click','.header-bottom__link',function(){
+    $('.header-bottom__list').removeClass('header-bottom__list--active')
+});
 
 
 

@@ -84,7 +84,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 0px;
+  scroll-padding-top: 50px;
 }
 
 .gray {
