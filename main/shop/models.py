@@ -4,6 +4,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 from admin.singleton_model import SingletonModel
 from subdomains.models import Subdomain
+from sorl.thumbnail import get_thumbnail
+
 # Create your models here.
 
 
@@ -39,8 +41,12 @@ class ShopSetup(SingletonModel):
     action = models.BooleanField(default=True, verbose_name='Включить акции')
     new_products = models.BooleanField(default=True, verbose_name='Включить новинки')
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
-
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
+
+    min_width = models.PositiveIntegerField(null=True, blank=True, default=290, verbose_name='Ширина миниатюры')
+    min_height = models.PositiveIntegerField(null=True, blank=True, default=193, verbose_name='Высота миниатюры')
+    max_width = models.PositiveIntegerField(null=True, blank=True, default=750, verbose_name='Ширина основного изображения')
+    max_height = models.PositiveIntegerField(null=True, blank=True, default=500, verbose_name='Высота основного изображения')
 
 
 
@@ -232,7 +238,6 @@ class Product(models.Model):
 
     # Маленькое изображение
     thumb = models.FileField(upload_to='products/thumb', verbose_name='Основное изображение')
-
     
     
 
@@ -250,6 +255,42 @@ class Product(models.Model):
     free = models.PositiveIntegerField(default=0, verbose_name='Бесплатно в заказе')
     minimum = models.PositiveIntegerField(default=1, verbose_name='Минимальное количество')
 
+
+
+    def get_thumb_mini(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.min_height and not setup.min_width:
+                res = get_thumbnail(self.thumb, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            elif setup.min_width and not setup.min_height:
+                res = get_thumbnail(self.thumb, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.min_height and setup.min_width:
+                res = get_thumbnail(self.thumb, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.thumb, '290x193', crop='center', format="WEBP", quality=100)
+        except:
+            pass
+
+        return res
+    
+    def get_thumb_maxi(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.max_height and not setup.max_width:
+                res = get_thumbnail(self.thumb, f'x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            elif setup.max_width and not setup.max_height:
+                res = get_thumbnail(self.thumb, f'{setup.max_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.max_height and setup.max_width:
+                res = get_thumbnail(self.thumb, f'{setup.max_width}x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.thumb, '750x500', crop='center', format="WEBP", quality=100)
+        except:
+            pass
+
+        
+        return res
 
     def __str__(self):
         

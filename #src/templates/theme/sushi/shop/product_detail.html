@@ -67,22 +67,22 @@
                     {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
                     {% endthumbnail %}
-                    {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
-                        <div data-image="{{ im.url }}"></div>
-                        {% endthumbnail %}
+                   
+                    <div data-image="{{ product.get_thumb_maxi.url }}"></div>
+                    
                     {% for image in product.images.all %}
                         {% thumbnail image.src "80x80" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
-                        {% thumbnail image.src "750x500" format="WEBP" crop="center" as im %}
-                        <div data-image="{{ im.url }}"></div>
-                        {% endthumbnail %}
+                 
+                        <div data-image="{{ product.get_thumb_maxi.url }}"></div>
+                      
                     {% endfor %}
                 </div>
                 {% endif %}
-                {% thumbnail product.thumb "750x500" format="WEBP" crop="center" as im %}
-                    <img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
-                {% endthumbnail %}
+               
+                <img itemprop="image" src="{{ product.get_thumb_maxi.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
+               
             </div>
 
 

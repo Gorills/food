@@ -30,9 +30,9 @@
                 
 
 
-                {% thumbnail product.thumb size format="WEBP" crop="center" as im %}
-                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb product-list__thumb-{{ product.id }}">
-                {% endthumbnail %}
+               
+                <img loading="lazy" src="{{ product.get_thumb_mini.url }}" alt="{{ product.name }}" class="product-list__thumb product-list__thumb-{{ product.id }}">
+                
 
                 {% comment %} {% if product.images.first %}
                     {% thumbnail product.images.first.src size format="WEBP" crop="center" as im %}
