@@ -1,4 +1,5 @@
 from django.db import models
+from main.transliterate_filename import transliterate_file
 
 # Create your models here.
 class Subdomain(models.Model):
@@ -26,8 +27,14 @@ class Subdomain(models.Model):
     meta_h1 = models.CharField(max_length=350, blank=True, null=True, verbose_name="Meta h1")
 
     text = models.TextField(blank=True, null=True, verbose_name="Текст")
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'delivery_zones/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
 
-    zone_file = models.FileField(blank=True, null=True, verbose_name="Файл зоны доставки", upload_to='delivery_zones')
+    zone_file = models.FileField(blank=True, null=True, verbose_name="Файл зоны доставки", upload_to=get_image_upload_path)
     
     def __str__(self):
 

@@ -5,6 +5,7 @@ from django.utils import timezone
 from admin.singleton_model import SingletonModel
 from subdomains.models import Subdomain
 from sorl.thumbnail import get_thumbnail
+from main.transliterate_filename import transliterate_file
 
 # Create your models here.
 
@@ -37,7 +38,14 @@ class ShopSetup(SingletonModel):
     meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Мета тайтл')
     meta_description = models.TextField(null=True, blank=True, verbose_name='Мета описание')
     meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова через запятую')
-    image = models.ImageField(upload_to='catalog', null=True, blank=True, verbose_name='Изображение')
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'shopsetup/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение')
     action = models.BooleanField(default=True, verbose_name='Включить акции')
     new_products = models.BooleanField(default=True, verbose_name='Включить новинки')
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
@@ -89,8 +97,14 @@ class Category(models.Model):
     meta_description = models.TextField(null=True, blank=True)
     meta_keywords = models.TextField(null=True, blank=True)
 
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'categories/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
     
-    image = models.ImageField(upload_to='catalog', null=True, blank=True)
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
     top = models.BooleanField()
     home = models.BooleanField(default=False, verbose_name='Отображать на главной странице (для темы Суши)')
     column = models.PositiveIntegerField(default=1)
@@ -145,7 +159,13 @@ class Manufacturer(models.Model):
     meta_keywords = models.TextField(null=True, blank=True)
 
     slug = models.SlugField(unique=True, max_length=250)
-    image = models.ImageField(upload_to='manufacturer', null=True, blank=True)
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'manufacturer/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
     sort_order = models.PositiveIntegerField(default=0, null=True, blank=True)
 
     create_at = models.DateField(auto_now_add=True)
@@ -236,8 +256,15 @@ class Product(models.Model):
     # Связанные товары
     product_connect = models.ManyToManyField('self', related_name='connects', blank=True)
 
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'products/thumb/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
     # Маленькое изображение
-    thumb = models.FileField(upload_to='products/thumb', verbose_name='Основное изображение')
+    thumb = models.FileField(upload_to=get_image_upload_path, verbose_name='Основное изображение')
     
     
 
@@ -402,7 +429,13 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     parent = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    src = models.ImageField(upload_to='products/images')
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'products/images/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    src = models.ImageField(upload_to=get_image_upload_path)
     class Meta:
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображения'
@@ -457,7 +490,13 @@ class ProductOption(models.Model):
 
 class OptionImage(models.Model):
     parent = models.ForeignKey(ProductOption, on_delete=models.CASCADE, related_name='images')
-    src = models.ImageField(upload_to='products/option/images')
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'products/option/images/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    src = models.ImageField(upload_to=get_image_upload_path)
     class Meta:
         verbose_name = 'Изображение опции товаров'
         verbose_name_plural = 'Изображения опций товаров'
@@ -518,7 +557,13 @@ class Combo(models.Model):
     name = models.CharField(max_length=350, verbose_name='Название')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
-    thumb = models.ImageField(upload_to='products/thumb', verbose_name='Основное изображение', null=True, blank=True)
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'products/thumb/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    thumb = models.ImageField(upload_to=get_image_upload_path, verbose_name='Основное изображение', null=True, blank=True)
     
 
 

@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from admin.singleton_model import SingletonModel
 # Create your models here.
+from main.transliterate_filename import transliterate_file
 
 
 class BlogSetup(SingletonModel):
@@ -10,7 +11,15 @@ class BlogSetup(SingletonModel):
     meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Мета тайтл')
     meta_description = models.TextField(null=True, blank=True, verbose_name='Мета описание')
     meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова через запятую')
-    image = models.ImageField(upload_to='catalog', null=True, blank=True, verbose_name='Изображение')
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'blog/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение')
 
 
 class BlogCategory(models.Model):
@@ -19,7 +28,15 @@ class BlogCategory(models.Model):
     meta_title = models.CharField(max_length=350, null=True, blank=True)
     meta_description = models.TextField(null=True, blank=True)
     meta_keywords = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='blog', null=True, blank=True)
+
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'blog/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
 
     slug = models.SlugField(unique=True, max_length=250)
 
@@ -48,7 +65,15 @@ class Post(models.Model):
     meta_title = models.CharField(max_length=350, null=True, blank=True)
     meta_description = models.TextField(null=True, blank=True)
     meta_keywords = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='blog', null=True, blank=True)
+
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'post/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
 
     slug = models.SlugField(unique=True, max_length=250)
 
@@ -76,6 +101,12 @@ class PostBlock(models.Model):
     type = models.CharField(max_length=250)
     title = models.CharField(max_length=400, null=True, blank=True)
     text = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='blog/images', null=True, blank=True)
-    video = models.FileField(upload_to='blog/video',null=True, blank=True)
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'post/files/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
+    video = models.FileField(upload_to=get_image_upload_path,null=True, blank=True)
     order = models.PositiveIntegerField(default=0)

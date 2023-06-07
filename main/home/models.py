@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from admin.singleton_model import SingletonModel
 # Create your models here.
+from main.transliterate_filename import transliterate_file
 
 class SliderSetup(SingletonModel):
 
@@ -15,8 +16,17 @@ class SliderSetup(SingletonModel):
 class Slider(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
     title = models.CharField(max_length=250, null=True, blank=True, verbose_name='Заголовок (не обязательно)')
-    image = models.FileField(upload_to='slider', verbose_name='Изображение/видео')
-    image_mob = models.FileField(upload_to='slider', verbose_name='Изображение/видео для мобильного', null=True, blank=True)
+    
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'slider/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+
+    image = models.FileField(upload_to=get_image_upload_path, verbose_name='Изображение/видео')
+    image_mob = models.FileField(upload_to=get_image_upload_path, verbose_name='Изображение/видео для мобильного', null=True, blank=True)
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
     link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка (не обязательно)')
@@ -101,7 +111,16 @@ class Page(models.Model):
     meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Мета тайтл')
     meta_description = models.TextField(null=True, blank=True, verbose_name='Мета описание')
     meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова через запятую')
-    image = models.ImageField(upload_to='catalog', null=True, blank=True, verbose_name='Изображение')
+    
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'catalog/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+    
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение')
     
     def __str__(self):
         return self.name

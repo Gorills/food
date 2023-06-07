@@ -2,6 +2,7 @@ from venv import create
 from django.db import models
 from admin.singleton_model import SingletonModel
 from subdomains.models import Subdomain
+from main.transliterate_filename import transliterate_file
 from sorl.thumbnail import get_thumbnail
 # Create your models here.
 
@@ -33,17 +34,25 @@ class BaseSettings(SingletonModel):
     meta_keywords = models.CharField(max_length=350, blank=True, null=True)
     meta_h1 = models.CharField(max_length=350, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
-    social_image = models.FileField(upload_to="social_image", blank=True, null=True)
-    logo_light = models.FileField(upload_to="logo", blank=True, null=True)
+
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'setup/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+    social_image = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
+    logo_light = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
 
     logo_height = models.CharField(max_length=250, blank=True, null=True)
     logo_width = models.CharField(max_length=250, blank=True, null=True)
     
-    logo_dark = models.FileField(upload_to="logo", blank=True, null=True)
-    icon_ico = models.FileField(upload_to="fav", blank=True, null=True)
-    icon_png = models.FileField(upload_to="fav", blank=True, null=True)
-    icon_svg = models.FileField(upload_to="fav", blank=True, null=True)
-    pay_image = models.FileField(upload_to="pay", blank=True, null=True)    
+    logo_dark = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
+    icon_ico = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
+    icon_png = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
+    icon_svg = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
+    pay_image = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)    
     theme_color = models.CharField(max_length=250, blank=True, null=True)
     time_zone = models.CharField(max_length=250, blank=True, null=True, default='UTC')
     active = models.BooleanField(default=False)
