@@ -15,3 +15,4 @@ yookassa
 openpyxl
 pytils
 transliterate
+djangorestframework
