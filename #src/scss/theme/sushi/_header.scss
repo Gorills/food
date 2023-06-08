@@ -433,6 +433,9 @@
             // display: flex;
             font-size: 14px;
         }
+        @media screen and (max-width:390px) {
+            display: none;
+        }
     }
 
     // .header__work-title
