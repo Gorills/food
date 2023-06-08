@@ -5227,6 +5227,10 @@ td.product-thumbnail img {
     margin-top: 10px;
   }
 
+  .header__work-time {
+    font-size: 14px;
+  }
+
   .header__contacts {
     flex-direction: column;
   }
@@ -5347,6 +5351,19 @@ td.product-thumbnail img {
     padding: 20px;
     border-top: 1px solid #e1e1e1;
     box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .header__contacts-soc svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .header__work-time {
+    display: none;
   }
 }
 /*# sourceMappingURL=maps/style.css.map */
