@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import BaseSettingsSerializer
+from .serializers import BaseSettingsSerializer, ShopSetupSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
@@ -20,3 +20,8 @@ from subdomains.models import Subdomain
 class BaseSettingsViewSet(viewsets.ModelViewSet):
     queryset = BaseSettings.objects.all()
     serializer_class = BaseSettingsSerializer
+
+
+class ShopSetupViewSet(viewsets.ModelViewSet):
+    queryset = ShopSetup.objects.all()
+    serializer_class = ShopSetupSerializer

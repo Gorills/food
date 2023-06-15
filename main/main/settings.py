@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'ckeditor',
     'ckeditor_uploader',
+    'integrations',
     # 'django.contrib.sites',
     'cart',
     'orders',

@@ -21,3 +21,9 @@ class BaseSettingsSerializer(serializers.ModelSerializer):
         model = BaseSettings
         fields = '__all__'
 
+
+class ShopSetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopSetup
+        fields = '__all__'
+
