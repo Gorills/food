@@ -60,7 +60,8 @@
     // .product-detail__image
 
     &__image {
-
+        width: 100%;
+        max-width: 750px;
         @media screen and (max-width:1200px) {
             width: 100%;
             object-fit: contain;

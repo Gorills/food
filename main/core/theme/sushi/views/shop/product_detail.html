@@ -68,20 +68,20 @@
                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
                     {% endthumbnail %}
                    
-                    <div data-image="{{ product.get_thumb_maxi.url }}"></div>
+                    <div data-image="{{ product.get_thumb_maxi }}"></div>
                     
                     {% for image in product.images.all %}
                         {% thumbnail image.src "80x80" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
                  
-                        <div data-image="{{ product.get_thumb_maxi.url }}"></div>
+                        <div data-image="{{ product.get_thumb_maxi }}"></div>
                       
                     {% endfor %}
                 </div>
                 {% endif %}
                
-                <img itemprop="image" src="{{ product.get_thumb_maxi.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
+                <img itemprop="image" src="{{ product.get_thumb_maxi }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__image">
                
             </div>
 
@@ -290,7 +290,7 @@
 </div>
 
 
-
+{% if product.description %}
 <div class="product-bottom">
     <div class="container">
         <div class="product-bottom__inner">
@@ -300,7 +300,7 @@
         </div>
     </div>
 </div>
-
+{% endif %}
 
 <div class="similar gray">
     <div class="container">

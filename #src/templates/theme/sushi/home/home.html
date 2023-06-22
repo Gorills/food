@@ -239,9 +239,15 @@
                             <div class="product-list__top">
                                 
 
-                                {% thumbnail combo.thumb "290x193" format="WEBP" crop="center" as im %}
-                                    <img loading="lazy" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}">
-                                {% endthumbnail %}
+                                
+                                    <img 
+                                        loading="lazy" 
+                                        src="{{ combo.get_thumb_mini }}"
+                                       
+                                        alt="{{ product.name }}" 
+                                        class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}"
+                                    >
+                                
 
                                
 

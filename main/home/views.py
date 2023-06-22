@@ -18,7 +18,7 @@ from django.views.generic import TemplateView, ListView
 
 from pay.models import AlfaBank, PaymentSet, Yookassa
 
-
+from integrations.views import *
 from pay.paykeeper_pay import get_status
 from subdomains.utilites import get_protocol
 # get_status()

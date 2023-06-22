@@ -1216,7 +1216,19 @@ class CategoryForm(forms.ModelForm):
     
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = [
+            'name',
+            'meta_h1',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'image',
+            'top',
+            
+            'sort_order',
+            'status',
+            'slug',
+        ]
         labels = {
             
 

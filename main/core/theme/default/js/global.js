@@ -1054,7 +1054,7 @@ $(document).on('click','.product-options__item',function(e){
     $productItem.find('.product-list__old').html(res_old_price + ' ₽')
     
     
-    $productItem.find('.product-options__span-'+product_id).html(value)
+    // $productItem.find('.product-options__span-'+product_id).html(value)
 
 });
 

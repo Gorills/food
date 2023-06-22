@@ -3283,7 +3283,8 @@ a {
   align-items: center;
   justify-content: center;
   margin-left: 5px;
-  width: 60px;
+  padding: 0 10px;
+  width: fit-content;
   text-align: center;
   height: 24px;
   background-color: #fff;
@@ -3781,6 +3782,11 @@ a {
 
 .product-detail__nav-image--active {
   border: 1px solid #d6d6d6;
+}
+
+.product-detail__image {
+  width: 100%;
+  max-width: 750px;
 }
 
 .product-detail__left {

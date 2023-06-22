@@ -90,6 +90,7 @@ class PayMethod(models.Model):
 
 
 class Category(models.Model):
+    external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     name = models.CharField(max_length=350)
     description = models.TextField(null=True, blank=True)
     meta_h1 = models.CharField(max_length=350, null=True, blank=True)
@@ -184,6 +185,7 @@ from itertools import groupby
 
 
 class Product(models.Model):
+    external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     # Выводить в меню и других списках
     name = models.CharField(max_length=350, verbose_name='Название')
     # Короткое описание, которое выводится в каталоге товаров, если есть
@@ -230,12 +232,7 @@ class Product(models.Model):
     length = models.CharField(max_length=200, null=True, blank=True)
     width = models.CharField(max_length=200, null=True, blank=True)
     height = models.CharField(max_length=200, null=True, blank=True)
-
-    # color = models.CharField(max_length=250, null=True, blank=True)
-    # color_name = models.CharField(max_length=250, null=True, blank=True)
-
-    # Состав
-    # composition = models.TextField(null=True, blank=True)
+    
 
     LENGHT_CLASS = (
        ('см', 'Сантиметры'),
@@ -264,7 +261,7 @@ class Product(models.Model):
         return f"{folder}{transliterate_file(instance, filename)}"
     
     # Маленькое изображение
-    thumb = models.FileField(upload_to=get_image_upload_path, verbose_name='Основное изображение')
+    thumb = models.FileField(upload_to=get_image_upload_path, verbose_name='Основное изображение', null=True, blank=True)
     
     
 
@@ -281,6 +278,9 @@ class Product(models.Model):
     all_cats = models.BooleanField(default=True, verbose_name='Отображать во всех категориях')
     free = models.PositiveIntegerField(default=0, verbose_name='Бесплатно в заказе')
     minimum = models.PositiveIntegerField(default=1, verbose_name='Минимальное количество')
+    
+    # iiko
+    iiko_type = models.CharField(max_length=200, null=True, blank=True, default='Dish')
 
 
 
@@ -296,8 +296,11 @@ class Product(models.Model):
                 res = get_thumbnail(self.thumb, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.thumb, '290x193', crop='center', format="WEBP", quality=100)
-        except:
-            pass
+
+            res = res.url
+        except Exception as e:
+            res = '/core/libs/no-image.webp'
+             
 
         return res
     
@@ -313,8 +316,10 @@ class Product(models.Model):
                 res = get_thumbnail(self.thumb, f'{setup.max_width}x{setup.max_height}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.thumb, '750x500', crop='center', format="WEBP", quality=100)
+
+            res = res.url
         except:
-            pass
+            res = '/core/libs/no-image.webp'
 
         
         return res
@@ -462,6 +467,7 @@ class OptionType(models.Model):
 
 
 class ProductOption(models.Model):
+    
     type = models.ForeignKey(OptionType, on_delete=models.CASCADE, related_name='t_options', null=True, blank=True)
     parent = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='options')
     
@@ -554,6 +560,7 @@ class ProductChar(models.Model):
 
 
 class Combo(models.Model):
+    external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     name = models.CharField(max_length=350, verbose_name='Название')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
@@ -565,7 +572,45 @@ class Combo(models.Model):
         return f"{folder}{transliterate_file(instance, filename)}"
     thumb = models.ImageField(upload_to=get_image_upload_path, verbose_name='Основное изображение', null=True, blank=True)
     
+    def get_thumb_mini(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.min_height and not setup.min_width:
+                res = get_thumbnail(self.thumb, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            elif setup.min_width and not setup.min_height:
+                res = get_thumbnail(self.thumb, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.min_height and setup.min_width:
+                res = get_thumbnail(self.thumb, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.thumb, '290x193', crop='center', format="WEBP", quality=100)
 
+            res = res.url
+        except Exception as e:
+            res = '/core/libs/no-image.webp'
+             
+
+        return res
+    
+    def get_thumb_maxi(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.max_height and not setup.max_width:
+                res = get_thumbnail(self.thumb, f'x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            elif setup.max_width and not setup.max_height:
+                res = get_thumbnail(self.thumb, f'{setup.max_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.max_height and setup.max_width:
+                res = get_thumbnail(self.thumb, f'{setup.max_width}x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.thumb, '750x500', crop='center', format="WEBP", quality=100)
+
+            res = res.url
+        except:
+            res = '/core/libs/no-image.webp'
+
+        
+        return res
 
 
 class ComboItem(models.Model):
