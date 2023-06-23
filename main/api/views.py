@@ -34,7 +34,12 @@ def get_statistic(request):
     orders = Order.objects.all().count()
     sales = Order.objects.all().aggregate(Sum('summ'))
 
-    summ = sales['summ__sum']
+    summ_res = sales['summ__sum']
+
+    if summ_res:
+        res = summ_res
+    else:
+        res = 0
 
     users = User.objects.all().exclude(is_staff=True)
     
@@ -45,11 +50,12 @@ def get_statistic(request):
 
     products = Product.objects.all().count()
     
-    data = {
-        'products': products,
-        'orders': orders,
-        'summ': summ,
-        'clients': clients,
-    }
+    items = [
+        { 'id': 1, 'count': str(orders), 'name': 'заказов', 'icons': 'basket' },
+        { 'id': 2, 'count': str(res), 'name': 'продаж', 'icons': 'card' },
+        { 'id': 3, 'count': str(products), 'name': 'товаров', 'icons': 'product' },
+        { 'id': 4, 'count': str(clients), 'name': 'клиентов', 'icons': 'users' },
+    ]
 
-    return Response(data, status=status.HTTP_200_OK)
+    
+    return Response(items, status=status.HTTP_200_OK)
