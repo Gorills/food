@@ -1224,7 +1224,9 @@ class CategoryForm(forms.ModelForm):
             'meta_keywords',
             'image',
             'top',
-            
+            'home',
+            'resize',
+            'font_color',
             'sort_order',
             'status',
             'slug',
@@ -1268,7 +1270,10 @@ class CategoryForm(forms.ModelForm):
                 'placeholder': 'Мета описание',
             }),
           
-            
+            'font_color': forms.TextInput(attrs={
+                # 'class': 'input',
+                'type': 'color',
+            }),
             
             'column': forms.NumberInput(attrs={
                 'class': 'input',

@@ -107,7 +107,10 @@ class Category(models.Model):
     
     image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
     top = models.BooleanField()
-    home = models.BooleanField(default=False, verbose_name='Отображать на главной странице (для темы Суши)')
+    home = models.BooleanField(default=False, verbose_name='Отображать на главной странице')
+    resize = models.BooleanField(default=False, verbose_name='Растянуть фон')
+    font_color = models.CharField(max_length=250, null=True, blank=True, verbose_name='Цвет шрифта')
+
     column = models.PositiveIntegerField(default=1)
     sort_order = models.PositiveIntegerField(default=0)
     status = models.BooleanField(default=True)
