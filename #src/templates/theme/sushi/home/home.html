@@ -120,7 +120,7 @@
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
-                        {% thumbnail cat.image "296" format="WEBP" crop="center" as im %}
+                        {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
                         {% endthumbnail %}
                     
