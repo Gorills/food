@@ -2215,11 +2215,12 @@ $(document).on('click','.content',function(){
         
     }
   
-    $('.delivery-popup__btn').click(function() {
-      $('.delivery-popup').hide();
-      $(this).prop('disabled', true);
-  
-      setCookie('isHidden', 'true', 1/24); // Устанавливаем куку на 1 день (время указано в днях)
+    $('.delivery-popup__btn').click(function(e) {
+        e.preventDefault();
+        $('.delivery-popup').hide();
+        $(this).prop('disabled', true);
+    
+        setCookie('isHidden', 'true', 1/24); // Устанавливаем куку на 1 день (время указано в днях)
     });
   });
   
