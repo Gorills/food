@@ -34,6 +34,8 @@ def get_work_active(request):
 
     except:
         delivery_active = True
+        start_time = time(ShopSetup.objects.get().start_delivery, 0)
+        end_time = time(ShopSetup.objects.get().end_delivery, 0)
 
     print(current_time)
     return {
