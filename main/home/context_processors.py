@@ -8,28 +8,32 @@ from main.local_settings import TIME_ZONE
 
 def get_work_active(request):
 
-    current_time = timezone.now()
+    try:
+        current_time = timezone.now()
 
-    # Определяем временную зону для сравнения
-    time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
+        # Определяем временную зону для сравнения
+        time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
 
-    # Конвертируем текущее время в нужную временную зону
-    current_time = current_time.astimezone(time_zone)
+        # Конвертируем текущее время в нужную временную зону
+        current_time = current_time.astimezone(time_zone)
 
-    # Создаем объекты времени для начала и конца диапазона доставки
-    start_time = time(ShopSetup.objects.get().start_delivery, 0)  # Начало доставки в 10:00
-    end_time = time(ShopSetup.objects.get().end_delivery, 0)  # Конец доставки в 22:00
+        # Создаем объекты времени для начала и конца диапазона доставки
+        start_time = time(ShopSetup.objects.get().start_delivery, 0)  # Начало доставки в 10:00
+        end_time = time(ShopSetup.objects.get().end_delivery, 0)  # Конец доставки в 22:00
 
-    # Создаем объекты datetime для сравнения времени
-    current_datetime = datetime.combine(current_time.date(), current_time.time())
-    start_datetime = datetime.combine(current_time.date(), start_time)
-    end_datetime = datetime.combine(current_time.date(), end_time)
+        # Создаем объекты datetime для сравнения времени
+        current_datetime = datetime.combine(current_time.date(), current_time.time())
+        start_datetime = datetime.combine(current_time.date(), start_time)
+        end_datetime = datetime.combine(current_time.date(), end_time)
 
-    # Проверяем, находится ли текущее время в диапазоне доставки
-    if start_datetime <= current_datetime <= end_datetime:
+        # Проверяем, находится ли текущее время в диапазоне доставки
+        if start_datetime <= current_datetime <= end_datetime:
+            delivery_active = True
+        else:
+            delivery_active = False
+
+    except:
         delivery_active = True
-    else:
-        delivery_active = False
 
     print(current_time)
     return {
