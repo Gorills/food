@@ -1,6 +1,46 @@
 from .models import Page
 from orders.forms import OrderCreateForm
 from shop.models import ShopSetup
+from django.utils import timezone
+from datetime import datetime, time
+import pytz
+from main.local_settings import TIME_ZONE
+
+def get_work_active(request):
+
+    current_time = timezone.now()
+
+    # Определяем временную зону для сравнения
+    time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
+
+    # Конвертируем текущее время в нужную временную зону
+    current_time = current_time.astimezone(time_zone)
+
+    # Создаем объекты времени для начала и конца диапазона доставки
+    start_time = time(ShopSetup.objects.get().start_delivery, 0)  # Начало доставки в 10:00
+    end_time = time(ShopSetup.objects.get().end_delivery, 0)  # Конец доставки в 22:00
+
+    # Создаем объекты datetime для сравнения времени
+    current_datetime = datetime.combine(current_time.date(), current_time.time())
+    start_datetime = datetime.combine(current_time.date(), start_time)
+    end_datetime = datetime.combine(current_time.date(), end_time)
+
+    # Проверяем, находится ли текущее время в диапазоне доставки
+    if start_datetime <= current_datetime <= end_datetime:
+        delivery_active = True
+    else:
+        delivery_active = False
+
+    print(current_time)
+    return {
+        'delivery_active': delivery_active,
+        'start_time': start_time,
+        'end_time': end_time
+        
+        }
+
+
+
 
 
 def pages(request):

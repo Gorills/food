@@ -102,6 +102,8 @@
     
     
 <body>
+
+   
    
     {% if not subdomains or subdomain or request.path == '/accounts/login/' %}
     {% include 'components/header.html' %}
@@ -143,7 +145,7 @@
     </div>
 
     {% endif %}
-
+    
     
 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e&amp;{% now "H:i:s" %}" type="text/javascript"></script>

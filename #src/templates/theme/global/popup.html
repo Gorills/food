@@ -34,3 +34,22 @@
     </div>
 </div>
 {% endif %} {% endcomment %}
+
+
+{% if delivery_active == False %}
+<div class="delivery-popup">
+    <div class="delivery-popup__overlay"></div>
+
+    <div class="delivery-popup__inner">
+        <h3 class="delivery-popup__title">Уважаемый клиент!</h3>
+
+        <p class="delivery-popup__text">Мы закрыты до <span>{{ start_time }}</span>. Вы можете оставить предварительный заказ. Он автоматически попадёт в очередь (на кухню)
+
+        </p>
+
+        <a href="#" class="delivery-popup__btn">Ok</a>
+    </div>
+
+</div>
+
+{% endif %}
