@@ -4,7 +4,12 @@ import requests
 
 from .models import Integrations
 
-api_key = Integrations.objects.get(name='iiko').api_key
+
+try:
+    api_key = Integrations.objects.get(name='iiko').api_key
+except:
+    pass
+
 
 
 
