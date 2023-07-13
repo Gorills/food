@@ -6,10 +6,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
+from integrations.models import Integrations
 from subdomains.models import Subdomain
 
 from orders.models import Order
@@ -833,9 +834,41 @@ def zone_file(request):
                 json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         subprocess.call(["touch", RESET_FILE])
-        return redirect('shop_settings')
 
+        
+        return redirect('shop_settings')
 # !!! Загрузка файлла с зонами доставки !!!
+    
+# !!! district_setup !!!
+
+from .get_dictricts import get_file
+@user_passes_test(lambda u: u.is_superuser)
+def district_setup(request):
+
+    if request.method == 'POST':
+        data_rions = request.POST.get('rions')
+
+        get_file(data_rions)
+
+        return redirect('shop_settings')
+    
+    file_path = "../core/result.geojson"
+
+    if os.path.exists(file_path):
+        file = True
+    else:
+        file = False
+
+    
+    
+    context = {
+        'file': file
+    }
+
+    return render(request, 'settings/district_setup.html', context)
+
+# !!! district_setup !!!
+
 
 
 # !!! Добавить зону доставки !!!
@@ -2316,6 +2349,7 @@ from PIL import Image
 
 from django.core.files.images import ImageFile
 
+@user_passes_test(lambda u: u.is_superuser)
 def product_upload():
 
     # cat = Category.objects.all()
@@ -2429,6 +2463,7 @@ def product_upload():
                 
 # !!!! Загрузка csv
 
+@user_passes_test(lambda u: u.is_superuser)
 def csv_upload(request):
 
     if request.method == 'POST':
@@ -2473,7 +2508,8 @@ def csv_upload(request):
 
 
 
-# !!! Субдомены !!!
+
+@user_passes_test(lambda u: u.is_superuser)# !!! Субдомены !!!
 def admin_subdomain(request):
 
     context = {
@@ -2483,6 +2519,7 @@ def admin_subdomain(request):
     return render(request, 'subdomain/admin_subdomain.html', context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def add_subdomain(request):
 
     if request.method == 'POST':
@@ -2508,6 +2545,7 @@ def add_subdomain(request):
     return render(request, 'subdomain/add_subdomain.html', context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def edit_subdomain(request, pk):
 
     subdomain = Subdomain.objects.get(id=pk)
@@ -2535,6 +2573,7 @@ def edit_subdomain(request, pk):
     return render(request, 'subdomain/edit_subdomain.html', context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def delete_subdomain(request, pk):
 
     subdomain = Subdomain.objects.get(id=pk)
@@ -2545,3 +2584,95 @@ def delete_subdomain(request, pk):
 
 
 # !!! Субдомены !!!
+
+
+
+# !!! Интеграции !!!
+
+@user_passes_test(lambda u: u.is_superuser)
+def integration(request):
+    try:
+        integrations = Integrations.objects.get()
+    except:
+        integrations = None
+    
+    context = {
+        'integrations': integrations
+    }
+
+    return render(request, 'integration/integration.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_integration(request):
+
+    if request.method == 'POST':
+        form = IntegrationsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('integration')
+        else:
+            return render(request, 'integration/add_integration.html', {'form': form})
+
+    form = IntegrationsForm()
+
+    context = {
+        'form': form
+    }
+    return render(request, 'integration/add_integration.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_integration(request, pk):
+    integration = Integrations.objects.get(id=pk)
+    if request.method == 'POST':
+        form = IntegrationsForm(request.POST, request.FILES, instance=integration)
+        if form.is_valid():
+            form.save()
+            return redirect('integration')
+        else:
+            return render(request, 'integration/add_integration.html', {'form': form})
+
+    form = IntegrationsForm(instance=integration)
+    context = {
+        'form': form
+    }
+    return render(request, 'integration/add_integration.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_integration(request, pk):
+    integration = Integrations.objects.get(id=pk)
+    integration.delete()
+    return redirect('integration')
+
+
+from integrations.iiko import load_menu
+@user_passes_test(lambda u: u.is_superuser)
+def catalogs_synch(request):
+
+    if request.method == 'POST':
+        load_menu(False)
+
+        return redirect('integration')
+
+@user_passes_test(lambda u: u.is_superuser)
+def synch_cron(request):
+
+
+    return redirect('integration')
+
+# !!! Интеграции !!!
+
+from integrations.cron import *
+
+
+
+
+
+
+
+
+
+

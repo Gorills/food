@@ -28,7 +28,7 @@
             {{ form.as_p }}
             {{ form.media }}
             <button class="btn btn--primary">Сохранить</button>
-
+            
         </form>
 
         <div class="page__wrap">
@@ -47,8 +47,10 @@
                 
                 {% endif %}
                 
-                <button class="btn btn--primary">Сохранить</button>
-
+                <div class="row">
+                    <button class="btn btn--primary">Сохранить</button>
+                    <a class="btn btn--danger" href="{% url 'district_setup' %}">Настроить по районам</a>
+                </div>
             </form>
 
             <div class="page__static page__title">

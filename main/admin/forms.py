@@ -9,6 +9,32 @@ from home.models import SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
+from integrations.models import Integrations
+
+
+
+class IntegrationsForm(forms.ModelForm):
+    class Meta:
+        model = Integrations
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'api_key': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'webhook_uri': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'webhook_token': forms.TextInput(attrs={
+                'class': 'input',
+            })
+
+        }
+
+        
 
 
 

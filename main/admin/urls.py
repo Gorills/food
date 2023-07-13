@@ -73,6 +73,10 @@ urlpatterns = [
     path('delete_zone/<int:pk>/', views.delete_zone, name='delete_zone'),
 
 
+    # district setup
+    path('district_setup/', views.district_setup, name='district_setup'),
+
+
     # shop
     path('shop_settings/', views.shop_settings, name='shop_settings'),
     path('category/', views.admin_category, name='admin_category'),
@@ -189,6 +193,23 @@ urlpatterns = [
     path('admin_subdomain/add/', views.add_subdomain, name='add_subdomain'),
     path('admin_subdomain/edit/<int:pk>/', views.edit_subdomain, name='edit_subdomain'),
     path('admin_subdomain/delete/<int:pk>/', views.delete_subdomain, name='delete_subdomain'),
+
+
+    # INTEGRATIONS
+    path('integration/', views.integration, name='integration'),
+    path('integration/add/', views.add_integration, name='add_integration'),
+    path('integration/edit/<int:pk>/', views.edit_integration, name='edit_integration'),
+    path('integration/delete/<int:pk>/', views.delete_integration, name='delete_integration'),
+
+
+
+    path('catalogs_synch/', views.catalogs_synch, name='catalogs_synch'),
+    path('synch_cron/', views.synch_cron, name='synch_cron'),
+
+
+
+
+
 ]
 
 

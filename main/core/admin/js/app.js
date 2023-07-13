@@ -812,3 +812,38 @@ $(document).on('click','.option_autofield_detail__item',function(){
 
 });
 
+
+
+
+// Интеграция, отправка формы для синхронизации каталогов
+$(document).ready(function() {
+  // при отправке формы
+  $('.synch__catalogs').submit(function(event) {
+    // отменяем стандартное действие браузера
+    event.preventDefault();
+    
+    // показываем лоадер
+    $('.synch__loader').addClass('synch__loader--active');
+    
+    // отправляем данные формы на сервер
+    $.ajax({
+      type: $(this).attr('method'),
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      success: function(response) {
+        // скрываем лоадер после успешной отправки формы
+        $('.synch__loader').removeClass('synch__loader--active');
+        
+        // обрабатываем ответ сервера
+        // ...
+      },
+      error: function(error) {
+        // скрываем лоадер после ошибки при отправке формы
+        $('.synch__loader').removeClass('synch__loader--active');
+        
+        // обрабатываем ошибку
+        // ...
+      }
+    });
+  });
+});
