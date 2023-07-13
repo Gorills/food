@@ -1,0 +1,126 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+<div class="page__title">Интеграции</div>
+
+<div class="breadcrumb">
+    <div class="breadcrumb__inner">
+
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+
+            <li class="breadcrumb__item">Интеграции</li>
+          
+        </ol>
+
+        {% if not integrations %}
+        <a href="{% url 'add_integration' %}" id="add" class="add">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+<div class="page search">
+    <div class="page__inner search__inner">
+
+        <ul class="responsive-table">
+            <li class="table-header">
+                
+                <div class="col col-2">
+                    Название 
+                </div>
+                <div class="col col-2">
+                    Ключ API 
+                </div>
+                
+              <div class="col col-5">Действие</div>
+            </li>
+
+            
+            {% if integrations %}
+            
+            <li class="table-row">
+                <div class="col col-2" data-label="">
+                    {{ integrations.name }}
+                </div>
+                <div class="col col-2" data-label="">
+                    
+                    {{ integrations.api_key }}
+                    
+                </div>
+                
+                <div class="col col-5" data-label="">
+
+                    <a href="{% url 'edit_integration' integrations.pk %}" class="edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"/></svg>
+                    </a>
+                    <a href="{% url 'delete_integration' integrations.pk %}" class="remove">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M268 416h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12zM432 80h-82.41l-34-56.7A48 48 0 0 0 274.41 0H173.59a48 48 0 0 0-41.16 23.3L98.41 80H16A16 16 0 0 0 0 96v16a16 16 0 0 0 16 16h16v336a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128h16a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16zM171.84 50.91A6 6 0 0 1 177 48h94a6 6 0 0 1 5.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12z"/></svg>
+                    </a>
+                </div> 
+            </li>
+                
+                
+            {% endif %}
+          
+                            
+              
+          </ul>
+    
+    </div>
+</div>
+
+
+{% load admin_static %}
+{% if integrations.name == 'iiko' %}
+<div class="synch">
+
+    <div class="synch__loader">
+   
+        <img src="{% get_static 'images/loader.png' %}" alt="" class="loader">
+    </div>
+
+    <div class="synch__inner">
+
+        <form action="{% url 'catalogs_synch' %}" class="synch__catalogs" method="post">
+            {% csrf_token %}
+            <button class="btn-to-synch">Синхронизировать каталоги</button>
+        </form>
+        
+        <form action="{% url 'synch_cron' %}" class="synch__cron">
+            <div class="synch__title">Настройка автообновлений</div>
+
+            <div class="synch__cron-row">
+                <label for="">
+                    Минуты
+                    <input type="number" min="30" class="input">
+                </label>
+                <label for="">
+                    Часы
+                    <input type="number" class="input">
+                </label>
+            </div>
+            <div class="synch__cron-bottom">
+                <small><b>* Укажите интервал времени, который будет использоваться для автоматической синхронизации каталогов. Например, для
+                    синхронизации каждый час оставте поле с минутами пустым, в поле с часами укажите 1 час. Для синхронизации каждые 30 минут укажите 30 мин, оставте поле с часами пустым. Минимальный 
+                    интервал - 30 минут.
+                </b></small>
+                <button class="btn btn--primary">Сохранить</button>
+            </div>
+           
+
+        </form>
+
+    </div>
+</div>
+{% endif %}
+
+
+
+{% endblock %}

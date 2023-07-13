@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block body %}
+
+<div class="page__title">Настройка районов доставки</div>
+
+<div class="breadcrumb">
+
+    <ol class="breadcrumb__list">
+        <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'admin' %}">Главная</a></li>
+        <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'shop_settings' %}">Настройки магазина</a></li>
+        <li class="breadcrumb__item">Настройка районов доставки</li>
+    </ol>
+
+</div>
+
+<div class="page">
+    <div class="page__inner">
+
+       
+        <form action="." class="form" method="post">
+            {% csrf_token %}
+            <p>
+                <label for="">Районы доставки и стоимость. Например: </label>
+                <br>
+                <br>
+                <input type="text" class="input" name="rions" placeholder="" required>
+            </p>
+            <button class="btn btn--primary">Сохранить</button>
+
+            <br>
+            <small><b>Описание:</b></small>
+
+            <br>
+            <br>
+            {% if file %}
+            <a href="/core/result.geojson" target="_blank" class="btn btn--primary">Скачать предыдущий файл для редактирования</a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}

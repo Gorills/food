@@ -1,3 +1,4 @@
+
 media
 db.sqlite3
 .DS_Store
@@ -43,3 +44,5 @@ delivery.json
 main/csv_upload
 
 **/db.json
+
+**/result.geojson
