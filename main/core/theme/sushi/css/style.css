@@ -4803,6 +4803,11 @@ td.product-thumbnail img {
 }
 
 @media screen and (max-width: 992px) {
+  .header__contacts-link-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+
   .product-list {
     grid-template-columns: repeat(2, 1fr);
   }

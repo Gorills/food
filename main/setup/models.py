@@ -97,7 +97,7 @@ class BaseSettings(SingletonModel):
             try:
                 res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
                 res_two = phone_list[1].replace(' ','').replace('-','').replace('(','').replace(')','')
-                phone = f'<a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a> <a href="tel:{ res_two }" class="header__contacts-link">{phone_list[1]}</a>'
+                phone = f'<div class="header__contacts-link-wrap"><a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a> <a href="tel:{ res_two }" class="header__contacts-link">{phone_list[1]}</a></div>' 
             except:
                 res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
 
