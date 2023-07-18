@@ -93,7 +93,7 @@ class BaseSettings(SingletonModel):
             phone_str = self.phone
             phone_list = phone_str.split(',')
             
-            print(phone_list)
+            
             try:
                 res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
                 res_two = phone_list[1].replace(' ','').replace('-','').replace('(','').replace(')','')
