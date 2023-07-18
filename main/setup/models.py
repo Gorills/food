@@ -80,12 +80,37 @@ class BaseSettings(SingletonModel):
 
         return res
 
+    # def get_phone(self):
+    #     try:
+    #         res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+    #     except:
+    #         res = '899999999'
+    #     return res
+    
     def get_phone(self):
-        try:
-            res = self.phone.replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
-        except:
-            res = '899999999'
-        return res
+
+        if self.phone:
+            phone_str = self.phone
+            phone_list = phone_str.split(',')
+            
+            print(phone_list)
+            try:
+                res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
+                res_two = phone_list[1].replace(' ','').replace('-','').replace('(','').replace(')','')
+                phone = f'<a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a> <a href="tel:{ res_two }" class="header__contacts-link">{phone_list[1]}</a>'
+            except:
+                res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
+
+                phone = f'<a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a>'
+      
+
+
+        else:
+            
+            base = BaseSettings.objects.get()
+            phone = f'<a href="tel:{ base.get_phone() }" class="header__contacts-link">{base.phone}</a>'
+
+        return phone
 
    
 
