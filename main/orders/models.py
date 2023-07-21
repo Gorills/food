@@ -71,6 +71,15 @@ class Order(models.Model):
     def get_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost - total_cost * (self.discount / Decimal('100'))
+    
+
+    def get_phone(self):
+
+        digits_only = ''.join(char for char in self.phone if char.isdigit())
+
+        return digits_only
+
+
 
 
 class OrderItem(models.Model):
