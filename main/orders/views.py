@@ -409,11 +409,11 @@ def order_webhook(request):
     try:
         telegram_bot = subdomain.telegram_bot
     except:
-        pass
+        telegram_bot = BaseSettings.objects.get().telegram_bot
     try:
         telegram_group = subdomain.telegram_group
     except:
-        pass
+        telegram_group = BaseSettings.objects.get().telegram_group
 
     if request.method == 'POST':
         event_json = json.loads(request.body)
