@@ -341,11 +341,11 @@ def order_confirm(request, pk):
     try:
         telegram_bot = subdomain.telegram_bot
     except:
-        pass
+        telegram_bot = BaseSettings.objects.get().telegram_bot
     try:
         telegram_group = subdomain.telegram_group
     except:
-        pass
+        telegram_group = BaseSettings.objects.get().telegram_group
 
     try:
         order = Order.objects.get(id=pk, paid=False, pay_method='Оплата картой на сайте')
@@ -475,11 +475,11 @@ def order_success(request):
     try:
         telegram_bot = subdomain.telegram_bot
     except:
-        pass
+        telegram_bot = BaseSettings.objects.get().telegram_bot
     try:
         telegram_group = subdomain.telegram_group
     except:
-        pass
+        telegram_group = BaseSettings.objects.get().telegram_group
 
     cart = Cart(request)
 
@@ -557,11 +557,11 @@ def paykeeper_success(request):
     try:
         telegram_bot = subdomain.telegram_bot
     except:
-        pass
+        telegram_bot = BaseSettings.objects.get().telegram_bot
     try:
         telegram_group = subdomain.telegram_group
     except:
-        pass
+        telegram_group = BaseSettings.objects.get().telegram_group
     
     print(pay_id)
 
@@ -617,11 +617,11 @@ def tinkoff_success(request, pk):
     try:
         telegram_bot = subdomain.telegram_bot
     except:
-        pass
+        telegram_bot = BaseSettings.objects.get().telegram_bot
     try:
         telegram_group = subdomain.telegram_group
     except:
-        pass
+        telegram_group = BaseSettings.objects.get().telegram_group
 
     cart = Cart(request)
     cart.combo_clear()
