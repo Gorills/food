@@ -1,6 +1,7 @@
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_GET
+from sorl.thumbnail import get_thumbnail
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
 from orders.models import Order
@@ -9,6 +10,8 @@ from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page
 from blog.models import BlogSetup, Post
 from setup.models import ThemeSettings
+from django.http import JsonResponse
+import json
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -23,7 +26,61 @@ from pay.paykeeper_pay import get_status
 from subdomains.utilites import get_protocol
 # get_status()
 
+def decimal_encoder(obj):
+    if isinstance(obj, Decimal):
+        return str(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
+def manifest_json(request):
+    # Получите данные из базы данных (здесь пример для одной записи)
+    data_from_db = BaseSettings.objects.get()
+    theme_setup = Colors.objects.get()
+
+    # Сгенерируйте словарь с данными для манифеста
+    manifest_data = {
+        "name": data_from_db.name,
+        "short_name": data_from_db.name,
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": theme_setup.body_bg,
+        "theme_color": theme_setup.primary,
+        "icons": [
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'48x48', format="PNG", crop='center', quality=100)),
+                "sizes": "48x48",
+                "type": "image/png"
+            },
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'72x72', format="PNG", crop='center', quality=100)),
+                "sizes": "72x72",
+                "type": "image/png"
+            },
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'96x96', format="PNG", crop='center', quality=100)),
+                "sizes": "96x96",
+                "type": "image/png"
+            },
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'144x144', format="PNG", crop='center', quality=100)),
+                "sizes": "144x144",
+                "type": "image/png"
+            },
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'192x192', format="PNG", crop='center', quality=100)),
+                "sizes": "192x192",
+                "type": "image/png"
+            },
+            {
+                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'512x512', format="PNG", crop='center', quality=100)),
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ]
+        # Добавьте другие поля, которые нужны в вашем манифесте
+    }
+
+    response_data = json.dumps(manifest_data, ensure_ascii=False, default=decimal_encoder)
+    return HttpResponse(response_data, content_type='application/json')
 
 @require_GET
 def robots_txt(request):

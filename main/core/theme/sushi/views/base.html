@@ -3,7 +3,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- base -->
     <title> {% block title %}{% endblock %}</title>
@@ -11,6 +12,7 @@
     <meta name="keywords" content="{% block keywords %}{% endblock %}" />
     <link rel="canonical" href="{{ site }}{% block canonical %}{% endblock %}" />
     <meta name="theme-color" content="{{ setup.theme_color }}">
+    <link rel="manifest" href="{% url 'manifest_json' %}">
     {% if setup.active == True %}<meta name="robots" content="index,follow" />{% else %}<meta name="robots" content="noindex,nofollow" />{% endif %}
     <!-- base -->
     <!-- og -->
@@ -154,6 +156,19 @@
     <script src="{% get_libs 'owl/owl.carousel.min.js' %}?v1.0.0"></script>
     <script src="{% get_static 'js/global.js' %}?v{% now "H:i:s" %}"></script>
     <script src="{% get_static 'js/app.js' %}?v{% now "H:i:s" %}"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker.register("{% get_libs 'service-worker.js' %}").then((registration) => {
+              console.log("Service worker registered:", registration);
+            }).catch((error) => {
+              console.error("Service worker registration failed:", error);
+            });
+          });
+        }
+    </script>
+      
 
         
     {% for code in codes %}
