@@ -280,6 +280,7 @@
         @media screen and (max-width:480px) {
             width: 100%;
             overflow: hidden;
+            border-radius: 4px;
             // height: 370px;
          }
     }
@@ -338,6 +339,11 @@
         font-size: 12px;
         line-height: 14px;
         color: #b5b5b5;
+
+        @media screen and (max-width: 480px) {
+            font-size: 16px;
+            
+        }
     }
 
     // .product-list__desc

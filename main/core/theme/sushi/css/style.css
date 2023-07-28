@@ -2107,6 +2107,7 @@ a {
 .app-menu {
   width: 100%;
   margin-bottom: 20px;
+  margin-top: 20px;
   display: flex;
   align-items: flex-start;
   overflow-x: scroll;
@@ -5467,6 +5468,7 @@ td.product-thumbnail img {
   .product-list__thumb {
     width: 100%;
     overflow: hidden;
+    border-radius: 4px;
   }
 
   .product-list__image {
@@ -5477,6 +5479,10 @@ td.product-thumbnail img {
   .product-list__title {
     font-size: 16px;
     line-height: 1;
+  }
+
+  .product-list__weight {
+    font-size: 16px;
   }
 
   .product-list__desc {
