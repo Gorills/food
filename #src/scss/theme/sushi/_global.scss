@@ -135,8 +135,12 @@ a   {
     width: fit-content;
     border-radius: 8px;
 
+    
+
     @media screen and (max-width:480px) {
-        padding: 16px 30px;
+        padding: 12px 30px;
+        font-size: 12px;
+        height: fit-content!important;
     }
         
     

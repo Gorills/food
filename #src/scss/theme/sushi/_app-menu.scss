@@ -1,0 +1,58 @@
+
+
+.app-menu {
+    width: 100%;
+
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    
+    overflow-x: scroll;
+
+    &::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
+    &::-webkit-scrollbar{width:0px;height:0;background-color:var(--color-body)}
+
+    .header-bottom__dropdown-item {
+        
+        border-radius: 15px;
+        width: fit-content;
+        
+        text-align: center;
+        
+    }
+
+    .header-bottom__link {
+        padding: 6px 15px!important;
+        border-radius: 15px;
+        text-transform: capitalize!important;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #b9b9b9;
+        position: relative;
+        &--active {
+            color: var(--color-primary);
+        }
+
+        &:hover {
+            
+            
+            &::before {
+                background-color: var(--color-primary);
+                position: absolute;
+                top: 0;
+                left: 0;
+                content: "";
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                z-index: 0;
+                opacity: 0.1;
+
+            }
+            
+        }
+    }
+    .header-bottom__dropdown-item + .header-bottom__dropdown-item {
+        margin-left: 10px;
+    }
+}

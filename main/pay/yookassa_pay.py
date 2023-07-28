@@ -26,7 +26,7 @@ def create_payment(order, cart, request):
     phone = order.phone
 
     digits_only = ''.join(char for char in phone if char.isdigit())
-    print(digits_only)
+    
 
     for item in cart:
         product = Product.objects.get(id=item['product'].id)

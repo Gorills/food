@@ -8,7 +8,7 @@
     <div class="product-list__item {{ big }}">
 
         <div class="product-list__top-top">
-            <a href="{{ product.get_absolute_url }}" class="product-list__top">
+            <a href="{{ product.get_absolute_url }}" class="product-list__top" style="max-height:{{ shop_setup.min_height }}px;overflow:hidden;">
                 
                 <div class="product-list__top-wrap">
                     {% if product.old_price %}
