@@ -7,6 +7,7 @@ class Integrations(SingletonModel):
 
     NAME_CLASS = (
         ('iiko', 'iiko'),
+        ('frontpad', 'FrontPad'),
     )
     name = models.CharField(max_length=50, choices=NAME_CLASS, verbose_name='Название')
 

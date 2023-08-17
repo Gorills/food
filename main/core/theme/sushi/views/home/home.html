@@ -47,10 +47,10 @@
             </div>
             </div>
             {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
-            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
-            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             </a>
             {% else %}
@@ -71,10 +71,10 @@
             </div>
             </div>
             {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
-            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
-            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             </div>
             {% endif %}
@@ -129,7 +129,7 @@
 
                     {% if cat.image %}
                         {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
                         {% endthumbnail %}
                     
 
@@ -251,7 +251,7 @@
                                     <img 
                                         loading="lazy" 
                                         src="{{ combo.get_thumb_mini }}"
-                                       
+                                        title="{{ product.name }}"
                                         alt="{{ product.name }}" 
                                         class="product-list__thumb {% if product.images.first %}product-list__thumb--opacity{% endif %}"
                                     >
@@ -388,7 +388,7 @@
 
                      
                         {% thumbnail new.image "321x201" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ new.name }}" class="news__image">
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ new.name }}" title="{{ new.name }}" class="news__image">
                         {% endthumbnail %}
 
                         </a>

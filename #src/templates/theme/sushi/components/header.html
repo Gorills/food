@@ -11,6 +11,7 @@
                                
                                     <img src="{{ setup.get_logo.url }}" 
                                         alt="{{ setup.name }}" 
+                                        title="{{ setup.name }}" 
                                         style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
                                         class="header__logo">
 
@@ -20,11 +21,12 @@
                             {% endif %}
                         {% else %}
                             {% if setup.logo_dark %}
-                            <a href="{% url 'home' %}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
+                            <a href="{{ site }}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
                                
                                     <img 
                                         src="{{ setup.get_logo.url }}" 
                                         alt="{{ setup.name }}" 
+                                        title="{{ setup.name }}" 
                                         style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
                                         class="header__logo">
                             </a>
