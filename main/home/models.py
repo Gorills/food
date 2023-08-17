@@ -3,6 +3,7 @@ from django.urls import reverse
 from admin.singleton_model import SingletonModel
 # Create your models here.
 from main.transliterate_filename import transliterate_file
+from django.utils import timezone
 
 class SliderSetup(SingletonModel):
 
@@ -111,6 +112,8 @@ class Page(models.Model):
     meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Мета тайтл')
     meta_description = models.TextField(null=True, blank=True, verbose_name='Мета описание')
     meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова через запятую')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
     
     def get_image_upload_path(instance, filename):
         """
