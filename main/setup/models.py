@@ -89,28 +89,33 @@ class BaseSettings(SingletonModel):
     
     def get_phone(self):
 
-        if self.phone:
-            phone_str = self.phone
-            phone_list = phone_str.split(',')
-            
-            
-            try:
-                res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
-                res_two = phone_list[1].replace(' ','').replace('-','').replace('(','').replace(')','')
-                phone = f'<div class="header__contacts-link-wrap"><a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a> <a href="tel:{ res_two }" class="header__contacts-link">{phone_list[1]}</a></div>' 
-            except:
-                res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
+        try:
 
-                phone = f'<a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a>'
-      
+            if self.phone:
+                phone_str = self.phone
+                phone_list = phone_str.split(',')
+                
+                
+                try:
+                    res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
+                    res_two = phone_list[1].replace(' ','').replace('-','').replace('(','').replace(')','')
+                    phone = f'<div class="header__contacts-link-wrap"><a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a> <a href="tel:{ res_two }" class="header__contacts-link">{phone_list[1]}</a></div>' 
+                except:
+                    res_one = phone_list[0].replace(' ','').replace('-','').replace('(','').replace(')','')
+
+                    phone = f'<a href="tel:{ res_one }" class="header__contacts-link">{phone_list[0]}</a>'
+        
 
 
-        else:
-            
-            base = BaseSettings.objects.get()
-            phone = f'<a href="tel:{ base.get_phone() }" class="header__contacts-link">{base.phone}</a>'
+            else:
+                
+                base = BaseSettings.objects.get()
+                phone = f'<a href="tel:{ base.get_phone() }" class="header__contacts-link">{base.phone}</a>'
 
-        return phone
+            return phone
+        except:
+            return None
+    
 
    
 
