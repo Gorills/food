@@ -108,13 +108,13 @@ class BaseSettings(SingletonModel):
 
 
             else:
-                
-                base = BaseSettings.objects.get()
-                phone = f'<a href="tel:{ base.get_phone() }" class="header__contacts-link">{base.phone}</a>'
+
+               
+                phone = ''
 
             return phone
         except:
-            return None
+            return ''
     
 
    
