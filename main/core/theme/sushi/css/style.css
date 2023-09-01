@@ -4507,6 +4507,18 @@ td.product-thumbnail img {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.header-bottom__list::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+}
+
+.header-bottom__list::-webkit-scrollbar {
+  width: 0px;
+  height: 0;
+  background-color: var(--color-body);
 }
 
 .header-bottom__dropdown-item {

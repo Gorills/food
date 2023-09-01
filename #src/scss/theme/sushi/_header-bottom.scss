@@ -29,6 +29,10 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
+        overflow-x: scroll;
+        white-space: nowrap;
+        &::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
+        &::-webkit-scrollbar{width:0px;height:0;background-color:var(--color-body)}
 
         @media screen and (max-width: 768px) {
             position: fixed;
