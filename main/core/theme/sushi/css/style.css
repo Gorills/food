@@ -4535,8 +4535,8 @@ td.product-thumbnail img {
 
 .header-bottom__link {
   color: var(--color-font);
-  padding: 20px 20px;
-  font-size: 14px;
+  padding: 20px 10px;
+  font-size: 12px;
   display: inline-block;
   text-transform: uppercase;
 }
