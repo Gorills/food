@@ -51,6 +51,8 @@ class ShopSetup(SingletonModel):
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
 
+    start_bonus = models.PositiveIntegerField(default=0, verbose_name='Количество бонусов при регистрации')
+
     min_width = models.PositiveIntegerField(null=True, blank=True, default=290, verbose_name='Ширина миниатюры')
     min_height = models.PositiveIntegerField(null=True, blank=True, default=193, verbose_name='Высота миниатюры')
     max_width = models.PositiveIntegerField(null=True, blank=True, default=750, verbose_name='Ширина основного изображения')

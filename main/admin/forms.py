@@ -781,6 +781,9 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
+            'start_bonus': forms.NumberInput(attrs={
+                'class': 'input',
+            })
         }
 
 
