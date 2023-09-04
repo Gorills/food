@@ -76,11 +76,12 @@
 
 
 
-                {% if shop_setup.show_descrioption == True and product.short_description %}
                 
                 {% if product.weight %}
                 <div class="product-list__weight product-list__weight-{{ product.id }}">{{ product.weight }}</div>
                 {% endif %}
+                {% if shop_setup.show_descrioption == True and product.short_description %}
+
                 <div class="product-list__desc">
                 {{ product.short_description }}
 
