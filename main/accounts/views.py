@@ -6,6 +6,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from allauth.account.forms import SignupForm
 from django.views import generic
 from django.shortcuts import render, get_object_or_404, redirect
+
+from shop.models import ShopSetup
 from .models import LoyaltyCard, UserProfile
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -100,10 +102,12 @@ def add_loyalty_card(userprofile):
             loyalty_card = LoyaltyCard.objects.get(user=userprofile)
 
         except Exception as e:
+            summ = ShopSetup.objects.get().start_bonus
             print(e)
             loyalty_card = LoyaltyCard(
                 user=userprofile,
-                summ=Decimal('0.00')
+                summ=Decimal(0),
+                balls=Decimal(summ),
                 )
             
             loyalty_card.save()

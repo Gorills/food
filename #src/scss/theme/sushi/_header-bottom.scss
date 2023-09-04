@@ -29,6 +29,7 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
+        
 
         @media screen and (max-width: 768px) {
             position: fixed;
@@ -87,8 +88,8 @@
 
     &__link {
         color: var(--color-font);
-        padding: 20px 20px;
-        font-size: 14px;
+        padding: 20px 10px;
+        font-size: 12px;
         display: inline-block;
         text-transform: uppercase;
 
