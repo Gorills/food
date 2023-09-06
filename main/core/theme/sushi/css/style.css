@@ -3368,6 +3368,8 @@ a {
   color: #76777b;
   line-height: 17px;
   margin-bottom: 15px;
+  max-width: 290px;
+  min-width: 290px;
 }
 
 .product-list__prices {
