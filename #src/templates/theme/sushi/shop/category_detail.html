@@ -3,15 +3,15 @@
 {% load thumbnail %}
 
 {% load thumbnail %}
-{% block title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
-{% block description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
+{% block title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block description %}{% if category.meta_description %}{{ category.meta_description }}{% else %} Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
 {% block keywords %}{{ category.meta_keywords }}{% endblock %}
 {% block canonical %}{{ category.get_absolute_url }}{% endblock %}
-{% block og:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
-{% block og:description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
+{% block og:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block og:description %}{% if category.meta_description %}{{ category.meta_description }}{% else %}Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
 {% block og:url %}{{ category.get_absolute_url }}{% endblock %}
-{% block twitter:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }}{% endif %}{% endblock %}
-{% block twitter:description %}{% if category.meta_description %}{{ category.meta_description }}{% endif %}{% endblock %}
+{% block twitter:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block twitter:description %}{% if category.meta_description %}{{ category.meta_description }}{% else %}Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
 
 {% block og:image %}{% if category.image %}{% thumbnail category.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
 {% block og:image:secure_url %}{% if category.image %}{% thumbnail category.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
