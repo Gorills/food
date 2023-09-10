@@ -64,7 +64,7 @@ def create_payment(order, cart, request):
             
     }
 
-    r = requests.post("https://web.rbsuat.com/ab/rest/register.do", post_data) 
+    r = requests.post("https://alfa.rbsuat.com/payment/rest/register.do", post_data) 
     print(r.json())
 
     try:
@@ -100,7 +100,7 @@ def get_status(pay_id):
             
     }
 
-    r = requests.post("https://web.rbsuat.com/ab/rest/getOrderStatusExtended.do", post_data) 
+    r = requests.post("https://alfa.rbsuat.com/payment/rest/getOrderStatus.do", post_data) 
 
     status = r.json()['errorCode']  
 
