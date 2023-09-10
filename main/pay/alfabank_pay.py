@@ -65,7 +65,7 @@ def create_payment(order, cart, request):
     }
 
     r = requests.post("https://alfa.rbsuat.com/payment/rest/register.do", post_data) 
-    print(r.json())
+    # print(r.json())
 
     try:
         confirmation_url = r.json()['formUrl']
