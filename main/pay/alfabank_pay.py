@@ -101,7 +101,7 @@ def get_status(pay_id):
     }
 
     r = requests.post("https://alfa.rbsuat.com/payment/rest/getOrderStatus.do", post_data) 
-    print(r.json())
+    # print(r.json())
 
     status = r.json()['ErrorCode']  
 
