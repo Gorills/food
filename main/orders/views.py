@@ -443,12 +443,15 @@ def order_webhook(request):
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
                     try:
                         loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                        loyalty_card.summ += order.summ
+                        loyalty_card.save()
                     except:
                         loyalty_card = LoyaltyCard.objects.create(
                             user=user_profile,
                             summ=Decimal('0.00')
                             )
-
+                        loyalty_card.summ += order.summ
+                        loyalty_card.save()
                     try:
                         if order.bonuses_pay > 0:
                             loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
@@ -499,11 +502,14 @@ def order_success(request):
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
             try:
                 loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                loyalty_card.summ += order.summ
             except:
                 loyalty_card = LoyaltyCard.objects.create(
                     user=user_profile,
                     summ=Decimal('0.00')
                     )
+                loyalty_card.summ += order.summ
+                loyalty_card.save()
 
             try:
                 if order.bonuses_pay > 0:
@@ -578,6 +584,7 @@ def paykeeper_success(request):
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
             try:
                 loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                loyalty_card.summ += order.summ
             except:
                 loyalty_card = LoyaltyCard.objects.create(
                     user=user_profile,
