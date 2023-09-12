@@ -391,6 +391,7 @@ class Cart(object):
         
         if product.minimum < self.cart[product_id]['quantity']:
             self.cart[product_id]['quantity'] -= quantity
+        
 
         if self.cart[product_id]['quantity'] == 0:
             if product_id in self.cart:
