@@ -336,7 +336,7 @@ class Cart(object):
 
         product_id = str(product.id)
         if product_id not in self.cart:
-            self.cart[product_id] = {'quantity': 0,
+            self.cart[product_id] = {'quantity': product.minimum - 1,
                                      'free': 0,
                                     'price': str(product.price),
                                     
@@ -388,8 +388,10 @@ class Cart(object):
     def minus(self, product, quantity, update_quantity=False):
         self.session['active_balls'] = '0.00'
         product_id = str(product.id)
-       
-        self.cart[product_id]['quantity'] -= quantity
+
+        if product.minimum < self.cart[product_id]['quantity']:
+            self.cart[product_id]['quantity'] -= quantity
+
 
         if self.cart[product_id]['quantity'] == 0:
             if product_id in self.cart:
