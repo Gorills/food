@@ -1286,6 +1286,7 @@ $(function() {
         var payMethod = $('#pay_method').attr('data-value')
         var getPhone = $('#id_phone').val()
         var getAddress = $('#finaladress').val()
+        var getZones = $('#suggest').attr('data-zones')
 
         var deliveryMethod = $('#delivery_method').val()
         if (deliveryMethod == 'Доставка') {
@@ -1419,21 +1420,26 @@ function init() {
     var csrf = $('#suggest').attr('data-csrf')
     var flickerAPI = $('#suggest').attr('data-file-zones');
     
-    var suggestView=new ymaps.SuggestView(
-        'suggest', {
-            provider: {
-            suggest: (function(request, options) {
+    if (zones != 'false') {
+        
+        var suggestView=new ymaps.SuggestView(
+            'suggest', {
+                provider: {
+                suggest: (function(request, options) {
+        
+                    return ymaps.suggest(request, {
+                        boundedBy: myMap.getBounds()
+                      });
     
-                return ymaps.suggest(request, {
-                    boundedBy: myMap.getBounds()
-                  });
+                    })
+                }}
+    
+            );
 
-                })
-            }}
-
-        );
+    } 
 
     if (zones == 'false') {
+        
         $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
             $('#finaladress').val($('#suggest').val())
         })
@@ -2251,3 +2257,19 @@ $(document).on('click','.content',function(){
     return null;
   }
   
+
+
+
+
+// $('#finaladress').attr('required', 'required').attr('name', 'address');
+
+
+$(document).on('input','#suggest',function(){
+    var getVal = $(this).val();
+
+    $('#finaladress').attr('required', 'required').attr('name', 'address');
+
+    $('#finaladress').val(getVal);
+
+})
+

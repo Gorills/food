@@ -532,7 +532,7 @@
                             
                             {% if request.session.delivery == 1 %}
                             <input  name="address" type="text" id="finaladress" required hidden>
-                            {% else %}
+                            {% elif request.session.delivery == 0 %}
                             <input type="text" name="address" id="get_area" class="cart__input" value="" required hidden>
 
                             {% endif %}
