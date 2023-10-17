@@ -93,57 +93,61 @@ def category_detail(request, slug):
     page_number = request.GET.get('page')
 
     category = get_object_or_404(Category, slug=slug)
+    
+    if category.status == True:
+        try:
 
-    try:
-
-        products_list = Product.objects.filter(status=True, stock__gt=0, related=False, parent=category)
-        
-        min_filter = products_list.order_by('price').first().price
-        max_filter = products_list.order_by('-price').first().price
-    except:
-        products_list = []
-        
-        min_filter = 0
-        max_filter = 0
-        
-    try:
-        min_price = request.GET['min_price']
-    except:
-        min_price = min_filter
-    try:
-        max_price = request.GET['max_price']
-    except:
-        max_price = max_filter
+            products_list = Product.objects.filter(status=True, stock__gt=0, related=False, parent=category)
+            
+            min_filter = products_list.order_by('price').first().price
+            max_filter = products_list.order_by('-price').first().price
+        except:
+            products_list = []
+            
+            min_filter = 0
+            max_filter = 0
+            
+        try:
+            min_price = request.GET['min_price']
+        except:
+            min_price = min_filter
+        try:
+            max_price = request.GET['max_price']
+        except:
+            max_price = max_filter
 
 
-    products_all = Product.objects.filter(status=True, parent=category, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
+        products_all = Product.objects.filter(status=True, parent=category, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
 
-    if limit:
-        paginator = Paginator(products_all, *limit)
+        if limit:
+            paginator = Paginator(products_all, *limit)
+        else:
+            paginator = Paginator(products_all, 32)
+
+
+        page_number = request.GET.get('page')
+
+        products = paginator.get_page(page_number)
+
+
+        context = {
+            
+            'category': category,
+            'products': products,
+            'shop_setup': ShopSetup.objects.get(),
+            'sort': sort,
+            'limit': limit,
+            'min_filter': min_filter,
+            'max_filter': max_filter,
+            'min_price': min_price,
+            'max_price': max_price
+        }
+
+
+        return render(request, 'shop/category_detail.html', context)
     else:
-        paginator = Paginator(products_all, 32)
 
-
-    page_number = request.GET.get('page')
-
-    products = paginator.get_page(page_number)
-
-
-    context = {
-        
-        'category': category,
-        'products': products,
-        'shop_setup': ShopSetup.objects.get(),
-        'sort': sort,
-        'limit': limit,
-        'min_filter': min_filter,
-        'max_filter': max_filter,
-        'min_price': min_price,
-        'max_price': max_price
-    }
-
-
-    return render(request, 'shop/category_detail.html', context)
+        return render(request, '404.html', status=404)
 
 
 from itertools import groupby
