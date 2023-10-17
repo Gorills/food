@@ -990,6 +990,12 @@ label span {
   width: 94%;
 }
 
+.responsive-table .table-row__cat-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .responsive-table .col {
   color: #333;
   display: flex;

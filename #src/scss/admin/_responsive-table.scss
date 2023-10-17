@@ -53,6 +53,12 @@
         text-align: center;
         width: 94%;
       }
+      // .table-row__cat-name
+      &__cat-name {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
     }
     .col {
         color: #333;
