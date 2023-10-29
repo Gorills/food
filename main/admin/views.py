@@ -1331,7 +1331,7 @@ def admin_product(request):
         # Разрешить поиск на странице
         'search': 'search',
         'products': product,
-        'no_cats': Product.objects.all(),
+        'no_cats': Product.objects.filter(parent=None),
         'q': q,
         'sort': sort_t,
     }
