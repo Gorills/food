@@ -127,7 +127,7 @@ def load_menu(clean):
                         price=price,
                         parent=cat_save,
                         short_description=product_description,
-                        type=product['orderItemType'],
+                        iiko_type=product['orderItemType'],
                         weight=weight
                     )
                 except:
@@ -138,7 +138,7 @@ def load_menu(clean):
                         price=price,
                         parent=cat_save,
                         short_description=product_description,
-                        type=product['orderItemType']
+                        iiko_type=product['orderItemType']
                     )
 
 
@@ -219,4 +219,4 @@ def load_menu(clean):
             
 
 
-# load_menu()
+# load_menu(False)

@@ -2654,7 +2654,7 @@ from integrations.iiko import load_menu
 def catalogs_synch(request):
 
     if request.method == 'POST':
-        load_menu(False)
+        load_menu(True)
 
         return redirect('integration')
 
