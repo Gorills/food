@@ -1674,8 +1674,7 @@ $(document).on('keyup', '#id_phone' ,function(e){
     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
     var csrf = $(this).attr('data-token')
     if (min.length == 13) {
-        console.log(min.length)
-        console.log(phone)
+        
 
         $.ajax({
             method: "POST",
@@ -1687,7 +1686,8 @@ $(document).on('keyup', '#id_phone' ,function(e){
             })
           .done(function() {
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            
+            console.log(min.length)
+            console.log(phone)
     
           });
     
