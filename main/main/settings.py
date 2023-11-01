@@ -258,30 +258,15 @@ except:
     DEBUG = True
     
 
-try:
-    import django
-    django.setup()
-    from setup.models import EmailSettings
-    email = EmailSettings.objects.get()
 
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = email.host
-    EMAIL_HOST_USER = email.host_user
-    EMAIL_HOST_PASSWORD = email.host_password
-    EMAIL_FROM = email.host_from 
-    EMAIL_PORT = email.host_port 
-    EMAIL_USE_SSL = email.use_ssl
-    EMAIL_USE_TLS = email.use_tls
-    
-except:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = '' 
-    EMAIL_HOST_USER = '' 
-    EMAIL_HOST_PASSWORD = '' 
-    EMAIL_FROM = '' 
-    EMAIL_PORT = 465 
-    EMAIL_USE_SSL = True
-    EMAIL_USE_TLS = False
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.beget.com' 
+EMAIL_HOST_USER = 'order@profit-platform.ru' 
+EMAIL_HOST_PASSWORD = 'Thkv51&Q' 
+EMAIL_FROM = 'order@profit-platform.ru' 
+EMAIL_PORT = 465 
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
 
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

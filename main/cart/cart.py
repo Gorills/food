@@ -65,7 +65,11 @@ class Cart(object):
             self.active_balls = Decimal('0.00')
 
         
-        self.first_delivery = request.session.get('first_delivery')
+        try:
+            self.first_delivery = request.session['first_delivery']
+        except:
+            self.first_delivery = 0
+            
         # print(self.first_delivery)
         if not self.first_delivery:
 
@@ -516,10 +520,12 @@ class Cart(object):
 
     def clear(self):
         # удаление корзины из сессии
-        del self.session[settings.CART_SESSION_ID]
         self.session['coupon_id'] = None
         self.session.modified = True
         self.first_delivery = 0
+        del self.first_delivery
+        del self.session[settings.CART_SESSION_ID]
+        
 
     
     def get_personal_sale(self):
@@ -571,6 +577,10 @@ class Cart(object):
     def get_free(self):
         
         return self.free_delivery
+    
+    def add_first_delivery_persent(self, first_delivery):
+
+        self.first_delivery = first_delivery
     
     def get_first_delivery_summ(self):
 

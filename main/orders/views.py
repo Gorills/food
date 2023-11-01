@@ -12,6 +12,9 @@ from accounts.models import UserProfile
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
+
+
+
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -35,13 +38,14 @@ try:
     telegram_bot = BaseSettings.objects.get().telegram_bot
     telegram_group = BaseSettings.objects.get().telegram_group
 except Exception as e:
-    print(e)
+    
     telegram_bot = ''
     telegram_group = ''
 
 
 from .telegram import order_telegram, send_message
 from sms.views import send_sms
+from .send_email import send_order_email
 
 from pay.models import PaymentSet
 try:
@@ -247,7 +251,12 @@ def order_create(request):
 
                 else:
                     order_telegram(telegram_bot, telegram_group, order)
-                    
+                    try:
+                        send_order_email(order)
+                    except Exception as e:
+                        pass
+                        
+
                     send_sms(sms_text(order.id), phone)
                     # очистка корзины
                     
@@ -277,6 +286,7 @@ def order_create(request):
                     cart.options_clear()
                     cart.combo_clear()
                     cart.clear()
+                    request.session['first_delivery'] = 0
 
                     return redirect(f'/?order=True&id={order.id}')
                 
