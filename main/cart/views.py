@@ -1,14 +1,16 @@
+from decimal import Decimal
 from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from shop.models import Product
+from shop.models import Product, ShopSetup
 from .cart import Cart
 from .forms import CartAddProductForm
 from coupons.forms import CouponApplyForm
 from orders.forms import OrderCreateForm
 from setup.models import ThemeSettings
+from accounts.models import UserProfile
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -252,3 +254,24 @@ def minus_options(request):
 
 
 
+def check_first_delivery(request):
+    cart = Cart(request)
+    first_delivery_persent = ShopSetup.objects.get().first_delivery
+
+    if request.method == 'POST':
+        phone = request.POST['phone']
+
+        try:
+            userprofile = UserProfile.objects.get(phone=phone)
+
+            request.session['first_delivery'] = 0
+            cart.first_delivery = 0
+            print(userprofile)
+            
+        except Exception as e:
+            
+            cart.first_delivery = first_delivery_persent
+            request.session['first_delivery'] = first_delivery_persent
+            
+
+        return redirect('home')

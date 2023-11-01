@@ -64,6 +64,14 @@ class Cart(object):
         except:
             self.active_balls = Decimal('0.00')
 
+        
+        self.first_delivery = request.session.get('first_delivery')
+        # print(self.first_delivery)
+        if not self.first_delivery:
+
+            self.first_delivery = 0
+
+        
 
 
         # сохранение текущего примененного купона
@@ -511,6 +519,7 @@ class Cart(object):
         del self.session[settings.CART_SESSION_ID]
         self.session['coupon_id'] = None
         self.session.modified = True
+        self.first_delivery = 0
 
     
     def get_personal_sale(self):
@@ -562,6 +571,12 @@ class Cart(object):
     def get_free(self):
         
         return self.free_delivery
+    
+    def get_first_delivery_summ(self):
+
+        summ = self.get_total_price() / 100 * self.first_delivery
+
+        return summ
 
     @property
     def coupon(self):
@@ -580,6 +595,7 @@ class Cart(object):
         c = self.get_delivery()
         d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
         e = self.active_balls 
+        f = self.get_first_delivery_summ()
         
         
-        return a - b + c - d - e
+        return a - b + c - d - e - f

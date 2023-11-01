@@ -3302,6 +3302,8 @@ a {
 }
 
 .product-list__form {
+  border-radius: 8px;
+  overflow: hidden;
   background-color: var(--color-body);
   bottom: 0;
   left: 0;
@@ -4692,7 +4694,7 @@ td.product-thumbnail img {
   width: 100%;
   display: grid;
   grid-gap: 24px;
-  background-color: #fff;
+  background-color: var(--color-body);
   grid-template-columns: repeat(9, 1fr);
 }
 
@@ -4704,6 +4706,7 @@ td.product-thumbnail img {
   border-radius: 8px;
   overflow: hidden;
   padding: 24px;
+  background-color: #fff;
   box-shadow: 2px 6px 20px rgba(47, 59, 88, 0.15);
   color: var(--color-fonts);
   text-transform: uppercase;

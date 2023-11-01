@@ -765,6 +765,10 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
+            'free_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Скидка на 1 заказ в %',
+            }),
             'meta_h1': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',

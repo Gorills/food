@@ -49,6 +49,7 @@ class ShopSetup(SingletonModel):
     action = models.BooleanField(default=True, verbose_name='Включить акции')
     new_products = models.BooleanField(default=True, verbose_name='Включить новинки')
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
+    first_delivery = models.PositiveIntegerField(default=0, verbose_name='Скидка на первый заказ')
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
 
     start_bonus = models.PositiveIntegerField(default=0, verbose_name='Количество бонусов при регистрации')

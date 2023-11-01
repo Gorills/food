@@ -20,4 +20,6 @@ urlpatterns = [
     path('remove_options/', views.remove_options, name='remove_options'),
     path('plus_options/', views.plus_options, name='plus_options'),
     path('minus_options/', views.minus_options, name='minus_options'),
+
+    path('check_first_delivery/', views.check_first_delivery, name='check_first_delivery'),
 ]

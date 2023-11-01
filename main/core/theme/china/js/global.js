@@ -1656,8 +1656,8 @@ $(document).on('keyup', '.phone-sms' ,function(e){
         if (secGet != '') {
             var sec = 120 - secGet
             var nowData = $('.cart__input-phone-btn').text()
-            console.log(sec)
-            console.log(nowData)
+            // console.log(sec)
+            // console.log(nowData)
             if (sec > 0) {
                 if (nowData == 'Подтвердить') {
                     $(".cart__input-phone-btn-wrap").countdown(redirect, sec, "Повторная отправка через <br>");
@@ -1668,6 +1668,32 @@ $(document).on('keyup', '.phone-sms' ,function(e){
         $('.cart__input-phone-btn').css({'display':'none'})
     }
 })
+
+$(document).on('keyup', '#id_phone' ,function(e){
+    var phone = $(this).val()
+    var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+    var csrf = $(this).attr('data-token')
+    if (min.length == 13) {
+        console.log(min.length)
+        console.log(phone)
+
+        $.ajax({
+            method: "POST",
+            url: "/cart/check_first_delivery/",
+            data: { 
+                csrfmiddlewaretoken: csrf,
+                phone: phone
+            }
+            })
+          .done(function() {
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+            
+    
+          });
+    
+    }
+})
+
 
 
 // Our countdown plugin takes a callback, a duration, and an optional message
