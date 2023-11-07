@@ -154,7 +154,7 @@
                 {% for option in product.get_first_select %}
 
                 
-                <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if option.images %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail product.get_thumb_mini size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
+                <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if option.images.count > 0 %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{{ product.get_thumb_mini }}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.option_price }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
                     {{ option.option_value }}
                 </div>
                 {% endfor %}
