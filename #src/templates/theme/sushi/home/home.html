@@ -309,7 +309,7 @@
                         
 
                     </div>
-                    {% include 'components/product_list.html' with slider='false' products=cat.all_active_products big='product-list__item--big' size='290x193' %}
+                    {% include 'components/product_list.html' with slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
 
                     
                 </div>
@@ -330,7 +330,7 @@
                         <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
 
                     </div>
-                    {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size='290x193' %}
+                    {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size=image_size %}
 
                     
                 </div>
@@ -345,7 +345,7 @@
             <div class="container">
                 <div class="block__inner">
                     <h2 class="title">Скидки</h2>
-                    {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size='290x193' %}
+                    {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size=image_size %}
                 
                     <div class="block__center">
                         {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
@@ -362,7 +362,7 @@
             <div class="container">
                 <div class="block__inner">
                     <h2 class="title">Хиты продаж</h2>
-                    {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size='290x193' %}
+                    {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size=image_size %}
 
                 </div>
             </div>

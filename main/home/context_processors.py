@@ -187,3 +187,10 @@ def get_days(request):
         count += 1
     
     return {'get_days': day_list}
+
+
+def image_size_get(request):
+
+    image_size = f'{ShopSetup.objects.get().min_width}x{ShopSetup.objects.get().min_height}'
+
+    return {'image_size': image_size}
