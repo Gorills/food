@@ -6,4 +6,30 @@
 
     &__inner {
     }
+
+    // .page__wrap
+    &__wrap {
+        margin-bottom: 80px;
+    }
+
+    // .page__subtitle
+    &__subtitle {
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+    // .page__phone
+    &__phone {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        svg {
+            margin-right: 15px;
+            width: 15px;
+            height: 15px;
+            path {
+                fill: var(--color-font);
+            }
+        }
+    }
 }

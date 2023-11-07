@@ -7,7 +7,7 @@ from accounts.models import LoyaltyCardSettings
 from orders.models import Order
 from shop.models import Category, Manufacturer, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
-from .models import SliderSetup, Slider, Page
+from .models import SliderSetup, Slider, Page, PlaceImages
 from blog.models import BlogSetup, Post
 from setup.models import ThemeSettings
 from django.http import JsonResponse
@@ -322,7 +322,8 @@ def home(request):
 def page_detail(request, slug):
     page = get_object_or_404(Page, type=slug, status=True)
     context = {
-        'page': page
+        'page': page,
+        'images': PlaceImages.objects.all(),
     }
     return render(request, 'home/page_detail.html', context)
 

@@ -2299,3 +2299,11 @@ $(document).on('input','#suggest',function(){
 
 })
 
+
+
+$(document).on('hover','.header__cart-no-active::after',function(){
+  
+    $('.header__cart-no-active-popup').addClass('header__cart-no-active-popup--active')
+})
+
+

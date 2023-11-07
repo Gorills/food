@@ -97,6 +97,7 @@ class Page(models.Model):
     bottom_link = models.BooleanField(default=True, verbose_name='Ссылка в футере')
     PAGE_CLASS = (
        ('o-nas', 'О нас'),
+       ('bron-stolika', 'Бронь столика'),
        ('oplata', 'Оплата'),
        ('politic', 'Политика конфиденциальности'),
        ('dostavka', 'Доставка'),
@@ -135,6 +136,16 @@ class Page(models.Model):
     class Meta:
         verbose_name = 'Страница'
         verbose_name_plural = 'Страницы'
+
+
+class PlaceImages(models.Model):
+    
+    image = models.ImageField(upload_to='place', verbose_name='Изображение зала')
+
+
+
+
+
 
 
 # class PageBlock(models.Model):

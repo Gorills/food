@@ -176,7 +176,11 @@ urlpatterns = [
     path('static/pages/add/', views.page_add, name='page_add'),
     path('static/pages/edit/<int:pk>/', views.page_edit, name='page_edit'),
 
-
+    # IMAGES
+    path('static/images/', views.admin_images, name='admin_images'),
+    path('static/images/add/', views.image_add, name='image_add'),
+    path('static/images/edit/<int:pk>/', views.image_edit, name='image_edit'),
+    path('static/images/delete/<int:pk>/', views.image_delete, name='image_delete'),
 
     # USERS
     path('users/', views.admin_users, name='admin_users'),

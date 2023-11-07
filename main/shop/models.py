@@ -29,6 +29,7 @@ class ShopSetup(SingletonModel):
 
     price_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость доставки', default=0)
     free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)
+    min_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Минимальная сумма заказа для доставки', default=0)
 
     show_descrioption = models.BooleanField(default=False, verbose_name='Показать короткое описание товара под карточкой')
     

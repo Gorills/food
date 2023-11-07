@@ -6,9 +6,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
-from home.models import Page, Slider, SliderSetup
+from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 from integrations.models import Integrations
 from subdomains.models import Subdomain
@@ -2039,6 +2039,63 @@ def page_edit(request, pk):
         'form': form,
     }
     return render(request, 'static/page_edit.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_images(request):
+
+
+    context = {
+        'images': PlaceImages.objects.all()
+    }
+
+    return render(request, 'static/admin_images.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def image_add(request):
+
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_images')
+    
+        else:
+            return render(request, 'static/image_add.html', {'form': form})
+        
+    form = ImageForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'static/image_add.html', context)
+
+        
+@user_passes_test(lambda u: u.is_superuser)
+def image_edit(request, pk):
+    image = PlaceImages.objects.get(id=pk)
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES, instance=image)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_images')
+        else:
+            return render(request, 'static/image_add.html', {'form': form})
+            
+    form = ImageForm(instance=image)
+    context = {
+        'form': form,
+    }
+    return render(request, 'static/image_add.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def image_delete(request, pk):
+    image = PlaceImages.objects.get(id=pk)
+    image.delete()
+    return redirect('admin_images')
 
 # !!! СТАТИКА !!!
 

@@ -5,7 +5,7 @@ from orders.models import Order
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
-from home.models import SliderSetup, Slider, Page
+from home.models import PlaceImages, SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
@@ -467,6 +467,23 @@ class OrderForm(forms.ModelForm):
             }),
         }
 
+
+
+
+# Изображения зала
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = PlaceImages
+        fields = '__all__'
+        
+        widgets = {
+            'image': forms.FileInput(attrs={
+                'class': 'input',
+            }),
+        }
+
+
 # Страницы 
 class PageForm(forms.ModelForm):
     text = forms.CharField(label='Текст страницы', required=False, widget=CKEditorUploadingWidget())
@@ -765,7 +782,11 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
-            'free_delivery': forms.NumberInput(attrs={
+            'min_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'first_delivery': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Скидка на 1 заказ в %',
             }),
