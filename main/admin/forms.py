@@ -1271,6 +1271,7 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = [
+            'parent',
             'name',
             'meta_h1',
             'meta_title',
@@ -1288,6 +1289,7 @@ class CategoryForm(forms.ModelForm):
         labels = {
             
 
+            'parent': 'Родительская категория',
             'name': 'Название категории',
             'meta_h1': 'Заголовок h1',
             'meta_title': 'Мета заголовок',
@@ -1304,7 +1306,10 @@ class CategoryForm(forms.ModelForm):
             
         }
         widgets = {
-           
+            'parent': forms.Select(attrs={
+                'class': 'input',
+                'placeholder': 'Родительская категория',
+            }),
            
             'name': forms.TextInput(attrs={
                 'class': 'input',

@@ -960,6 +960,10 @@ label span {
   box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
 }
 
+.responsive-table .table-row--children {
+  margin-left: 20px;
+}
+
 .responsive-table .table-row--new {
   border: 1px solid #884FFB;
 }
@@ -994,6 +998,23 @@ label span {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.responsive-table .table-row__cat-name--children {
+  padding-left: 20px;
+  position: relative;
+}
+
+.responsive-table .table-row__cat-name--children::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .responsive-table .col {

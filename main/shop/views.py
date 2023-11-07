@@ -122,7 +122,7 @@ def category_detail(request, slug):
         if limit:
             paginator = Paginator(products_all, *limit)
         else:
-            paginator = Paginator(products_all, 32)
+            paginator = Paginator(products_all, 600)
 
 
         page_number = request.GET.get('page')
@@ -134,6 +134,7 @@ def category_detail(request, slug):
             
             'category': category,
             'products': products,
+            'category_children': category.children.all(),
             'shop_setup': ShopSetup.objects.get(),
             'sort': sort,
             'limit': limit,

@@ -50,6 +50,8 @@
             </div>
         </div>
     </div>
+
+    {% if category.products.count != 0 %}
     <div class="banner">
         <div class="container">
             <div class="banner__inner">
@@ -59,8 +61,8 @@
             </div>
         </div>
     </div>
-
-
+    {% endif %}
+    {% if category.products.count != 0 %}
     <div class="catalog">
         
         <div class="container">
@@ -71,16 +73,64 @@
                 
                 <div class="catalog__list">
                     <div class="catalog__refresh">
-                        {% include 'components/sort.html'  %}
+                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
                         {% include 'components/product_list.html' with products=products big='' size=image_size %}
-                        {% include 'global/pagination.html'  %}
+                        {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
+                    </div>
+
+                </div>
+
+                
+
+
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
+    
+            
+{% if category_children %}
+
+
+    {% for children in category_children  %}
+        <div class="banner">
+            <div class="container">
+                <div class="banner__inner">
+
+                    {% if forloop.counter == 1 and category.products.count == 0 %}
+                    <h1 class="banner__title">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h1>
+                    
+                    {% else %}
+                    <h2 class="banner__title">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h2>
+                    
+                    
+                    {% endif %}
+
+
+                </div>
+            </div>
+        </div>
+        <div class="catalog">
+
+            <div class="container">
+                
+                <div class="catalog__list">
+                    <div class="catalog__refresh">
+                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
+                        {% include 'components/product_list.html' with products=children.products.all big='' size=image_size %}
+                        {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
 
                 </div>
             </div>
         </div>
-        
-    </div>
+
+    {% endfor %}
+
+{% endif %}
+
+    
 
     {% if category.description %}
     <div class="cat-desc">

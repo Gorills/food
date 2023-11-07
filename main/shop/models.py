@@ -123,6 +123,8 @@ class Category(models.Model):
     create_at = models.DateField(auto_now_add=True)
     update_at = models.DateField(auto_now=True)
 
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
+
     def __str__(self):
         return self.name
     
