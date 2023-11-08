@@ -116,6 +116,8 @@ class Category(models.Model):
     home = models.BooleanField(default=False, verbose_name='Отображать на главной странице')
     resize = models.BooleanField(default=False, verbose_name='Растянуть фон')
     font_color = models.CharField(max_length=250, null=True, blank=True, verbose_name='Цвет шрифта')
+    bg_color = models.CharField(max_length=250, default='#ffffff', null=True, blank=True, verbose_name='Цвет фона')
+    opacity = models.PositiveIntegerField(default=100, verbose_name='Прозрачность изображения')
 
     column = models.PositiveIntegerField(default=1)
     sort_order = models.PositiveIntegerField(default=0)

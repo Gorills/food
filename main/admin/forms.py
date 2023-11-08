@@ -1299,6 +1299,8 @@ class CategoryForm(forms.ModelForm):
             'home',
             'resize',
             'font_color',
+            'bg_color',
+            'opacity',
             'sort_order',
             'status',
             'slug',
@@ -1350,7 +1352,14 @@ class CategoryForm(forms.ModelForm):
                 # 'class': 'input',
                 'type': 'color',
             }),
-            
+            'bg_color': forms.TextInput(attrs={
+                # 'class': 'input',
+                'type': 'color',
+            }),
+            'opacity': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Прозрачность изображения',
+            }),
             'column': forms.NumberInput(attrs={
                 'class': 'input',
                 'placeholder': 'Количество колонок',
