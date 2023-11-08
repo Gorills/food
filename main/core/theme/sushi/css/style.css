@@ -216,7 +216,7 @@ a {
 }
 
 .btn--primary {
-  background: none;
+  background: #fff;
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
 }
@@ -3364,7 +3364,6 @@ a {
 .product-list__form {
   border-radius: 8px;
   overflow: hidden;
-  background-color: var(--color-body);
   bottom: 0;
   left: 0;
   right: 0;
