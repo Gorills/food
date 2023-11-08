@@ -790,6 +790,10 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Скидка на 1 заказ в %',
             }),
+            'discount_on_pickup': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Скидка при самовывозе',
+            }),
             'meta_h1': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
@@ -808,7 +812,20 @@ class ShopSetupForm(forms.ModelForm):
             }),
             'start_bonus': forms.NumberInput(attrs={
                 'class': 'input',
+            }),
+            'min_width': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'min_height': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'max_width': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'max_height': forms.NumberInput(attrs={
+                'class': 'input',
             })
+            
         }
 
 

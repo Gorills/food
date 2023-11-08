@@ -85,6 +85,7 @@ class Cart(object):
         get_d = request.session.get('delivery')
         get_sum = request.session.get('delivery_summ')
 
+        print(get_d)
         if not get_sum:
             self.get_d = 0
         self.get_sum = get_sum
@@ -598,6 +599,24 @@ class Cart(object):
         if self.coupon:
             return (self.coupon.discount / Decimal('100')) * self.get_total_price()
         return Decimal('0')
+    
+
+    def get_discount_on_pickup(self):
+        if self.get_d == 0:
+            result = self.get_total_price() / 100 * ShopSetup.objects.get().discount_on_pickup
+        else:
+            result = 0
+
+        return result
+
+    def get_discount_on_pickup_persent(self):
+        if self.get_d == 0:
+            result = ShopSetup.objects.get().discount_on_pickup
+        else:
+            result = 0
+
+        return result
+
 
     def get_total_price_after_discount(self):
         a = self.get_total_price()
@@ -606,6 +625,7 @@ class Cart(object):
         d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
         e = self.active_balls 
         f = self.get_first_delivery_summ()
+        g = self.get_discount_on_pickup()
         
         
-        return a - b + c - d - e - f
+        return a - b + c - d - e - f - g

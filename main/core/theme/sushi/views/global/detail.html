@@ -716,6 +716,13 @@
 
                             </div>
                             {% endif %}
+                            {% if cart.get_discount_on_pickup != 0 %}
+                            <div class="cart__order-line">
+                                <p class="cart__order-line-text">Скидка за самовывоз:</p>
+                                <p class="cart__order-line-summ">{{ cart.get_discount_on_pickup }}₽ ({{ cart.get_discount_on_pickup_persent }}%)</p>
+
+                            </div>
+                            {% endif %}
                             {% if card_loyalty_settings.active == True %}
 
                                 {% if cart.get_personal_sale > 0 %}
