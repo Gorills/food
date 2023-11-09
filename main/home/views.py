@@ -248,7 +248,8 @@ def home(request):
 
     hit_products = Product.objects.filter(bestseller=True).exclude(related=True).exclude(stock=0)[:8]
 
-    if hit_products.count == 0:
+    
+    if hit_products.count() == 0:
 
         hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
 
