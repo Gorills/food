@@ -235,6 +235,8 @@ class Product(models.Model):
     shipping = models.BooleanField(default=True)
     # Новинка
     new = models.BooleanField(default=False)
+    # Бестселлер
+    bestseller = models.BooleanField(default=False)
 
     slug = models.SlugField(unique=True, max_length=250, null=True)
 

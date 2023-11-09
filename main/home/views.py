@@ -245,7 +245,13 @@ def home(request):
 
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
     sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]
-    hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
+
+    hit_products = Product.objects.filter(bestseller=True).exclude(related=True).exclude(stock=0)[:8]
+
+    if hit_products.count == 0:
+
+        hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
+
     news = Post.objects.all().order_by('-id').exclude(draft=True)[:4]
 
 

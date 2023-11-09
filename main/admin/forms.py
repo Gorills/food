@@ -1112,6 +1112,7 @@ class ProductForm(forms.ModelForm):
             'subtract',
             'shipping',
             'new',
+            'bestseller',
             'slug',
             
             'length',
@@ -1146,6 +1147,7 @@ class ProductForm(forms.ModelForm):
             'subtract': 'Вычитать со склада',
             'shipping': 'Необходима доставка',
             'new': 'Новинка',
+            'bestseller': 'Хит продаж',
             'slug': 'SEO URL',
             
             'length': 'Длина',
