@@ -382,7 +382,7 @@ $(function() {
       }).done(function() {
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-
+        $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         
        
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
@@ -434,7 +434,7 @@ $(function() {
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
 
-        
+        $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
         
@@ -464,7 +464,7 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-
+        $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         removeCart(id, name, price, category, quantity) 
         
     });
@@ -986,7 +986,7 @@ $(document).ready(function() {
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-           
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
             
         });
 })
@@ -1008,6 +1008,7 @@ $(document).on('click','.plus_options',function(e){
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         });
 })
 
@@ -2179,6 +2180,7 @@ $(document).on('click','.combo__remove',function(e){
             
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             removeCart(id, name, price, 'Комбо', quantity)
         });
@@ -2202,6 +2204,7 @@ $(document).on('click','.plus_combo',function(e){
             
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             
             if (url.indexOf('plus_combo') > -1) {

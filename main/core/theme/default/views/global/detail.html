@@ -18,9 +18,11 @@
                     </div>
                 </div>
                 {% if cart|length > 0 %}
-                <div class="cart__top-row">
-                    <a href="#" class="cart__order">Заказать</a>
-                </div>
+                    {% if shop_setup.min_delivery <= cart.get_total_price %}
+                    <div class="cart__top-row">
+                        <a href="#" class="cart__order">Заказать</a>
+                    </div>
+                    {% endif %}
                 {% endif %}
             </div>
             
@@ -338,6 +340,7 @@
 
    
     <div class="cart__form-refresh">
+        {% if shop_setup.min_delivery <= cart.get_total_price %}
         
         <div class="cart__form">
             <div class="cart__form-wrap">
@@ -773,6 +776,8 @@
             </div>
             <div class="cart__order-layout"></div>
         </div>
+        {% endif %}
+
         
         
     </div>
@@ -803,7 +808,7 @@
         <div class="header__cart-price">{{ cart.get_total | floatformat:"0" }} ₽</div>
 
     </a>
-    {% if shop_setup.min_delivery > cart.get_total_price %}
+    {% if shop_setup.min_delivery >= cart.get_total_price %}
         <div class="header__cart-no-active-popup">
             Минимальная сумма заказа {{ shop_setup.min_delivery | floatformat:"0" }}
         </div>
