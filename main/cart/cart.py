@@ -85,7 +85,7 @@ class Cart(object):
         get_d = request.session.get('delivery')
         get_sum = request.session.get('delivery_summ')
 
-        print(get_d)
+        
         if not get_sum:
             self.get_d = 0
         self.get_sum = get_sum
