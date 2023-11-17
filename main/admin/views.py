@@ -2412,10 +2412,10 @@ from django.core.files.images import ImageFile
 @user_passes_test(lambda u: u.is_superuser)
 def product_upload(request):
 
-    cat = Category.objects.all()
+    
     prod = Product.objects.all()
 
-    cat.delete()
+    
     prod.delete()
     
     # file = 'csv_upload/upload/upload.xlsx'
