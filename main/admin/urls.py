@@ -34,7 +34,8 @@ urlpatterns = [
     path('add_pay_method/', views.add_pay_method, name='add_pay_method'),
     path('edit_pay_method/<int:pk>/', views.edit_pay_method, name='edit_pay_method'),
     path('delete_pay_method/<int:pk>/', views.delete_pay_method, name='delete_pay_method'),
-  
+
+    
 
     # sidebar
     path('sidebar_show/', views.sidebar_show, name='sidebar_show'),
@@ -89,6 +90,13 @@ urlpatterns = [
     path('product/add/', views.product_add, name='product_add'),
     path('product/edit/<int:pk>/', views.product_edit, name='product_edit'),
     path('product/delete/<int:pk>/', views.product_delete, name='product_delete'),
+
+    # works day
+    
+    path('add_worksday/', views.add_worksday, name='add_worksday'),
+    path('edit_worksday/<int:pk>/', views.edit_worksday, name='edit_worksday'),
+    path('delete_worksday/<int:pk>/', views.delete_worksday, name='delete_worksday'),
+  
 
     # Комбо
     path('combo/', views.admin_combo, name='admin_combo'),

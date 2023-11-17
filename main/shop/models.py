@@ -64,6 +64,25 @@ class ShopSetup(SingletonModel):
 
 
 
+
+class WorkDay(models.Model):
+
+    DAY_CLASS = (
+       (0, 'Понедельник'),
+       (1, 'Вторник'),
+       (2, 'Среда'),
+       (3, 'Четверг'),
+       (4, 'Пятница'),
+       (5, 'Суббота'),
+       (6, 'Воскресенье'),
+    )
+
+    day = models.PositiveIntegerField(verbose_name='День недели', choices=DAY_CLASS, unique=True)
+    start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
+    end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
+
+
+
 class PickupAreas(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название филиала (для внутреннего использования)')
     address = models.CharField(max_length=250, verbose_name='Адрес')

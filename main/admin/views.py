@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -14,7 +14,7 @@ from integrations.models import Integrations
 from subdomains.models import Subdomain
 
 from orders.models import Order
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup, WorkDay
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -944,7 +944,9 @@ def shop_settings(request):
     context = {
         'form': form,
         'zones': PickupAreas.objects.all(),
-        'methods': PayMethod.objects.all()
+        'methods': PayMethod.objects.all(),
+        'worksdays': WorkDay.objects.all().order_by('day'),
+
     }
 
     return render(request, 'shop/settings.html', context)
@@ -2408,13 +2410,13 @@ from PIL import Image
 from django.core.files.images import ImageFile
 
 @user_passes_test(lambda u: u.is_superuser)
-def product_upload():
+def product_upload(request):
 
-    # cat = Category.objects.all()
-    # prod = Product.objects.all()
+    cat = Category.objects.all()
+    prod = Product.objects.all()
 
-    # cat.delete()
-    # prod.delete()
+    cat.delete()
+    prod.delete()
     
     # file = 'csv_upload/upload/upload.xlsx'
     file = 'csv_upload/upload.xlsx'
@@ -2426,7 +2428,7 @@ def product_upload():
     count = 0
     connect = 0
     for row in ws.iter_rows(min_row=1):
-        if count == 0 or count == 1:
+        if count == 0:
             pass
         else:
             name = row[1].value
@@ -2440,40 +2442,51 @@ def product_upload():
 
             if old_price == '':
                 old_price = None
+
+            weight = row[5].value
+
+            if weight == '':
+                weight = None
             
-            filename = str(str(row[5].value).split('.')[0])
+            short_description = row[6].value
+            if short_description == '':
+                short_description = None
+           
+            
+            
+            # filename = str(str(row[7].value).split('.')[0])
 
-            thumb = 'csv_upload/' + filename
+            # thumb = 'csv_upload/' + filename
 
-            files = os.listdir('csv_upload/')
+            # files = os.listdir('csv_upload/')
 
-            if any(filename in f for f in files):
-                print(f"Изображение {filename} найдено")
-                formats = ['.jpg', ' .jpg', '.jpeg', ' .jpeg', '.webp', ' .webp', '.png', ' .png']
-                format = None
-                for ext in formats:
-                    try:
-                        with open('csv_upload/'+filename + ext, "rb") as f:
-                            format = ext.strip()
-                            break
-                    except:
-                        pass
+            # if any(filename in f for f in files):
+            #     print(f"Изображение {filename} найдено")
+            #     formats = ['.jpg', ' .jpg', '.jpeg', ' .jpeg', '.webp', ' .webp', '.png', ' .png']
+            #     format = None
+            #     for ext in formats:
+            #         try:
+            #             with open('csv_upload/'+filename + ext, "rb") as f:
+            #                 format = ext.strip()
+            #                 break
+            #         except:
+            #             pass
 
-                if format:
-                    print("Формат файла: " + format)
-                else:
-                    print("Не удалось определить формат файла")
+            #     if format:
+            #         print("Формат файла: " + format)
+            #     else:
+            #         print("Не удалось определить формат файла")
 
-            else:
-                print(f"Изображение {name} не найдено")
+            # else:
+            #     print(f"Изображение {name} не найдено")
 
-            print(format)
+            
             
             try:
-                thumb_path = 'csv_upload/'
-                thumb_for_format = thumb_path + filename + format
-                thumb_file = open(thumb_for_format, 'rb')
-                thumb_image = ImageFile(thumb_file)
+                # thumb_path = 'csv_upload/'
+                # thumb_for_format = thumb_path + filename + format
+                # thumb_file = open(thumb_for_format, 'rb')
+                # thumb_image = ImageFile(thumb_file)
 
             
                 try:
@@ -2493,8 +2506,10 @@ def product_upload():
                     product.price=price
                     product.old_price=old_price
                     
-                    product.thumb=thumb_image
+                    # product.thumb=thumb_image
                     product.parent=cat
+                    product.weight=weight
+                    product.short_description=short_description
 
                     product.save()
 
@@ -2507,8 +2522,10 @@ def product_upload():
                         price=price,
                         old_price=old_price,
                       
-                        thumb=thumb_image,
-                        parent=cat
+                        # thumb=thumb_image,
+                        parent=cat,
+                        weight=weight,
+                        short_description=short_description
                         )
             except Exception as e:
                 print(e)
@@ -2546,7 +2563,7 @@ def csv_upload(request):
 
         os.remove(file_to_open)
 
-        product_upload()
+        product_upload(request)
 
         shutil.rmtree('csv_upload')
 
@@ -2728,9 +2745,50 @@ from integrations.cron import *
 
 
 
+# !!! Настройка рабочих дней и времени доставки !!!
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_worksday(request):
+    if request.method == 'POST':
+        form = WorksdayForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/works_day/add_worksday.html', {'form': form})
+
+    form = WorksdayForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/works_day/add_worksday.html', context)
 
 
+@user_passes_test(lambda u: u.is_superuser)
+def edit_worksday(request, pk):
+    worksday = WorkDay.objects.get(id=pk)
+    if request.method == 'POST':
+        form = WorksdayForm(request.POST, instance=worksday)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/works_day/edit_worksday.html', {'form': form})
+
+    form = WorksdayForm(instance=worksday)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/works_day/edit_worksday.html', context)
 
 
-
-
+@user_passes_test(lambda u: u.is_superuser)
+def delete_worksday(request, pk):
+    worksday = WorkDay.objects.get(id=pk)
+    worksday.delete()
+    return redirect('shop_settings')
+# !!! Настройка рабочих дней и времени доставки !!!
