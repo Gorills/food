@@ -963,6 +963,7 @@ a {
   border: 2px solid #eaedff;
   max-width: 700px;
   margin: 0 auto;
+  background-color: #fff;
 }
 
 .login p {

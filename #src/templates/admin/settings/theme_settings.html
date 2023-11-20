@@ -27,7 +27,18 @@
         </form>
     </div>
 </div>
+<div class="page">
+    <div class="page__inner">
 
+       
+        <form action="{% url "font_settings" %}" class="form" method="post">
+            {% csrf_token %}
+           
+            {{ font_form }}
+            <button class="btn btn--primary">Сохранить</button>
+        </form>
+    </div>
+</div>
 
 
 {% endblock %}

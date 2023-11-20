@@ -2,7 +2,7 @@ from django import forms
 from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order 
-from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode
+from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod, WorkDay
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page
@@ -55,6 +55,19 @@ class IntegrationsForm(forms.ModelForm):
 
         
 
+class FontForm(forms.ModelForm):
+    class Meta:
+        model = Fonts
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.Select(attrs={
+                'class': 'input',
+            }),
+        }
+        labels = {
+            'name': 'Шрифт',
+        }
 
 
 
@@ -1435,7 +1448,11 @@ class ColorsForm(forms.ModelForm):
             'bg_btn',
             'border_btn',
             'color_btn',
-            'color_btn_light'
+            'color_btn_light',
+            'bg_image',
+            'header_image',
+            'footer_image',
+            'product_detail_image',
         ]
         widgets = {
             'primary': forms.TextInput(attrs={

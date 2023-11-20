@@ -33,6 +33,7 @@ gulp.task("serve", () => {
     gulp.watch(paths.global_sushi_views.watch, gulp.parallel("global_sushi_views"));
     gulp.watch(paths.sushi_js.watch, gulp.parallel("sushi_js"));
     gulp.watch(paths.sushi_styles.watch, gulp.parallel("sushi_styles"));
+    gulp.watch(paths.sushi_change_fonts.watch, gulp.parallel("sushi_change_fonts"));
     gulp.watch(paths.sushi_scripts.watch, gulp.parallel("sushi_scripts"));
     gulp.watch(paths.sushi_sprites.watch, gulp.parallel("sushi_sprites"));
     gulp.watch(paths.sushi_images.watch, gulp.parallel("sushi_images"));

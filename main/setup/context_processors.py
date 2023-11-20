@@ -1,4 +1,4 @@
-from .models import BaseSettings, CustomCode, Colors, ThemeSettings
+from .models import BaseSettings, CustomCode, Colors, Fonts, ThemeSettings
 
 def setup(request):
     try:
@@ -30,3 +30,11 @@ def theme(request):
     except:
         theme = []
     return {'theme': theme}
+
+def fonts(request):
+    try:
+        font = Fonts.objects.get()
+    except:
+        font = Fonts.objects.create()
+        
+    return {'font': font}

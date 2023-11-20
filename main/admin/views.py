@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -15,7 +15,7 @@ from subdomains.models import Subdomain
 
 from orders.models import Order
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup, WorkDay
-from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, RecaptchaSettings, ThemeSettings
+from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
@@ -422,9 +422,12 @@ def codes_settings_delete(request, pk):
 def color_settings(request):
 
     if request.method == 'POST':
-        form = ColorsForm(request.POST)
+        form = ColorsForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+
+        else:
+            return render(request, 'settings/color_settings.html', {'form': form})
 
         return redirect('color_settings')
     try:
@@ -445,6 +448,7 @@ def theme_settings(request):
     if request.method == 'POST':
 
         form = ThemeSettingsForm(request.POST)
+        
         if form.is_valid():
             form.save()
             subprocess.call(["touch", RESET_FILE])
@@ -456,11 +460,34 @@ def theme_settings(request):
     except:
         form = ThemeSettingsForm()
     
+    try:
+        font = Fonts.objects.get()
+        font_form = FontForm(instance=font)
+    except:
+        font_form = FontForm()
+    
     context = {
-        'form': form
+        'form': form,
+        'font_form': font_form
     }
 
     return render(request, 'settings/theme_settings.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def font_settings(request):
+    
+    if request.method == 'POST':
+
+        form = FontForm(request.POST)
+        if form.is_valid():
+            form.save()
+            subprocess.call(["touch", RESET_FILE])
+        else:
+            print(form.errors)
+
+        return redirect('theme_settings')
+
+
 
 
 

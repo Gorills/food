@@ -19,7 +19,7 @@
     <div class="page__inner">
 
        
-        <form action="." class="form" method="post">
+        <form action="." class="form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
            
             {{ form }}

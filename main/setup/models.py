@@ -211,7 +211,26 @@ class Colors(SingletonModel):
     color_btn_light = models.CharField(max_length=50, default='#222222')
 
 
+    bg_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
+
+    header_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
+    footer_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
+    product_detail_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
 
 
 
+class Fonts(SingletonModel):
 
+    FONTS_CHOICES = (
+        ('Roboto', 'Roboto'),
+        ('Montserrat', 'Montserrat'),
+        ('Lato', 'Lato'),
+        ('Certa', 'Certa'),
+    )
+
+
+    name = models.CharField(max_length=250, choices=FONTS_CHOICES, default='Roboto')
+    
+
+    def __str__(self):
+        return self.name

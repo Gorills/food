@@ -128,6 +128,17 @@ const requireDir = require("require-dir"),
                 
             ]
         },
+        sushi_change_fonts: {
+            src: "./#src/scss/theme/sushi/fonts/**/*.{scss,sass}",
+            dist: "./main/core/theme/sushi/css/fonts/",
+            watch: [
+                "./#src/scss/theme/sushi/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/sushi/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/sushi/fonts/**/*.{scss,sass}"
+
+                
+            ]
+        },
         sushi_scripts: {
             src: "./#src/js/theme/sushi/app.js",
             dist: "./main/core/theme/sushi/js/",
@@ -151,9 +162,9 @@ const requireDir = require("require-dir"),
             watch: "./#src/images/theme/sushi/sprites/*.svg"
         },
         sushi_fonts: {
-            src: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf}",
+            src: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,otf}",
             dist: "./main/core/theme/sushi/fonts/",
-            watch: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf}"
+            watch: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,otf}"
         },
         sushi_favicons: {
             src: "./#src/img/theme/sushi/fav/*.{jpg,jpeg,png,gif}",
@@ -308,6 +319,7 @@ export const development = gulp.series("clean", "adminclean",
         "global_sushi_views",
         "sushi_js",
         "sushi_styles",
+        "sushi_change_fonts",
         "sushi_scripts",
         "sushi_webp", 
         "sushi_images",
@@ -352,6 +364,7 @@ export const prod = gulp.series("clean", "adminclean",
         "global_sushi_views",
         "sushi_js",
         "sushi_styles",
+        "sushi_change_fonts",
         "sushi_scripts",
         "sushi_webp", 
         "sushi_images",

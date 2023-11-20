@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('color_settings/', views.color_settings, name='color_settings'),
     path('theme_settings/', views.theme_settings, name='theme_settings'),
+    path('font_settings/', views.font_settings, name='font_settings'),
 
     # sale
     path('admin_order/', views.admin_order, name='admin_order'),

@@ -48,6 +48,8 @@
     <!-- icons -->
     <style>
         :root {
+
+            --theme-font: "{{ font.name }}", sans-serif;
             --color-primary: {{ colors.primary }};
             --color-primary-light: {{ colors.primary }};
             --color-primary-dark: {{ colors.primary }};
@@ -83,6 +85,15 @@
             --color-bg-dark: #000;
         }
     </style>
+    {% comment %} Fonts {% endcomment %}
+    {% if font.name == "Roboto" %}
+        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+    {% elif font.name == "Certa" %}
+        <link href="{% get_static 'css/fonts/certa.css' %}" rel="stylesheet">
+    {% else %}
+        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+    {% endif %}
+
     <link href="{% get_libs 'owl/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">
 
@@ -103,7 +114,7 @@
     
     
     
-<body>
+<body {% if colors.bg_image %}style="background-image: url({{ colors.bg_image.url }});" class="body-bg"{% endif %}>
 
    
    

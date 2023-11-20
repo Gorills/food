@@ -14,7 +14,7 @@ body {
     background-color: var(--color-body);
     color: var(--color-font);
     line-height: 1.6;
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--theme-font);
     
     font-size: 16px;
 
@@ -26,6 +26,13 @@ body {
         // height: fit-content;
         // overflow: scroll;
         
+    }
+}
+
+.body-bg {
+    
+    * {
+        background: none;
     }
 }
 
