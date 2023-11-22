@@ -1445,6 +1445,10 @@ class ColorsForm(forms.ModelForm):
             'header_font',
             'body_bg',
             'body_font',
+            'search_bg',
+            'search_font',
+            'mobile_menu_bg',
+            'mobile_menu_font',
             'bg_btn',
             'border_btn',
             'color_btn',
@@ -1452,9 +1456,22 @@ class ColorsForm(forms.ModelForm):
             'bg_image',
             'header_image',
             'footer_image',
-            'product_detail_image',
+            'product_detail_image'
         ]
         widgets = {
+            'search_bg': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'search_font': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'mobile_menu_bg': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'mobile_menu_font': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+
             'primary': forms.TextInput(attrs={
                 
                 'placeholder': 'Основной цвет',
@@ -1527,6 +1544,10 @@ class ColorsForm(forms.ModelForm):
             }),
         }
         labels = {
+            'search_bg': 'Цвет поиска',
+            'search_font': 'Цвет шрифтов в поиске',
+            'mobile_menu_bg': 'Цвет мобильного меню',
+            'mobile_menu_font': 'Цвет шрифтов в мобильном меню',
             'primary': 'Основной цвет',
             'secondary': 'Дополнительный цвет',
             'success': 'Цвет успеха',

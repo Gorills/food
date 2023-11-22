@@ -204,6 +204,11 @@ class Colors(SingletonModel):
     body_bg_light = models.CharField(max_length=50, default='#f7f7fa')
     body_font_light = models.CharField(max_length=50, default='#f7f7fa')
 
+    search_bg = models.CharField(max_length=50, default='#ffffff')
+    search_font = models.CharField(max_length=50, default='#222222')
+    mobile_menu_bg = models.CharField(max_length=50, default='#ffffff')
+    mobile_menu_font = models.CharField(max_length=50, default='#222222')
+
 
     bg_btn = models.CharField(max_length=50, default='#222222')
     border_btn = models.CharField(max_length=50, default='#222222')

@@ -34,7 +34,7 @@
         @media screen and (max-width: 768px) {
             position: fixed;
             flex-direction: column;
-            background-color: var(--color-body);
+            background-color: var(--color-mobile-menu);
             z-index: 99;
             padding: 40px;
             left: -550px;
@@ -58,6 +58,10 @@
             }
             .header-bottom__dropdown-item + .header-bottom__dropdown-item {
                 margin-top: 20px;
+            }
+
+            .header-bottom__link {
+                color: var(--color-mobile-menu-font);
             }
         }
     }

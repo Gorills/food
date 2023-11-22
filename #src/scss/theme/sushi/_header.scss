@@ -44,6 +44,11 @@
         }
 
     }
+    &--image-bg {
+        .header__wrapper {
+            background-color: transparent;
+        }
+    }
 
     // .header__wrapper
     &__wrapper {

@@ -420,9 +420,14 @@ def codes_settings_delete(request, pk):
 # Настройки цвета
 @user_passes_test(lambda u: u.is_superuser)
 def color_settings(request):
+    try:
+        color = Colors.objects.get()
+        form = ColorsForm(instance=color)
+    except:
+        form = ColorsForm()
 
     if request.method == 'POST':
-        form = ColorsForm(request.POST, request.FILES)
+        form = ColorsForm(request.POST, request.FILES, instance=color)
         if form.is_valid():
             form.save()
 
@@ -430,11 +435,7 @@ def color_settings(request):
             return render(request, 'settings/color_settings.html', {'form': form})
 
         return redirect('color_settings')
-    try:
-        color = Colors.objects.get()
-        form = ColorsForm(instance=color)
-    except:
-        form = ColorsForm()
+    
     context = {
         'form': form
     }

@@ -1,9 +1,9 @@
 {% load thumbnail %}
-<header class="header">
+<header class="header {% if colors.bg_image %}header--image-bg" {% if colors.bg_image %}{% endif %}style="background-image: url({{ colors.bg_image.url }});"{% endif %}>
     <div class="header__wrapper">
         <div class="container">
             <div class="header__inner">
-                <div class="header__top">
+                <div  class="header__top" >
                     <div class="header__left">
                         {% if request.path == '/' %}
                             {% if setup.logo_dark %}
