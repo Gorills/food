@@ -1,5 +1,5 @@
 {% load thumbnail %}
-<header class="header {% if colors.bg_image %}header--image-bg" {% if colors.bg_image %}{% endif %}style="background-image: url({{ colors.bg_image.url }});"{% endif %}>
+<header class="header {% if colors.header_image %}header--image-bg{% endif %}" {% if colors.header_image %}style="background-image: url({{ colors.header_image.url }});"{% endif %}>
     <div class="header__wrapper">
         <div class="container">
             <div class="header__inner">
