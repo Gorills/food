@@ -322,7 +322,7 @@ $(function() {
         data: $form.serialize()
       })
       .done(function() {
-        $.get("/cart/set_delivery/1/", function() {
+        
           refreshElements();
           $('#suggest').attr('required', 'required');
           $('#finaladress').attr('required', 'required').attr('name', 'address');
@@ -331,7 +331,7 @@ $(function() {
           $('.cart__pickup-row').removeClass('cart__pickup-row--active');
           $('#delivery_method').val('Доставка');
           $('.product-detail__button').addClass('btn--success');
-        });
+       
   
         
   
@@ -380,12 +380,13 @@ $(function() {
         url: $form.attr('action'),
         data: $form.serialize()
       }).done(function() {
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-        $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+        $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
+        $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
         
-       
-        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        
        
         
 
@@ -1156,7 +1157,7 @@ $(document).ready(function(){
         });
 
         $('body').addClass('body')
-        $.get( "/cart/set_delivery/1/", function() {});
+        // $.get( "/cart/set_delivery/1/", function() {});
     })
 
     $(document).on('click','.cart__close, .cart__closer, #cancel',function(e){
@@ -1164,7 +1165,7 @@ $(document).ready(function(){
 
         $('#cartData').html('')
 
-        $.get( "/cart/set_delivery/1/", function() {});
+        // $.get( "/cart/set_delivery/1/", function() {});
         $('body').removeClass('body')
     })
 
@@ -1312,8 +1313,10 @@ $(function() {
         }
         if (getAddress == '') {
             $('#suggest').addClass('suggest-error')
+            $('.cart__form-delivery-in-session-ref').addClass('cart__form-delivery-in-session-ref--error')
         } else {
             $('#suggest').removeClass('suggest-error')
+            $('.cart__form-delivery-in-session-ref').removeClass('cart__form-delivery-in-session-ref--error')
         }
         if(getOrderTime=='0') {
             $('#order_time').children().children('.cart__select-error').show()
@@ -1551,10 +1554,19 @@ function init() {
                                     var deliveryFree = item.properties._data.balloonContentFooter
                                     var sd=parseInt(deliveryPrice.match(/\d+/)[0]);
                                     var fd=parseInt(deliveryFree.match(/\d+/)[0]);
+                                    var min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+
+                                    if(min_delivery) {
+                                        min_delivery_post = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+                                    } else {
+                                        min_delivery_post = 0
+                                    }
+                                    
 
                                     data = {
                                         price: sd,
                                         free: fd,
+                                        min_delivery: min_delivery_post,
                                         csrfmiddlewaretoken: csrf,
                                     }                                    
 
@@ -1562,9 +1574,6 @@ function init() {
                                     .done(function( ) {      
 
                                         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-
-
-                                        
 
                                         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
                                         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
@@ -1601,9 +1610,19 @@ function init() {
                                     myMap.geoObjects.add(item)
                                     myMap.geoObjects.add(myGeoObject)
                                     $('#finaladress').val($('#suggest').val())
+
+                                    address_data = {
+                                        delivery_address: $('#suggest').val(),
+                                        csrfmiddlewaretoken: csrf,
+                                    }
+
+                                    $.post('/cart/set_address/', address_data)
+                                    
+                                    
                                     myMap.setCenter(obj.geometry._coordinates);
                                     myMap.setZoom(17);
                                     $('#suggest').css('border-color', 'green');
+                                    $('#suggest').attr('data-value', $('#suggest').val());
     
                                 } else {
                                     showError('Нет доставки')
@@ -1676,6 +1695,19 @@ $(document).on('keyup', '#id_phone' ,function(e){
     var csrf = $(this).attr('data-token')
     if (min.length == 13) {
         
+        $.ajax({
+            method: "POST",
+            url: "/cart/set_phone/",
+            data: { 
+                csrfmiddlewaretoken: csrf,
+                phone: phone
+            }
+            })
+          .done(function() {
+            
+            
+    
+          });
 
         $.ajax({
             method: "POST",
@@ -1687,8 +1719,7 @@ $(document).on('keyup', '#id_phone' ,function(e){
             })
           .done(function() {
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            console.log(min.length)
-            console.log(phone)
+            
     
           });
     
@@ -2310,3 +2341,61 @@ $(document).on('hover','.header__cart-no-active::after',function(){
 })
 
 
+
+
+// Настройка адреся доставки в сессии
+$(document).on('click','.check-delivery__overlay',function(){
+    $('.check-delivery__inner').css('transform', 'scale(1.05)');
+
+    setTimeout(function(){
+        $('.check-delivery__inner').css('transform', 'scale(1)');
+    }, 100)
+})
+
+$(document).on('click','.check-delivery__item--delivery, .cart__form-delivery-in-session-ref',function(e){
+    e.preventDefault();
+    
+    $('.setup-address').addClass('setup-address--active')
+})
+
+
+
+
+$(document).on('click','.check-delivery__item--pickup',function(){
+    $.get("/cart/set_delivery/0/", function() {});
+    $('.check-delivery').hide();
+
+    
+})
+
+$(document).on('click','.setup-address__close, .setup-address__overlay',function(){
+    $('.setup-address').removeClass('setup-address--active')
+})
+
+
+$(document).on('submit','.save-delivery',function(e){
+    e.preventDefault();
+    var data_value = $('#suggest').attr('data-value');
+
+    if (data_value != '') {
+        $('.check-delivery').hide();
+        $('.setup-address').removeClass('setup-address--active');
+        $.get("/cart/set_delivery/1/", function() {});
+        $('#addressError').text('');
+        $('#addressError').hide();
+
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+        $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
+        $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
+        $('.cart__form-delivery-in-session').load('/cart/ .cart__form-delivery-in-session-ref', function() {});
+
+    } else {
+        
+        $('#addressError').text('Пустой или некорректный адрес')
+        $('#addressError').show()
+    }
+    
+    
+    
+})

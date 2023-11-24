@@ -827,9 +827,25 @@ def zone_file(request):
                 balloonContentHeader = 'Зона платной доставки'
                 try:
                     balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'].split(':')[0] + ' рублей'
-                    balloonContentFooter = 'Бесплатная доставка от - ' + d['properties']['description'].split(':')[1]  + ' рублей'
-                except:
+
+                    try:
+                        min_delivery = d['properties']['description'].split(':')[2]
+                    except Exception as e:
+                        
+                        min_delivery = None
+
+                    print(min_delivery)
+                    if min_delivery:
+
+                        balloonContentFooter = f'''Бесплатная доставка от - ''' + d['properties']['description'].split(':')[1]  + ''' рублей,
+                        минимальная сумма для заказа - ''' + d['properties']['description'].split(':')[2]  + ''' рублей'''
+                    else:
+                        balloonContentFooter = f'''Бесплатная доставка от - ''' + d['properties']['description'].split(':')[1]  + ''' рублей'''
+
+                except Exception as e:
+                   
                     balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'] + ' рублей'
+                    
             coords = []
             for i in d['geometry']['coordinates']:
                 for l in i:
@@ -858,7 +874,7 @@ def zone_file(request):
             subdomain.save()
 
         else:
-            with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
+            with open('core/libs/delivery.json', 'w', encoding='utf-8') as f:
                 json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         subprocess.call(["touch", RESET_FILE])

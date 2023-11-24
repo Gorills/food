@@ -114,10 +114,16 @@ def delivery_summ(request):
     if request.method == 'POST':
         price = request.POST['price'] 
         free = request.POST['free'] 
-        
+        min_delivery = request.POST['min_delivery']
+
+        print(min_delivery)
 
         request.session['delivery_summ'] = price
         request.session['free_delivery'] = free
+
+        if min_delivery != 0:
+            
+            request.session['min_delivery'] = min_delivery
 
         return redirect('home')
 
@@ -274,4 +280,29 @@ def check_first_delivery(request):
             request.session['first_delivery'] = first_delivery_persent
             
 
+        return redirect('home')
+    
+
+
+
+def set_address(request):
+    if request.method == 'POST':
+        
+        delivery_address = request.POST['delivery_address']
+        print(delivery_address)
+        data = {
+            'street': delivery_address
+        }
+        request.session['delivery_address'] = data
+        return redirect('home')
+    
+
+def set_phone(request):
+    if request.method == 'POST':
+        
+        phone = request.POST['phone']
+        data = {
+            'phone': phone
+        }
+        request.session['phone'] = data
         return redirect('home')

@@ -1,0 +1,97 @@
+.setup-address {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    @media screen and (max-width: 768px) {
+        align-items: flex-start;
+    }
+
+
+    &--active {
+        display: flex;
+    }
+
+    // .setup-address__overlay
+
+    &__overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 10000;
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    // .setup-address__inner
+
+    &__inner {
+        
+        width: 100%;
+        max-width: 750px;
+        position: relative;
+        z-index: 10001;
+        padding: 20px;
+        border-radius: 8px;
+        
+        background-color: #fff;
+        @media screen and (max-width: 768px) {
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            border-radius: 0;
+            
+        }
+    }
+
+    // .setup-address__close
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    // .setup-address__title
+
+    &__title {
+        margin-bottom: 20px;
+    }
+
+    #map {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+   
+
+    #set_address {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .address-error {
+        font-size: 12px;
+        margin-bottom: 10px;
+        color: red;
+        margin-top: -10px;
+        display: none;
+    }
+    .suggest-error {
+        border-color: red;
+    }
+}

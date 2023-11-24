@@ -400,6 +400,48 @@
     }
 
 
+    // .cart__form-delivery-in-session
+    &__form-delivery-in-session {
+        
+    }
+
+    // .cart__form-delivery-in-session-ref
+    &__form-delivery-in-session-ref {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        cursor: pointer;
+
+        &--error {
+            border: 1px solid red;
+        }
+        div {
+            margin-right: 10px;
+        }
+        p:first-child {
+            font-weight: 400;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        p:last-child {
+            font-weight: 700;
+        }
+        p {
+            line-height: 1;
+            font-size: 14px;
+        }
+        a {
+            display: inline-block;
+            padding: 3px 15px;
+            color: var(--color-font);
+            border: 1px solid var(--color-font);
+            
+            text-align: center;
+        }
+    }
    
 
     // .cart__form-coupon
@@ -811,13 +853,24 @@
         font-family: 'Circe', sans-serif;
         color: var(--color-font);
         background: none;
-        font-size: 16px;
+        
         border: 2px solid var(--color-primary);
         color: var(--color-primary);
         width: 100%;
         border-radius: 8px;
         font-size: 18px;
         font-weight: 500;
+
+        &--error {
+            border: 2px solid red;
+            padding: 16px 13px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--color-primary);
+            text-align: center;
+        }
         
         // background-color: var(--color-font);
     }
@@ -871,6 +924,7 @@
     // .cart__delivery
     &__delivery {
         
+        font-size: 13px;
 
         &--top {
             font-size: 18px;
@@ -905,16 +959,7 @@
         }
     }
 
-    .address-error {
-        font-size: 12px;
-        margin-bottom: 10px;
-        color: red;
-        margin-top: -10px;
-        display: none;
-    }
-    .suggest-error {
-        border-color: red;
-    }
+    
 }
 
 
@@ -922,16 +967,18 @@
     top: 0!important;
 }
 
-#map {
-    display: none;
 
-    @media screen and (max-width: 768px) {
-        // display: none!important;
-        left: -100%;
-        z-index: 0;
-        // opacity: 0;
-    }
-}
+
+// #map {
+//     display: none;
+
+//     @media screen and (max-width: 768px) {
+//         // display: none!important;
+//         left: -100%;
+//         z-index: 0;
+//         // opacity: 0;
+//     }
+// }
 
 .id_phone-wrap {
     position: relative;

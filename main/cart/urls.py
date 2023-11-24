@@ -22,4 +22,8 @@ urlpatterns = [
     path('minus_options/', views.minus_options, name='minus_options'),
 
     path('check_first_delivery/', views.check_first_delivery, name='check_first_delivery'),
+
+    path('set_address/', views.set_address, name='set_address'),
+    path('set_phone/', views.set_phone, name='set_phone'),
+ 
 ]

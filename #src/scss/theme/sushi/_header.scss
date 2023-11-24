@@ -403,36 +403,29 @@
                 fill: var(--color-header-font);
             }
         }
+
+        
     }
 
     .header__cart-wrap {
         position: relative;
-        
-    }
-    // .header__cart-no-active
-    &__cart-no-active {
-        
-
         &:hover {
             .header__cart-no-active-popup {
                 display: block;
             }
         }
 
-        .header__cart {
-            opacity: 40%;
-        }
+       
         
         
-        &::after {
-            content: "";
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            
-        }
+        
+        
+    }
+    // .header__cart-no-active
+    &__cart-no-active {
+        
+
+        
     }
 
     // .header__cart-no-active-popup

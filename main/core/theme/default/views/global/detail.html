@@ -8,8 +8,10 @@
     <div class="cart__inner">
         <div class="cart__refresh">
             <div class="cart__top">
+                
                 <div class="cart__top-wrap">
                     <p class="cart__title">{{ cart.get_total | floatformat:"2" }}₽</p>
+                    
                     
                     <div class="cart__close">
                         <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,7 +20,7 @@
                     </div>
                 </div>
                 {% if cart|length > 0 %}
-                    {% if shop_setup.min_delivery <= cart.get_total_price %}
+                    {% if cart.get_min_delivery  <= cart.get_total_price or request.session.delivery == 0 %}
                     <div class="cart__top-row">
                         <a href="#" class="cart__order">Заказать</a>
                     </div>
@@ -318,7 +320,16 @@
                         <br>
                         
                     </div>
+                    {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
 
+                       
+                        <div class="cart__delivery">
+                            Минимальная сумма заказа : {{ cart.get_min_delivery | floatformat:"0" }}₽
+                            <br>
+                       
+                        </div>
+
+                    {% endif %}
                     
                     <div class="cart__delivery">
                         Доставка: {{ cart.get_delivery | floatformat:"2" }}₽
@@ -340,7 +351,7 @@
 
    
     <div class="cart__form-refresh">
-        {% if shop_setup.min_delivery <= cart.get_total_price %}
+        
         
         <div class="cart__form">
             <div class="cart__form-wrap">
@@ -415,8 +426,8 @@
                                 {% endif %}
 
                             {% else %}
-
-                            <input id="id_phone" data-token="{{ csrf_token }}" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
+                                
+                            <input id="id_phone" data-token="{{ csrf_token }}" value="{{ cart.phone.phone }}" required name="phone" type="text" class="cart__input phone" placeholder="+7 999 999 99 99">
                             {% endif %}
 
                         </div>
@@ -429,11 +440,44 @@
                     <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
                     
         
-
+                    
                     <div class="cart__form-refresh-delivery {% if request.session.delivery == 1 %}cart__form-refresh-delivery--active{% endif %}">
 
                         <div class="cart__form-refresh-delivery-inner">
+
+                            {% if shop_setup.zones_delivery %}
+
+
+                            <div class="cart__form-delivery-in-session">
+                                <div class="cart__form-delivery-in-session-ref">
+                                    <div>
+                                        <p>Адрес доставки:</p>
+                                        <p> {{ cart.delivery_address.street }}</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
                             
+
+                             <div class="cart__input-wrap">
+                                <div class="cart__input-col">
+
+                                    <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                                    <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+                                    
+                                </div>
+                                
+                                <div class="cart__input-col">
+
+                                    <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                                    <input name="domofon" type="text" class="cart__input" placeholder="Домофон">
+                                </div>
+                                
+
+                            </div>
+                            <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+                            
+                            {% else %}
                             <div class="cart__input-address-wrap">
                                 <input {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-file-zones="{% if subdomain %}{{ subdomain.zone_file.url }}{% else %}/core/libs/delivery.json{% endif %}" data-city="{% if subdomain %}{{ subdomain.city }}{% else %}{{ setup.city }}{% endif %}" data-csrf="{{ csrf_token }}" class="cart__input" placeholder="Улица, дом" id="suggest">
                                 <div id="addressError" class="address-error"></div>
@@ -456,6 +500,9 @@
 
                             </div>
                             <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea>
+
+                            {% endif %}
+
 
                         </div>
                     </div>
@@ -535,7 +582,8 @@
                         <div class="wrap-delivery-address__inner">
                             
                             {% if request.session.delivery == 1 %}
-                            <input  name="address" type="text" id="finaladress" required hidden>
+
+                            <input  name="address" type="text" id="finaladress" value="{{ request.session.delivery_address.street }}" required hidden>
                             {% elif request.session.delivery == 0 %}
                             <input type="text" name="address" id="get_area" class="cart__input" value="" required hidden>
 
@@ -764,9 +812,15 @@
                             
                             
                             
+                            {% if cart.get_min_delivery <= cart.get_total_price or request.session.delivery == 0 %}
                             
                             <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }}₽</button>
                             
+                            {% else %}
+                            <div class="cart__order-create--error">
+                                <p>Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽</p>
+                            </div>
+                            {% endif %}
                             
                            
                         </div>
@@ -776,14 +830,12 @@
             </div>
             <div class="cart__order-layout"></div>
         </div>
-        {% endif %}
+        
 
         
         
     </div>
-    {% if shop_setup.zones_delivery %}
-    <div id="map" style="width: 100%;max-width:1200px;height: 100vh;position:relative;z-index:99999;"></div> 
-    {% endif %}
+    
     
     <div class="get-sec">
         <div class="get-sec__inner" data-timer="{{ get_sec }}"></div>
@@ -794,8 +846,8 @@
 
 
 
-
-<div class="header__cart-wrap {% if shop_setup.min_delivery > cart.get_total_price %}header__cart-no-active{% endif %}">
+{% comment %} {% if cart.get_min_delivery > cart.get_total_price and request.session.delivery == 1 %}header__cart-no-active{% endif %} {% endcomment %}
+<div class="header__cart-wrap ">
     <a href="#" class="header__cart">
 
         <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -805,12 +857,12 @@
 
         
 
-        <div class="header__cart-price">{{ cart.get_total | floatformat:"0" }} ₽</div>
+        <div class="header__cart-price">{{ cart.get_total_price | floatformat:"0" }} ₽</div>
 
     </a>
-    {% if shop_setup.min_delivery >= cart.get_total_price %}
+    {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
         <div class="header__cart-no-active-popup">
-            Минимальная сумма заказа {{ shop_setup.min_delivery | floatformat:"0" }}
+            Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽
         </div>
     {% endif %}
 </div>

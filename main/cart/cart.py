@@ -134,6 +134,29 @@ class Cart(object):
             }
         self.combos = combos
 
+        # Пустой адрес доставки
+        delivery_address = request.session.get('delivery_address')
+        if not delivery_address:
+            delivery_address = self.session['delivery_address'] = {
+                'street': ''
+               
+            }
+        self.delivery_address = delivery_address
+
+        # Пустой телефон
+        phone = request.session.get('phone')
+        if not phone:
+            phone = self.session['phone'] = {
+                'phone': ''
+            }
+        self.phone = phone
+
+        min_delivery = request.session.get('min_delivery')
+        if not min_delivery:
+            
+            min_delivery = self.min_delivery = ShopSetup.objects.get().min_delivery
+        self.min_delivery = min_delivery
+
 
         # Инициализируем пустой товар с опциями
         options = request.session.get('options')
@@ -495,6 +518,11 @@ class Cart(object):
             return Decimal(self.get_sum) if total_price < Decimal(self.free_delivery) else Decimal(0)
 
         return Decimal(0) 
+    
+
+    def get_min_delivery(self):
+
+        return Decimal(self.min_delivery)
 
 
     def get_total_price(self):

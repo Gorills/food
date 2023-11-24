@@ -58,11 +58,11 @@ const requireDir = require("require-dir"),
         },
         images: {
             src: [
-                "./#src/images/theme/default/**/*.{jpg,jpeg,png,gif,tiff,svg}",
-                "!./#src/images/theme/default/fav/*.{jpg,jpeg,png,gif,tiff}"
+                "./#src/images/theme/default/**/*.{jpg,jpeg,png,gif,tiff,svg,webp}",
+                "!./#src/images/theme/default/fav/*.{jpg,jpeg,png,gif,tiff,webp}"
             ],
             dist: "./main/core/theme/default/images/",
-            watch: "./#src/images/theme/default/**/*.{jpg,jpeg,png,gif,svg,tiff}"
+            watch: "./#src/images/theme/default/**/*.{jpg,jpeg,png,gif,svg,tiff,webp}"
         },
         sprites: {
             src: "./#src/images/theme/default/sprites/*.svg",
@@ -150,11 +150,11 @@ const requireDir = require("require-dir"),
         },
         sushi_images: {
             src: [
-                "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,tiff,svg}",
-                "!./#src/images/theme/sushi/fav/*.{jpg,jpeg,png,gif,tiff}"
+                "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,tiff,svg,webp}",
+                "!./#src/images/theme/sushi/fav/*.{jpg,jpeg,png,gif,tiff,webp}"
             ],
             dist: "./main/core/theme/sushi/images/",
-            watch: "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,svg,tiff}"
+            watch: "./#src/images/theme/sushi/**/*.{jpg,jpeg,png,gif,svg,tiff,webp}"
         },
         sushi_sprites: {
             src: "./#src/images/theme/sushi/sprites/*.svg",
