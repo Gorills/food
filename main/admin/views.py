@@ -874,7 +874,7 @@ def zone_file(request):
             subdomain.save()
 
         else:
-            with open('../core/libs/delivery.json', 'w', encoding='utf-8') as f:
+            with open('/core/libs/delivery.json', 'w', encoding='utf-8') as f:
                 json.dump(new_file, f, ensure_ascii=False, indent=4)
 
         subprocess.call(["touch", RESET_FILE])
