@@ -909,6 +909,8 @@ def district_setup(request):
         'file': file
     }
 
+    
+    subprocess.call(["touch", RESET_FILE])
     return render(request, 'settings/district_setup.html', context)
 
 # !!! district_setup !!!

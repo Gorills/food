@@ -82,6 +82,11 @@ def get_file(data_rions):
             color_index = min(int(str_list[1]), len(colors) - 1)
             fill_color = list(colors.values())[color_index]
             stroke_color = list(colors.values())[color_index]
+
+            try:
+                str_list_3 = str_list[3]
+            except:
+                str_list_3 = ''
             features.append({
                 "type": "Feature",
                 "id": counter,
@@ -90,7 +95,7 @@ def get_file(data_rions):
                     "coordinates": result
                 },
                 "properties": {
-                    "description": f"{str_list[1]}:{str_list[2].replace(' ', '')}",
+                    "description": f"{str_list[1]}:{str_list[2].replace(' ', '')}:{str_list_3.replace(' ', '')}",
                     "fill": fill_color,
                     "fill-opacity": 0.4,
                     "stroke": stroke_color,
