@@ -154,7 +154,7 @@ class Cart(object):
         min_delivery = request.session.get('min_delivery')
         if not min_delivery:
             
-            min_delivery = self.min_delivery = ShopSetup.objects.get().min_delivery
+            min_delivery = ShopSetup.objects.get().min_delivery
         self.min_delivery = min_delivery
 
 

@@ -320,17 +320,27 @@
                         <br>
                         
                     </div>
-                    {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
+                    {% if shop_setup.zones_delivery %}
+                        {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
 
-                       
+                        
+                            <div class="cart__delivery">
+                                Минимальная сумма заказа : {{ cart.get_min_delivery | floatformat:"0" }}₽
+                                <br>
+                        
+                            </div>
+
+                        {% endif %}
+                    {% else %}
+                        {% if cart.get_min_delivery >= cart.get_total_price %}
                         <div class="cart__delivery">
                             Минимальная сумма заказа : {{ cart.get_min_delivery | floatformat:"0" }}₽
                             <br>
-                       
+                    
                         </div>
+                        {% endif %}
 
                     {% endif %}
-                    
                     <div class="cart__delivery">
                         Доставка: {{ cart.get_delivery | floatformat:"2" }}₽
                         <br>
@@ -860,9 +870,24 @@
         <div class="header__cart-price">{{ cart.get_total_price | floatformat:"0" }} ₽</div>
 
     </a>
-    {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
+    {% if shop_setup.zones_delivery %}
+
+        {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
+
+            <div class="header__cart-no-active-popup">
+                Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽
+            </div>
+        
+            
+        
+        {% endif %}
+    
+    {% else %}
+        {% if cart.get_min_delivery >= cart.get_total_price %}
         <div class="header__cart-no-active-popup">
             Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽
         </div>
+        {% endif %}
+
     {% endif %}
 </div>
