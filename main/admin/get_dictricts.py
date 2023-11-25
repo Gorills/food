@@ -50,7 +50,7 @@ def areaCoordsParser(search):
     return result
 
 
-# areaCoordsParser('Свердловский район, Пермь', 'result.json')
+# areaCoordsParser('Советский район, Красноярск')
 
 from setup.models import BaseSettings
 

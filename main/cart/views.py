@@ -289,7 +289,7 @@ def set_address(request):
     if request.method == 'POST':
         
         delivery_address = request.POST['delivery_address']
-        print(delivery_address)
+        
         data = {
             'street': delivery_address
         }
