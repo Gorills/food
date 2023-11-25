@@ -364,6 +364,8 @@
         
         
         <div class="cart__form">
+
+            
             <div class="cart__form-wrap">
 
                 <div class="cart__deliv-method-wrap">
@@ -377,7 +379,7 @@
 
             </div>
             
-            
+            {% if request.session.delivery == 0 or request.session.delivery == 1 %}
             <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
                 <div class="cart__form-coupon-inner">
                     {% csrf_token %}
@@ -387,8 +389,12 @@
                     <button class="cart__form-coupon-btn">Применить</button>
                 </div>
             </form> 
-            
+            {% else %}
+
+            <p>Нужно выбрать способ доставки</p>
+            {% endif %}
             <div class="cart__form-form-wrap">
+                {% if request.session.delivery == 0 or request.session.delivery == 1 %}
                 <form action="{% url 'orders:order_create' %}" class="cart__form-form" method="post" id="form-delivery">
                     
                     {% csrf_token %}
@@ -837,8 +843,12 @@
                     </div>
                     
                 </form>
+                {% endif %}
             </div>
+            
             <div class="cart__order-layout"></div>
+
+           
         </div>
         
 
