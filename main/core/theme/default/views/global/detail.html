@@ -704,7 +704,12 @@
                                 {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
 
                                     {% if cart_active == True %}
-                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                        <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                        {% for meth in pay_method %}
+                                            {% if meth.in_pay_delivery == True %}
+                                            <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                            {% endif %}
+                                        {% endfor %}
                                     {% else %}
                                         {% for meth in pay_method %}
                                             {% if meth.in_pay_delivery == True %}
