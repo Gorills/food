@@ -700,24 +700,42 @@
                         <div class="cart__select-drop" id="cart__select-drop">
                             {% if pay_method %}
                             <div class="cart__select-drop-refresh" id="cart__select-drop-refresh">
+
                                 {% if request.session.delivery == True and shop_setup.only_pay_with_delivery == True %}
 
                                     {% if cart_active == True %}
                                     <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
                                     {% else %}
                                         {% for meth in pay_method %}
-                                        <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                            {% if meth.in_pay_delivery == True %}
+                                            <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                            {% endif %}
                                         {% endfor %}
                                     
                                     {% endif %}
-                                {% else %}
+
+                                {% elif request.session.delivery == True %}
+                                    {% if cart_active == True %}
+                                    <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
+                                    {% endif %}
                                     {% for meth in pay_method %}
+                                        {% if meth.in_pay_delivery == True %}
                                         <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+
+                                    {% for meth in pay_method %}
+                                        {% if meth.in_pay_pickup == True %}
+                                        <div class="cart__select-item cart__select-item--card">{{ meth.name }}</div>
+                                        {% endif %}
                                     {% endfor %}
                                     {% if cart_active == True %}
                                     <div class="cart__select-item cart__select-item--card">Оплата картой на сайте</div>
                                     {% endif %}
+
                                 {% endif %}
+                                
                             </div>
                             
                             {% else %}
@@ -893,7 +911,7 @@
         {% endif %}
     
     {% else %}
-        {% if cart.get_min_delivery >= cart.get_total_price %}
+        {% if cart.get_min_delivery > cart.get_total_price %}
         <div class="header__cart-no-active-popup">
             Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽
         </div>

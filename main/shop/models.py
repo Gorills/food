@@ -109,6 +109,8 @@ class PickupAreas(models.Model):
 
 class PayMethod(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название способа оплаты')
+    in_pay_delivery = models.BooleanField(default=False, verbose_name='Включить в способ оплаты доставки')
+    in_pay_pickup = models.BooleanField(default=True, verbose_name='Включить в способ оплаты самовывоза')
 
     def __str__(self):
         return self.name
