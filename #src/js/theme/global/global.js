@@ -2391,9 +2391,14 @@ $(document).on('click','.check-delivery__overlay',function(){
     }, 100)
 })
 
-$(document).on('click','.check-delivery__item--delivery, .cart__form-delivery-in-session-ref',function(e){
+$(document).on('click','.check-delivery__item--delivery',function(e){
     e.preventDefault();
     
+    $('.setup-address').addClass('setup-address--active')
+})
+
+$(document).on('click','.cart__form-delivery-in-session-ref',function(e){
+    e.preventDefault();
     $('.setup-address').addClass('setup-address--active')
 })
 
@@ -2404,16 +2409,19 @@ $(document).on('click','.check-delivery__item--pickup',function(){
     $.get("/cart/set_delivery/0/", function() {});
     $('.check-delivery').hide();
 
-    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
-    updateMinDelivery()
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {
+        updateMinDelivery()
+    });
+    
     
 })
 $(document).on('click','.check-delivery__item--delivery-nozones',function(){
     $.get("/cart/set_delivery/1/", function() {});
     $('.check-delivery').hide();
 
-    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
-    updateMinDelivery()
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {
+        updateMinDelivery()
+    });
     
 })
 
