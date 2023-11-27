@@ -4,7 +4,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 99999;
+    z-index: 999;
     background-color: #fff;
     
     box-shadow: 0px 0px 5px 0px rgb(0 0 0 / 10%);
@@ -17,7 +17,7 @@
         top: 0;
         bottom: 0;
         left: 0;
-        z-index: 1000001;
+        z-index: 1001;
         transition: all 0.3s ease-out;
     }
 
@@ -26,7 +26,7 @@
     &__inner {
         padding: 10px 0;
         position: relative;
-        z-index: 1000002;
+        z-index: 1002;
         color: var(--color-font);
         display: flex;
         justify-content: space-between;
