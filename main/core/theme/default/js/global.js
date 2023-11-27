@@ -486,7 +486,13 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-        $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+        $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
+        $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
+        updateMinDelivery()
+
+
+
+        // $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         removeCart(id, name, price, category, quantity) 
         updateMinDelivery()
     });
@@ -1395,6 +1401,10 @@ $(document).on('click','#pickup',function(e){
     $('#pickupInput').attr('name', 'address')
     $('#delivery_method').val('Самовывоз')
 
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+    updateMinDelivery()
+
+
     var url = $(this).attr('href')
 
     $.get( url, function() {
@@ -1421,6 +1431,10 @@ $(document).on('click','#delivery',function(e){
     $('#delivery_method').val('Доставка')
     $('#get_area').val('')
     var url = $(this).attr('href')
+
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+    updateMinDelivery()
+
 
     $.get( url, function() {
         loadCartData()
@@ -1601,9 +1615,7 @@ function init() {
                                         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
                                         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
                                         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-                                        $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
-
-                                        updateMinDelivery()
+                                        
                                     });
 
                                     // console.log(deliveryPrice)
@@ -1642,6 +1654,7 @@ function init() {
 
                                     $.post('/cart/set_address/', address_data)
 
+                                    
                                     
                                     
                                     myMap.setCenter(obj.geometry._coordinates);
@@ -2391,6 +2404,8 @@ $(document).on('click','.check-delivery__item--pickup',function(){
     $.get("/cart/set_delivery/0/", function() {});
     $('.check-delivery').hide();
 
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+    updateMinDelivery()
     
 })
 
@@ -2415,6 +2430,9 @@ $(document).on('submit','.save-delivery',function(e){
         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
         $('.cart__form-delivery-in-session').load('/cart/ .cart__form-delivery-in-session-ref', function() {});
+
+        $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+        updateMinDelivery()
 
     } else {
         
