@@ -1,7 +1,7 @@
 
 
 {% load theme_static %}
-{% if shop_setup.zones_delivery %}
+
 
 {% if request.session.delivery != 1 and request.session.delivery != 0 %}
 
@@ -14,11 +14,19 @@
         
         
         <div class="check-delivery__row">
+            {% if shop_setup.zones_delivery %}
             <div class="check-delivery__item check-delivery__item--delivery">
                 <img src="{% get_static 'images/delivery_icon.webp' %}" alt="" class="check-delivery__img">
                 <p class="check-delivery__item-title">Доставка</p>
                 
             </div>
+            {% else %}
+            <div class="check-delivery__item check-delivery__item--delivery-nozones">
+                <img src="{% get_static 'images/delivery_icon.webp' %}" alt="" class="check-delivery__img">
+                <p class="check-delivery__item-title">Доставка</p>
+                
+            </div>
+            {% endif %}
             <div class="check-delivery__item check-delivery__item--pickup">
                 <img src="{% get_static 'images/pickup_icon.webp' %}" alt="" class="check-delivery__img">
                 <p class="check-delivery__item-title">Самовывоз</p>
@@ -28,7 +36,7 @@
         </div>
     </div>
 </div>    
-{% endif %}
+
 
 
 

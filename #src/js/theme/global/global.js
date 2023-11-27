@@ -2408,6 +2408,14 @@ $(document).on('click','.check-delivery__item--pickup',function(){
     updateMinDelivery()
     
 })
+$(document).on('click','.check-delivery__item--delivery-nozones',function(){
+    $.get("/cart/set_delivery/1/", function() {});
+    $('.check-delivery').hide();
+
+    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+    updateMinDelivery()
+    
+})
 
 $(document).on('click','.setup-address__close, .setup-address__overlay',function(){
     $('.setup-address').removeClass('setup-address--active')

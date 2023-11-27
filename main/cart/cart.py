@@ -158,13 +158,6 @@ class Cart(object):
             min_delivery = ShopSetup.objects.get().min_delivery
         self.min_delivery = min_delivery
 
-        # Если не заданы зоны доставки, то выставляем по умолчанию способ доставки как самовывоз
-        
-        # if ShopSetup.objects.get().zones_delivery == 0:
-        #     request.session['delivery'] = 1
-        #     print(request.session.get('delivery'))
-        
-
 
         # Инициализируем пустой товар с опциями
         options = request.session.get('options')
