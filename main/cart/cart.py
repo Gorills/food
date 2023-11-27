@@ -151,11 +151,19 @@ class Cart(object):
             }
         self.phone = phone
 
+        # Минимальная сумма для доставки
         min_delivery = request.session.get('min_delivery')
         if not min_delivery:
             
             min_delivery = ShopSetup.objects.get().min_delivery
         self.min_delivery = min_delivery
+
+        # Если не заданы зоны доставки, то выставляем по умолчанию способ доставки как самовывоз
+        
+        # if ShopSetup.objects.get().zones_delivery == 0:
+        #     request.session['delivery'] = 1
+        #     print(request.session.get('delivery'))
+        
 
 
         # Инициализируем пустой товар с опциями
@@ -523,6 +531,18 @@ class Cart(object):
     def get_min_delivery(self):
 
         return Decimal(self.min_delivery)
+    
+
+    def get_minimum_persent(self):
+
+        min_delivery = self.get_min_delivery()
+        price = self.get_total_price()
+
+        persent = (Decimal(price) / Decimal(min_delivery)) * Decimal(100)
+
+
+        return int(persent)
+        
 
 
     def get_total_price(self):

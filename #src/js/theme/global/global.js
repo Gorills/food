@@ -1,5 +1,24 @@
 
 
+function updateMinDelivery() {
+
+    $('.minimum-bar__wrap').load(location.href + ' .minimum-bar__refresh', function() {
+        var dataWidth = $('.minimum-bar__refresh').data('width');
+        console.log(dataWidth)
+        $('.minimum-bar__bar').css('width', dataWidth)
+    });
+    
+    
+}
+
+$(document).ready(function() {
+    updateMinDelivery()
+    
+});
+
+
+
+
 jQuery(document).ready(function () {
     $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
 });
@@ -331,6 +350,7 @@ $(function() {
           $('.cart__pickup-row').removeClass('cart__pickup-row--active');
           $('#delivery_method').val('Доставка');
           $('.product-detail__button').addClass('btn--success');
+          updateMinDelivery();
        
   
         
@@ -358,6 +378,7 @@ $(function() {
       function refreshElements() {
         
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        updateMinDelivery()
         
       }
     });
@@ -385,7 +406,7 @@ $(function() {
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-        
+        updateMinDelivery()
         
        
         
@@ -437,7 +458,7 @@ $(function() {
 
         $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-        
+        updateMinDelivery()
         
         
         
@@ -467,7 +488,7 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         removeCart(id, name, price, category, quantity) 
-        
+        updateMinDelivery()
     });
 
     count = 0
@@ -499,7 +520,7 @@ $(document).on('click','.cart__order-line__balls-link',function(e){
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         
-    
+        updateMinDelivery()
     });
 
    
@@ -518,7 +539,7 @@ $(function() {
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-        
+        updateMinDelivery()
 
         
       }).fail(function() {
@@ -913,7 +934,7 @@ $(document).ready(function() {
             $('.options_btn').html('Добавлен')
             $('.options_btn').addClass('btn--success')
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-
+            updateMinDelivery()
             btn_get.html('Добавлен')
             
             $('.product-options-popup').removeClass('product-options-popup--active')
@@ -952,7 +973,7 @@ $(document).ready(function() {
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
             $('.product-options-popup').removeClass('product-options-popup--active')
-            
+            updateMinDelivery()
             btn_get.html('Добавлен')
             function explode() {
 
@@ -988,7 +1009,7 @@ $(document).ready(function() {
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
             $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
-            
+            updateMinDelivery()
         });
 })
 
@@ -1010,6 +1031,7 @@ $(document).on('click','.plus_options',function(e){
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+            updateMinDelivery()
         });
 })
 
@@ -1579,7 +1601,9 @@ function init() {
                                         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
                                         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
                                         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-                                        
+                                        $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
+
+                                        updateMinDelivery()
                                     });
 
                                     // console.log(deliveryPrice)
@@ -1617,6 +1641,7 @@ function init() {
                                     }
 
                                     $.post('/cart/set_address/', address_data)
+
                                     
                                     
                                     myMap.setCenter(obj.geometry._coordinates);
@@ -2185,7 +2210,7 @@ $(document).ready(function() {
                 comboPopup.removeClass('combo-popup--active');
                 
                 $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-            
+                updateMinDelivery()
 
 
                 addCart(combo, name, price, 'Комбо', quantity)
@@ -2214,6 +2239,7 @@ $(document).on('click','.combo__remove',function(e){
             $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
             removeCart(id, name, price, 'Комбо', quantity)
+            updateMinDelivery()
         });
 })
 
@@ -2237,7 +2263,7 @@ $(document).on('click','.plus_combo',function(e){
             $('.cart__inner').load('/cart/ .cart__refresh', function() {});
             $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
             $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            
+            updateMinDelivery()
             if (url.indexOf('plus_combo') > -1) {
                 addCart(combo, name, price, 'Комбо', 1)
             } else if (url.indexOf('minus_combo') > -1) {

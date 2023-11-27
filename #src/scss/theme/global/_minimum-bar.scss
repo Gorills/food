@@ -1,0 +1,57 @@
+.minimum-bar {
+    
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    background-color: #fff;
+    
+    box-shadow: 0px 0px 5px 0px rgb(0 0 0 / 10%);
+    
+    // .minimum-bar__bar
+
+    &__bar {
+        position: absolute;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000001;
+        transition: all 0.3s ease-out;
+    }
+
+    // .minimum-bar__inner
+
+    &__inner {
+        padding: 10px 0;
+        position: relative;
+        z-index: 1000002;
+        color: var(--color-font);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    // .minimum-bar__summ
+    &__summ {
+        font-size: 24px;
+        font-weight: 700;
+
+        @media screen and (max-width: 480px) {
+            font-size: 16px;
+            
+        }
+    }
+
+    // .minimum-bar__text
+
+    &__text {
+
+        @media screen and (max-width: 480px) {
+            font-size: 12px;
+            
+        }
+    }
+}
+
