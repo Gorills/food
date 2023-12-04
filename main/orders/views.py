@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
 from subdomains.utilites import get_subdomain
-from shop.models import ComboItem, Product, ProductOption
+from shop.models import ComboItem, Product, ProductOption, ShopSetup
 from .models import Order, OrderItem
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
@@ -198,6 +198,13 @@ def order_create(request):
 
                 
                 if pay_method == 'Оплата картой на сайте':
+
+                    # отправлять заказ в телеграм бот, даже если не прошла оплата
+                    info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
+                    print(info_to_order_anyway)
+                    if info_to_order_anyway:
+                        order_telegram(telegram_bot, telegram_group, order)
+
 
                     if pay_name == 'yookassa':
                         data = create_payment(order, cart, request)
