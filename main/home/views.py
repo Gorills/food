@@ -24,7 +24,7 @@ from pay.models import AlfaBank, PaymentSet, Yookassa
 from integrations.views import *
 from pay.paykeeper_pay import get_status
 from subdomains.utilites import get_protocol
-from delivery.yandex_eda import *
+# from delivery.yandex_eda import *
 
 
 # get_status()
