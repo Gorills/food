@@ -31,6 +31,12 @@ urlpatterns = [
     path('paykeeper_save/', views.paykeeper_save, name='paykeeper_save'),
     path('tinkoff_save/', views.tinkoff_save, name='tinkoff_save'),
 
+    # delivery
+    path('admin_delivery/', views.admin_delivery, name='admin_delivery'),
+    path('delivery_add/', views.delivery_add, name='delivery_add'),
+    path('delivery_edit/<int:pk>/', views.delivery_edit, name='delivery_edit'),
+    path('delivery_delete/<int:pk>/', views.delivery_delete, name='delivery_delete'),
+
     # paay method
     path('add_pay_method/', views.add_pay_method, name='add_pay_method'),
     path('edit_pay_method/<int:pk>/', views.edit_pay_method, name='edit_pay_method'),

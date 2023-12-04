@@ -5626,6 +5626,7 @@ td.product-thumbnail img {
 
   .header__work-time {
     font-size: 14px;
+    margin: 0 auto;
   }
 
   .header__contacts {
@@ -5803,6 +5804,12 @@ td.product-thumbnail img {
 }
 
 @media screen and (max-width: 390px) {
+  .header__work-time {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 320px) {
   .header__work-time {
     display: none;
   }

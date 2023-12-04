@@ -10,6 +10,26 @@ from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
+from delivery.models import Delivery
+
+
+
+
+class DeliveryForm(forms.ModelForm):
+    class Meta:
+        model = Delivery
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'api_key': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+
+        }
+
 
 
 

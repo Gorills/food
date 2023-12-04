@@ -17,6 +17,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('yafeed.xml', include('yafeed.urls')),
     path('api/v1/', include('api.urls')),
+    path('delivery/', include('delivery.urls')),
     
 
 

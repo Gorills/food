@@ -6,12 +6,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, DeliveryForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 from integrations.models import Integrations
 from subdomains.models import Subdomain
+from delivery.models import Delivery
 
 from orders.models import Order
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup, WorkDay
@@ -2779,7 +2780,15 @@ from integrations.iiko import load_menu
 def catalogs_synch(request):
 
     if request.method == 'POST':
-        load_menu(True)
+
+        clean = request.POST.get('clean')
+        print(clean)
+        if clean == 'on':
+            load_menu(True)
+        else:
+            load_menu(False)
+
+        
 
         return redirect('integration')
 
@@ -2843,3 +2852,67 @@ def delete_worksday(request, pk):
     worksday.delete()
     return redirect('shop_settings')
 # !!! Настройка рабочих дней и времени доставки !!!
+
+
+
+# !!! ДОСТАВКА !!!
+@user_passes_test(lambda u: u.is_superuser)
+def admin_delivery(request):
+
+    try:
+        deliverys = Delivery.objects.get()
+    except:
+        deliverys = None
+
+
+    context = {
+        'deliverys': deliverys
+    }
+    return render(request, 'delivery/admin_delivery.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delivery_add(request):
+
+    if request.method == 'POST':
+        form = DeliveryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_delivery')
+        else:
+            return render(request, 'delivery/add_delivery.html', {'form': form})
+
+    form = DeliveryForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'delivery/add_delivery.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delivery_edit(request, pk):
+    delivery = Delivery.objects.get(id=pk)
+    if request.method == 'POST':
+        form = DeliveryForm(request.POST, instance=delivery)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_delivery')
+        else:
+            return render(request, 'delivery/add_delivery.html', {'form': form})
+
+    form = DeliveryForm(instance=delivery)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'delivery/add_delivery.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delivery_delete(request, pk):
+    delivery = Delivery.objects.get(id=pk)
+    delivery.delete()
+    return redirect('admin_delivery')

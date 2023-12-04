@@ -490,8 +490,14 @@
         @media screen and (max-width:480px) {
             // display: flex;
             font-size: 14px;
+            margin: 0 auto;
         }
         @media screen and (max-width:390px) {
+            font-size: 12px;
+        }
+            
+        
+        @media screen and (max-width:320px) {
             display: none;
         }
     }

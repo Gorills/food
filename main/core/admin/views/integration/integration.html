@@ -89,6 +89,11 @@
     <div class="synch__inner">
 
         <form action="{% url 'catalogs_synch' %}" class="synch__catalogs" method="post">
+            <label for="">
+                Обновить и очистить категории товаров
+                <input type="checkbox" class="checkbox" name="clean">
+            </label>
+            
             {% csrf_token %}
             <button class="btn-to-synch">Синхронизировать каталоги</button>
         </form>

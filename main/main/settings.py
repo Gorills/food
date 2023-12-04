@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'integrations',
+    'delivery',
     # 'django.contrib.sites',
     'cart',
     'orders',
