@@ -99,7 +99,10 @@ def order_telegram(telegram_bot, telegram_group, order):
         flat = ''
 
     if order.pay_method == 'Оплата картой на сайте':
-        not_pay = "\n" + "*Статус оплаты*: *НЕ ОПЛАЧЕН! ПРЕДВАРИТЕЛЬНОЕ ОПЛВЕЩЕНИЕ О ЗАКАЗЕ*"
+        if order.paid:
+            not_pay = "\n" + "*Статус оплаты*: *ОПЛАЧЕН*"
+        else
+            not_pay = "\n" + "*Статус оплаты*: *НЕ ОПЛАЧЕН! ПРЕДВАРИТЕЛЬНОЕ ОПОВЕЩЕНИЕ О ЗАКАЗЕ*"
     else:
         not_pay = ""
 
