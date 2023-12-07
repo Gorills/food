@@ -206,6 +206,27 @@ $(document).on('click','#save',function(e){
       $(this).parent().parent('.char__row').remove()
     }
   });
+
+  var url = document.location.href;
+
+    if(url.includes('edit')) {
+
+    } else {
+      var getVal = $('#id_name').val()
+
+      var res = makeSlug(getVal)
+
+      var color = $('#data-color').val()
+      if (color != '') {
+          resAll = res + '-' + color
+      } else {
+          resAll = res
+      }
+      
+      $('#id_slug').val(resAll)
+      $('#data-slug').val(res)
+  }
+
   $('.form').submit();
 })
 // end save form
