@@ -4,6 +4,7 @@ import re
 import telepot
 
 from setup.models import BaseSettings
+from shop.models import ShopSetup
 
 
 
@@ -99,10 +100,14 @@ def order_telegram(telegram_bot, telegram_group, order):
         flat = ''
 
     if order.pay_method == 'Оплата картой на сайте':
-        if order.paid:
-            not_pay = "\n" + "*Статус оплаты*: *ОПЛАЧЕН*"
+        if ShopSetup.objects.get().info_to_order_anyway == True:
+            
+            if order.paid == True:
+                not_pay = "\n" + "*Статус оплаты*: *ОПЛАЧЕН*"
+            else:
+                not_pay = "\n" + "*Статус оплаты*: *НЕ ОПЛАЧЕН! ПРЕДВАРИТЕЛЬНОЕ ОПОВЕЩЕНИЕ О ЗАКАЗЕ*"
         else:
-            not_pay = "\n" + "*Статус оплаты*: *НЕ ОПЛАЧЕН! ПРЕДВАРИТЕЛЬНОЕ ОПОВЕЩЕНИЕ О ЗАКАЗЕ*"
+            not_pay = ''
     else:
         not_pay = ""
 
