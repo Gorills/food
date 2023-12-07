@@ -910,6 +910,7 @@ a {
 
 .cart__deliv-method--fend {
   justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
 .cart__form-refresh-delivery {

@@ -378,16 +378,16 @@
         <div class="cart__form">
 
             
-            <div class="cart__form-wrap">
+          
 
-                <div class="cart__deliv-method-wrap">
-                    <div class="cart__deliv-method cart__deliv-method--fend">
-                
-                        <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
-                    </div>
+           
+                <div class="cart__deliv-method cart__deliv-method--fend">
+            
+                    <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
                 </div>
+            
 
-            </div>
+        
             
             {% if request.session.delivery == 0 or request.session.delivery == 1 %}
             <form action="{% url "coupons:apply" %}" class="cart__form-coupon" method="post">
