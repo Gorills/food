@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    {% if category.products.count != 0 %}
+   
     <div class="banner">
         <div class="container">
             <div class="banner__inner">
@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-    {% endif %}
+    
     {% if category.products.count != 0 %}
     <div class="catalog">
         
@@ -98,15 +98,11 @@
             <div class="container">
                 <div class="banner__inner">
 
-                    {% if forloop.counter == 1 and category.products.count == 0 %}
-                    <h1 class="banner__title">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h1>
-                    
-                    {% else %}
-                    <h2 class="banner__title">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h2>
+                   
+                    <h2 class="banner__title banner__title--child">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h2>
                     
                     
-                    {% endif %}
-
+                    
 
                 </div>
             </div>
