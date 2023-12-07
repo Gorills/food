@@ -594,12 +594,11 @@ a {
 }
 
 .cart__form-btn {
-  width: 100%;
   display: inline-block;
   text-align: center;
   background-color: var(--color-body);
-  padding: 8px 20px;
-  height: 100%;
+  padding: 5px 20px;
+  font-size: 12px;
   color: var(--color-font-light);
   border: 1px solid #eaedff;
 }
@@ -608,10 +607,6 @@ a {
   background-color: var(--color-primary);
   color: var(--color-body);
   border: 1px solid var(--color-primary);
-}
-
-.cart__form-btn + .cart__form-btn {
-  margin-left: 40px;
 }
 
 .cart__form-politic {
@@ -914,6 +909,12 @@ a {
 
 .cart__deliv-method {
   display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cart__deliv-method--fend {
+  justify-content: flex-end;
 }
 
 .cart__form-refresh-delivery {

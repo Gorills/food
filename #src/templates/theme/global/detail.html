@@ -19,6 +19,18 @@
                         </svg>
                     </div>
                 </div>
+                <div class="cart__form-wrap">
+
+                    <div class="cart__deliv-method-wrap">
+                        <div class="cart__deliv-method">
+                    
+                            <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
+                            <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
+                           
+                        </div>
+                    </div>
+    
+                </div>
                 {% if cart|length > 0 %}
                     {% if cart.get_min_delivery  <= cart.get_total_price or request.session.delivery == 0 %}
                     <div class="cart__top-row">
@@ -369,10 +381,8 @@
             <div class="cart__form-wrap">
 
                 <div class="cart__deliv-method-wrap">
-                    <div class="cart__deliv-method">
+                    <div class="cart__deliv-method cart__deliv-method--fend">
                 
-                        <a href="{% url 'cart:set_delivery' 1 %}" class="cart__form-btn {% if request.session.delivery == 1 %}cart__form-btn--active{% endif %} " id="delivery">Доставка</a>
-                        <a href="{% url 'cart:set_delivery' 0 %}" class="cart__form-btn {% if request.session.delivery == 0 %}cart__form-btn--active{% endif %}" id="pickup">Самовывоз</a>
                         <a href="#" class="cart__form-btn" id="cancel">Отмена</a>
                     </div>
                 </div>
