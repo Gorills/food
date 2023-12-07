@@ -371,9 +371,7 @@ def order_confirm(request, pk):
         
 
         if status == 'succeeded':
-            order_telegram(telegram_bot, telegram_group, order)
             
-            send_sms(sms_text(order.id), order.phone)
 
             if LoyaltyCardSettings.objects.get().active == True:
                 user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -399,6 +397,10 @@ def order_confirm(request, pk):
             request.session['delivery'] = 1
             order.paid = True
             order.save()
+
+            order_telegram(telegram_bot, telegram_group, order)
+            
+            send_sms(sms_text(order.id), order.phone)
 
             return redirect(f'/?order=True&id={order.id}')
 
@@ -450,11 +452,13 @@ def order_webhook(request):
             status = payment.status
             if status == 'succeeded':
                 
+                
+                order.paid = True
+                order.save()
+
                 order_telegram(telegram_bot, telegram_group, order)
                 
                 send_sms(sms_text(order.id), order.phone)
-                order.paid = True
-                order.save()
 
                 if LoyaltyCardSettings.objects.get().active == True:
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -490,6 +494,7 @@ def order_error(request):
     return render(request, 'orders/order/error.html')
 
 
+# Альфабанк
 def order_success(request):
     subdomain = get_subdomain(request)
     try:
@@ -510,10 +515,7 @@ def order_success(request):
     if data['status'] == '0':
         order = data['order']
 
-        order_telegram(telegram_bot, telegram_group, order)
         
-        
-        send_sms(sms_text(order.id), order.phone)
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -544,6 +546,9 @@ def order_success(request):
         order.paid = True
         
         order.save()
+
+        order_telegram(telegram_bot, telegram_group, order)
+        send_sms(sms_text(order.id), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
 
@@ -593,9 +598,7 @@ def paykeeper_success(request):
     if data['status'] == 'paid':
         order = data['order']
 
-        order_telegram(telegram_bot, telegram_group, order)
         
-        send_sms(sms_text(order.id), order.phone)
 
         if LoyaltyCardSettings.objects.get().active == True:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -626,6 +629,10 @@ def paykeeper_success(request):
         order.paid = True
         
         order.save()
+
+        order_telegram(telegram_bot, telegram_group, order)
+        
+        send_sms(sms_text(order.id), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
 
