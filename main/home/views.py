@@ -227,7 +227,7 @@ def home(request):
 
 
     order_get = request.GET.getlist('order')
-    home_cats = Category.objects.filter(home=True)
+    home_cats = Category.objects.filter(home=True).order_by('sort_order')
 
     try:
         slider_setup = SliderSetup.objects.get()
