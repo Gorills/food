@@ -496,7 +496,7 @@ def order_error(request):
 
 # Альфабанк
 def alpha_check(request, pk):
-    order = Order.objects.get(id=id)
+    order = Order.objects.get(id=pk)
 
     data = get_status(order.payment_id)
 
