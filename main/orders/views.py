@@ -501,18 +501,23 @@ def alpha_check(request, pk):
     data = get_status(order.payment_id)
 
     if data['status'] == '0':
-        
+        order = data['order']
 
         
       
-        order.paid = True
+        # order.paid = True
         
-        order.save()
+        # order.save()
 
-        order_telegram(telegram_bot, '-1001850576262', order)
+        order_telegram(telegram_bot, telegram_group, order)
         # send_sms(sms_text(order.id), order.phone)
 
-        return HttpResponse(data['order'])
+        return HttpResponse(data)
+    
+    else:
+
+        # order_telegram(telegram_bot, telegram_group, order)
+        return HttpResponse(data['status'])
 
 
   
