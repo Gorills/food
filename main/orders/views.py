@@ -500,7 +500,7 @@ def alpha_check(request, pk):
 
     data = get_status(order.payment_id)
 
-    if data['status'] == '2':
+    if data['status'] == '0':
         order = data['order']
 
         
@@ -512,7 +512,7 @@ def alpha_check(request, pk):
         order_telegram(telegram_bot, telegram_group, order)
         # send_sms(sms_text(order.id), order.phone)
 
-        return HttpResponse(data)
+        return HttpResponse(data['status'])
     
     else:
 
@@ -541,7 +541,7 @@ def order_success(request):
 
     data = get_status(pay_id)
 
-    if data['status'] == '2':
+    if data['status'] == '0':
         order = data['order']
 
         
