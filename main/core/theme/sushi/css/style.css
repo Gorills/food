@@ -133,6 +133,7 @@ a {
   justify-content: center;
   width: fit-content;
   border-radius: 8px;
+  font-family: var(--theme-font);
 }
 
 .btn--primary {
