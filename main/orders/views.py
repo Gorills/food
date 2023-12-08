@@ -507,7 +507,7 @@ def alpha_check(request, pk):
 
         
       
-        order.paid = False
+        order.paid = True
         
         order.save()
 
@@ -517,6 +517,9 @@ def alpha_check(request, pk):
         return HttpResponse(f'Оплачен {data["status"]}')
     
     else:
+        order.paid = False
+        
+        order.save()
 
         # order_telegram(telegram_bot, telegram_group, order)
         return HttpResponse(data['status'])
