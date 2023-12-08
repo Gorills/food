@@ -504,40 +504,15 @@ def alpha_check(request, id):
         order = data['order']
 
         
-
-        if LoyaltyCardSettings.objects.get().active == True:
-            user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-            try:
-                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
-                loyalty_card.summ += order.summ
-            except:
-                loyalty_card = LoyaltyCard.objects.create(
-                    user=user_profile,
-                    summ=Decimal('0.00')
-                    )
-                loyalty_card.summ += order.summ
-                loyalty_card.save()
-
-            try:
-                if order.bonuses_pay > 0:
-                    loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
-
-            except:
-                pass
-            
-            loyalty_card.save()
-
-
       
-      
-        order.paid = True
+        # order.paid = True
         
-        order.save()
+        # order.save()
 
-        order_telegram(telegram_bot, telegram_group, order)
-        send_sms(sms_text(order.id), order.phone)
+        order_telegram(telegram_bot, '-1001850576262', order)
+        # send_sms(sms_text(order.id), order.phone)
 
-        return redirect(f'/?order=True&id={order.id}')
+        return HttpResponse(data)
 
 
   
