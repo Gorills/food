@@ -505,14 +505,14 @@ def alpha_check(request, id):
 
         
       
-        # order.paid = True
+        order.paid = True
         
-        # order.save()
+        order.save()
 
         order_telegram(telegram_bot, '-1001850576262', order)
         # send_sms(sms_text(order.id), order.phone)
 
-        return HttpResponse(data)
+        return redirect('admin_order')
 
 
   
