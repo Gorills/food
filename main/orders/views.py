@@ -512,7 +512,7 @@ def alpha_check(request, pk):
         order_telegram(telegram_bot, '-1001850576262', order)
         # send_sms(sms_text(order.id), order.phone)
 
-        return redirect('admin_order')
+        return HttpResponse(data)
 
 
   
