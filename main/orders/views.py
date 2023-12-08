@@ -501,7 +501,7 @@ def alpha_check(request, pk):
     data = get_status(order.payment_id)
 
     if data['status'] == '0':
-        order = data['order']
+        
 
         
       
