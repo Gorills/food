@@ -209,6 +209,8 @@ class Colors(SingletonModel):
     mobile_menu_bg = models.CharField(max_length=50, default='#ffffff')
     mobile_menu_font = models.CharField(max_length=50, default='#222222')
 
+    gray = models.CharField(max_length=50, default='#f1f2f2')
+
 
     bg_btn = models.CharField(max_length=50, default='#222222')
     border_btn = models.CharField(max_length=50, default='#222222')

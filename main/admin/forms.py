@@ -1465,6 +1465,7 @@ class ColorsForm(forms.ModelForm):
             'header_font',
             'body_bg',
             'body_font',
+            'gray',
             'search_bg',
             'search_font',
             'mobile_menu_bg',
@@ -1542,6 +1543,10 @@ class ColorsForm(forms.ModelForm):
                 'placeholder': 'Цвет шрифтов сайта',
                 'type': 'color'
             }),
+            'gray': forms.TextInput(attrs={
+                'placeholder': 'Цвет каталогов',
+                'type': 'color'
+            }),
             'bg_btn': forms.TextInput(attrs={
                 
                 'placeholder': 'Цвет кнопок',
@@ -1579,6 +1584,7 @@ class ColorsForm(forms.ModelForm):
 
             'body_bg': 'Цвет фона сайта',
             'body_font': 'Цвет шрифтов сайта',
+            'gray': 'Цвет каталогов',
             'bg_btn': 'Цвет кнопок',
             'border_btn': 'Цвет обводки кнопок',
             'color_btn': 'Цвет шрифтов в кнопках',
