@@ -222,6 +222,7 @@ TEMPLATES = [
                 'setup.context_processors.theme',
                 'setup.context_processors.fonts',
                 'shop.context_processors.categorys',
+                'shop.context_processors.categorys_top',
                 'shop.context_processors.combos',
                 'shop.context_processors.shop_setup',
                 'shop.context_processors.pickup_areas',

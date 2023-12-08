@@ -45,7 +45,51 @@
         }
     }
 
-    // ..cat-home__item-flex
+    // .cat-home__inner-two
+    &__inner-two {
+        display: grid;
+        grid-gap: 24px;
+        grid-template-columns: repeat(2, 1fr);
+
+        
+    
+
+        @media screen and (max-width:480px) {
+          grid-template-columns: repeat(1, 1fr);
+          
+        }
+    }
+    // .cat-home__inner-three
+    &__inner-three {
+        display: grid;
+        grid-gap: 24px;
+        grid-template-columns: repeat(3, 1fr);
+
+        @media screen and (max-width:768px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        @media screen and (max-width:480px) {
+          grid-template-columns: repeat(1, 1fr);
+          
+        }
+    }
+
+    // .cat-home__inner-four
+    &__inner-four {
+        display: grid;
+        grid-gap: 24px;
+        grid-template-columns: repeat(4, 1fr);
+
+        @media screen and (max-width:768px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        @media screen and (max-width:480px) {
+          grid-template-columns: repeat(1, 1fr);
+        }
+    }
+
+
+    // .cat-home__item-flex
 
     &__item-flex {
         display: inline-block;

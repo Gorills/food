@@ -5,6 +5,9 @@ def categorys(request):
 
 
 
+def categorys_top(request):
+    return {'categorys_top': Category.objects.filter(status=True, top=True).order_by('sort_order')}
+
 def combos(request):
     return {'combos': Combo.objects.all()}
 

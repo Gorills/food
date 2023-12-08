@@ -290,6 +290,8 @@
                             <div id="headerCart">
                                
                             </div>    
+                            
+                            {% if categorys_top.count != 0 %}
                             <div class="toggle-menu" id="menu">
                                 <div class="toggle-section">
                                     <a href="#" class="menu-btn">
@@ -297,6 +299,7 @@
                                     </a>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                     
@@ -310,6 +313,8 @@
     </div>
   
     <div class="header-bottom">
+
+        
         <div class="container">
             <nav class="header-bottom__inner" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
                 <ul class="header-bottom__list" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
