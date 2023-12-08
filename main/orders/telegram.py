@@ -120,6 +120,6 @@ def order_telegram(telegram_bot, telegram_group, order):
     try:
         send_message(telegram_bot, telegram_group, message)
     except Exception as e:
-        message = e
-        send_message(telegram_bot, telegram_group, message)
+        # print(e)
+        pass
         
