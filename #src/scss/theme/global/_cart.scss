@@ -76,7 +76,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 20px 0;
-        border-bottom: 1px solid #e1e1e1;
+        border-bottom: 1px solid var(--color-cart-border);
     }
 
     // .cart__order
@@ -145,7 +145,7 @@
         position: relative;
         
         padding: 20px 0;
-        border-bottom: 1px solid #e1e1e1;
+        border-bottom: 1px solid var(--color-cart-border);
         &:last-child {
             border-bottom: none;
         }
@@ -376,7 +376,7 @@
 
     // .cart__form
     &__form {
-        border-left: 1px solid #e1e1e1;
+        border-left: 1px solid var(--color-cart-border);
         position: relative;
         z-index: 10001;
         width: 100%;
@@ -465,7 +465,7 @@
         height: 41px;
         max-height: 41px;
         margin-bottom: 10px;
-        border: 1px solid #eaedff;
+        border: 1px solid var(--color-cart-border);
         background-color: var(--color-body);
         color: var(--color-font);
     }
@@ -502,8 +502,8 @@
         padding: 5px 20px;
         
         font-size: 12px;
-        color: var(--color-font-light);
-        border: 1px solid #eaedff;
+        color: var(--color-cart-font);
+        border: 1px solid var(--color-cart-border);
         &--active {
             background-color: var(--color-primary);
             color: var(--color-body);
@@ -554,7 +554,7 @@
 
     &__input {
         background: var(--color-body);
-        border: 1px solid #eaedff;
+        border: 1px solid var(--color-cart-border);
         border-radius: 0;
         padding: 12px 20px;
         height: 41px;
@@ -642,7 +642,7 @@
         
         align-items: center;
         justify-content: center;
-        border: 1px solid #eaedff;
+        border: 1px solid var(--color-cart-border);
         border-left: none;
         background-color: var(--color-body);
         color: var(--color-font);
@@ -793,7 +793,7 @@
     // .cart__order-create-wrapper
 
     &__order-create-wrapper {
-        border-top: 1px solid #e1e1e1;
+        border-top: 1px solid var(--color-cart-border);
         position: absolute;
         bottom: 0;
         padding: 20px;
@@ -906,7 +906,8 @@
 
     #cancel {
         // display: none;
-
+        padding: 5px 16px;
+        color: red;
         @media screen and (max-width: 768px) {
             display: inline-block;
         }

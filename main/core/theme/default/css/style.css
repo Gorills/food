@@ -290,7 +290,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 20px 0;
-  border-bottom: 1px solid #e1e1e1;
+  border-bottom: 1px solid var(--color-cart-border);
 }
 
 .cart__order {
@@ -335,7 +335,7 @@ a {
 .cart__item {
   position: relative;
   padding: 20px 0;
-  border-bottom: 1px solid #e1e1e1;
+  border-bottom: 1px solid var(--color-cart-border);
 }
 
 .cart__item:last-child {
@@ -505,7 +505,7 @@ a {
 }
 
 .cart__form {
-  border-left: 1px solid #e1e1e1;
+  border-left: 1px solid var(--color-cart-border);
   position: relative;
   z-index: 10001;
   width: 100%;
@@ -572,7 +572,7 @@ a {
   height: 41px;
   max-height: 41px;
   margin-bottom: 10px;
-  border: 1px solid #eaedff;
+  border: 1px solid var(--color-cart-border);
   background-color: var(--color-body);
   color: var(--color-font);
 }
@@ -594,8 +594,8 @@ a {
   background-color: var(--color-body);
   padding: 5px 20px;
   font-size: 12px;
-  color: var(--color-font-light);
-  border: 1px solid #eaedff;
+  color: var(--color-cart-font);
+  border: 1px solid var(--color-cart-border);
 }
 
 .cart__form-btn--active {
@@ -627,7 +627,7 @@ a {
 
 .cart__input {
   background: var(--color-body);
-  border: 1px solid #eaedff;
+  border: 1px solid var(--color-cart-border);
   border-radius: 0;
   padding: 12px 20px;
   height: 41px;
@@ -695,7 +695,7 @@ a {
   height: 41px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #eaedff;
+  border: 1px solid var(--color-cart-border);
   border-left: none;
   background-color: var(--color-body);
   color: var(--color-font);
@@ -806,7 +806,7 @@ a {
 }
 
 .cart__order-create-wrapper {
-  border-top: 1px solid #e1e1e1;
+  border-top: 1px solid var(--color-cart-border);
   position: absolute;
   bottom: 0;
   padding: 20px;
@@ -879,6 +879,11 @@ a {
   background-color: var(--color-body);
   padding: 20px;
   min-width: 400px;
+}
+
+.cart #cancel {
+  padding: 5px 16px;
+  color: red;
 }
 
 .cart__select-drop-two-hidden {
@@ -1437,7 +1442,7 @@ a {
 
 .order-detail__input {
   background: #ffffff;
-  border: 1px solid #eaedff;
+  border: 1px solid var(--color-cart-border);
   border-radius: 0;
   height: 45px;
   padding: 0 0 0 10px;

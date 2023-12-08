@@ -207,6 +207,9 @@ class Colors(SingletonModel):
     body_bg_light = models.CharField(max_length=50, default='#f7f7fa')
     body_font_light = models.CharField(max_length=50, default='#f7f7fa')
 
+    cart_border = models.CharField(max_length=50, default='#eaedff', verbose_name='Цвет границы корзины')
+    cart_fonts_color = models.CharField(max_length=50, default='#999999', verbose_name='Цвет шрифтов корзины')
+
     search_bg = models.CharField(max_length=50, default='#ffffff')
     search_font = models.CharField(max_length=50, default='#222222')
     mobile_menu_bg = models.CharField(max_length=50, default='#ffffff')

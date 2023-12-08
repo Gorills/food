@@ -1476,12 +1476,21 @@ class ColorsForm(forms.ModelForm):
             'border_btn',
             'color_btn',
             'color_btn_light',
+            'cart_border',
+            'cart_fonts_color',
             'bg_image',
             'header_image',
             'footer_image',
             'product_detail_image'
         ]
         widgets = {
+            'cart_fonts_color': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'cart_border': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+
             'search_bg': forms.TextInput(attrs={
                 'type': 'color'
             }),
