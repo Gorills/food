@@ -509,7 +509,7 @@ def alpha_check(request, pk):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order)
+        order_telegram(telegram_bot, '-1001850576262', order)
         # send_sms(sms_text(order.id), order.phone)
 
         return HttpResponse(data['order'])
