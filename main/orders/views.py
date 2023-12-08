@@ -496,7 +496,7 @@ def order_error(request):
 
 # Альфабанк
 def alpha_check(request, pk):
-    order = Order.objects.get(id=pk)
+    order = Order.objects.get(id=id)
 
     data = get_status(order.payment_id)
 
@@ -509,7 +509,7 @@ def alpha_check(request, pk):
         
         order.save()
 
-        order_telegram(telegram_bot, '-1001850576262', order)
+        order_telegram(telegram_bot, telegram_bot, order)
         # send_sms(sms_text(order.id), order.phone)
 
         return HttpResponse(data)
