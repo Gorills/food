@@ -1463,6 +1463,8 @@ class ColorsForm(forms.ModelForm):
             'info',
             'header_bg',
             'header_font',
+            'footer_color',
+            'footer_font',
             'body_bg',
             'body_font',
             'gray',
@@ -1532,6 +1534,14 @@ class ColorsForm(forms.ModelForm):
                 
                 'placeholder': 'Цвет шрифтов в header',
                 'type': 'color'
+            }),
+            'footer_color': forms.TextInput(attrs={
+
+                'placeholder': 'Цвет footer',
+                'type': 'color'
+            }),
+            'footer_font': forms.TextInput(attrs={
+                 'type': 'color'
             }),
             'body_bg': forms.TextInput(attrs={
                 

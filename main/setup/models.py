@@ -198,6 +198,9 @@ class Colors(SingletonModel):
     header_bg = models.CharField(max_length=50, default='#ffffff')
     header_font = models.CharField(max_length=50, default='#222222')
 
+    footer_color = models.CharField(max_length=50, default='#24262b', verbose_name='Цвет футера')
+    footer_font = models.CharField(max_length=50, default='#ffffff', verbose_name='Цвет шрифта футера')
+
     body_bg = models.CharField(max_length=50, default='#ffffff')
     body_font = models.CharField(max_length=50, default='#222222')
 

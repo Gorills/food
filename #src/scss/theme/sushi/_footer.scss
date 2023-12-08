@@ -110,9 +110,9 @@
     flex-wrap: wrap;
   }
 .footer{
-    background-color: #24262b;
+    background-color: var(--color-footer);
     padding: 70px 0;
-    color: #fff;
+    color: var(--color-footer-font);
     // .footer__address-item
     &__address-item {
         margin-bottom: 25px;
@@ -170,7 +170,7 @@
   }
   .footer-col h4{
     font-size: 18px;
-    color: #ffffff;
+    color: var(--color-footer-font);;
     text-transform: capitalize;
     margin-bottom: 35px;
     font-weight: 500;
@@ -192,7 +192,7 @@
   .footer-col ul li a{
     font-size: 16px;
     text-transform: capitalize;
-    color: #ffffff;
+    color: var(--color-footer-font);;
     text-decoration: none;
     font-weight: 300;
     color: #bbbbbb;
@@ -200,7 +200,7 @@
     transition: all 0.1s ease;
   }
   .footer-col ul li a:hover{
-    color: #ffffff;
+    color: var(--color-footer-font);;
     padding-left: 8px;
   }
   .footer-col .social-links a{
@@ -212,12 +212,12 @@
     text-align: center;
     line-height: 40px;
     border-radius: 50%;
-    color: #ffffff;
+    color: var(--color-footer-font);;
     transition: all 0.5s ease;
   }
   .footer-col .social-links a:hover{
     color: #24262b;
-    background-color: #ffffff;
+    background-color: var(--color-footer-font);;
   }
   
   /*responsive*/
