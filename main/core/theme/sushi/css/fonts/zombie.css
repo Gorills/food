@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Zombie";
+  src: url("../../fonts/zombie/ds_zombie_cyr.eot");
+  /* IE9 Compat Modes */
+  src: url("../../fonts/zombie/ds_zombie_cyr.eot?#iefix") format("embedded-opentype"), url("../../fonts/zombie/DSZombieCyr.woff2") format("woff2"), url("../../fonts/zombie/DSZombieCyr.woff") format("woff"), url("../../fonts/zombie/ds_zombie_cyr.ttf") format("truetype"), url("../../fonts/zombie/ds_zombie_cyr.svg#svgFontName") format("svg");
+  /* Legacy iOS */
+  font-weight: 400;
+  font-style: normal;
+}
+/*# sourceMappingURL=maps/zombie.css.map */

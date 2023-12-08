@@ -162,9 +162,9 @@ const requireDir = require("require-dir"),
             watch: "./#src/images/theme/sushi/sprites/*.svg"
         },
         sushi_fonts: {
-            src: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,otf}",
+            src: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,TTF,otf}",
             dist: "./main/core/theme/sushi/fonts/",
-            watch: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,otf}"
+            watch: "./#src/fonts/theme/sushi/**/*.{woff,woff2,ttf,TTF,otf}"
         },
         sushi_favicons: {
             src: "./#src/img/theme/sushi/fav/*.{jpg,jpeg,png,gif}",
