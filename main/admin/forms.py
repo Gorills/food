@@ -801,6 +801,7 @@ class BlogCategoryForm(forms.ModelForm):
 
 class ShopSetupForm(forms.ModelForm):
     description = forms.CharField(label='Описание каталога', required=False, widget=CKEditorUploadingWidget())
+    delivery_blocked_text = forms.CharField(label='Текст блокировки', required=False, widget=CKEditorUploadingWidget())
     class Meta:
         model = ShopSetup
         fields = "__all__"

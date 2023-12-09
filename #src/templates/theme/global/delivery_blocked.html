@@ -1,0 +1,9 @@
+
+{% if shop_setup.delivery_blocked %}
+<div class="delivery-blocked">
+    <div class="delivery-blocked__overflow"></div>
+    <div class="delivery-blocked__inner">
+        {{ shop_setup.delivery_blocked_text | safe }}
+    </div>
+</div>
+{% endif %}

@@ -64,6 +64,10 @@ class ShopSetup(SingletonModel):
     max_height = models.PositiveIntegerField(null=True, blank=True, default=500, verbose_name='Высота основного изображения')
 
 
+    delivery_blocked = models.BooleanField(default=False, verbose_name='Заблокировать доставку')
+    delivery_blocked_text = models.TextField(null=True, blank=True, verbose_name='Текст блокировки доставки')
+
+
 
 
 class WorkDay(models.Model):
