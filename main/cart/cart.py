@@ -503,7 +503,17 @@ class Cart(object):
 
 
     def get_delivery(self):
-        total_price = self.get_total_price()
+        
+
+        a = self.get_total_price()
+        b = self.get_discount()
+        d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
+        e = self.active_balls 
+        f = self.get_first_delivery_summ()
+        g = self.get_discount_on_pickup()
+        total_price = a - b - d - e - f - g
+
+
         if total_price == 0:
             return Decimal(0)
 
@@ -668,5 +678,5 @@ class Cart(object):
         f = self.get_first_delivery_summ()
         g = self.get_discount_on_pickup()
         
-        
-        return a - b + c - d - e - f - g
+        res = a - b + c - d - e - f - g
+        return res
