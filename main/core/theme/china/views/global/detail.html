@@ -854,6 +854,12 @@
                             {% endif %}
 
                             <div class="cart__order-line">
+                                <p class="cart__order-line-text">Итого без скидки и доставки</p>
+                                <p class="cart__order-line-summ">{{ cart.get_total_price | floatformat:"2" }}₽</p>
+
+                            </div>
+
+                            <div class="cart__order-line">
                                 <p class="cart__order-line-text"><b>Итого</b></p>
                                 <p class="cart__order-line-summ"><b>{{ cart.get_total_price_after_discount | floatformat:"2" }}₽</b></p>
 
