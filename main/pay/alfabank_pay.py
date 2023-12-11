@@ -128,8 +128,8 @@ def get_status(pay_id):
         
         count +=1
         time.sleep(10)
-        print(status_pay)
-        print(count)
+        # print(status_pay)
+        # print(count)
 
 
 
