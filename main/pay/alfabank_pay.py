@@ -87,8 +87,14 @@ def create_payment(order, cart, request):
    
 
 
-
+import threading
+import time
+from setup.models import BaseSettings
+from orders.telegram import order_telegram
 def get_status(pay_id):
+
+    telegram_bot = BaseSettings.objects.get().telegram_bot
+    telegram_group = BaseSettings.objects.get().telegram_group
 
     order = Order.objects.get(payment_id=pay_id)
 
@@ -100,19 +106,51 @@ def get_status(pay_id):
             
     }
 
+    status = order.paid
     r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
-    # print(r.json())
-    status = r.json()['OrderStatus']  
+    status_pay = r.json()['OrderStatus']  
+
+    count = 0
+    while status == False and status_pay != 2:
+        if status_pay == 6 or count == 48:
+            break
+        else:
+            r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
+            # print(r.json())
+            status_pay = r.json()['OrderStatus']  
+
+        if status_pay == 2:
+            status = True
+            order.paid = True
+            order.save()
+
+            order_telegram(telegram_bot, telegram_group, order)
+        
+        count +=1
+        time.sleep(10)
+        print(status_pay)
+        print(count)
+
+
 
     data = {
-        'status': status,
+        'status': status_pay,
         'order': order
     }
 
 
-    return data    
+    return data
+
+    
+
+
+    
 
 
 
 
 
+
+def start_background_task(pay_id):
+    thread = threading.Thread(target=get_status, args=(pay_id, ))
+    thread.start()

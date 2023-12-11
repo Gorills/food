@@ -46,6 +46,7 @@ except Exception as e:
 from .telegram import order_telegram, send_message
 from sms.views import send_sms
 from .send_email import send_order_email
+from pay.alfabank_pay import start_background_task
 
 from pay.models import PaymentSet
 try:
@@ -226,6 +227,8 @@ def order_create(request):
                         order.payment_id = payment_id
                         order.payment_dop_info = confirmation_url
                         order.save()
+
+                        start_background_task(order.payment_id)
                         
                         return redirect(confirmation_url)
 
@@ -495,34 +498,7 @@ def order_error(request):
 
 
 # Альфабанк
-def alpha_check(request, pk):
-    order = Order.objects.get(id=pk)
 
-    data = get_status(order.payment_id)
-
-    print(data)
-
-    if data['status'] == 2:
-        order = data['order']
-
-        
-      
-        order.paid = True
-        
-        order.save()
-
-        order_telegram(telegram_bot, telegram_group, order)
-        # send_sms(sms_text(order.id), order.phone)
-
-        return HttpResponse(f'Оплачен {data["status"]}')
-    
-    else:
-        order.paid = False
-        
-        order.save()
-
-        # order_telegram(telegram_bot, telegram_group, order)
-        return HttpResponse(data['status'])
 
 
   

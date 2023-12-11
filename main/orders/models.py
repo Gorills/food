@@ -14,6 +14,7 @@ class Order(models.Model):
     user_pr = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='user_order')
 
     phone = models.CharField(max_length=50, null=True, blank=True, verbose_name='Телефон')
+    name = models.CharField(max_length=250, null=True, blank=True, verbose_name='Имя')
     address = models.CharField(max_length=250, null=True, blank=True, verbose_name='Адрес')
     address_comment = models.TextField(null=True, blank=True, verbose_name='Комментарий к адресу')
 
@@ -59,6 +60,8 @@ class Order(models.Model):
     balls = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     percent_pay = models.PositiveIntegerField(null=True, blank=True)
 
+    request_id = models.CharField(max_length=450, verbose_name="ID запроса для доставки", null=True, blank=True)
+    delivery_status = models.CharField(max_length=450, verbose_name="Статус доставки", null=True, blank=True)
 
     class Meta:
         ordering = ('-created',)
