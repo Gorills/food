@@ -400,6 +400,11 @@
     }
 
 
+    // .cart__form-refresh
+    &__form-refresh {
+        width: 100%;
+    }
+
     // .cart__form-delivery-in-session
     &__form-delivery-in-session {
         
@@ -412,7 +417,7 @@
         align-items: center;
         margin-bottom: 10px;
         padding: 20px;
-        border: 1px solid #e1e1e1;
+        border: 1px solid var(--color-cart-border);
         cursor: pointer;
 
         &--error {
