@@ -120,16 +120,11 @@ def delivery_summ(request):
 
             price = request.POST['price'] 
             free = request.POST['free'] 
-            min_delivery = request.POST['min_delivery']
-
             
-
             request.session['delivery_summ'] = price
             request.session['free_delivery'] = free
-            request.session['min_delivery'] = min_delivery
-
-            cart.add_delivery_summ(price, free, min_delivery)
-    
+            
+            cart.add_delivery_summ(price, free)
 
             return redirect('home')
         
@@ -138,6 +133,13 @@ def delivery_summ(request):
             send_message(telegram_bot, telegram_group, message)
             return redirect('home')
 
+
+def min_delivery_summ(request):
+    if request.method == 'POST':
+        min_delivery = request.POST['min_delivery']
+        request.session['min_delivery'] = min_delivery
+        print(min_delivery)
+        return redirect('home')
 
 
 def active_balls(request):

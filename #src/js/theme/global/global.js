@@ -1602,6 +1602,11 @@ function init() {
 
                                     if(min_delivery) {
                                         var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
+                                        data_min = {
+                                            min_delivery: min_delivery_post,
+                                            csrfmiddlewaretoken: csrf,
+                                        } 
+                                        $.post('/cart/min_delivery_summ/', data_min)
                                     } else {
                                         var min_delivery_post = 0
                                     }
@@ -1610,11 +1615,11 @@ function init() {
                                     data = {
                                         price: sd,
                                         free: fd,
-                                        min_delivery: min_delivery_post,
+                                        
                                         csrfmiddlewaretoken: csrf,
                                     }                                    
 
-                                    
+                                                                       
 
                                     address_data = {
                                         delivery_address: $('#suggest').val(),
@@ -1622,6 +1627,7 @@ function init() {
                                     }
                                     
                                     $.post('/cart/delivery_summ/', data)
+                                    
                                     $.post('/cart/set_address/', address_data)
                                     $.get("/cart/set_delivery/1/", function() {
                                         console.log(min_delivery_post)

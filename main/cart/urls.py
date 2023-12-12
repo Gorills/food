@@ -10,6 +10,7 @@ urlpatterns = [
     path('plus/<product_id>/', views.cart_plus, name='cart_plus'),
     path('set_delivery/<int:value>/', views.set_delivery, name='set_delivery'),
     path('delivery_summ/', views.delivery_summ, name='delivery_summ'),
+    path('min_delivery_summ/', views.min_delivery_summ, name='min_delivery_summ'),
     path('active_balls/', views.active_balls, name='active_balls'),
     path('add_combo/', views.add_combo, name='add_combo'),
     path('remove_combo/', views.remove_combo, name='remove_combo'),
