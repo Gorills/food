@@ -2489,7 +2489,6 @@ $(document).on('submit','.save-delivery',function(e){
         $('#addressError').text('');
         $('#addressError').hide();
 
-        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
@@ -2502,6 +2501,8 @@ $(document).on('submit','.save-delivery',function(e){
 
 
         $('.setup-address').removeClass('setup-address--active')
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+
 
 
 
