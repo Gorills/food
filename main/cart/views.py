@@ -122,13 +122,15 @@ def delivery_summ(request):
             free = request.POST['free'] 
             min_delivery = request.POST['min_delivery']
 
-            
+        
 
-            request.session['delivery_summ'] = price
-            request.session['free_delivery'] = free
-            request.session['min_delivery'] = min_delivery
+            while request.session['delivery_summ'] != price and request.session['free_delivery'] != free and request.session['min_delivery'] != min_delivery:
 
-            cart.add_delivery_summ(price, free, min_delivery)
+                request.session['delivery_summ'] = price
+                request.session['free_delivery'] = free
+                request.session['min_delivery'] = min_delivery
+
+                cart.add_delivery_summ(price, free, min_delivery)
     
 
             return redirect('home')
