@@ -115,8 +115,8 @@ def get_status(pay_id):
     count = 0
     while status == False and status_pay != 2:
         if status_pay == 6 or count == 48:
-            
-            message = f'Статус оплаты: {status_pay}'
+
+            message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}'
             telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
             telegram_group_work = '-1001850576262'
             send_message(telegram_bot_work, telegram_group_work, message)
@@ -132,7 +132,7 @@ def get_status(pay_id):
 
             order_telegram(telegram_bot, telegram_group, order)
 
-            message = f'Статус оплаты: {status_pay}'
+            message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}'
             telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
             telegram_group_work = '-1001850576262'
             send_message(telegram_bot_work, telegram_group_work, message)
@@ -140,7 +140,7 @@ def get_status(pay_id):
         count +=1
         time.sleep(10)
 
-        message = f'Статус оплаты: {status_pay}'
+        message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}'
         telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
         telegram_group_work = '-1001850576262'
         send_message(telegram_bot_work, telegram_group_work, message)
