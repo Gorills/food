@@ -1736,19 +1736,19 @@ $(document).on('keyup', '#id_phone' ,function(e){
     var csrf = $(this).attr('data-token')
     if (min.length == 13) {
         
-        $.ajax({
-            method: "POST",
-            url: "/cart/set_phone/",
-            data: { 
-                csrfmiddlewaretoken: csrf,
-                phone: phone
-            }
-            })
-          .done(function() {
-            console.log(phone);
+        // $.ajax({
+        //     method: "POST",
+        //     url: "/cart/set_phone/",
+        //     data: { 
+        //         csrfmiddlewaretoken: csrf,
+        //         phone: phone
+        //     }
+        //     })
+        //   .done(function() {
+        //     console.log(phone);
             
     
-          });
+        //   });
 
         $.ajax({
             method: "POST",
