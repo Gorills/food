@@ -90,7 +90,9 @@ def create_payment(order, cart, request):
 import threading
 import time
 from setup.models import BaseSettings
-from orders.telegram import order_telegram
+from orders.telegram import order_telegram, send_message
+
+
 def get_status(pay_id):
 
     telegram_bot = BaseSettings.objects.get().telegram_bot
@@ -128,6 +130,11 @@ def get_status(pay_id):
         
         count +=1
         time.sleep(10)
+
+        message = f'Статус оплаты: {status_pay}'
+        telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
+        telegram_group_work = '-1001850576262'
+        send_message(telegram_bot, telegram_group, message)
         # print(status_pay)
         # print(count)
 
