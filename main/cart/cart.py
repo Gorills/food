@@ -29,6 +29,11 @@ class Cart(object):
         cart = self.session.get(settings.CART_SESSION_ID)
 
 
+        if not cart:
+            # save an empty cart in the session
+            cart = self.session[settings.CART_SESSION_ID] = {}
+        self.cart = cart
+        
 
         # Программа лояльности
         try:
@@ -94,45 +99,23 @@ class Cart(object):
             self.get_d = 1
         self.get_d = get_d
 
+        # Сумма для бесплатной доставки
         self.free_delivery = request.session.get('free_delivery')
         if not self.free_delivery:
             self.free_delivery = free_delivery
+
+        # Минимальная сумма для доставки
+        min_delivery = request.session.get('min_delivery')
+        if not min_delivery:
+            
+            min_delivery = ShopSetup.objects.get().min_delivery
+        self.min_delivery = min_delivery
        
-        if not cart:
-            # save an empty cart in the session
-            cart = self.session[settings.CART_SESSION_ID] = {}
-        self.cart = cart
-
-
-        # Перебираем все ключи и ищем товары, которые были удалены 
-        product_ids = self.cart.keys()
-        empty = []
-        for id in product_ids:
-            try:
-                prod = Product.objects.get(id=id)
-              
-            except:
-                product = id
-                empty.append(product)
         
-        # Удаляем удаленные товары из корзины
-        for em in empty:
-            product = str(em)
-            self.remove(product)
 
-        # Инициализируем пустой комбо
-        combos = request.session.get('combos')
-        if not combos:
-            combos = self.session['combos'] = {
-                '0': { 
-                    'id': 0,
-                    'combo': 0,
-                    'quantity': 0,
-                    'price': 0,
-                    'products': None
-                }
-            }
-        self.combos = combos
+
+        
+        
 
         # Пустой адрес доставки
         delivery_address = request.session.get('delivery_address')
@@ -151,12 +134,20 @@ class Cart(object):
             }
         self.phone = phone
 
-        # Минимальная сумма для доставки
-        min_delivery = request.session.get('min_delivery')
-        if not min_delivery:
-            
-            min_delivery = ShopSetup.objects.get().min_delivery
-        self.min_delivery = min_delivery
+        
+        # Инициализируем пустой комбо
+        combos = request.session.get('combos')
+        if not combos:
+            combos = self.session['combos'] = {
+                '0': { 
+                    'id': 0,
+                    'combo': 0,
+                    'quantity': 0,
+                    'price': 0,
+                    'products': None
+                }
+            }
+        self.combos = combos
 
 
         # Инициализируем пустой товар с опциями
@@ -173,6 +164,23 @@ class Cart(object):
                 }
             }
         self.options = options
+
+
+        # Перебираем все ключи и ищем товары, которые были удалены 
+        product_ids = self.cart.keys()
+        empty = []
+        for id in product_ids:
+            try:
+                prod = Product.objects.get(id=id)
+              
+            except:
+                product = id
+                empty.append(product)
+
+        # Удаляем удаленные товары из корзины
+        for em in empty:
+            product = str(em)
+            self.remove(product)
     
     def add_options(self, options_id, options, products, quantity, price):
         self.session['active_balls'] = '0.00'

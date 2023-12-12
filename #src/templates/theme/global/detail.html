@@ -870,7 +870,9 @@
                             {% if cart.get_min_delivery <= cart.get_total_price or request.session.delivery == 0 %}
                             
                             <button class="cart__order-create">Оформить заказ на {{ cart.get_total_price_after_discount | floatformat:"2" }}₽</button>
-                            
+
+                            {% elif cart.get_min_delivery == 0 %}
+
                             {% else %}
                             <div class="cart__order-create--error">
                                 <p>Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽</p>
