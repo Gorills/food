@@ -109,27 +109,34 @@ def set_delivery(request, value):
     request.session['delivery'] = value
     return redirect('home')
 
-
+from orders.telegram import send_message
+telegram_bot = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
+telegram_group = '-1001850576262'
 def delivery_summ(request):
     if request.method == 'POST':
-        cart = Cart(request)
 
-        price = request.POST['price'] 
-        free = request.POST['free'] 
-        min_delivery = request.POST['min_delivery']
+        try:
+            cart = Cart(request)
 
+            price = request.POST['price'] 
+            free = request.POST['free'] 
+            min_delivery = request.POST['min_delivery']
+
+            
+
+            request.session['delivery_summ'] = price
+            request.session['free_delivery'] = free
+            request.session['min_delivery'] = min_delivery
+
+            cart.add_delivery_summ(price, free, min_delivery)
+    
+
+            return redirect('home')
         
-
-        request.session['delivery_summ'] = price
-        request.session['free_delivery'] = free
-        request.session['min_delivery'] = min_delivery
-
-        cart.add_delivery_summ(price, free, min_delivery)
-
-
-        
-
-        return redirect('home')
+        except Exception as e:
+            message = str(e)
+            send_message(telegram_bot, telegram_group, message)
+            return redirect('home')
 
 
 
