@@ -89,7 +89,7 @@ function loadCartData() {
         }
         if (map_show == 'true') {
             $(this).find('#map').show()
-            ymaps.ready(init);
+            
         } 
 
         grecaptcha.ready(function() {
@@ -1179,7 +1179,7 @@ $(document).ready(function(){
         $('#cartData').load('/cart/ .cart', function() {
            
             $(this).find('.cart').addClass('cart--active');
-            ymaps.ready(init);
+            
             
     
         });
@@ -1600,40 +1600,21 @@ function init() {
                                     var fd=parseInt(deliveryFree.match(/\d+/)[0]);
                                     var min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
 
+                                    
+                                    
+                                    $('#suggest').attr('data-delivery', sd)
+                                    $('#suggest').attr('data-free', fd)
+                                    $('#suggest').attr('data-value', suggestElement.val())
+
                                     if(min_delivery) {
                                         var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
-                                        data_min = {
-                                            min_delivery: min_delivery_post,
-                                            csrfmiddlewaretoken: csrf,
-                                        } 
-                                        $.post('/cart/min_delivery_summ/', data_min)
+                                        $('#suggest').attr('data-min', min_delivery_post)
                                     } else {
                                         var min_delivery_post = 0
+                                        $('#suggest').attr('data-min', min_delivery_post)
                                     }
                                     
 
-                                    data = {
-                                        price: sd,
-                                        free: fd,
-                                        
-                                        csrfmiddlewaretoken: csrf,
-                                    }                                    
-
-                                                                       
-
-                                    address_data = {
-                                        delivery_address: $('#suggest').val(),
-                                        csrfmiddlewaretoken: csrf,
-                                    }
-                                    
-                                    $.post('/cart/delivery_summ/', data)
-                                    
-                                    $.post('/cart/set_address/', address_data)
-                                    $.get("/cart/set_delivery/1/", function() {
-                                        console.log(min_delivery_post)
-                                    });
-                                    // console.log(deliveryPrice)
-                                    // console.log(deliveryText)
     
                                     myGeoObject = new ymaps.GeoObject({
                                         // Описание геометрии.
@@ -1764,7 +1745,7 @@ $(document).on('keyup', '#id_phone' ,function(e){
             }
             })
           .done(function() {
-            
+            console.log(phone);
             
     
           });
@@ -2479,16 +2460,32 @@ $(document).on('submit','.save-delivery',function(e){
     var data_value = $('#suggest').attr('data-value');
     var csrf = $('#suggest').attr('data-csrf')
 
-    address_data = {
+    data_min = {
+        
+        csrfmiddlewaretoken: csrf,
+    } 
+
+    data = {
+        price: $('#suggest').attr('data-delivery'),
+        free: $('#suggest').attr('data-free'),
+        min_delivery: $('#suggest').attr('data-min'),
         delivery_address: $('#suggest').val(),
+        csrfmiddlewaretoken: csrf,
+    }                                    
+
+                                       
+
+    address_data = {
+        
         csrfmiddlewaretoken: csrf,
     }
 
     if (data_value != '') {
-        $('.check-delivery').hide();
-        $('.setup-address').removeClass('setup-address--active');
-        $.get("/cart/set_delivery/1/", function() {});
-        $.post('/cart/set_address/', address_data)
+
+        $.post('/cart/set_delivery_detail/', data)
+        
+        
+
         $('#addressError').text('');
         $('#addressError').hide();
 
@@ -2502,6 +2499,11 @@ $(document).on('submit','.save-delivery',function(e){
             updateMinDelivery()
         });
         $('.check-delivery__refresh').load(location.href + ' .check-delivery', function() {});
+
+
+        $('.setup-address').removeClass('setup-address--active')
+
+
 
     } else {
         

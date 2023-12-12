@@ -105,41 +105,6 @@ def cart_detail(request):
 
 
 
-def set_delivery(request, value): 
-    request.session['delivery'] = value
-    return redirect('home')
-
-from orders.telegram import send_message
-telegram_bot = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
-telegram_group = '-1001850576262'
-def delivery_summ(request):
-    if request.method == 'POST':
-
-        try:
-            cart = Cart(request)
-
-            price = request.POST['price'] 
-            free = request.POST['free'] 
-            
-            request.session['delivery_summ'] = price
-            request.session['free_delivery'] = free
-            
-            cart.add_delivery_summ(price, free)
-
-            return redirect('home')
-        
-        except Exception as e:
-            message = str(e)
-            send_message(telegram_bot, telegram_group, message)
-            return redirect('home')
-
-
-def min_delivery_summ(request):
-    if request.method == 'POST':
-        min_delivery = request.POST['min_delivery']
-        request.session['min_delivery'] = min_delivery
-        print(min_delivery)
-        return redirect('home')
 
 
 def active_balls(request):
@@ -169,8 +134,6 @@ def add_combo(request):
 
     
     return redirect('/')
-
-
 
 
 
@@ -296,26 +259,58 @@ def check_first_delivery(request):
         return redirect('home')
     
 
+def set_delivery_detail(request):
 
-
-def set_address(request):
     if request.method == 'POST':
+        cart = Cart(request)
+
         
+        price = request.POST['price'] 
+        free = request.POST['free'] 
+        min_delivery = request.POST['min_delivery']
         delivery_address = request.POST['delivery_address']
         
+        request.session['delivery_summ'] = price
+        request.session['free_delivery'] = free
+        request.session['min_delivery'] = min_delivery
+
+
         data = {
             'street': delivery_address
         }
+        
         request.session['delivery_address'] = data
+
+
+        cart.add_address(delivery_address)
+        cart.add_delivery_summ(price, free)
+        cart.add_min_delivery(min_delivery)
+        
         return redirect('home')
+
+
+def set_delivery(request, value): 
+    request.session['delivery'] = value
+    return redirect('home')
+
+
+
+
+
     
 
 def set_phone(request):
     if request.method == 'POST':
+        cart = Cart(request)
         
         phone = request.POST['phone']
         data = {
             'phone': phone
         }
+        
+        
+        cart.add_phone(data)
         request.session['phone'] = data
+        
+        print(cart.return_phone())
         return redirect('home')

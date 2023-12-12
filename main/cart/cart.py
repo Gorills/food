@@ -539,9 +539,27 @@ class Cart(object):
         return Decimal(0) 
     
 
-    def add_delivery_summ(self, delivery_summ, free_delivery):
+    # Добавляем адрес
+    def add_address(self, delivery_address):
 
-        
+        self.delivery_address = delivery_address
+        self.session.modified = True
+        self.save()
+
+    def add_phone(self, phone):
+
+        self.phone = phone
+        self.session.modified = True
+        self.save()
+
+    def return_phone(self):
+
+        return self.phone
+
+ 
+
+
+    def add_delivery_summ(self, delivery_summ, free_delivery):
 
         self.get_sum = delivery_summ
         self.free_delivery = free_delivery
@@ -549,7 +567,15 @@ class Cart(object):
         self.session.modified = True
         self.save()
 
-        
+    
+    def add_min_delivery(self, min_delivery):
+
+        self.min_delivery = min_delivery
+        self.session.modified = True
+        self.save()
+
+
+
 
     def get_min_delivery(self):
 
