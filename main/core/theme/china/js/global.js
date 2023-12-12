@@ -1616,6 +1616,7 @@ function init() {
 
                                     
                                     
+                                    
 
                                     address_data = {
                                         delivery_address: $('#suggest').val(),
@@ -1624,7 +1625,9 @@ function init() {
                                     
                                     $.post('/cart/delivery_summ/', data)
                                     $.post('/cart/set_address/', address_data)
-
+                                    $.get("/cart/set_delivery/1/", function() {
+                                        console.log(min_delivery_post)
+                                    });
                                     // console.log(deliveryPrice)
                                     // console.log(deliveryText)
     
@@ -2410,6 +2413,7 @@ $(document).on('click','.check-delivery__item--delivery',function(e){
     e.preventDefault();
     
     $('.setup-address').addClass('setup-address--active')
+    $.get("/cart/set_delivery/1/", function() {});
 })
 
 $(document).on('click','.cart__form-delivery-in-session-ref',function(e){
@@ -2444,6 +2448,15 @@ $(document).on('click','.setup-address__close, .setup-address__overlay',function
     $('.setup-address').removeClass('setup-address--active')
     $('#suggest').val('');
     $('#suggest').attr('data-value', '');
+
+    var csrf = $('#suggest').attr('data-csrf')
+    address_data = {
+        delivery_address: '',
+        csrfmiddlewaretoken: csrf,
+    }
+
+    $.post('/cart/set_address/', address_data)
+    $('#finaladress').val('')
     
     $('.cart__inner').load('/cart/ .cart__refresh', function() {});
     $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
@@ -2481,8 +2494,10 @@ $(document).on('submit','.save-delivery',function(e){
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
         $('.cart__form-delivery-in-session').load('/cart/ .cart__form-delivery-in-session-ref', function() {});
 
-        $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
-        updateMinDelivery()
+        $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {
+            updateMinDelivery()
+        });
+        $('.check-delivery__refresh').load(location.href + ' .check-delivery', function() {});
 
     } else {
         
