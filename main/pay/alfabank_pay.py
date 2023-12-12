@@ -129,6 +129,7 @@ def get_status(pay_id):
             status = True
             order.paid = True
             order.save()
+            
 
             order_telegram(telegram_bot, telegram_group, order)
 
