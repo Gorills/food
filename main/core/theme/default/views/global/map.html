@@ -3,7 +3,7 @@
 {% load theme_static %}
 
 
-{{ cart.min_delivery }}
+{% comment %} {{ cart.min_delivery }} {% endcomment %}
 
 <div class="check-delivery__refresh">
     {% if request.session.delivery != 1 and request.session.delivery != 0 %}
