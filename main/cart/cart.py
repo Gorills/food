@@ -33,7 +33,7 @@ class Cart(object):
             # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
-        
+
 
         # Программа лояльности
         try:
@@ -550,7 +550,7 @@ class Cart(object):
         self.session.modified = True
         self.save()
 
-        print(self.min_delivery, 'Из корзины')
+        
 
     def get_min_delivery(self):
 
