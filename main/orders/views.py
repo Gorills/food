@@ -557,7 +557,7 @@ def order_success(request):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order)
+        # order_telegram(telegram_bot, telegram_group, order)
         send_sms(sms_text(order.id), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
