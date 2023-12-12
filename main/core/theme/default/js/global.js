@@ -1615,8 +1615,6 @@ function init() {
                                     }                                    
 
                                     
-                                    
-                                    
 
                                     address_data = {
                                         delivery_address: $('#suggest').val(),

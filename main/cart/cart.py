@@ -531,6 +531,19 @@ class Cart(object):
         return Decimal(0) 
     
 
+    def add_delivery_summ(self, delivery_summ, free_delivery, min_delivery):
+
+        
+
+        self.get_sum = delivery_summ
+        self.free_delivery = free_delivery
+        self.min_delivery = Decimal(min_delivery)
+
+        self.session.modified = True
+        self.save()
+
+        print(self.min_delivery, 'Из корзины')
+
     def get_min_delivery(self):
 
         return Decimal(self.min_delivery)
