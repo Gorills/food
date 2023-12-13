@@ -5888,6 +5888,7 @@ td.product-thumbnail img {
     padding: 20px 20px;
     width: 100%;
     bottom: 0;
+    height: 100vh;
   }
 
   .product-options-popup__options-row-wrap {
