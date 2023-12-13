@@ -904,7 +904,8 @@ $(document).ready(function() {
   
   
 
-  $('.options_btn, .product-options__btn, .product-options-popup_btn').click(function(e) {
+  $(document).on('click','.options_btn, .product-options__btn, .product-options-popup_btn',function(e){
+
     e.preventDefault();
     var options_id = $(this).attr('data-options-id');
     var options = $(this).attr('data-options');
@@ -1044,6 +1045,8 @@ $(document).on('click','.plus_options',function(e){
 
 
 $(document).on('click','.product-options__item',function(e){
+
+    
     var id = $(this).attr('data-id')
     var price = parseFloat($(this).attr('data-price'))
     var value = $(this).attr('data-value')
@@ -1082,6 +1085,22 @@ $(document).on('click','.product-options__item',function(e){
 
     $productItem.find('.product-list__price').html(res_price + ' ₽')
     $productItem.find('.product-list__old').html(res_old_price + ' ₽')
+
+
+    $productItem.find('.product-options-popup__options-select-wrap').find('.product-options-popup__options-select').removeClass('product-options-popup__options-select--active')
+    $productItem.find('.product-options-popup__options-select-wrap').find(`[data-id='${id}']`).addClass('product-options-popup__options-select--active')
+
+    $productItem.find('.product-options-popup__price').attr('data-price', res_price)
+    $productItem.find('.product-options-popup__old-price').attr('data-price', res_old_price)
+
+    $productItem.find('.product-options-popup__price').text(res_price + ' ₽')
+    $productItem.find('.product-options-popup__old-price').text(res_old_price + ' ₽')
+
+    // .product-options-popup_btn
+    $productItem.find('.product-options-popup_btn').attr('data-price', res_price).attr('data-options-id', id).attr('data-options', value)
+    
+
+    
     
     
     // $productItem.find('.product-options__span-'+product_id).html(value)
@@ -1090,14 +1109,22 @@ $(document).on('click','.product-options__item',function(e){
 
 
 
-// Дополнительные опции
+// Дополнительные опции product-options-popup__options-checkbox-row
 $(document).ready(function() {
     $('input[type="checkbox"]').change(function() {
         
-            
+        
         // Найти родительский элемент всех выбранных checkbox
         var $parent = $(this).parents('.product-options-popup__inner');
+
+
+        var checked_select_id = $parent.find('.product-options-popup__options-select--active').data('id');
+        var checked_select_value = $parent.find('.product-options-popup__options-select--active').data('value');
         
+
+        
+
+
         // Обновить сумму всех выбранных чекбоксов
         var sum = 0;
         $parent.find('input[type="checkbox"]:checked').each(function() {
@@ -1131,8 +1158,22 @@ $(document).ready(function() {
         
         // Записать названия выбранных значений через запятую в атрибут data-options кнопки .btn
         $parent.find('.btn').attr('data-options', options.join(', '));
+
+        if (checked_select_id != undefined && checked_select_value != undefined) {
+            var id_now = $parent.find('.btn').attr('data-options-id');
+            var options_now = $parent.find('.btn').attr('data-options');
+            
+    
+            $parent.find('.btn').attr('data-options-id', checked_select_id + ',' + id_now);
+            $parent.find('.btn').attr('data-options', checked_select_value + ',' + options_now);
+        }
+
+        
+
+
+
     });
-  });
+});
   
 
 $(document).on('click','.option_setup',function(e){

@@ -3733,6 +3733,35 @@ a {
   font-weight: 700;
 }
 
+.product-options-popup__options-select-wrap {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.product-options-popup__options-select {
+  padding: 10px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  width: 100%;
+  text-align: center;
+  display: none;
+}
+
+.product-options-popup__options-select--active {
+  background-color: var(--color-primary);
+  color: #ffffff !important;
+  display: block;
+}
+
+.product-options-popup__options-select + .product-options-popup__options-select {
+  margin-left: 10px;
+}
+
 .product-options-popup__options-row-wrap {
   display: flex;
   flex-wrap: wrap;
