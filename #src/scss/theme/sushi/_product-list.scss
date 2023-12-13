@@ -494,6 +494,15 @@
         max-width: 635px;
         // max-height: 450px;
         // overflow-y: scroll;
+
+        @media screen and (max-width: 480px) {
+            top: 0;
+            transform: translateY(0);
+            padding: 20px 20px;
+            width: 100%;
+            bottom: 0;
+            
+        }
     }
 
     // .product-options-popup__closer
@@ -556,6 +565,10 @@
 
         max-height: 450px;
         overflow-y: scroll;
+        @media screen and (max-width: 480px) {
+            max-height: 59%;
+            
+        }
     }
 
     // .product-options-popup__options-checkbox-row

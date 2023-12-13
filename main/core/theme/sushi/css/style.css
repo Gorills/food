@@ -5882,6 +5882,18 @@ td.product-thumbnail img {
     font-size: 20px;
   }
 
+  .product-options-popup__inner {
+    top: 0;
+    transform: translateY(0);
+    padding: 20px 20px;
+    width: 100%;
+    bottom: 0;
+  }
+
+  .product-options-popup__options-row-wrap {
+    max-height: 59%;
+  }
+
   .news__item {
     width: 100%;
   }
