@@ -3715,6 +3715,7 @@ a {
   height: fit-content;
   width: 95%;
   max-width: 635px;
+  max-height: 100vh;
 }
 
 .product-options-popup__closer {
@@ -3765,7 +3766,7 @@ a {
 .product-options-popup__options-row-wrap {
   display: flex;
   flex-wrap: wrap;
-  max-height: 450px;
+  max-height: 350px;
   overflow-y: scroll;
 }
 
