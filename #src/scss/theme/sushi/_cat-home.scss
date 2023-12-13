@@ -78,7 +78,7 @@
     &__inner-four {
         display: grid;
         grid-gap: 24px;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
 
         @media screen and (max-width:768px) {
           grid-template-columns: repeat(2, 1fr);
