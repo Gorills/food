@@ -499,7 +499,26 @@ def order_error(request):
 
 # Альфабанк
 
+def alpha_check(request, pk):
 
+    order = Order.objects.get(id=pk)
+    pay_id = order.payment_id
+    data = get_status(pay_id)
+     
+    if data['status'] == 2:
+        order = data['order']
+
+        
+        print(data['status'])
+
+       
+        order.paid = True
+        
+        order.save()
+
+        order_telegram(telegram_bot, telegram_group, order)
+
+    return redirect('admin_order')
 
   
 
