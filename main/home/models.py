@@ -113,6 +113,7 @@ class Page(models.Model):
     meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Мета тайтл')
     meta_description = models.TextField(null=True, blank=True, verbose_name='Мета описание')
     meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова через запятую')
+    code = models.TextField(null=True, blank=True, verbose_name='Дополнтельный код')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     

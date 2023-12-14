@@ -3361,6 +3361,10 @@ a {
   fill: var(--color-font);
 }
 
+.page__code {
+  margin-top: 80px;
+}
+
 .product-list {
   width: 100%;
   display: grid;

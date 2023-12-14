@@ -155,6 +155,16 @@
             </div>
             {% endif %}
 
+            {% if page.type == 'oplata' %}
+            <div class="page__code">
+                <div id="map2" style="width: 100%; max-width: 100%; height: 500px; position: relative; z-index: 1;"></div>
+            </div>
+
+            {% endif %}
+
+            <div class="page__code">
+                {{ page.code | safe }}
+            </div>
 
             
 

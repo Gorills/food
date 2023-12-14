@@ -1731,6 +1731,9 @@ function init() {
 
 
 
+
+
+
 $(document).on('focus', '.phone' ,function(e){
     $(".phone").mask("+7 (999) 999 99-99");
 })

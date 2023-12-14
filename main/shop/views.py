@@ -21,7 +21,7 @@ def catalog(request):
     sort = request.GET.getlist('sort')
     limit = request.GET.getlist('limit')
     page_number = request.GET.get('page')
-
+    
 
     
 
