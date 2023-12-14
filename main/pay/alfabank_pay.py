@@ -120,6 +120,7 @@ def get_status(pay_id):
             telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
             telegram_group_work = '-1001850576262'
             send_message(telegram_bot_work, telegram_group_work, message)
+            break
         else:
             r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
             # print(r.json())
