@@ -113,7 +113,7 @@ def get_status(pay_id):
     status_pay = r.json()['OrderStatus']  
 
     count = 0
-    while status == False and status_pay != 2:
+    while status == False and status_pay != 2 and status_pay != 6:
         if status_pay == 6 or count == 48:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
