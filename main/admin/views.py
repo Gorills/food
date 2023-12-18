@@ -1980,7 +1980,7 @@ def post_block_add_delete(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_slider(request):
-    sliders = Slider.objects.all()
+    sliders = Slider.objects.all().order_by('order')
     try:
         slider_setup = SliderSetup.objects.get()
     except:

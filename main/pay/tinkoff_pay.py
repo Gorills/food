@@ -145,13 +145,13 @@ def create_payment(order, request):
     payList = json.dumps(dictionary, indent=4)
 
 
-    print(payList)
+    # print(payList)
     
 
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
-    print(response.text)
+    # print(response.text)
     res = response.json()
-    print(res)
+    # print(res)
     url = res['PaymentURL']
     
 

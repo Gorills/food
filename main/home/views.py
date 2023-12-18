@@ -244,7 +244,7 @@ def home(request):
     except:
         shop_setup = ShopSetup.objects.create()
 
-    sliders = Slider.objects.filter(day__in=[7, current_day])
+    sliders = Slider.objects.filter(day__in=[7, current_day]).order_by('order')
 
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
     sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]

@@ -31,6 +31,7 @@ class Slider(models.Model):
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
     link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка (не обязательно)')
+    order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
     DAY_CLASS = (
        (7, 'Все дни'),
        (0, 'Понедельник'),
