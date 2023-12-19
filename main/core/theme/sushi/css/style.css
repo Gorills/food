@@ -3823,7 +3823,7 @@ a {
 
 .product-options-popup__price {
   margin-right: 10px;
-  color: var(--color-font);
+  color: #222;
   font-weight: 500;
   font-size: 28px;
   line-height: 34px;
