@@ -3593,7 +3593,7 @@ a {
 }
 
 .product-list__title a {
-  color: var(--color-font);
+  color: #222;
 }
 
 .product-list .btn {
