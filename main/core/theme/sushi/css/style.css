@@ -4848,6 +4848,7 @@ td.product-thumbnail img {
 .combo-popup__inner {
   padding: 30px;
   background-color: #fff;
+  color: #222;
   position: relative;
   border-radius: 30px;
   z-index: 100001;
