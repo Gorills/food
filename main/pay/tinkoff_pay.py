@@ -99,8 +99,8 @@ def create_payment(order, request):
         # print(item.free)
         # print('quantity')
         # print(quantity)
-        print('Amount:')
-        print(amount)
+        # print('Amount:')
+        # print(amount)
 
 
 
@@ -110,7 +110,7 @@ def create_payment(order, request):
     
     if Decimal(delivery_price) > 0:
 
-        print(delivery_price)
+        # print(delivery_price)
         items_arr.append({
                 
             'Name': 'Доставка',
@@ -151,12 +151,17 @@ def create_payment(order, request):
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
     # print(response.text)
     res = response.json()
-    # print(res)
-    url = res['PaymentURL']
     
+    url = res['PaymentURL']
+    payment_id = res['PaymentId']
+    
+    data = {
+        'url': url,
+        'payment_id': payment_id
+    }
 
     
     # with open('data.json', 'w') as f:
     #     json.dump(payList, f)
 
-    return url
+    return data

@@ -97,6 +97,10 @@
         
         {% endif %}
 
+        {% if  order.payment_id %}
+        <p class="page-order__info">ID платежа в платежной системе: {{ order.payment_id }}</p>
+        {% endif %}
+
         {% if  order.order_conmment%}
         <p class="page-order__info">Комментарий к заказу: {{ order.order_conmment }}</p>
         {% endif %}
