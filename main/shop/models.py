@@ -512,7 +512,7 @@ class Product(models.Model):
                 persent = (razn/old)*100
                 return persent
             except:
-                return 0
+                return None
         
         else:
 
@@ -528,13 +528,17 @@ class Product(models.Model):
                     persent = (razn/old)*100
                     return persent
                 except:
-                    return 0
+                    return None
         
 
     
     def get_price_after_sale(self):
+
+        get_sale = self.get_sale()
+        
         product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
-        if not product_sale:
+
+        if not product_sale or not get_sale:
             return self.price
 
         percent = product_sale.percent
@@ -548,11 +552,11 @@ class Product(models.Model):
         
 
     def get_old_price(self):
-
+        get_sale = self.get_sale()
         product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
 
         
-        if not product_sale:
+        if not product_sale or not get_sale: 
             return self.old_price
         else:
 
@@ -710,10 +714,13 @@ class ProductOption(models.Model):
         
         persent = self.parent.get_sale()
 
-        res = option_price - (option_price * math.ceil(persent) / 100)
+        if not persent:
+            return option_price
+        else:
+            res = option_price - (option_price * math.ceil(persent) / 100)
 
 
-        return res
+       
 
 
     def __str__(self):
@@ -859,11 +866,11 @@ class ProductSale(models.Model):
 
     date_start = models.DateField(null=True, blank=True, verbose_name='Дата начала акции')
     date_end = models.DateField(null=True, blank=True, verbose_name='Дата окончания акции')
-    time_start = models.TimeField(null=True, blank=True, verbose_name='Время начала действия скидки')
-    time_end = models.TimeField(null=True, blank=True, verbose_name='Время окончания действия скидки')
+    time_start = models.TimeField(null=True, blank=True, verbose_name='Время начала действия скидки', default='00:00')
+    time_end = models.TimeField(null=True, blank=True, verbose_name='Время окончания действия скидки', default='23:59')
 
     percent = models.PositiveIntegerField(verbose_name='Процент скидки')
-    rounding_up = models.BooleanField(default=False, verbose_name='Округление цены в большую сторону')
+    rounding_up = models.BooleanField(default=True, verbose_name='Округление цены в большую сторону')
 
     categorys = models.ManyToManyField(Category, blank=True, related_name='sale')
     products = models.ManyToManyField(Product, blank=True, related_name='sale')
