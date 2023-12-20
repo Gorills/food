@@ -256,8 +256,9 @@ def home(request):
     # Фильтровать товары с ненулевой скидкой
     sale_products_list = []
     for product in all_products:
-        if product.get_sale() > 0:
-            sale_products_list.append(product.id)
+        if product.get_sale():
+            if product.get_sale() > 0:
+                sale_products_list.append(product.id)
 
     sale_products = Product.objects.filter(id__in=sale_products_list)[:8]
 
