@@ -3,7 +3,7 @@ from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
-from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ShopSetup, PickupAreas, PayMethod, WorkDay
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
@@ -792,6 +792,47 @@ class BlogCategoryForm(forms.ModelForm):
             'slug': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'SEO URL',
+            }),
+        }
+
+
+# Настройка скидок на категории и товары
+        
+class ProductSaleForm(forms.ModelForm):
+    class Meta:
+        model = ProductSale
+        fields = "__all__"
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': '',
+            }),
+            'date_start': forms.DateInput(attrs={
+                'class': 'input',
+                'type': 'date',
+            }),
+            'date_end': forms.DateInput(attrs={
+                'class': 'input',
+                'type': 'date',
+            }),
+            'time_start': forms.TimeInput(attrs={
+                'class': 'input',
+                'type': 'time',
+            }),
+            'time_end': forms.TimeInput(attrs={
+                'class': 'input',
+                'type': 'time',
+            }),
+            'percent': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': '',
+            }),
+            'categorys': forms.SelectMultiple(attrs={
+                'class': 'input',
+            }),
+            'products': forms.SelectMultiple(attrs={
+                'class': 'input',
             }),
         }
 

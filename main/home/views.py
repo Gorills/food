@@ -5,7 +5,7 @@ from sorl.thumbnail import get_thumbnail
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
 from orders.models import Order
-from shop.models import Category, Manufacturer, ShopSetup, Product
+from shop.models import Category, Manufacturer, ProductSale, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page, PlaceImages
 from blog.models import BlogSetup, Post
@@ -247,11 +247,22 @@ def home(request):
     sliders = Slider.objects.filter(day__in=[7, current_day]).order_by('order')
 
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
-    sale_products = Product.objects.filter(status=True).exclude(old_price=None).exclude(stock=0)[:8]
-
-    hit_products = Product.objects.filter(bestseller=True).exclude(related=True).exclude(stock=0)[:8]
 
     
+
+    # Получить все товары
+    all_products = Product.objects.all()
+
+    # Фильтровать товары с ненулевой скидкой
+    sale_products_list = []
+    for product in all_products:
+        if product.get_sale() > 0:
+            sale_products_list.append(product.id)
+
+    sale_products = Product.objects.filter(id__in=sale_products_list)[:8]
+
+
+    hit_products = Product.objects.filter(bestseller=True).exclude(stock=0)[:8]
     if hit_products.count() == 0:
 
         hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]

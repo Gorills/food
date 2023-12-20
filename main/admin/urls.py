@@ -98,6 +98,12 @@ urlpatterns = [
     path('product/edit/<int:pk>/', views.product_edit, name='product_edit'),
     path('product/delete/<int:pk>/', views.product_delete, name='product_delete'),
 
+    path('admin_sale/', views.admin_sale, name='admin_sale'),
+    path('add_sale/', views.add_sale, name='add_sale'),
+    path('edit_sale/<int:pk>/', views.edit_sale, name='edit_sale'),
+    path('delete_sale/<int:pk>/', views.delete_sale, name='delete_sale'),
+
+
     # works day
     
     path('add_worksday/', views.add_worksday, name='add_worksday'),

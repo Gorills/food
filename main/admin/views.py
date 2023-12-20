@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, DeliveryForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, DeliveryForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -15,7 +15,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ShopSetup, WorkDay
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -1002,6 +1002,61 @@ def shop_settings(request):
     }
 
     return render(request, 'shop/settings.html', context)
+
+
+# Настройка скидок на товары
+@user_passes_test(lambda u: u.is_superuser)
+def admin_sale(request):
+    
+
+    sales = ProductSale.objects.all()
+
+
+    context = {
+        'sales': sales
+    }
+
+    return render(request, 'shop/sale/sale.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_sale(request):
+    if request.method == 'POST':
+        form = ProductSaleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_sale')
+        else:
+            return render(request, 'shop/sale/add_sale.html', {'form':form})
+    form = ProductSaleForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/sale/add_sale.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_sale(request, pk):
+    sale = ProductSale.objects.get(id=pk)
+    if request.method == 'POST':
+        form = ProductSaleForm(request.POST, request.FILES, instance=sale)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_sale')
+        else:
+            return render(request, 'shop/sale/add_sale.html', {'form':form})
+    form = ProductSaleForm(instance=sale)
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/sale/add_sale.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_sale(request, pk):
+    sale = ProductSale.objects.get(id=pk)
+    sale.delete()
+    return redirect('admin_sale')
 
 
 # Список категорий

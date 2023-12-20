@@ -1,3 +1,4 @@
+import math
 from django.db import models
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -221,6 +222,129 @@ class Manufacturer(models.Model):
         verbose_name_plural = 'Производители'
 
 from itertools import groupby
+from django.db.models import Q
+
+
+import datetime
+
+import time
+
+def check_time(product_sale):
+    now_day = datetime.datetime.now().strftime('%Y-%m-%d')
+    day = datetime.datetime.strptime(now_day, '%Y-%m-%d')
+    now_get = datetime.datetime.now().strftime('%H:%M:%S')
+    now = datetime.datetime.strptime(now_get, '%H:%M:%S')
+
+    try: 
+        date_start = datetime.datetime.strptime(str(product_sale.date_start), '%Y-%m-%d')
+    except:
+        date_start = None
+    
+    try:
+        date_end = datetime.datetime.strptime(str(product_sale.date_end), '%Y-%m-%d')
+    except:
+        date_end = None
+
+    if date_start and date_end:
+        if date_start <= day <= date_end:
+            try:
+                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
+            except:
+                start = None
+            try:
+                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
+            except:
+                end = None
+
+            if start and end:
+                if start <= now <= end:
+                    return True
+                else:
+                    return False
+            elif start and not end:
+                if start <= now:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+    elif date_start and not date_end:
+        if date_start <= day:
+            try:
+                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
+            except:
+                start = None
+            try:
+                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
+            except:
+                end = None
+
+            if start and end:
+                if start <= now <= end:
+                    return True
+                else:
+                    return False
+            elif start and not end:
+                if start <= now:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+        
+    elif not date_start and date_end:
+        if date_end >= day:
+            try:
+                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
+            except:
+                start = None
+            try:
+                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
+            except:
+                end = None
+
+            if start and end:
+                if start <= now <= end:
+                    return True
+                else:
+                    return False
+            elif start and not end:
+                if start <= now:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+        
+    else:
+        try:
+            start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
+        except:
+            start = None
+        try:
+            end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
+        except:
+            end = None
+
+        if start and end:
+            if start <= now <= end:
+                return True
+            else:
+                return False
+        elif start and not end:
+            if start <= now:
+                return True
+            else:
+                return False
+        else:
+            return False
 
 
 class Product(models.Model):
@@ -377,11 +501,63 @@ class Product(models.Model):
             return('')
     
     def get_sale(self):
-        old = self.old_price
-        new = self.price
-        razn = old - new
-        persent = (razn/old)*100
-        return persent
+
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+        
+        if not product_sale:
+            try:
+                old = self.old_price
+                new = self.price
+                razn = old - new
+                persent = (razn/old)*100
+                return persent
+            except:
+                return 0
+        
+        else:
+
+            get_time = check_time(product_sale)
+            
+            if get_time:
+                return product_sale.percent
+            else:
+                try:
+                    old = self.old_price
+                    new = self.price
+                    razn = old - new
+                    persent = (razn/old)*100
+                    return persent
+                except:
+                    return 0
+        
+
+    
+    def get_price_after_sale(self):
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+        if not product_sale:
+            return self.price
+
+        percent = product_sale.percent
+        rounding_up = product_sale.rounding_up
+
+        if rounding_up:
+            return math.ceil(self.price - (self.price * percent / 100))
+        else:
+            return self.price - (self.price * percent / 100)
+
+        
+
+    def get_old_price(self):
+
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+
+        
+        if not product_sale:
+            return self.old_price
+        else:
+
+            return self.price
+     
 
         
     def get_first_select(self):
@@ -527,6 +703,19 @@ class ProductOption(models.Model):
     # Включить изображения
     image_status = models.BooleanField(default=False)
 
+    def get_price_after_discount(self):
+
+        option_price = self.option_price
+
+        
+        persent = self.parent.get_sale()
+
+        res = option_price - (option_price * math.ceil(persent) / 100)
+
+
+        return res
+
+
     def __str__(self):
         return self.type.name
 
@@ -659,4 +848,23 @@ class ComboItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='combo_items')
     cat = models.CharField(max_length=250, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Наценка')
+
+
+
+
+
+
+class ProductSale(models.Model):
+    name = models.CharField(max_length=250)
+
+    date_start = models.DateField(null=True, blank=True, verbose_name='Дата начала акции')
+    date_end = models.DateField(null=True, blank=True, verbose_name='Дата окончания акции')
+    time_start = models.TimeField(null=True, blank=True, verbose_name='Время начала действия скидки')
+    time_end = models.TimeField(null=True, blank=True, verbose_name='Время окончания действия скидки')
+
+    percent = models.PositiveIntegerField(verbose_name='Процент скидки')
+    rounding_up = models.BooleanField(default=False, verbose_name='Округление цены в большую сторону')
+
+    categorys = models.ManyToManyField(Category, blank=True, related_name='sale')
+    products = models.ManyToManyField(Product, blank=True, related_name='sale')
 
