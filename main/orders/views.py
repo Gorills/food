@@ -130,12 +130,14 @@ def order_create(request):
                 
 
                 for item in cart:
+                    
                     OrderItem.objects.create(
                         order=order,
                         product=item['product'],
                         price=item['price'],
                         free=item['free'],
-                        quantity=item['quantity']
+                        quantity=item['quantity'],
+                        weight=item['product'].weight
                         )
                     
                     pr = Product.objects.get(id=item['product'].id)

@@ -38,6 +38,10 @@ def order_telegram(telegram_bot, telegram_group, order):
             }
             if pr_opt is not None:
                 pr_dict['Опции'] = pr_opt
+
+            pr_weight = item.weight
+            if pr_weight is not None:
+                pr_dict['Вес'] = pr_weight
             
             pr.append(pr_dict)
             

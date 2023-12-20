@@ -94,6 +94,7 @@ class OrderItem(models.Model):
     free = models.PositiveIntegerField(default=0, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
+    weight = models.CharField(max_length=250, null=True, blank=True)
 
    
     def get_cost(self):
