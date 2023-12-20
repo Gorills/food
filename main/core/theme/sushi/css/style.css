@@ -2053,6 +2053,7 @@ a {
 .delivery-popup__inner {
   position: relative;
   z-index: 10001;
+  color: #222;
   background-color: #fff;
   width: 100%;
   max-width: 650px;
