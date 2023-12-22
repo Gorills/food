@@ -356,7 +356,8 @@
                     <div class="cart__delivery">
                         Доставка: {{ cart.get_delivery | floatformat:"2" }}₽
                         <br>
-                        {% if cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }}₽</span>){% endif %}
+                        
+                        {% if cart.get_free != '0' and cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }}₽</span>){% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -415,6 +416,8 @@
                     
                     <div class="phone_refresh" >
                         <div class="phone_refresh__inner">
+
+                            <input id="id_name" value="" required name="name" type="text" class="cart__input" placeholder="Имя">
 
                             {% if setup.sms == True %}
                             
@@ -496,7 +499,7 @@
                                 <div class="cart__input-col">
 
                                     <input name="floor" type="text" class="cart__input" placeholder="Этаж">
-                                    <input name="domofon" type="text" class="cart__input" placeholder="Домофон">
+                                    <input name="door_code" type="text" class="cart__input" placeholder="Домофон">
                                 </div>
                                 
 
@@ -622,7 +625,28 @@
 
                     <input type="text" name="delivery_method" hidden value="{% if request.session.delivery == 1 %}Доставка{% else %}Самовывоз{% endif %}" id="delivery_method">
 
+                    {% if delivery %}
+                    <div class="cart__select" id="order_time" data-value="1">
+                        <div class="cart__select-active">
+                            
+                            <div class="cart__select-active-inner">
+                                <svg width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24c5.523 0 10-4.477 10-10S19.523 4 14 4 4 8.477 4 14s4.477 10 10 10z" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8v6l4 2" stroke="#1D1D1D" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                
+                                <div class="cart__select-time">
+                                    <p id="time" data-value="1">Как можно скорее</p>
+                                    <p id="data" data-value="1">Сегодня</p>
+                                    <input type="text" id="id_datetime" hidden name="time" required value="Как можно скорее/Сегодня">
+                                </div>
+                                
 
+                            </div>
+                        
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    {% else %}
                     <div class="cart__select" id="order_time" data-value="0">
                         
                         <div class="cart__select-active">
@@ -689,6 +713,8 @@
                         </div>
 
                     </div>
+                    {% endif %}
+                    
 
 
                     <div class="cart__select" id="pay_method" data-value="0">

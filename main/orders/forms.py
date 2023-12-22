@@ -19,6 +19,7 @@ class OrderCreateForm(forms.ModelForm):
         fields = [
 
             'phone',
+            'name',
             'address',
             'address_comment',
             'entrance',

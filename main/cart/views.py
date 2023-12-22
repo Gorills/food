@@ -274,6 +274,8 @@ def set_delivery_detail(request):
         request.session['free_delivery'] = free
         request.session['min_delivery'] = min_delivery
 
+        
+
 
         data = {
             'street': delivery_address
@@ -285,6 +287,8 @@ def set_delivery_detail(request):
         cart.add_address(delivery_address)
         cart.add_delivery_summ(price, free)
         cart.add_min_delivery(min_delivery)
+
+        
         
         return redirect('home')
 

@@ -91,7 +91,7 @@ import threading
 import time
 from setup.models import BaseSettings
 from orders.telegram import order_telegram, send_message
-
+from delivery.yandex_eda import yandex_create_order
 
 def get_status(pay_id):
 
@@ -133,6 +133,7 @@ def get_status(pay_id):
             
 
             order_telegram(telegram_bot, telegram_group, order)
+            yandex_create_order(order)
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
             telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'

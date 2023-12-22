@@ -12,7 +12,7 @@ from accounts.models import UserProfile
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
-
+from delivery.yandex_eda import yandex_create_order
 
 
 try:
@@ -88,9 +88,10 @@ def order_create(request):
 
             pay_method = request.POST['pay_method']
             phone = request.POST['phone']
+            name = request.POST['name']
 
             try:
-                domofon = request.POST['domofon']
+                domofon = request.POST['door_code']
                 if domofon == '':
                     domofon = request.POST['flat']
             except:
@@ -111,7 +112,7 @@ def order_create(request):
                 
                 if cart.active_balls:
                     order.balls = cart.active_balls
-            
+
                 order.user_pr = user_pr
                 order.summ = cart.get_total_price_after_discount()
                 order.delivery_price = Decimal(cart.get_delivery())
@@ -123,8 +124,12 @@ def order_create(request):
 
                 
                 if order.flat:
-                    order.flat = str(order.flat) + ' (домофон: ' + str(domofon) + ')'
+                    order.flat = str(order.flat)
+                
+                
 
+                order.door_code = domofon
+                order.name = name
                 order.save()
                 
                 
@@ -271,6 +276,7 @@ def order_create(request):
                         
 
                     send_sms(sms_text(order.id), phone)
+                    
                     # очистка корзины
                     
                     
@@ -463,7 +469,7 @@ def order_webhook(request):
                 order.save()
 
                 order_telegram(telegram_bot, telegram_group, order)
-                
+                yandex_create_order(order)
                 send_sms(sms_text(order.id), order.phone)
 
                 if LoyaltyCardSettings.objects.get().active == True:

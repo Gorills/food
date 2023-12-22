@@ -1356,6 +1356,7 @@ $(function() {
         var getData = $('#data').attr('data-value')
         var payMethod = $('#pay_method').attr('data-value')
         var getPhone = $('#id_phone').val()
+        var getName = $('#id_name').val()
         var getAddress = $('#finaladress').val()
         var getZones = $('#suggest').attr('data-zones')
 
@@ -1374,11 +1375,16 @@ $(function() {
             $('#pickup_areas').children().children('.cart__select-error').show()
         }
 
+        if (getName == '') {
+            $('#id_name').css('border-color', 'red')
+        } else {
+            $('#id_name').css('border-color', 'var(--color-cart-border)')
+        }
 
         if (getPhone == '') {
             $('#id_phone').css('border-color', 'red')
         } else {
-            $('#id_phone').css('border-color', '#eaedff')
+            $('#id_phone').css('border-color', 'var(--color-cart-border)')
         }
         if (getAddress == '') {
             $('#suggest').addClass('suggest-error')
@@ -1503,6 +1509,7 @@ function init() {
     var zones = $('#suggest').attr('data-zones')
     var csrf = $('#suggest').attr('data-csrf')
     var flickerAPI = $('#suggest').attr('data-file-zones');
+    var datathirdPartyDdelivery = $('#suggest').attr('data-third-party-delivery');
     
     if (zones != 'false') {
         
@@ -1634,26 +1641,53 @@ function init() {
                                     var cartInnerElement = $('.cart__inner');
 
                                     
-                                    var deliveryText = item.properties._data.hintContent
-                                    var deliveryPrice = item.properties._data.balloonContentBody
-                                    var deliveryFree = item.properties._data.balloonContentFooter
-                                    var sd=parseInt(deliveryPrice.match(/\d+/)[0]);
-                                    var fd=parseInt(deliveryFree.match(/\d+/)[0]);
-                                    var min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+                                    if (datathirdPartyDdelivery == 'true') {
+                                        
+                                        data_del = {
+                                            
+                                            dotaddress: suggestElement.val(),
+                                            csrfmiddlewaretoken: csrf
+                                        }
 
-                                    
-                                    
-                                    $('#suggest').attr('data-delivery', sd)
-                                    $('#suggest').attr('data-free', fd)
-                                    $('#suggest').attr('data-value', suggestElement.val())
+                                        $.post("/delivery/check_price/", data_del, function(response) {
+                                            // Парсинг JSON-ответа
+                                            var price = response.price;
+                                            
+                                            console.log(price);
+                                            
+                                            $('#suggest').attr('data-delivery', price)
+                                            $('#suggest').attr('data-free', 0)
+                                            $('#suggest').attr('data-value', suggestElement.val())
+                                            $('#suggest').attr('data-min', 0)
+                                        
+                                        });
+                                        
 
-                                    if(min_delivery) {
-                                        var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
-                                        $('#suggest').attr('data-min', min_delivery_post)
                                     } else {
-                                        var min_delivery_post = 0
-                                        $('#suggest').attr('data-min', min_delivery_post)
+
+                                        var deliveryText = item.properties._data.hintContent
+                                        var deliveryPrice = item.properties._data.balloonContentBody
+                                        var deliveryFree = item.properties._data.balloonContentFooter
+                                        var sd=parseInt(deliveryPrice.match(/\d+/)[0]);
+                                        var fd=parseInt(deliveryFree.match(/\d+/)[0]);
+                                        var min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+    
+                                        
+                                        
+                                        $('#suggest').attr('data-delivery', sd)
+                                        $('#suggest').attr('data-free', fd)
+                                        $('#suggest').attr('data-value', suggestElement.val())
+    
+                                        if(min_delivery) {
+                                            var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
+                                            $('#suggest').attr('data-min', min_delivery_post)
+                                        } else {
+                                            var min_delivery_post = 0
+                                            $('#suggest').attr('data-min', min_delivery_post)
+                                        }
+
                                     }
+                                    
                                     
 
     

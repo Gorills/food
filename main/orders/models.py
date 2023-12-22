@@ -21,6 +21,7 @@ class Order(models.Model):
     entrance = models.CharField(max_length=250, null=True, blank=True, verbose_name='Подъезд')
     floor = models.CharField(max_length=250, null=True, blank=True, verbose_name='Этаж')
     flat = models.CharField(max_length=250, null=True, blank=True, verbose_name='Квартира')
+    door_code = models.CharField(max_length=250, null=True, blank=True, verbose_name='Код двери')
 
     time = models.CharField(max_length=250, null=True, blank=True, verbose_name='Время')
     

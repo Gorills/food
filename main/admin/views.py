@@ -2953,6 +2953,7 @@ def delivery_edit(request, pk):
         form = DeliveryForm(request.POST, instance=delivery)
         if form.is_valid():
             form.save()
+            subprocess.call(["touch", RESET_FILE])
             return redirect('admin_delivery')
         else:
             return render(request, 'delivery/add_delivery.html', {'form': form})

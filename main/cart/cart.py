@@ -4,6 +4,17 @@ from shop.models import Category, Combo, ComboItem, Product, Product, ProductOpt
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 import decimal
+from delivery.models import Delivery
+import math
+
+try: 
+    delivery = Delivery.objects.filter(active=True).first()
+
+except:
+    delivery = None
+
+
+
 D = decimal.Decimal
 
 try:
@@ -512,7 +523,7 @@ class Cart(object):
 
     def get_delivery(self):
         
-
+        
         a = self.get_total_price()
         b = self.get_discount()
         d = ((self.get_personal_sale()/Decimal('100') * self.get_total_price()))
@@ -521,22 +532,67 @@ class Cart(object):
         g = self.get_discount_on_pickup()
         total_price = a - b - d - e - f - g
 
-
+        res = 0
+        
         if total_price == 0:
-            return Decimal(0)
+            
+            res = Decimal(0)
 
         if not del_zones:
             if self.get_d != 1:
-                return Decimal(0)
-            return Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
+                res = Decimal(0)
+            
+            res = Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
 
         if self.get_d != 1:
-            return Decimal(0)
+            res = Decimal(0)
 
         if self.get_sum:
-            return Decimal(self.get_sum) if total_price < Decimal(self.free_delivery) else Decimal(0)
+            
+            if self.free_delivery != '0':
+                res = Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
+            elif self.free_delivery == '0':
+                
+                res = Decimal(self.get_sum)
 
-        return Decimal(0) 
+        print(res)
+        
+        if delivery:
+            
+            sale_persent_get = delivery.sale_persent
+            if sale_persent_get:
+                sale_persent = delivery.sale_persent
+            else:
+                sale_persent = 0
+           
+            
+            summ_persent_get = delivery.summ_persent
+            if summ_persent_get:
+                summ_persent = delivery.summ_persent
+            else:
+                summ_persent = 0
+           
+            
+            delivery_summ_persent_get = delivery.delivery_summ_persent
+            if delivery_summ_persent_get:
+                delivery_summ_persent = delivery.delivery_summ_persent
+            else:
+                delivery_summ_persent = 0
+
+
+            res_percent = math.ceil(res / 100 * sale_persent)
+
+        
+            if summ_persent != 0 and total_price >= summ_persent:
+                res = res - res_percent
+
+            if delivery_summ_persent != 0 and res >= delivery_summ_persent:
+                res = res - res_percent
+                
+       
+
+
+        return res
     
 
     # Добавляем адрес

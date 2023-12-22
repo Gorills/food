@@ -1,4 +1,5 @@
 from .models import BaseSettings, CustomCode, Colors, Fonts, ThemeSettings
+from delivery.models import Delivery
 
 def setup(request):
     try:
@@ -38,3 +39,12 @@ def fonts(request):
         font = Fonts.objects.create()
         
     return {'font': font}
+
+
+def delivery(request):
+    try:
+        delivery_object = Delivery.objects.get()
+        delivery = delivery_object.active
+    except:
+        delivery = None
+    return {'delivery': delivery}
