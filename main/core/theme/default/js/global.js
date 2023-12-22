@@ -1510,6 +1510,8 @@ function init() {
     var csrf = $('#suggest').attr('data-csrf')
     var flickerAPI = $('#suggest').attr('data-file-zones');
     var datathirdPartyDdelivery = $('#suggest').attr('data-third-party-delivery');
+
+    
     
     if (zones != 'false') {
         
@@ -1560,25 +1562,45 @@ function init() {
                     var count = 0
                     $.each(data.deliverys, function(index, val) {
                         
-                        freeArea = new ymaps.Polygon(
-                            [
-                                val.coords
-                            ], {
-                                hintContent: val.hintContent,
-                                balloonContent: val.balloonContent,
-                                balloonContentHeader: val.balloonContentHeader,
-                                balloonContentBody: val.balloonContentBody,
-                                balloonContentFooter: val.balloonContentFooter
-                            }, {
+                        if(datathirdPartyDdelivery == 'false') {
+                            freeArea = new ymaps.Polygon(
+                                [
+                                    val.coords
+                                ], {
+                                    hintContent: val.hintContent,
+                                    balloonContent: val.balloonContent,
+                                    balloonContentHeader: val.balloonContentHeader,
+                                    balloonContentBody: val.balloonContentBody,
+                                    balloonContentFooter: val.balloonContentFooter
+                                }, {
+                            
+                                fillColor: val.fillColor,
+                                strokeColor: val.strokeColor,
+                                opacity: val.opacity
+                            });
+                            myMap.geoObjects.add(freeArea);
+                            count+=1
+                        } else {
+                            freeArea = new ymaps.Polygon(
+                                [
+                                    val.coords
+                                ], {
+                                    
+                                }, {
+                            
+                                fillColor: val.fillColor,
+                                strokeColor: val.strokeColor,
+                                opacity: val.opacity
+                            });
+                            myMap.geoObjects.add(freeArea);
+                            count+=1
+
+                        }
+
                         
-                            fillColor: val.fillColor,
-                            strokeColor: val.strokeColor,
-                            opacity: val.opacity
-                        });
-                        myMap.geoObjects.add(freeArea);
-                        count+=1
                     })
                 });
+                
             };
             getzones()
             $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
@@ -1598,7 +1620,8 @@ function init() {
                 ymaps.geocode(request).then(function (res) {
                     var obj = res.geoObjects.get(0),
                         error, hint;
-    
+                    
+                    
                     if (obj) {
                         // Об оценке точности ответа геокодера можно прочитать тут: https://tech.yandex.ru/maps/doc/geocoder/desc/reference/precision-docpage/
                         switch (obj.properties.get('metaDataProperty.GeocoderMetaData.precision')) {
@@ -1759,7 +1782,6 @@ function init() {
         });
 
     }
-    
 }
 
 

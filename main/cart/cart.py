@@ -555,7 +555,7 @@ class Cart(object):
                 
                 res = Decimal(self.get_sum)
 
-        print(res)
+        
         
         if delivery:
             
