@@ -50,19 +50,19 @@ input::-webkit-inner-spin-button {
 
 textarea {
 
-    font-family: var(--theme-font);
+    font-family: "Roboto", sans-serif;
     color: var(--color-font);
     &::placeholder {
-        font-family: var(--theme-font);
+        font-family: "Roboto", sans-serif;
         color: var(--color-font)
     }
 
 }
 input {
-    font-family: var(--theme-font);
+    font-family: "Roboto", sans-serif;
     color: var(--color-font);
     &::placeholder {
-        font-family: var(--theme-font);
+        font-family: "Roboto", sans-serif;
         color: var(--color-font)
     }
 }
