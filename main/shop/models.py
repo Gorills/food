@@ -502,7 +502,8 @@ class Product(models.Model):
     
     def get_sale(self):
 
-        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).prefetch_related('categorys', 'products').first()
+
         
         if not product_sale:
             try:
@@ -536,7 +537,7 @@ class Product(models.Model):
 
         get_sale = self.get_sale()
         
-        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).prefetch_related('categorys', 'products').first()
 
         if not product_sale or not get_sale:
             return self.price
@@ -553,7 +554,7 @@ class Product(models.Model):
 
     def get_old_price(self):
         get_sale = self.get_sale()
-        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).first()
+        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).prefetch_related('categorys', 'products').first()
 
         
         if not product_sale or not get_sale: 
@@ -876,4 +877,6 @@ class ProductSale(models.Model):
 
     categorys = models.ManyToManyField(Category, blank=True, related_name='sale')
     products = models.ManyToManyField(Product, blank=True, related_name='sale')
+
+    
 
