@@ -719,6 +719,8 @@ class ProductOption(models.Model):
         else:
             res = option_price - (option_price * math.ceil(persent) / 100)
 
+            return res
+
 
        
 
