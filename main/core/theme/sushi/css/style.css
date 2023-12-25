@@ -2305,6 +2305,10 @@ a {
   margin-left: 20px;
 }
 
+.check-delivery__item-title {
+  color: #222;
+}
+
 .check-delivery__img {
   width: 150px;
 }
