@@ -134,7 +134,7 @@ class Cart(object):
             
             self.min_delivery = min_delivery    
         
-        print(self.min_delivery)
+        
 
         # Пустой адрес доставки
         delivery_address = request.session.get('delivery_address')
