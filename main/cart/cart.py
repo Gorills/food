@@ -8,10 +8,10 @@ from delivery.models import Delivery
 import math
 
 try: 
-    delivery = Delivery.objects.filter(active=True).first()
+    delivery_integrations = Delivery.objects.filter(active=True).first()
 
 except:
-    delivery = None
+    delivery_integrations = None
 
 
 
@@ -26,9 +26,12 @@ except:
 try:
     price_delivery = ShopSetup.objects.get().price_delivery
     free_delivery = ShopSetup.objects.get().free_delivery
+    min_delivery = ShopSetup.objects.get().min_delivery
+    
 except:
     price_delivery = 0
     free_delivery = 0
+    min_delivery = 0
 
 class Cart(object):
 
@@ -99,12 +102,20 @@ class Cart(object):
 
 
         get_d = request.session.get('delivery')
-        get_sum = request.session.get('delivery_summ')
+        get_delivery_sum = request.session.get('delivery_summ')
 
         
-        if not get_sum:
-            self.get_d = 0
-        self.get_sum = get_sum
+        if not get_delivery_sum:
+            
+            
+            self.get_delivery_sum = 0
+            
+        else:
+            self.get_delivery_sum = get_delivery_sum
+
+        
+        
+
 
         if not get_d:
             self.get_d = 1
@@ -113,20 +124,17 @@ class Cart(object):
         # Сумма для бесплатной доставки
         self.free_delivery = request.session.get('free_delivery')
         if not self.free_delivery:
-            self.free_delivery = free_delivery
+            self.free_delivery = Decimal(free_delivery)
+
+        
 
         # Минимальная сумма для доставки
-        min_delivery = request.session.get('min_delivery')
-        if not min_delivery:
+        self.min_delivery = request.session.get('min_delivery')
+        if not self.min_delivery:
             
-            min_delivery = ShopSetup.objects.get().min_delivery
-        self.min_delivery = min_delivery
-       
+            self.min_delivery = min_delivery    
         
-
-
-        
-        
+        print(self.min_delivery)
 
         # Пустой адрес доставки
         delivery_address = request.session.get('delivery_address')
@@ -532,55 +540,64 @@ class Cart(object):
         g = self.get_discount_on_pickup()
         total_price = a - b - d - e - f - g
 
-        res = 0
+        
+        res = self.get_delivery_sum
         
         if total_price == 0:
             
             res = Decimal(0)
 
+        
         if not del_zones:
             if self.get_d != 1:
                 res = Decimal(0)
             
-            res = Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
+            res = Decimal(self.get_delivery_sum) if total_price < Decimal(self.free_delivery) else Decimal(0)
+            return res
 
         if self.get_d != 1:
             res = Decimal(0)
+            return res
 
-        if self.get_sum:
+        if self.get_delivery_sum:
             
             if self.free_delivery != '0':
-                res = Decimal(price_delivery) if total_price < Decimal(self.free_delivery) else Decimal(0)
+                res = Decimal(self.get_delivery_sum) if total_price < Decimal(self.free_delivery) else Decimal(0)
+               
             elif self.free_delivery == '0':
                 
-                res = Decimal(self.get_sum)
+                res = Decimal(self.get_delivery_sum)
+
+            
 
         
         
-        if delivery:
+        if delivery_integrations:
             
-            sale_persent_get = delivery.sale_persent
+            # Если есть скидка на доставку в Delivery, то берем ее (Процент скидки на доставку (компенсация за доставку))
+            sale_persent_get = delivery_integrations.sale_persent
             if sale_persent_get:
-                sale_persent = delivery.sale_persent
+                sale_persent = delivery_integrations.sale_persent
             else:
                 sale_persent = 0
            
-            
-            summ_persent_get = delivery.summ_persent
+            # Если есть скидка на доставку в Delivery, то берем ее (Сумма заказа, от которой начинает работать компенсация за доставку)
+            summ_persent_get = delivery_integrations.summ_persent
             if summ_persent_get:
-                summ_persent = delivery.summ_persent
+                summ_persent = delivery_integrations.summ_persent
             else:
                 summ_persent = 0
            
-            
-            delivery_summ_persent_get = delivery.delivery_summ_persent
+            # Если есть скидка на доставку в Delivery, то берем ее (Сумма доставки, от которой начинает работать компенсация за доставку)
+            delivery_summ_persent_get = delivery_integrations.delivery_summ_persent
             if delivery_summ_persent_get:
-                delivery_summ_persent = delivery.delivery_summ_persent
+                delivery_summ_persent = delivery_integrations.delivery_summ_persent
             else:
                 delivery_summ_persent = 0
 
-
+            # Считаем процент скидки
             res_percent = math.ceil(res / 100 * sale_persent)
+            
 
         
             if summ_persent != 0 and total_price >= summ_persent:
@@ -591,7 +608,7 @@ class Cart(object):
                 
        
 
-
+        
         return res
     
 
@@ -617,7 +634,7 @@ class Cart(object):
 
     def add_delivery_summ(self, delivery_summ, free_delivery):
 
-        self.get_sum = delivery_summ
+        self.get_delivery_sum = delivery_summ
         self.free_delivery = free_delivery
 
         self.session.modified = True

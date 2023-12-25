@@ -288,7 +288,7 @@ def set_delivery_detail(request):
         cart.add_delivery_summ(price, free)
         cart.add_min_delivery(min_delivery)
 
-        
+        # print(request.session['delivery_summ'])
         
         return redirect('home')
 

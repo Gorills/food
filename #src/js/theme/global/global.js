@@ -1704,10 +1704,7 @@ function init() {
                                         if(min_delivery) {
                                             var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
                                             $('#suggest').attr('data-min', min_delivery_post)
-                                        } else {
-                                            var min_delivery_post = 0
-                                            $('#suggest').attr('data-min', min_delivery_post)
-                                        }
+                                        } 
 
                                     }
                                     
@@ -2504,6 +2501,8 @@ $(document).on('click','.check-delivery__item--delivery',function(e){
 $(document).on('click','.cart__form-delivery-in-session-ref',function(e){
     e.preventDefault();
     $('.setup-address').addClass('setup-address--active')
+    ymaps.ready(init);
+
 })
 
 

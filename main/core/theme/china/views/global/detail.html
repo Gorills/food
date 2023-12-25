@@ -949,7 +949,7 @@
     </a>
     {% if shop_setup.zones_delivery %}
 
-        {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
+        {% if cart.get_min_delivery > cart.get_total_price and request.session.delivery == 1 %}
 
             <div class="header__cart-no-active-popup">
                 Минимальная сумма заказа {{ cart.get_min_delivery | floatformat:"0" }} ₽
