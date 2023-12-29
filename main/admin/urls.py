@@ -103,6 +103,20 @@ urlpatterns = [
     path('edit_sale/<int:pk>/', views.edit_sale, name='edit_sale'),
     path('delete_sale/<int:pk>/', views.delete_sale, name='delete_sale'),
 
+    path('admin_food_constructor/', views.admin_food_constructor, name='admin_food_constructor'),
+    path('add_food_constructor/', views.add_food_constructor, name='add_food_constructor'),
+    path('edit_food_constructor/<int:pk>/', views.edit_food_constructor, name='edit_food_constructor'),
+    path('delete_food_constructor/<int:pk>/', views.delete_food_constructor, name='delete_food_constructor'),
+
+    path('add_constructor_category/<int:pk>/', views.add_constructor_category, name='add_constructor_category'),
+    path('edit_constructor_category/<int:pk>/', views.edit_constructor_category, name='edit_constructor_category'),
+    path('delete_constructor_category/<int:pk>/', views.delete_constructor_category, name='delete_constructor_category'),
+    path('add_ingridients/<int:pk>/', views.add_ingridients, name='add_ingridients'),
+    path('edit_ingridients/<int:pk>/', views.edit_ingridients, name='edit_ingridients'),
+    path('delete_ingridients/<int:pk>/', views.delete_ingridients, name='delete_ingridients'),
+
+
+
 
     # works day
     

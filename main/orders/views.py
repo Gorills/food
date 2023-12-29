@@ -204,7 +204,26 @@ def order_create(request):
                         quantity=option['quantity']
                     )
 
-                
+
+                constructors = cart.get_constructors()
+                for constructor in constructors:
+                    
+                    constructor_items = ''
+                    for con in constructor['items']:
+                        constructor_items = constructor_items + con.name + ', '
+
+                    
+                    constructor_items = constructor_items[:-1]
+
+                    OrderItem.objects.create(
+                        order=order,
+                        constructor=constructor['constructor'],
+                        price=constructor['price'],
+                        constructor_items=constructor_items,
+                        quantity=constructor['quantity']
+                    )
+                    
+
                 if pay_method == 'Оплата картой на сайте':
 
                     # отправлять заказ в телеграм бот, даже если не прошла оплата
@@ -304,6 +323,7 @@ def order_create(request):
 
                     cart.options_clear()
                     cart.combo_clear()
+                    cart.constructor_clear()
                     cart.clear()
                     request.session['first_delivery'] = 0
 
@@ -406,6 +426,7 @@ def order_confirm(request, pk):
 
             cart.combo_clear()
             cart.clear()
+            cart.constructor_clear()
             request.session['delivery'] = 1
             order.paid = True
             order.save()
@@ -580,6 +601,7 @@ def order_success(request):
 
         cart.combo_clear()
         cart.clear()
+        cart.constructor_clear()
         request.session['delivery'] = 1
         order.paid = True
         
@@ -661,6 +683,7 @@ def paykeeper_success(request):
 
         cart.combo_clear()
         cart.clear()
+        cart.constructor_clear()
         request.session['delivery'] = 1
         request.session['myorder_id'] = 0
 
@@ -695,6 +718,7 @@ def tinkoff_success(request, pk):
     cart = Cart(request)
     cart.combo_clear()
     cart.clear()
+    cart.constructor_clear()
 
     order = Order.objects.get(id=pk)
     order.paid = True

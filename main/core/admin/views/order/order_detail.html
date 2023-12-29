@@ -127,7 +127,7 @@
 
         <ul class="responsive-table">
             <li class="table-header">
-                <div class="col col-2">
+                <div class="col col-3">
                     Изображение
                 </div>
 
@@ -156,7 +156,7 @@
 
             
                 <li class="table-row">
-                    <div class="col col-2" data-label="">
+                    <div class="col col-3" data-label="">
                         {% if product.product.thumb %}
                         <img src="{{ product.product.thumb.url }}" alt="">
                         {% endif %}
@@ -185,7 +185,7 @@
                 {% elif product.combo %}
 
                 <li class="table-row">
-                    <div class="col col-2" data-label="">
+                    <div class="col col-3" data-label="">
                         <img src="{{ product.combo.thumb.url }}" alt="">
                     </div>
                     <div class="col col-6" data-label="">
@@ -206,7 +206,29 @@
 
                     
                 </li>
+                {% elif product.constructor %}
 
+                <li class="table-row">
+                    <div class="col col-3" data-label="">
+                        <img src="{{ product.constructor.image.url }}" alt="">
+                    </div>
+                    <div class="col col-6" data-label="">
+                        {{ product.constructor.name }} <br>
+                       
+                    </div>
+                    <div class="col col-6" data-label="">
+                        {{ product.constructor_items }} 
+                    </div>
+                    <div class="col col-2" data-label="">
+                        
+                        <p class="col__new">{{ product.get_cost }} руб.</p>
+                    </div>
+                    <div class="col col-2 col__center" data-label="">
+                        <div class="col__stock">
+                            {{ product.quantity }}
+                        </div>
+                    </div>
+                </li>
 
                 {% endif %}
             {% endfor %}

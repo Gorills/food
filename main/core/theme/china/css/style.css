@@ -419,7 +419,8 @@ a {
 }
 
 .cart .combo__remove,
-.cart .options_remove {
+.cart .options_remove,
+.cart .constructor__remove {
   position: absolute;
   top: 20px;
   right: 0;
@@ -433,24 +434,28 @@ a {
 }
 
 .cart .combo__remove:hover svg path,
-.cart .options_remove:hover svg path {
+.cart .options_remove:hover svg path,
+.cart .constructor__remove:hover svg path {
   fill: var(--color-font);
 }
 
 .cart .combo__remove svg,
-.cart .options_remove svg {
+.cart .options_remove svg,
+.cart .constructor__remove svg {
   width: 6px;
   transition: all 0.5s ease;
 }
 
 .cart .combo__remove svg path,
-.cart .options_remove svg path {
+.cart .options_remove svg path,
+.cart .constructor__remove svg path {
   transition: all 0.5s ease;
   fill: rgb(117, 117, 117);
 }
 
 .cart .plus_combo,
-.cart .plus_options {
+.cart .plus_options,
+.cart .plus_constructor {
   background: none;
   border: none;
   color: var(--color-font);

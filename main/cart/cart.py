@@ -1,11 +1,12 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Category, Combo, ComboItem, Product, Product, ProductOption, ShopSetup
+from shop.models import Category, Combo, ComboItem, Product, Product, ProductOption, ShopSetup, ConstructorCategory, Ingridients, FoodConstructor
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 import decimal
 from delivery.models import Delivery
 import math
+import json
 
 try: 
     delivery_integrations = Delivery.objects.filter(active=True).first()
@@ -168,6 +169,21 @@ class Cart(object):
             }
         self.combos = combos
 
+        # Инициализируем пустой конструктор
+        constructors = request.session.get('constructors')
+        if not constructors:
+            constructors = self.session['constructors'] = {
+                '0': { 
+                    'id': 0,
+                    'constructor': 0,
+                    'quantity': 0,
+                    'price': 0,
+                    'products': None
+                }
+            }
+        self.constructors = constructors
+
+        # self.constructors.clear()
 
         # Инициализируем пустой товар с опциями
         options = request.session.get('options')
@@ -381,7 +397,9 @@ class Cart(object):
         
         return sum((Decimal(item['price']) * item['quantity']) for item in self.options.values())
 
-
+    def constructors_summ(self):
+        
+        return sum((Decimal(item['price']) * item['quantity']) for item in self.constructors.values())
 
     def count_combos(self):
         combo_len = sum(int(item['quantity']) for item in self.combos.values())
@@ -390,6 +408,11 @@ class Cart(object):
     def count_options(self):
         combo_len = sum(int(item['quantity']) for item in self.options.values())
         return combo_len
+    
+    def count_constructors(self):
+
+        constructor_len = sum(int(item['quantity']) for item in self.constructors.values())
+        return constructor_len
     
 
     def add(self, product, quantity=1, update_quantity=False):
@@ -493,6 +516,83 @@ class Cart(object):
             self.save()
 
 
+    def add_constructor(self, id, quantity, radio, checkbox, price):
+        self.session['active_balls'] = '0.00'
+
+        products = radio.replace(' ', '').replace('[', '').replace(']', '') + ','+ checkbox.replace(' ', '').replace('[', '').replace(']', '')
+        constructor = id + radio.replace(' ', '').replace(',', '').replace('[', '').replace(']', '') + checkbox.replace(' ', '').replace(',', '').replace('[', '').replace(']', '')
+        
+        if constructor not in self.constructors:
+
+            self.constructors[constructor] = {
+                'id': constructor,
+                'constructor': int(id),
+                'quantity': int(quantity),
+                'price': str(price),
+                'products': products
+                }
+            
+
+        else:
+            
+            self.constructors[constructor]['quantity'] += int(quantity)
+        
+        self.session.modified = True
+        self.save()
+
+    def plus_constructor(self, constructor):
+
+        self.constructors[constructor]['quantity'] += 1
+        self.session.modified = True
+        self.save()
+
+
+    def minus_constructor(self, constructor):
+        self.constructors[constructor]['quantity'] -= 1
+        self.session.modified = True
+        self.save()
+
+    def remove_constructor(self, constructor):
+
+        del self.constructors[constructor]
+        self.session.modified = True
+        self.save()
+
+    def get_constructors(self):
+        constructor_list = []
+        for item in self.constructors.values():
+            try:
+                products = item['products'].split(',')
+                constructor = FoodConstructor.objects.get(id=item['constructor'])
+                constructor_items = []
+                for i in products:
+                    try:
+                        item_c = Ingridients.objects.get(id=str(i))
+                        constructor_items.append(item_c)
+                    except: 
+                        pass
+
+                constructor_list.append({
+                    'id': item['id'],
+                    'constructor': constructor,
+                    'price': Decimal(item['price']),
+                    'quantity': item['quantity'],
+                    'items': constructor_items
+                })
+
+            except:
+                pass
+
+
+        return constructor_list
+
+    def constructor_clear(self):
+        items = self.constructors.keys()
+        for item in list(items):
+            if item != 0:
+                del self.constructors[item]
+                self.save()
+
 
     def __iter__(self):
         """
@@ -526,7 +626,7 @@ class Cart(object):
         all_len = sum(item['quantity'] for item in self.cart.values())
         
 
-        return all_len + self.count_combos() + self.count_options()
+        return all_len + self.count_combos() + self.count_options() + self.count_constructors()
 
 
     def get_delivery(self):
@@ -686,7 +786,7 @@ class Cart(object):
 
         total_pr = Decimal(res)
 
-        return total_pr + self.combo_summ() + self.options_summ()
+        return total_pr + self.combo_summ() + self.options_summ() + self.constructors_summ()
 
 
     def clear(self):

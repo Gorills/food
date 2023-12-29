@@ -318,3 +318,58 @@ def set_phone(request):
         
         print(cart.return_phone())
         return redirect('home')
+    
+
+
+def add_constructor(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        id = request.POST['id']
+        radio = request.POST['radio']
+        checkbox = request.POST['checkbox']
+        price = request.POST['price']
+        quantity = 1
+
+        
+
+        # print(id, quantity, radio, checkbox, price)
+        
+        cart.add_constructor(id, quantity, radio, checkbox, price)
+
+    return redirect('home')
+
+
+def remove_constructor(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        id = request.POST['id']
+
+        cart.remove_constructor(id)
+        
+
+    
+    return redirect('home')
+
+def plus_constructor(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        id = request.POST['id']
+       
+        cart.plus_constructor(id)
+        
+
+    
+    return redirect('home')
+
+def minus_constructor(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        id = request.POST['id']
+       
+        cart.minus_constructor(id)
+        
+
+    
+    return redirect('home')

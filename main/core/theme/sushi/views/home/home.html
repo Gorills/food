@@ -107,6 +107,8 @@
 {% endif %}
 
 
+
+
 {% comment %} <div class="append-cats">
     <div class="container">
         <div class="append-cats__inner" id="appendCats">    
@@ -278,7 +280,7 @@
                         
 
                     </div>
-                    {% include 'components/product_list.html' with slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
+                    {% include 'components/product_list.html' with category=cat slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
 
                     
                 </div>

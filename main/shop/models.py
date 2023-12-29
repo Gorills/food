@@ -863,7 +863,7 @@ class ComboItem(models.Model):
 
 
 
-
+# Скидка на товары и категории
 class ProductSale(models.Model):
     name = models.CharField(max_length=250)
 
@@ -880,3 +880,133 @@ class ProductSale(models.Model):
 
     
 
+
+class FoodConstructor(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    image = models.ImageField(upload_to='constructors', verbose_name='Изображение', null=True, blank=True)
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    weight = models.CharField(max_length=250, verbose_name='Вес', null=True, blank=True)
+    parent = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='constructors', null=True, blank=True, verbose_name='Категория')
+
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена', default=0)
+    meta_h1 = models.CharField(max_length=350, null=True, blank=True, verbose_name='Заголовок h1') 
+    meta_title = models.CharField(max_length=350, null=True, blank=True, verbose_name='Заголовок meta title')
+    meta_description = models.TextField(null=True, blank=True, verbose_name='Описание meta')
+    meta_keywords = models.TextField(null=True, blank=True, verbose_name='Ключевые слова')
+
+    slug = models.SlugField(unique=True, max_length=250)
+
+
+    def get_thumb_mini(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.min_height and not setup.min_width:
+                res = get_thumbnail(self.image, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            elif setup.min_width and not setup.min_height:
+                res = get_thumbnail(self.image, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.min_height and setup.min_width:
+                res = get_thumbnail(self.image, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.image, '290x193', crop='center', format="WEBP", quality=100)
+
+            res = res.url
+        except Exception as e:
+            res = '/core/libs/no-image.webp'
+             
+
+        return res
+    
+    def get_thumb_maxi(self):
+        res = None
+        setup = ShopSetup.objects.get()
+        try:
+            if setup.max_height and not setup.max_width:
+                res = get_thumbnail(self.image, f'x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            elif setup.max_width and not setup.max_height:
+                res = get_thumbnail(self.image, f'{setup.max_width}x', format="WEBP", crop='center', quality=100)
+            elif setup.max_height and setup.max_width:
+                res = get_thumbnail(self.image, f'{setup.max_width}x{setup.max_height}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.image, '750x500', crop='center', format="WEBP", quality=100)
+
+            res = res.url
+        except:
+            res = '/core/libs/no-image.webp'
+
+        
+        return res
+
+
+    def __str__(self):
+        return self.name
+
+
+
+class ConstructorCategory(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    image = models.ImageField(upload_to='constructors', verbose_name='Изображение', null=True, blank=True)
+    parent = models.ForeignKey(FoodConstructor, on_delete=models.CASCADE, related_name='constructor_categorys', null=True, blank=True, verbose_name='Конструктор')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+
+    obligatory = models.BooleanField(default=True, verbose_name='Категория, выбор ингридиента в которой обязателен ')
+    viev_desc_in_constructor = models.BooleanField(default=False, verbose_name='Отображать описание в конструкторе')
+    weight_plus = models.BooleanField(default=False, verbose_name='Добавлять вес ингридиента к конечному весу')
+    show_name = models.BooleanField(default=True, verbose_name='Отображать название категории')
+
+    CATEGORY_CLASS = (
+     
+    #    ('radio', 'Переключатель'),
+       ('checkbox', 'Флажки'),
+       ('select', 'Переключатель'),
+      
+    )
+    
+
+    category_class = models.CharField(max_length=250, null=True, blank=True, choices=CATEGORY_CLASS, verbose_name='Класс категории')
+
+    minimum = models.PositiveIntegerField(null=True, blank=True, verbose_name='Минимальное количество ингридиентов можно выбрать')
+    maximum = models.PositiveIntegerField(null=True, blank=True, verbose_name='Максимальное количество ингридиентов можно выбрать')
+
+    def __str__(self):
+        return self.name
+    
+
+
+class Ingridients(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
+    image = models.ImageField(upload_to='ingridients', verbose_name='Изображение', null=True, blank=True)
+    weight = models.CharField(max_length=250, verbose_name='Вес', null=True, blank=True)
+    parent = models.ForeignKey(ConstructorCategory, on_delete=models.CASCADE, related_name='ingridients', null=True, blank=True, verbose_name='Категория')
+    not_ingridient = models.ManyToManyField('self', blank=True, related_name='not_category', verbose_name='Не активен при выборе ингридиента')
+    extra_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Дополнительная наценка на другие ингридиенты')
+
+    def __str__(self):
+        name = self.name + ' - ' + self.parent.name + ' - ' + self.parent.parent.name
+        return name
+    
+    def get_thumb_maxi(self):
+        res = None
+        try:    
+            res = get_thumbnail(self.image, '750x500', crop='center', format="WEBP", quality=100)
+            res = res.url
+
+        except:
+            res = ''
+
+        
+        return res
+    
+    def get_thumb_mini(self):
+        res = None
+        try:    
+            res = get_thumbnail(self.image, '90x90', crop='center', format="WEBP", quality=100)
+            res = res.url
+
+        except:
+            res = ''
+
+        
+        return res

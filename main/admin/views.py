@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, CustomCodeForm, DeliveryForm, FontForm, ImageForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -15,7 +15,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -2972,3 +2972,168 @@ def delivery_delete(request, pk):
     delivery = Delivery.objects.get(id=pk)
     delivery.delete()
     return redirect('admin_delivery')
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_food_constructor(request):
+
+    food_constructors = FoodConstructor.objects.all()
+
+    context = {
+        'food_constructors': food_constructors
+    }
+    return render(request, 'shop/food_constructor/food_constructor.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_food_constructor(request):
+
+    if request.method == 'POST':
+        form = FoodConstructorForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', {'form': form})
+
+    form = FoodConstructorForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_food_constructor(request, pk):
+    food_constructor = FoodConstructor.objects.get(id=pk)
+    if request.method == 'POST':
+        form = FoodConstructorForm(request.POST, request.FILES, instance=food_constructor)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', {'form': form})
+
+    form = FoodConstructorForm(instance=food_constructor)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_food_constructor(request, pk):
+    food_constructor = FoodConstructor.objects.get(id=pk)
+    food_constructor.delete()
+    return redirect('admin_food_constructor')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_constructor_category(request, pk):
+
+    parent = FoodConstructor.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = ConstructorCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/category/add_constructor_category.html', {'form': form})
+
+    form = ConstructorCategoryForm({
+        'parent': parent
+    })
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/category/add_constructor_category.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_constructor_category(request, pk):
+
+    category = ConstructorCategory.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = ConstructorCategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/category/add_constructor_category.html', {'form': form})
+
+    form = ConstructorCategoryForm(instance=category)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/category/add_constructor_category.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_constructor_category(request, pk):
+    category = ConstructorCategory.objects.get(id=pk)
+    category.delete()
+    return redirect('admin_food_constructor')
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_ingridients(request, pk):
+
+    parent = ConstructorCategory.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = IngridientsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', {'form': form})
+
+    form = IngridientsForm({
+        'parent': parent
+    })
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_ingridients(request, pk):
+
+    ingridient = Ingridients.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = IngridientsForm(request.POST, request.FILES, instance=ingridient)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_food_constructor')
+        else:
+            return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', {'form': form})
+
+    form = IngridientsForm(instance=ingridient)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_ingridients(request, pk):
+    ingridient = Ingridients.objects.get(id=pk)
+    ingridient.delete()
+    return redirect('admin_food_constructor')

@@ -973,9 +973,6 @@ $(document).ready(function() {
         $.post( "/cart/add/"+products+'/', data)
         .done(function( ) {
         
-            
-            
-        
          
             $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         
@@ -2614,3 +2611,362 @@ $(document).on('submit','.save-delivery',function(e){
     
     
 })
+
+
+function replaceDesc(context) {
+    var active = context.closest('.product-list__item').find('.constructor-popup__radio-item--active');
+    var res = '';
+    active.each(function() {
+        res += $(this).data('desc') + ', ';
+    });
+    context.next('.constructor-popup').find('.constructor-popup__structure').text(res.slice(0, -2));
+    context.closest('.constructor-popup').find('.constructor-popup__structure').text(res.slice(0, -2));
+}
+
+function replaceImg(context) {
+    var image = context.data('image');
+    if (image) {
+        context.closest('.constructor-popup').find('.constructor-popup__image').attr('src', image);
+    } else {
+        var image_replace = context.closest('.constructor-popup').find('.constructor-popup__image').data('image');
+        context.closest('.constructor-popup').find('.constructor-popup__image').attr('src', image_replace);
+    }
+}
+
+
+
+
+function unique(list) {
+    var result = [];
+    $.each(list, function(i, e) {
+      if ($.inArray(e, result) == -1) result.push(e);
+    });
+    return result;
+  }
+
+function countPrice(context) {
+    var default_price = context.closest('.product-list__item').find('.constructor-popup').data('price');
+
+    var_radio_price = 0
+    var_checkbox_price = 0
+
+    var all_radio = context.closest('.constructor-popup').find('.constructor-popup__radio-item--active');
+    var all_checkbox = context.closest('.constructor-popup').find('.constructor-popup__checkbox-item--active');
+
+    all_radio.each(function() {
+        var_radio_price += parseInt($(this).data('price'));
+    })
+    all_checkbox.each(function() {
+        var_checkbox_price += parseInt($(this).data('price'));
+    })
+    res = default_price + var_radio_price + var_checkbox_price
+
+    context.find('.constructor-popup__price').text(res)
+    context.find('.constructor-popup__btn').attr('data-price',res)
+
+    return res    
+}
+
+function findNoIngr(context) {
+
+    var all_no_ingridient_radio = context.closest('.constructor-popup').find('.constructor-popup__radio-item--active');
+    var all_no_ingridient_checkbox = context.closest('.constructor-popup').find('.constructor-popup__checkbox-item--active');
+    
+    no_list = []
+    all_no_ingridient_radio.each(function() {
+        var no_ing = $(this).data('noingridient');
+        // Перебираем все элементы с атрибутом data-id
+        // Проверяем, является ли dataIdString строкой
+        var dataIdArray;
+        if (typeof no_ing === 'string') {
+
+            dataIdArray = no_ing.split(',').map(function(item) {
+                no_list.push(parseInt(item, 10));
+            });
+
+        } else if (no_ing) {
+            // Если не является, создаем массив с одним элементом
+            no_list.push(parseInt(no_ing, 10));
+        }
+    })
+    all_no_ingridient_checkbox.each(function() {
+        var no_ing = $(this).data('noingridient');
+        // Перебираем все элементы с атрибутом data-id
+        // Проверяем, является ли dataIdString строкой
+        var dataIdArray;
+        if (typeof no_ing === 'string') {
+
+            dataIdArray = no_ing.split(',').map(function(item) {
+                no_list.push(parseInt(item, 10));
+            });
+
+        } else if (no_ing) {
+            // Если не является, создаем массив с одним элементом
+            no_list.push(parseInt(no_ing, 10));
+        }
+    })
+
+    no_list = unique(no_list)
+
+    
+
+    var radio_id = context.closest('.constructor-popup').find('.constructor-popup__radio-item');
+    var checkbox_id = context.closest('.constructor-popup').find('.constructor-popup__checkbox-item');
+    var foundIds = []; // Создаем массив для отслеживания найденных id
+
+    radio_id.each(function() {
+        var currentId = $(this).data('id');
+        $(this).removeClass('deactivate-ingredient')
+        // Проверяем, был ли этот ID уже найден ранее
+        if ($.inArray(currentId, foundIds) === -1) {
+            if ($.inArray(currentId, no_list) !== -1) {
+                if ($(this).hasClass('constructor-popup__radio-item--active')) {
+                    // Ищем предыдущий элемент с классом .constructor-popup__radio-item
+                    var prevRadioItem = $(this).prev('.constructor-popup__radio-item');
+                    // Если предыдущий элемент не найден, ищем следующий элемент
+                    if (prevRadioItem.length === 0) {
+                        prevRadioItem = $(this).next('.constructor-popup__radio-item');
+                    }
+                    // Теперь у вас есть либо предыдущий, либо следующий элемент
+                    if (prevRadioItem.length > 0) {
+                        // Ваш код для работы с prevRadioItem
+                        prevRadioItem.addClass('constructor-popup__radio-item--active');
+                    } else {
+                        console.log('Предыдущий и следующий элементы не найдены.');
+                    }
+
+                }
+                $(this).addClass('deactivate-ingredient')
+                $(this).removeClass('constructor-popup__radio-item--active')
+
+            }
+
+            // Добавляем найденный ID в массив foundIds
+            foundIds.push(currentId);
+        }
+    });
+
+    checkbox_id.each(function() {
+        var currentId = $(this).data('id');
+        $(this).removeClass('deactivate-ingredient')
+        // Проверяем, был ли этот ID уже найден ранее
+        if ($.inArray(currentId, foundIds) === -1) {
+            if ($.inArray(currentId, no_list) !== -1) {
+                
+                $(this).addClass('deactivate-ingredient')
+                $(this).removeClass('constructor-popup__checkbox-item--active')
+
+            }
+
+            // Добавляем найденный ID в массив foundIds
+            foundIds.push(currentId);
+        }
+    })
+
+    var first_radio = context.closest('.constructor-popup').find('.constructor-popup__radio').first();
+    var dirst_radio_item = first_radio.find('.constructor-popup__radio-item');
+    dirst_radio_item.each(function() {
+        $(this).removeClass('deactivate-ingredient')
+
+    })
+
+}
+
+function clearCheckbox(context) {
+    context.find('.constructor-popup__checkbox-item').removeClass('constructor-popup__checkbox-item--active')
+    context.find('.constructor-popup__checkbox-item').removeClass('deactivate-ingredient')
+}
+
+$(document).on('click','.product-list__constructor',function(e){
+    e.preventDefault();
+    $(this).next('.constructor-popup').addClass('constructor-popup--active')
+    $('body').addClass('body')
+    
+    replaceDesc($(this));
+    findNoIngr($(this).next('.constructor-popup'))
+    countPrice($(this).next('.constructor-popup').find('.constructor-popup__inner'))
+
+})
+
+
+$(document).on('click','.constructor-popup__close, .constructor-popup__overflov',function(){
+    $('.constructor-popup').removeClass('constructor-popup--active')
+    $('body').removeClass('body')
+})
+
+
+$(document).on('click','.constructor-popup__radio-item',function(e){
+
+    if ($(this).hasClass('deactivate') || $(this).hasClass('deactivate-ingredient')) {
+        return;
+    } else {
+
+        $(this).closest('.constructor-popup__radio-row').find('.constructor-popup__radio-item').removeClass('constructor-popup__radio-item--active');
+        $(this).addClass('constructor-popup__radio-item--active');
+        
+        replaceImg($(this));
+        replaceDesc($(this));
+        clearCheckbox($(this).closest('.constructor-popup'));
+        findNoIngr($(this));
+        $(this).closest('.constructor-popup__radio-row').find('.constructor-popup__radio-item').removeClass('constructor-popup__radio-item--active');
+        $(this).addClass('constructor-popup__radio-item--active');
+
+        var extra_charge = 0;
+        var radio = $(this).closest('.constructor-popup').find('.constructor-popup__radio-item--active');
+        radio.each(function() {
+            
+            if ($(this).data('extra')) {
+                extra_charge += $(this).data('extra');
+            }
+            
+        })
+
+        
+
+        
+        var checkbox_id = $(this).closest('.constructor-popup').find('.constructor-popup__checkbox-item');
+
+        checkbox_id.each(function() {
+            var price = $(this).data('saveprice');
+            if (extra_charge) {
+                var res = price + extra_charge;
+            } else {
+                var res = price;
+            }
+            
+            $(this).find('.constructor-popup__replace-price').text(res);
+            $(this).data('price', res)
+        })
+
+        countPrice($(this).closest('.constructor-popup').find('.constructor-popup__inner'));
+        
+
+    }
+
+    
+})
+
+
+$(document).on('click','.constructor-popup__checkbox-item',function(){
+    if($(this).hasClass('deactivate') || $(this).hasClass('deactivate-ingredient')) {
+        return
+    } else {
+        $(this).toggleClass('constructor-popup__checkbox-item--active');
+    }
+    
+    var min = $(this).data('min');
+    var max = $(this).data('max');
+
+    var active = $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item--active').length;
+    
+
+
+    if (active >= max) {
+        $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').not(".constructor-popup__checkbox-item--active").addClass('deactivate')
+
+    } else {
+        
+        $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').removeClass('deactivate')
+    }
+
+    findNoIngr($(this))
+    countPrice($(this).closest('.constructor-popup').find('.constructor-popup__inner'));
+})
+
+
+
+
+$(document).on('click', '.constructor-popup__btn', function (e) {
+    e.preventDefault();
+    var id = $(this).data('id');
+    var csrf = $(this).data('csrf');
+
+    var radio = $(this).closest('.constructor-popup').find('.constructor-popup__radio-item--active');
+    var checkbox = $(this).closest('.constructor-popup').find('.constructor-popup__checkbox-item--active');
+    var price = countPrice($(this));
+
+    var data_radio = [];
+    var data_checkbox = [];
+
+    if (radio.length != 0) {
+        radio.each(function () {
+            data_radio.push($(this).data('id'));
+        });
+    }
+
+    if (checkbox.length != 0) {
+        checkbox.each(function () {
+            data_checkbox.push($(this).data('id'));
+        });
+    }
+
+    var data = {
+        'id': id,
+        'price': price,
+        'csrfmiddlewaretoken': csrf,
+        'radio': JSON.stringify(data_radio), // Преобразование в строку
+        'checkbox': JSON.stringify(data_checkbox) // Преобразование в строку
+    };
+
+    
+    $.post('/cart/add_constructor/', data)
+        .done(function () {
+            
+            $('.constructor-popup').removeClass('constructor-popup--active')
+            $('body').removeClass('body')
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        
+            
+            updateMinDelivery()
+
+        })
+        .fail(function (error) {
+            console.error('Error:', error);
+            // Обработка ошибок
+        });
+});
+
+
+$(document).on('click','.constructor__remove',function(e){
+    e.preventDefault();
+    
+    var id = $(this).attr('data-id')
+    var csrfToken = $(this).attr('data-token')
+    
+    data = {
+        id: id, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( "/cart/remove_constructor/", data)
+        .done(function( ) {      
+            
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+            
+            updateMinDelivery()
+        });
+})
+
+$(document).on('click','.plus_constructor',function(e){
+    e.preventDefault();
+    var id = $(this).attr('data-id')
+    var csrfToken = $(this).attr('data-token')
+    var url = $(this).attr('data-url')
+
+    data = {
+        id: id, 
+        csrfmiddlewaretoken: csrfToken
+    }
+    $.post( url, data)
+        .done(function( ) {
+            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+            
+            updateMinDelivery()
+        })
+})
+

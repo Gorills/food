@@ -581,6 +581,10 @@ label span {
   position: relative;
 }
 
+#id_not_ingridient {
+  height: 350px;
+}
+
 .sidebar {
   width: 270px;
   background-color: #fff;

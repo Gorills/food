@@ -45,9 +45,26 @@ def order_telegram(telegram_bot, telegram_group, order):
             
             pr.append(pr_dict)
             
-        else:
+        elif item.combo:
             pr_name = item.combo.name
             pr_sost = item.combo_items
+            pr_quantity = item.quantity
+            pr_price = str(item.price)
+
+            pr_summ = pr_quantity * item.price
+            
+
+            pr.append({
+                
+                'Название':pr_name,
+                'Состав':pr_sost,
+                'Количество':pr_quantity,
+                'Цена':pr_price,
+                'Итого': str(pr_summ),
+            })
+        elif item.constructor:
+            pr_name = item.constructor.name
+            pr_sost = item.constructor_items
             pr_quantity = item.quantity
             pr_price = str(item.price)
 

@@ -26,4 +26,8 @@ urlpatterns = [
     path('check_first_delivery/', views.check_first_delivery, name='check_first_delivery'),
 
     path('set_phone/', views.set_phone, name='set_phone'),
+    path('add_constructor/', views.add_constructor, name='add_constructor'),
+    path('remove_constructor/', views.remove_constructor, name='remove_constructor'),
+    path('plus_constructor/', views.plus_constructor, name='plus_constructor'),
+    path('minus_constructor/', views.minus_constructor, name='minus_constructor'),
 ]

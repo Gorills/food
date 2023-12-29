@@ -62,7 +62,7 @@
         </div>
     </div>
     
-    {% if category.products.count != 0 %}
+    {% if category.products.count != 0 or category.constructors.count != 0 %}
     <div class="catalog">
         
         <div class="container">
@@ -74,7 +74,7 @@
                 <div class="catalog__list">
                     <div class="catalog__refresh">
                         {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
-                        {% include 'components/product_list.html' with products=products big='' size=image_size %}
+                        {% include 'components/product_list.html' with category=category products=products big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
 
@@ -114,7 +114,7 @@
                 <div class="catalog__list">
                     <div class="catalog__refresh">
                         {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
-                        {% include 'components/product_list.html' with products=children.products.all big='' size=image_size %}
+                        {% include 'components/product_list.html' with category=children products=children.products.all big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
 

@@ -264,7 +264,7 @@
     }
 
     // .combo__remove
-    .combo__remove, .options_remove {
+    .combo__remove, .options_remove, .constructor__remove {
         position: absolute;
         top: 20px;
         right: 0;
@@ -296,7 +296,7 @@
         }
     }
 
-    .plus_combo, .plus_options {
+    .plus_combo, .plus_options, .plus_constructor {
         background: none;
         border: none;
         

@@ -3,7 +3,7 @@ from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
-from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
@@ -12,6 +12,103 @@ from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
 from delivery.models import Delivery
 
+
+
+class IngridientsForm(forms.ModelForm):
+    class Meta:
+        model = Ingridients
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'input',
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'weight': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'not_ingridient': forms.SelectMultiple(attrs={
+                'class': 'input',
+            }),
+            'extra_charge': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+        }
+
+
+
+class ConstructorCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ConstructorCategory
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'input',
+            }),
+            'category_class': forms.Select(attrs={
+                'class': 'input',
+                'required': 'required'
+            }),
+            'minimum': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'maximum': forms.NumberInput(attrs={
+                'class': 'input',
+            })
+        }
+
+
+
+class FoodConstructorForm(forms.ModelForm):
+    class Meta:
+        model = FoodConstructor
+        fields = '__all__'
+
+        widgets = {
+            
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'input',
+            }),
+            'weight': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'meta_h1': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'meta_title': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'meta_description': forms.Textarea(attrs={
+                'class': 'input',
+            }),
+            'meta_keywords': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'slug': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+        }
 
 
 

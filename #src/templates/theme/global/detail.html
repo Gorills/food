@@ -114,81 +114,141 @@
                     
 
                     {% for option in cart.get_options %}
-                    
-                    <div class="cart__item">
-                        <a href="#" class="options_remove"  data-id="{{ option.id }}" data-token="{{ csrf_token }}" >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
-                        </a>
-                        <div class="cart__item-inner">
-                            <div class="cart__img-wrap">
-        
-                                
-                                    {% thumbnail option.products.thumb "55x55" format="WEBP" crop="center" as im %}
-                                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ option.products.name }}" class="cart__img">
-                                    {% endthumbnail %}
-
-                
-                            </div>
-
-                            <div class="cart__wrap">
-                                <p class="cart__name">{{ option.products.name }}</p>
-
-                                {% if option.options %}
-                                    <div class="cart__name-option-wrap">
-                                            
-                                        
-                                
-                                    {% for type, options in option.options.items %}
-                                        <div class="opt-wrap">
-                                            <p class="cart__name-option cart__name-option--name"><b>{{ type }}:</b></p>
-                                            <div class="opt-inner">
-                                                {% for opt in options %}
-                                                <p class="cart__name-option"> {{ opt.option_value }}</p>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                                
-                                        
-                                            
-                                
-                                    </div>
-                                {% endif %}
-
-                            </div>
-                            
-                           
-                        </div>
-
                         
-                        <div class="cart__bottom">
-                            <p class="cart__total-price">{{ option.price | floatformat:"2" }}₽</p>
+                        <div class="cart__item">
+                            <a href="#" class="options_remove"  data-id="{{ option.id }}" data-token="{{ csrf_token }}" >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                            </a>
+                            <div class="cart__item-inner">
+                                <div class="cart__img-wrap">
+            
+                                    
+                                        {% thumbnail option.products.thumb "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ option.products.name }}" class="cart__img">
+                                        {% endthumbnail %}
 
-                            <div class="cart-plus-minus">
+                    
+                                </div>
+
+                                <div class="cart__wrap">
+                                    <p class="cart__name">{{ option.products.name }}</p>
+
+                                    {% if option.options %}
+                                        <div class="cart__name-option-wrap">
+                                                
+                                            
+                                    
+                                        {% for type, options in option.options.items %}
+                                            <div class="opt-wrap">
+                                                <p class="cart__name-option cart__name-option--name"><b>{{ type }}:</b></p>
+                                                <div class="opt-inner">
+                                                    {% for opt in options %}
+                                                    <p class="cart__name-option"> {{ opt.option_value }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                                     
-                                
+                                            
+                                                
+                                    
+                                        </div>
+                                    {% endif %}
 
-
-                              
-                                <button class="plus_options" data-url="{% url 'cart:minus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">-</button>
-
-                               
-                                <input type="text" value="{{ option.quantity }}" class="cart-input">
-                               
-                                 
-                                
-                                  
-                                <button class="plus_options" data-url="{% url 'cart:plus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">+</button>
-
+                                </div>
                                 
                             
                             </div>
 
-                        </div>
-                    </div>
+                            
+                            <div class="cart__bottom">
+                                <p class="cart__total-price">{{ option.price | floatformat:"2" }}₽</p>
 
-                {% endfor %}
-                   
+                                <div class="cart-plus-minus">
+                                                        
+                                    
+
+
+                                
+                                    <button class="plus_options" data-url="{% url 'cart:minus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">-</button>
+
+                                
+                                    <input type="text" value="{{ option.quantity }}" class="cart-input">
+                                
+                                    
+                                    
+                                    
+                                    <button class="plus_options" data-url="{% url 'cart:plus_options' %}" data-token="{{ csrf_token }}" data-id="{{ option.id }}">+</button>
+
+                                    
+                                
+                                </div>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                    
+                    {% for constructor in cart.get_constructors %}
+                    
+                        <div class="cart__item">
+                            <a href="{% url "cart:remove_constructor" %}" class="constructor__remove" data-token="{{ csrf_token }}" data-id="{{ constructor.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+                            </a>
+                            <div class="cart__item-inner">
+                                <div class="cart__img-wrap">
+            
+                                    
+                                        {% thumbnail constructor.constructor.image "55x55" format="WEBP" crop="center" as im %}
+                                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ constructor.constructor.name }}" class="cart__img">
+                                        {% endthumbnail %}
+
+                    
+                                </div>
+
+                                <div class="cart__wrap">
+                                    <p class="cart__name">{{ constructor.constructor.name }}</p>
+                                    <div class="cart__name-option-wrap">
+                                    {% for item in constructor.items %}
+
+                                    
+                                        <p class="cart__name-option">
+                                           {{ item.name }}{% if forloop.revcounter > 1 %}, {% endif %}<br>
+                                        </p>
+                                    {% endfor %}
+                                </div>
+
+                                </div>
+                                
+                               
+                            </div>
+
+                            
+                            <div class="cart__bottom">
+                                <p class="cart__total-price">{{ constructor.price | floatformat:"2" }}₽</p>
+
+                                <div class="cart-plus-minus">
+                                                        
+                 
+                                  
+                                        <button class="plus_constructor" data-url="{% url 'cart:minus_constructor' %}" data-token="{{ csrf_token }}" data-id="{{ constructor.id }}">-</button>
+
+                                   
+                                    <input type="text" value="{{ constructor.quantity }}" class="cart-input">
+                                   
+                                     
+                                    
+                                      
+                                        <button class="plus_constructor" data-url="{% url 'cart:plus_constructor' %}" data-token="{{ csrf_token }}" data-id="{{ constructor.id }}">+</button>
+
+                                    
+                                
+                                </div>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
 
 
                     {% for combo in cart.get_combos %}

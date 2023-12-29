@@ -6,7 +6,7 @@ from django.conf import settings
 from accounts.models import UserProfile
 
 # Create your models here.
-from shop.models import Combo, Product, ProductOption
+from shop.models import Combo, Product, ProductOption, Ingridients, FoodConstructor
 
 class Order(models.Model):
     # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
@@ -92,6 +92,8 @@ class OrderItem(models.Model):
     options = models.TextField(null=True, blank=True)
     combo = models.ForeignKey(Combo, related_name='order_combo', on_delete=models.CASCADE, null=True, blank=True)
     combo_items = models.TextField(null=True, blank=True)
+    constructor = models.ForeignKey(FoodConstructor, related_name='order_constructor', on_delete=models.CASCADE, null=True, blank=True)
+    constructor_items = models.TextField(null=True, blank=True)
     free = models.PositiveIntegerField(default=0, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
