@@ -75,6 +75,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        object-fit: contain;
     }
 
     // .constructor-popup__image
@@ -85,6 +86,12 @@
         height: fit-content;
         margin-right: 20px;
         padding: 30px;
+        @media screen and (max-width:576px) {
+            max-width: 100%;
+            margin-right: 0;
+            object-fit: contain;
+            
+        }
     }
 
     // .constructor-popup__row-wrap
@@ -98,6 +105,7 @@
 
         @media screen and (max-width:576px) {
             max-width: 100%;
+            padding: 20px 10px 50px 10px;
             
         }
     }

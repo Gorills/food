@@ -5330,6 +5330,7 @@ td.product-thumbnail img {
   display: flex;
   align-items: center;
   justify-content: center;
+  object-fit: contain;
 }
 
 .constructor-popup__image {
@@ -6056,8 +6057,15 @@ td.product-thumbnail img {
     border-radius: 0;
   }
 
+  .constructor-popup__image {
+    max-width: 100%;
+    margin-right: 0;
+    object-fit: contain;
+  }
+
   .constructor-popup__row-wrap {
     max-width: 100%;
+    padding: 20px 10px 50px 10px;
   }
 
   .constructor-popup__row {
