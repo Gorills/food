@@ -184,7 +184,7 @@
       outline: 0px;
       background: none;
       font-weight: 400;
-      color: var(--color-font);
+      color: var(--color-cart-font);
       font-size: 14px;
       display: inline-block;
       // height: 45px;
@@ -197,7 +197,7 @@
   }
   .cart-plus-minus .qtybutton {
       font-size: 20px;
-      color: var(--color-font);
+      color: var(--color-cart-font);
       display: flex;
       align-items: center;
       justify-content: center;

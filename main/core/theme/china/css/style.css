@@ -250,6 +250,7 @@ a {
   transition: all 0.3s ease-out;
   left: -100%;
   opacity: 0;
+  color: var(--color-cart-font);
 }
 
 .cart ::-webkit-scrollbar {
@@ -284,7 +285,7 @@ a {
 .cart__inner {
   max-width: 300px;
   min-width: 300px;
-  background-color: #fff;
+  background-color: var(--color-cart-bg);
   color: #222;
   position: relative;
   z-index: 10001;
@@ -303,8 +304,8 @@ a {
 .cart__order {
   display: inline-block;
   padding: 3px 15px;
-  color: var(--color-font);
-  border: 1px solid var(--color-font);
+  color: var(--color-cart-font);
+  border: 1px solid var(--color-cart-font);
   width: 100%;
   text-align: center;
 }
@@ -324,11 +325,13 @@ a {
 .cart__bottom {
   display: flex;
   justify-content: space-between;
+  color: var(--color-cart-font);
 }
 
 .cart__title {
   font-size: 20px;
   font-weight: 600;
+  color: var(--color-cart-font);
 }
 
 .cart__close {
@@ -337,6 +340,10 @@ a {
 
 .cart__close svg {
   width: 15px;
+}
+
+.cart__close svg path stroke {
+  color: var(--color-cart-font);
 }
 
 .cart__item {
@@ -367,7 +374,7 @@ a {
 }
 
 .cart__name {
-  color: var(--color-font);
+  color: var(--color-cart-font);
   display: block;
   margin-bottom: 5px;
   line-height: 1;
@@ -406,7 +413,7 @@ a {
 }
 
 .cart__remove:hover svg path {
-  fill: var(--color-font);
+  fill: var(--color-cart-font);
 }
 
 .cart__remove svg {
@@ -437,7 +444,7 @@ a {
 .cart .combo__remove:hover svg path,
 .cart .options_remove:hover svg path,
 .cart .constructor__remove:hover svg path {
-  fill: var(--color-font);
+  fill: var(--color-cart-font);
 }
 
 .cart .combo__remove svg,
@@ -459,7 +466,7 @@ a {
 .cart .plus_constructor {
   background: none;
   border: none;
-  color: var(--color-font);
+  color: var(--color-cart-font);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,7 +531,7 @@ a {
   height: 100vh;
   max-width: 550px;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--color-cart-bg);
   color: #222;
   display: none;
 }
@@ -569,8 +576,8 @@ a {
 .cart__form-delivery-in-session-ref a {
   display: inline-block;
   padding: 3px 15px;
-  color: var(--color-font);
-  border: 1px solid var(--color-font);
+  color: var(--color-cart-font);
+  border: 1px solid var(--color-cart-font);
   text-align: center;
 }
 
@@ -590,8 +597,8 @@ a {
   max-height: 41px;
   margin-bottom: 10px;
   border: 1px solid var(--color-cart-border);
-  background-color: #fff;
-  color: var(--color-font);
+  background-color: var(--color-cart-bg);
+  color: var(--color-cart-font);
 }
 
 .cart__deliv-method-wrap {
@@ -623,11 +630,11 @@ a {
 .cart__form-politic {
   font-size: 12px;
   margin-bottom: 10px;
-  color: var(--color-font);
+  color: var(--color-cart-font);
 }
 
 .cart__form-politic a {
-  color: var(--color-font);
+  color: var(--color-cart-font);
   text-decoration: underline;
 }
 
@@ -642,7 +649,7 @@ a {
 }
 
 .cart__input {
-  background: #fff;
+  background-color: var(--color-cart-bg);
   border: 1px solid var(--color-cart-border);
   border-radius: 0;
   padding: 12px 20px;
@@ -655,7 +662,7 @@ a {
   -moz-appearance: textfield;
   margin-bottom: 10px;
   resize: none;
-  color: var(--color-font);
+  color: var(--color-cart-font);
 }
 
 .cart__input::placeholder {
@@ -714,7 +721,7 @@ a {
   border: 1px solid var(--color-cart-border);
   border-left: none;
   background-color: var(--color-body);
-  color: var(--color-font);
+  color: var(--color-cart-font);
   white-space: nowrap;
   transition: all 0.5s ease;
 }
@@ -743,7 +750,8 @@ a {
 .cart__select {
   position: relative;
   padding: 8px 20px;
-  background-color: #fff;
+  background-color: var(--color-cart-bg);
+  color: var(--color-cart-font);
   margin-bottom: 20px;
   cursor: pointer;
 }
@@ -758,7 +766,7 @@ a {
 }
 
 .cart__select-active-inner svg path {
-  stroke: var(--color-font);
+  stroke: var(--color-cart-font);
 }
 
 .cart__select-error {
@@ -829,7 +837,8 @@ a {
   width: 100%;
   left: 0;
   right: 0;
-  background-color: #fff;
+  background-color: var(--color-cart-bg);
+  color: var(--color-cart-font);
   z-index: 99;
 }
 
@@ -845,7 +854,7 @@ a {
 
 .cart__order-line__balls-link {
   font-size: 14px;
-  color: var(--color-font);
+  color: var(--color-cart-font);
   text-decoration: underline;
   display: inline-block;
 }
@@ -854,7 +863,7 @@ a {
   margin-top: 20px;
   padding: 16px 13px;
   font-family: "Circe", sans-serif;
-  color: var(--color-font);
+  color: var(--color-cart-font);
   background: none;
   border: 2px solid var(--color-primary);
   color: var(--color-primary);

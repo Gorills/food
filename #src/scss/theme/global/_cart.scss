@@ -11,6 +11,7 @@
     transition: all 0.3s ease-out;
     left: -100%;
     opacity: 0;
+    color: var(--color-cart-font);
 
     @media screen and (max-width:768px) {
         flex-direction: column;
@@ -50,7 +51,7 @@
     &__inner {
         max-width: 300px;
         min-width: 300px;
-        background-color: #fff;
+        background-color: var(--color-cart-bg);
         color: #222;
         position: relative;
         z-index: 10001;
@@ -84,8 +85,8 @@
     &__order {
         display: inline-block;
         padding: 3px 15px;
-        color: var(--color-font);
-        border: 1px solid var(--color-font);
+        color: var(--color-cart-font);
+        border: 1px solid var(--color-cart-font);
         width: 100%;
         text-align: center;
 
@@ -109,6 +110,7 @@
     &__bottom {
         display: flex;
         justify-content: space-between;
+        color: var(--color-cart-font);
     }
 
     // .cart__title
@@ -116,7 +118,7 @@
     &__title {
         font-size: 20px;
         font-weight: 600;
-        
+        color: var(--color-cart-font);
     }
 
     // .cart__close
@@ -124,7 +126,14 @@
     &__close {
         cursor: pointer;
          svg {
+
             width: 15px;
+
+            path {
+                stroke {
+                    color: var(--color-cart-font);
+                }
+            }
          }
     }
 
@@ -187,7 +196,7 @@
     // .cart__name
 
     &__name {
-        color: var(--color-font);
+        color: var(--color-cart-font);
         display: block;
         margin-bottom: 5px;
         line-height: 1;
@@ -249,7 +258,7 @@
             svg{
                 
                 path {
-                    fill: var(--color-font);
+                    fill: var(--color-cart-font);
                 }
             }
         }
@@ -283,7 +292,7 @@
             svg{
                 
                 path {
-                    fill: var(--color-font);
+                    fill: var(--color-cart-font);
                 }
             }
         }
@@ -301,7 +310,7 @@
         background: none;
         border: none;
         
-        color: var(--color-font);
+        color: var(--color-cart-font);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -385,7 +394,7 @@
         max-width: 550px;
         // min-width: 550px;
         padding: 20px;
-        background-color: #fff;
+        background-color: var(--color-cart-bg);
         color: #222;
         display: none;
 
@@ -443,8 +452,8 @@
         a {
             display: inline-block;
             padding: 3px 15px;
-            color: var(--color-font);
-            border: 1px solid var(--color-font);
+            color: var(--color-cart-font);
+            border: 1px solid var(--color-cart-font);
             
             text-align: center;
         }
@@ -473,8 +482,8 @@
         max-height: 41px;
         margin-bottom: 10px;
         border: 1px solid var(--color-cart-border);
-        background-color: #fff;
-        color: var(--color-font);
+        background-color: var(--color-cart-bg);
+        color: var(--color-cart-font);
     }
 
 
@@ -537,9 +546,9 @@
         font-size: 12px;
         margin-bottom: 10px;
         
-        color: var(--color-font);
+        color: var(--color-cart-font);
         a {
-            color: var(--color-font);
+            color: var(--color-cart-font);
             text-decoration: underline;
         }
     }
@@ -560,7 +569,8 @@
     // .cart__input
 
     &__input {
-        background: #fff;
+        background-color: var(--color-cart-bg);
+        
         border: 1px solid var(--color-cart-border);
         border-radius: 0;
         padding: 12px 20px;
@@ -573,7 +583,7 @@
         -moz-appearance: textfield;
         margin-bottom: 10px;
         resize: none;
-        color: var(--color-font);
+        color: var(--color-cart-font);
         &::placeholder {
             color: #797979;
         }
@@ -652,7 +662,7 @@
         border: 1px solid var(--color-cart-border);
         border-left: none;
         background-color: var(--color-body);
-        color: var(--color-font);
+        color: var(--color-cart-font);
         
         white-space: nowrap;
         transition: all .5s ease;
@@ -693,7 +703,8 @@
     &__select {
         position: relative;
         padding: 8px 20px;
-        background-color: #fff;
+        background-color: var(--color-cart-bg);
+        color: var(--color-cart-font);
         margin-bottom: 20px;
         cursor: pointer;
         
@@ -714,7 +725,7 @@
             margin-right: 10px;
             
             path {
-                stroke: var(--color-font);
+                stroke: var(--color-cart-font);
             }
         }
     }
@@ -807,7 +818,8 @@
         width: 100%;
         left: 0;
         right: 0;
-        background-color: #fff;
+        background-color: var(--color-cart-bg);
+        color: var(--color-cart-font);
         z-index: 99;
 
         @media screen and (max-width: 768px) {
@@ -836,7 +848,7 @@
     // .cart__order-line__balls-link
     &__order-line__balls-link {
         font-size: 14px;
-        color: var(--color-font);
+        color: var(--color-cart-font);
         text-decoration: underline;
         display: inline-block;
         
@@ -858,7 +870,7 @@
         margin-top: 20px;
         padding: 16px 13px;
         font-family: 'Circe', sans-serif;
-        color: var(--color-font);
+        color: var(--color-cart-font);
         background: none;
         
         border: 2px solid var(--color-primary);
@@ -879,7 +891,7 @@
             text-align: center;
         }
         
-        // background-color: var(--color-font);
+        // background-color: var(--color-cart-font);
     }
     // .cart__order-layout
     &__order-layout {
