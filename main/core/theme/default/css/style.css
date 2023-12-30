@@ -279,7 +279,8 @@ a {
 .cart__inner {
   max-width: 300px;
   min-width: 300px;
-  background-color: var(--color-body);
+  background-color: #fff;
+  color: #222;
   position: relative;
   z-index: 10001;
   padding: 20px;
