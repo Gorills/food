@@ -6252,6 +6252,8 @@ td.product-thumbnail img {
   }
 
   .product-list__thumb {
+    max-width: 100% !important;
+    max-height: fit-content !important;
     width: 100%;
     overflow: hidden;
     border-radius: 4px;
