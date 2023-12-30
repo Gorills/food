@@ -524,7 +524,8 @@ a {
   height: 100vh;
   max-width: 550px;
   padding: 20px;
-  background-color: var(--color-body);
+  background-color: #fff;
+  color: #222;
   display: none;
 }
 
@@ -589,7 +590,7 @@ a {
   max-height: 41px;
   margin-bottom: 10px;
   border: 1px solid var(--color-cart-border);
-  background-color: var(--color-body);
+  background-color: #fff;
   color: var(--color-font);
 }
 
@@ -615,7 +616,7 @@ a {
 
 .cart__form-btn--active {
   background-color: var(--color-primary);
-  color: var(--color-body);
+  color: var(--color-cart-font);
   border: 1px solid var(--color-primary);
 }
 
@@ -641,7 +642,7 @@ a {
 }
 
 .cart__input {
-  background: var(--color-body);
+  background: #fff;
   border: 1px solid var(--color-cart-border);
   border-radius: 0;
   padding: 12px 20px;
@@ -742,7 +743,7 @@ a {
 .cart__select {
   position: relative;
   padding: 8px 20px;
-  background-color: var(--color-body);
+  background-color: #fff;
   margin-bottom: 20px;
   cursor: pointer;
 }
@@ -828,7 +829,7 @@ a {
   width: 100%;
   left: 0;
   right: 0;
-  background-color: var(--color-body);
+  background-color: #fff;
   z-index: 99;
 }
 

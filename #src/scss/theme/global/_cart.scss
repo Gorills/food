@@ -385,7 +385,8 @@
         max-width: 550px;
         // min-width: 550px;
         padding: 20px;
-        background-color: var(--color-body);
+        background-color: #fff;
+        color: #222;
         display: none;
 
         @media screen and (max-width: 768px) {
@@ -472,7 +473,7 @@
         max-height: 41px;
         margin-bottom: 10px;
         border: 1px solid var(--color-cart-border);
-        background-color: var(--color-body);
+        background-color: #fff;
         color: var(--color-font);
     }
 
@@ -512,7 +513,7 @@
         border: 1px solid var(--color-cart-border);
         &--active {
             background-color: var(--color-primary);
-            color: var(--color-body);
+            color: var(--color-cart-font);
             border: 1px solid var(--color-primary);
         }
     }
@@ -559,7 +560,7 @@
     // .cart__input
 
     &__input {
-        background: var(--color-body);
+        background: #fff;
         border: 1px solid var(--color-cart-border);
         border-radius: 0;
         padding: 12px 20px;
@@ -692,7 +693,7 @@
     &__select {
         position: relative;
         padding: 8px 20px;
-        background-color: var(--color-body);
+        background-color: #fff;
         margin-bottom: 20px;
         cursor: pointer;
         
@@ -806,7 +807,7 @@
         width: 100%;
         left: 0;
         right: 0;
-        background-color: var(--color-body);
+        background-color: #fff;
         z-index: 99;
 
         @media screen and (max-width: 768px) {
