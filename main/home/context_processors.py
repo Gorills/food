@@ -269,13 +269,14 @@ def get_hours(request):
                 time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery_fix, interval)
                 time_intervals = generate_time_intervals(start_delivery, end_delivery_fix, interval)
 
+                if time_intervals_now == []:
+                    dop_time_list = []
 
                 if count == 0 and time_intervals_now != []:
                     days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
 
                 elif count == 1:
-                    if time_intervals_now == []:
-                        dop_time_list = []
+                   
                     days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
 
                 else:
@@ -297,13 +298,12 @@ def get_hours(request):
 
             time_intervals_now = generate_now_intervals(current_time, delay, start_datetime, end_datetime_fix, interval)
             time_intervals = generate_time_intervals(start_datetime, end_datetime_fix, interval)
-
+            if time_intervals_now == []:
+                dop_time_list = []
             if count == 0 and time_intervals_now != []:
                 days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
                 
             elif count == 1:
-                if time_intervals_now == []:
-                        dop_time_list = []
                 days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
                 
             else:
