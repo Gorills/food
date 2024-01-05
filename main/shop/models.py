@@ -19,11 +19,12 @@ class ShopSetup(SingletonModel):
     )
     work_time = models.CharField(max_length=250, verbose_name='Время работы', null=True, blank=True)
 
-    start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
-    end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
+    start_delivery = models.TimeField(default="10:00", verbose_name='Время начала доставки (указывайте время с интервалом в 30 минут, значения с другими параметрами может вызвать ошибку)')
+    end_delivery = models.TimeField(default="21:00", verbose_name='Время окончания доставки (указывайте время с интервалом в 30 минут, значения с другими параметрами может вызвать ошибку)')
 
     delivery_full = models.BooleanField(default=False, verbose_name='Доставка 24/7')
-    delay = models.PositiveIntegerField(default=2, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
+    delay = models.PositiveIntegerField(default=1, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
+    interval = models.PositiveIntegerField(default=30, verbose_name='Интервалы по времени доставки в минутах')
 
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')
     info_to_order_anyway = models.BooleanField(default=False, verbose_name='Отправлять информацию о заказе в телеграм, даже если оплата не прошла')
@@ -84,9 +85,14 @@ class WorkDay(models.Model):
     )
 
     day = models.PositiveIntegerField(verbose_name='День недели', choices=DAY_CLASS, unique=True)
-    start_delivery = models.PositiveIntegerField(default=10, verbose_name='Время начала доставки')
-    end_delivery = models.PositiveIntegerField(default=21, verbose_name='Время окончания доставки')
+    start_delivery = models.TimeField(default="10:00", verbose_name='Время начала доставки', null=True, blank=True)
+    end_delivery = models.TimeField(default="21:00", verbose_name='Время окончания доставки', null=True, blank=True)
+    active = models.BooleanField(default=True, verbose_name='Рабочий день недели')
 
+  
+    class Meta:
+        verbose_name = 'Рабочий день недели'
+        verbose_name_plural = 'Рабочие дни недели'
 
 
 class PickupAreas(models.Model):

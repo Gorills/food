@@ -726,51 +726,30 @@
                             
                             <div class="cart__select-error">Выберите время доставки</div>
                         </div>
-
+                        
                         
                         <div class="cart__select-drop cart__select-drop-time">
                             <div class="cart__select-drop-inner">
-                                <div class="cart__select-drop-wrap">
-                                    {% if get_hours %}
-                                    <div class="cart__select-item cart__select-item-first cart__select-item--data cart__select-item--active">Сегодня</div>
-                                    {% endif %}
+                                <div class="cart__select-drop-wrap-days">
+                                    
                                     {% for day in get_days %}
-                                    <div class="cart__select-item cart__select-item-second cart__select-item--data">{{ day }}</div>
+                                    <div data-id="{{ forloop.counter }}" class="cart__select-item cart__select-item-second cart__select-item--data">{{ day.while }}</div>
                                     {% endfor %}
                                     
                                 </div>
 
-                                <div class="cart__select-drop-wrap cart__select-drop-wrap-hours">
-                                    {% if get_hours %}
-
-                                        <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
-                                        {% for hour in get_hours %}
-                                        <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                                        {% endfor %}
-                                        
-                                    {% else %}
-
-                                        {% for hour in get_hours2 %}
-                                            <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                                        {% endfor %}
-                                
-                                    {% endif %}
-                                    
+                                {% for day in get_days %}
+                                <div id="time-{{ forloop.counter }}" class="cart__select-drop-wrap cart__select-drop-wrap-hours {% if forloop.counter == 1 %}cart__select-drop-wrap-hours--active{% endif %}">
+                                    {% for time in day.times %}
+                                    <div class="cart__select-item cart__select-item--time">{{time}}</div>
+                                    {% endfor %}
                                 </div>
+                                {% endfor %}
+
                             </div>
                         </div>
 
-                        <div class="cart__select-drop-two-hidden">
-                            {% for hour in get_hours2 %}
-                                <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="cart__select-drop-one-hidden">
-                            <div class="cart__select-item cart__select-item--time">Как можно скорее</div>
-                            {% for hour in get_hours %}
-                                <div class="cart__select-item cart__select-item--time">{{hour}}</div>
-                            {% endfor %}
-                        </div>
+                        
 
                     </div>
                     {% endif %}

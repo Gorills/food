@@ -807,9 +807,26 @@ a {
 }
 
 .cart__select-drop-wrap {
+  display: none;
+  width: 100%;
+}
+
+.cart__select-drop-wrap-days {
   width: 100%;
   max-height: 350px;
   overflow-y: scroll;
+}
+
+.cart__select-drop-wrap-hours {
+  display: none;
+  width: 100%;
+  max-height: 350px;
+  overflow-y: scroll;
+}
+
+.cart__select-drop-wrap-hours--active {
+  display: block;
+  width: 100%;
 }
 
 .cart__select-item {

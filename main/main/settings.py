@@ -233,7 +233,7 @@ TEMPLATES = [
                 'home.context_processors.pages',
                 'home.context_processors.odrer_form',
                 'home.context_processors.get_hours',
-                'home.context_processors.get_days',
+             
                 'home.context_processors.image_size_get',
                 'cart.context_processors.cart',
                 'accounts.context_processors.userprofile',

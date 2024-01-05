@@ -141,9 +141,11 @@ class WorksdayForm(forms.ModelForm):
             }),
             'start_delivery': forms.TextInput(attrs={
                 'class': 'input',
+                'type': 'time'
             }),
             'end_delivery': forms.TextInput(attrs={
                 'class': 'input',
+                 'type': 'time'
             }),
 
         }
@@ -951,15 +953,28 @@ class ShopSetupForm(forms.ModelForm):
             'work_time': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
+                
             }),
-             'start_delivery': forms.NumberInput(attrs={
+             'start_delivery': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
+                'type': 'time',
+                'step':"300"
             }),
             
-            'end_delivery': forms.NumberInput(attrs={
+            'end_delivery': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
+                'type': 'time',
+                'step':"300"
+            }),
+            'interval': forms.NumberInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+                'min': "30",
+                'max': "60",
+                'step': "30",
+                'onkeypress': 'return false'
             }),
             'delay': forms.NumberInput(attrs={
                 'class': 'input',

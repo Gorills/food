@@ -785,10 +785,29 @@
     }
     // .cart__select-drop-wrap
     &__select-drop-wrap {
+        display: none;
+        width: 100%;
+    }
+
+    // .cart__select-drop-wrap-days
+    &__select-drop-wrap-days {
         width: 100%;
         max-height: 350px;
         overflow-y: scroll;
     }
+
+    // .cart__select-drop-wrap-hours
+    &__select-drop-wrap-hours {
+        display: none;
+        width: 100%;
+        max-height: 350px;
+        overflow-y: scroll;
+        &--active {
+            display: block;
+            width: 100%;
+        }
+    }
+
     // .cart__select-item
 
     &__select-item {

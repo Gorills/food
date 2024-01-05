@@ -1,54 +1,79 @@
 from .models import Page
 from orders.forms import OrderCreateForm
-from shop.models import ShopSetup
+from shop.models import ShopSetup, WorkDay
 from django.utils import timezone
 from datetime import datetime, time
 import pytz
 from main.local_settings import TIME_ZONE
 
 def get_work_active(request):
-
-
     if not ShopSetup.objects.get().delivery_full:
 
 
         try:
             current_time = timezone.now()
-
             # Определяем временную зону для сравнения
             time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
-
             # Конвертируем текущее время в нужную временную зону
             current_time = current_time.astimezone(time_zone)
 
+            try:
+                workday = WorkDay.objects.get(day=current_time.weekday())
+                
+            except:
+                workday = None
+                
+            
+
             # Создаем объекты времени для начала и конца диапазона доставки
-            start_time = time(ShopSetup.objects.get().start_delivery, 0)  # Начало доставки в 10:00
-            end_time = time(ShopSetup.objects.get().end_delivery, 0)  # Конец доставки в 22:00
+            start_time = ShopSetup.objects.get().start_delivery  # Начало доставки в 10:00
+            end_time = ShopSetup.objects.get().end_delivery  # Конец доставки в 22:00
 
             # Создаем объекты datetime для сравнения времени
             current_datetime = datetime.combine(current_time.date(), current_time.time())
-            start_datetime = datetime.combine(current_time.date(), start_time)
-            end_datetime = datetime.combine(current_time.date(), end_time)
 
-            # Проверяем, находится ли текущее время в диапазоне доставки
-            if start_datetime <= current_datetime <= end_datetime:
-                delivery_active = True
+            if workday:
+                start_datetime = datetime.combine(current_time.date(), workday.start_delivery)
+                end_datetime = datetime.combine(current_time.date(), workday.end_delivery)
+                workday_active = workday.active
             else:
-                delivery_active = False
+                start_datetime = datetime.combine(current_time.date(), start_time)
+                end_datetime = datetime.combine(current_time.date(), end_time)
+                workday_active = True
 
-        except:
-            pass
+            
+            if start_datetime < end_datetime:
+                # Проверяем, находится ли текущее время в диапазоне доставки
+                if start_datetime <= current_datetime <= end_datetime:
+                    delivery_active = True
+                else:
+                    delivery_active = False
+
+            else:
+                if start_datetime <= current_datetime or current_datetime <= end_datetime:
+                    delivery_active = True
+                else:
+                    delivery_active = False
+
+        except Exception as e:
+            
+            delivery_active = True
+            start_time = time(int('10'), 0)
+            end_time = time(int('21'), 0)
 
     else:
         delivery_active = True
-        start_time = time(ShopSetup.objects.get().start_delivery, 0)
-        end_time = time(ShopSetup.objects.get().end_delivery, 0)
+        start_time = time(int('0'), 0)
+        end_time = time(int('0'), 0)
 
+
+    
     
     return {
         'delivery_active': delivery_active,
-        'start_time': start_time,
-        'end_time': end_time
+        'workday_active': workday_active,
+        'start_time': start_datetime.time().strftime('%H:%M'),
+        'end_time': end_datetime.time().strftime('%H:%M')
         
         }
 
@@ -64,129 +89,243 @@ def odrer_form(request):
 
 
 from datetime import datetime, timedelta
+def custom_round_time(current_time, interval):
+    current_datetime = datetime.strptime(current_time, "%H:%M")
+    minutes = current_datetime.minute
+
+    # Округление в большую сторону, если минуты не кратны интервалу
+    if minutes % interval != 0:
+        try:
+            rounded_minutes = minutes + interval - (minutes % interval)
+        except ValueError:
+            rounded_minutes = minutes
+        # Учет промежутка в час при интервале 60 минут
+        if interval == 60 and rounded_minutes == 60:
+            current_datetime += timedelta(hours=1)
+            rounded_minutes = 0
+        current_datetime = current_datetime.replace(minute=rounded_minutes % 60, hour=(current_datetime.hour + rounded_minutes // 60) % 24)
+
+    rounded_time = current_datetime.time()
+    return rounded_time
+
+
+def generate_time_intervals(start_datetime, end_datetime, interval):
+    time_list = []
+    current_time_while = start_datetime
+
+    while current_time_while < end_datetime:
+        end_time = current_time_while + timedelta(minutes=interval)
+        end_time_str = end_time.time().strftime('%H:%M')
+        if interval == 60:
+            start_time_str = current_time_while.time().strftime('%H:%M')
+            time_list.append(f'{start_time_str} - {end_time_str}')
+        else:
+            time_list.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time_str}')
+        current_time_while = end_time
+    return time_list
+
+
+def generate_now_intervals(current_time, delay, start_datetime, end_datetime, interval):
+    current_datetime = datetime.strptime(current_time.time().strftime('%H:%M'), "%H:%M").time()
+
+    if start_datetime.time() > current_datetime:
+        now_start_time = start_datetime
+    else:
+        now_start_time = datetime.combine(current_time.date(), custom_round_time(current_time.time().strftime('%H:%M'), interval))
+    
+    now_start_time += timedelta(hours=2)
+    # print(custom_round_time(current_time.time().strftime('%H:%M'), interval), now_start_time)
+
+    time_intervals_now = []
+    current_time_while = now_start_time
+
+    while current_time_while < end_datetime:
+        end_time = current_time_while + timedelta(minutes=interval)
+        end_time_str = end_time.time().strftime('%H:%M')
+        if interval == 60:
+            start_time_str = current_time_while.time().strftime('%H:%M')
+            time_intervals_now.append(f'{start_time_str} - {end_time_str}')
+        else:
+            time_intervals_now.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time_str}')
+        current_time_while = end_time
+
+    return time_intervals_now
+
+
+
+def generate_dop_intervals(start_datetime, end_datetime, interval):
+    dop_time_list = []
+    
+    if end_datetime < start_datetime:
+        dop_start_date = datetime.combine(end_datetime.date(), time(0, 0, 0)) + timedelta(days=1)
+        current_time_while = dop_start_date
+
+            
+        while current_time_while < end_datetime + timedelta(days=1):
+            end_time = current_time_while + timedelta(minutes=interval)
+            end_time_str = end_time.time().strftime('%H:%M')
+            if interval == 60:
+                start_time_str = current_time_while.time().strftime('%H:%M')
+                dop_time_list.append(f'{start_time_str} - {end_time_str}')
+            else:
+                dop_time_list.append(f"{current_time_while.time().strftime('%H:%M')} - {end_time_str}")
+            current_time_while = end_time
+        end_datetime = datetime.combine(end_datetime.date(), time(23, 59, 59))
+
+    return dop_time_list
 
 
 def get_hours(request):
 
-    try:
-        start = ShopSetup.objects.get().start_delivery
-        end = ShopSetup.objects.get().end_delivery
-        delay = ShopSetup.objects.get().delay
+    workdays = WorkDay.objects.all()
 
-        if ShopSetup.objects.get().delivery_full:
-            start = 0
-            end = 24
+    current_time = timezone.now()
+    time_zone = pytz.timezone(TIME_ZONE)
+    current_time = current_time.astimezone(time_zone)
+
+    days = {
+        0: 'Понедельник',
+        1: 'Вторник',
+        2: 'Среда',
+        3: 'Четверг',
+        4: 'Пятница',
+        5: 'Суббота',
+        6: 'Воскресенье',
+    }
+
+    months = {
+        1: 'Января',
+        2: 'Февраля',
+        3: 'Марта',
+        4: 'Апреля',
+        5: 'Мая',
+        6: 'Июня',
+        7: 'Июля',
+        8: 'Августа',
+        9: 'Сентября',
+        10: 'Октября',
+        11: 'Ноября',
+        12: 'Декабря',
+    }
+
+    
+    now_date = datetime.now()
+
+    shop_setup = ShopSetup.objects.get()
+    start = shop_setup.start_delivery
+    end = shop_setup.end_delivery
+    delay = shop_setup.delay
+    interval = shop_setup.interval
+
+    
+
+    if ShopSetup.objects.get().delivery_full:
+        start = time(0, 0)
+        end = time(23, 59)
+        
+
+    start_datetime = datetime.combine(datetime.today(), start)
+    end_datetime = datetime.combine(datetime.today(), end)
+
+    # Добавляем задержку, если она есть
+    if ShopSetup.objects.get().delivery_full:
+        start_datetime += timedelta(hours=0)
+    else:
+        start_datetime += timedelta(hours=delay)
+
+    
+
+    count = 0
+    days = []
+     
+
+    while count < 6:
+        mod_date = now_date + timedelta(days=count)
+
+        day_count_now = mod_date.weekday()
+        day_now = mod_date.day
+        month_now = mod_date.month  
+
+
+        try:
+            workday = WorkDay.objects.get(day=day_count_now)
+        except:
+            workday = None
+        
+        if workday:
+
+            if workday.active:
+                start_delivery = datetime.combine(datetime.today(), workday.start_delivery)
+                end_delivery = datetime.combine(datetime.today(), workday.end_delivery)
+                
+                
+
+                if end_delivery < start_delivery:        
+                    end_delivery_fix = datetime.combine(end_datetime.date(), time(23, 59, 59))
+                else:
+                    end_delivery_fix = end_delivery
+
+                start_delivery += timedelta(hours=delay)
+                time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery_fix, interval)
+                time_intervals = generate_time_intervals(start_delivery, end_delivery_fix, interval)
+
+
+                if count == 0:
+                    days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
+
+                elif count == 1:
+                    days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+
+                else:
+                    days.append({'while':f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                
+                dop_time_list = generate_dop_intervals(start_delivery, end_delivery, interval)
+
+            else:
+                dop_time_list = []
+
+            # print(day_count_now)
+        else:
+
             
+            if end_datetime < start_datetime:        
+                end_datetime_fix = datetime.combine(end_datetime.date(), time(23, 59, 59))
+            else:
+                end_datetime_fix = end_datetime
 
-    except:
-        start = 10
-        end = 22
-        delay = 2
-    
-    # Определяем задержку времени до доставки
-    get_hour = int((datetime.now()+timedelta(hours=delay)).time().hour)
+            time_intervals_now = generate_now_intervals(current_time, delay, start_datetime, end_datetime_fix, interval)
+            time_intervals = generate_time_intervals(start_datetime, end_datetime_fix, interval)
 
-    hour_now = datetime.now().hour
-    
+            if count == 0:
+                days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
+                
+            elif count == 1:
+                days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                
+            else:
+                days.append({'while':f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
 
-    hour_list = []
+            dop_time_list = generate_dop_intervals(start_datetime, end_datetime, interval)
 
-    list_attach = []
-    for i in range(end):
-        if i >= start and i <= end:
-            list_attach.append(i)
-    list_attach.append(end)
+        count += 1
 
-    if hour_now in list_attach:
-        for l in list_attach:
-            item = str(l+delay) + ':00-' + str(l+delay) + ':30'
-            item_two = str(l+delay) + ':30-' + str(l+delay+1) + ':00'
-
-            if l >= hour_now and l <= end-delay-1:
-                hour_list.append(item)
-                hour_list.append(item_two)
-
-    
+    # print(days)
 
 
-    if hour_now < min(list_attach) and hour_now >= 0:
-        hour_list = []
-        count_two = 0
-        for i in range(end):
-            item = str(count_two+delay) + ':00-' + str(count_two+delay) + ':30'
-            item_two = str(count_two+delay) + ':30-' + str(count_two+delay+1) + ':00'
-
-            if count_two >= start and count_two + delay +1 <= end:
-                hour_list.append(item)
-                hour_list.append(item_two)
-            count_two += 1
-
-
-
-    hour_list_two = []
-    count_two = 0
-    for i in range(end):
-        item = str(count_two+delay) + ':00-' + str(count_two+delay) + ':30'
-        item_two = str(count_two+delay) + ':30-' + str(count_two+delay+1) + ':00'
-
-        if count_two >= start and count_two + delay +1 <= end:
-            hour_list_two.append(item)
-            hour_list_two.append(item_two)
-        count_two += 1
 
     try:
         get_sec = int((datetime.now() - datetime.strptime(request.session["code_date"], '%Y-%m-%d %H:%M:%S.%f')).total_seconds())
     except:
         get_sec = ''
-    
+
     return {
-        'get_hours': hour_list,
-        'get_hours2': hour_list_two,
+        'current_time': current_time,
+        'get_days': days,
         'get_sec': get_sec
     }
 
 
-def get_days(request):
-    day_list = []
-    count = 1
-    get_day = datetime.now()
-    for i in range(10):
-        get_day = datetime.now() + timedelta(days=count)
-        get_month = get_day.strftime("%b")
-        if get_month == 'Nov':
-            month = 'ноября'
-        if get_month == 'Dec':
-            month = 'декабря'
-        if get_month == 'Jan':
-            month = 'января'
-        if get_month == 'Feb':
-            month = 'февраля'
-        if get_month == 'Mar':
-            month = 'марта'
-        if get_month == 'Apr':
-            month = 'апреля'
-        if get_month == 'May':
-            month = 'мая'
-        if get_month == 'Jun':
-            month = 'июня'
-        if get_month == 'Jul':
-            month = 'июля'
-        if get_month == 'Aug':
-            month = 'августа'
-        if get_month == 'Sep':
-            month = 'сентября'
-        if get_month == 'Oct':
-            month = 'октября'
-        if count == 1:
-            day_str = 'Завтра, ' + str(get_day.day) + ' ' + month
-        else:
-            day_str = str(get_day.day) + ' ' + month
-        
-        day_list.append(day_str)
 
-        count += 1
-    
-    return {'get_days': day_list}
 
 
 def image_size_get(request):

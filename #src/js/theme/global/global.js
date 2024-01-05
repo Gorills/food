@@ -1244,7 +1244,21 @@ $(document).ready(function(){
     
 
     $(document).on('click','.cart__select-item--data',function(){
+
+        var id = $(this).attr('data-id');
+        console.log(id)
+
+        $('.cart__select-drop-wrap-hours').removeClass('cart__select-drop-wrap-hours--active')
+
+        $('#time-'+id).addClass('cart__select-drop-wrap-hours--active')
+
+
+
+        $('.cart__select-item--time').removeClass('cart__select-item--active')
         $('.cart__select-item--data').removeClass('cart__select-item--active')
+        $('#id_datetime').val('')
+        $('#time').html('')
+
         $(this).addClass('cart__select-item--active')
 
         if ($(this).hasClass('cart__select-item-first')) {
@@ -1256,7 +1270,7 @@ $(document).ready(function(){
 
         var getDay = $(this).html()
         $('#data').html(getDay)
-        $('#data').attr('data-value', '1')
+        $('#data').attr('data-value', '0')
         var dataExit = 0
 
         $(".cart__select-item--time").each(function() {

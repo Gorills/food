@@ -35,18 +35,22 @@
 </div>
 {% endif %} {% endcomment %}
 
-
-{% if delivery_active == False %}
+{{current_time}}
+{% if delivery_active == False or workday_active == False %}
 <div class="delivery-popup">
     <div class="delivery-popup__overlay"></div>
 
     <div class="delivery-popup__inner">
         <h3 class="delivery-popup__title">Уважаемый клиент!</h3>
 
+        {% if workday_active %}
         <p class="delivery-popup__text">Мы закрыты до <span>{{ start_time }}</span>. Вы можете оставить предварительный заказ. Он автоматически попадёт в очередь (на кухню)
 
         </p>
-
+        {% else %}
+        <p class="delivery-popup__text">Сегодня у нас выходной, но вы можете оставить предварительный заказ на ближайшую рабочую дату. Он автоматически попадёт в очередь (на кухню)
+        </p>
+        {% endif %}
         <a href="#" class="delivery-popup__btn">Ok</a>
     </div>
 

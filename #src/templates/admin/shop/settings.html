@@ -120,6 +120,9 @@
                     <div class="page__item-name">{{ day.get_day_display }}</div>
                     <div class="page__item-name">{{ day.start_delivery }}</div>
                     <div class="page__item-name">{{ day.end_delivery }}</div>
+
+                    <div class="page__item-name">{% if day.active %}Рабочий{% else %}Выходной{% endif %}</div>
+
                     
                     <div class="page__item-row">
                         <a href="{% url 'edit_worksday' day.id %}" class="edit">
