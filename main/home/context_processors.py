@@ -319,7 +319,7 @@ def get_hours(request):
         get_sec = ''
 
     return {
-        'current_time': current_time,
+        
         'get_days': days,
         'get_sec': get_sec
     }
