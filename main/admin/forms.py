@@ -959,6 +959,7 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
                 'type': 'time',
+                'step': "1"
                 
             }),
             
@@ -966,6 +967,7 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
                 'type': 'time',
+                'step': "1"
                 
             }),
             'interval': forms.NumberInput(attrs={
