@@ -107,7 +107,11 @@ class Cart(object):
 
         
         if not get_delivery_sum:
-            self.get_delivery_sum = price_delivery
+            if get_d == 1:
+                self.get_delivery_sum = price_delivery
+            else:
+                self.get_delivery_sum = 0
+            
             
         else:
             self.get_delivery_sum = get_delivery_sum
@@ -666,10 +670,6 @@ class Cart(object):
                 
                 res = Decimal(self.get_delivery_sum)
 
-            
-
-        
-        
         if delivery_integrations:
             
             # Если есть скидка на доставку в Delivery, то берем ее (Процент скидки на доставку (компенсация за доставку))
