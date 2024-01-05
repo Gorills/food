@@ -133,7 +133,7 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
     else:
         now_start_time = datetime.combine(current_time.date(), custom_round_time(current_time.time().strftime('%H:%M'), interval))
     
-    now_start_time += timedelta(hours=2)
+    # now_start_time += timedelta(hours=1)
     # print(custom_round_time(current_time.time().strftime('%H:%M'), interval), now_start_time)
 
     time_intervals_now = []
