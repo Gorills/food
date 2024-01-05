@@ -107,9 +107,7 @@ class Cart(object):
 
         
         if not get_delivery_sum:
-            
-            
-            self.get_delivery_sum = 0
+            self.get_delivery_sum = price_delivery
             
         else:
             self.get_delivery_sum = get_delivery_sum
