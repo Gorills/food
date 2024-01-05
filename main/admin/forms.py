@@ -959,14 +959,14 @@ class ShopSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
                 'type': 'time',
-                'step':"300"
+                
             }),
             
             'end_delivery': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
                 'type': 'time',
-                'step':"300"
+                
             }),
             'interval': forms.NumberInput(attrs={
                 'class': 'input',
