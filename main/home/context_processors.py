@@ -274,6 +274,8 @@ def get_hours(request):
                     days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
 
                 elif count == 1:
+                    if time_intervals_now == []:
+                        dop_time_list = []
                     days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
 
                 else:
@@ -300,6 +302,8 @@ def get_hours(request):
                 days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
                 
             elif count == 1:
+                if time_intervals_now == []:
+                        dop_time_list = []
                 days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
                 
             else:
