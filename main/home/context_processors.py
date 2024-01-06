@@ -7,16 +7,14 @@ import pytz
 from main.local_settings import TIME_ZONE
 
 def get_work_active(request):
+    current_time = timezone.now()
+    # Определяем временную зону для сравнения
+    time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
+    # Конвертируем текущее время в нужную временную зону
+    current_time = current_time.astimezone(time_zone)
+
     if not ShopSetup.objects.get().delivery_full:
-
-
         try:
-            current_time = timezone.now()
-            # Определяем временную зону для сравнения
-            time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
-            # Конвертируем текущее время в нужную временную зону
-            current_time = current_time.astimezone(time_zone)
-
             try:
                 workday = WorkDay.objects.get(day=current_time.weekday())
                 
