@@ -62,11 +62,17 @@ def get_work_active(request):
             end_time = time(int('21'), 0)
             workday_active = True
 
+            start_datetime = datetime.combine(current_time.date(), start_time)
+            end_datetime = datetime.combine(current_time.date(), end_time)
+
     else:
         delivery_active = True
         start_time = time(int('0'), 0)
         end_time = time(int('0'), 0)
         workday_active = True
+
+        start_datetime = datetime.combine(current_time.date(), start_time)
+        end_datetime = datetime.combine(current_time.date(), end_time)
 
     
     
