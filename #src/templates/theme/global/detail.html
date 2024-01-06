@@ -733,7 +733,7 @@
                                 <div class="cart__select-drop-wrap-days">
                                     
                                     {% for day in get_days %}
-                                    <div data-id="{{ forloop.counter }}" class="cart__select-item cart__select-item-second cart__select-item--data">{{ day.while }}</div>
+                                    <div data-id="{{ forloop.counter }}" class="cart__select-item {% if forloop.counter == 1 %}cart__select-item--data cart__select-item--active{% endif %} cart__select-item-second cart__select-item--data">{{ day.while }}</div>
                                     {% endfor %}
                                     
                                 </div>
