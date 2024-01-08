@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PlaceImages, Slider, SliderSetup
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -15,7 +15,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -3137,3 +3137,63 @@ def delete_ingridients(request, pk):
     ingridient = Ingridients.objects.get(id=pk)
     ingridient.delete()
     return redirect('admin_food_constructor')
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delivery_time_price(request):
+
+    context = {
+        'delivery_times': DeliveryTimePrice.objects.all()
+    }
+
+    return render(request, 'shop/delivery_time_price/delivery_time_price.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_delivery_time_price(request):
+
+    if request.method == 'POST':
+        form = DeliveryTimePriceForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('delivery_time_price')
+        else:
+            return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', {'form': form})
+
+    form = DeliveryTimePriceForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_delivery_time_price(request, pk):
+
+    delivery_time_price = DeliveryTimePrice.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = DeliveryTimePriceForm(request.POST, request.FILES, instance=delivery_time_price)
+        if form.is_valid():
+            form.save()
+            return redirect('delivery_time_price')
+        else:
+            return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', {'form': form})
+
+    form = DeliveryTimePriceForm(instance=delivery_time_price)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_delivery_time_price(request, pk):
+    delivery_time_price = DeliveryTimePrice.objects.get(id=pk)
+    delivery_time_price.delete()
+    return redirect('delivery_time_price')

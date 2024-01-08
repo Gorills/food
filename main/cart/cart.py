@@ -1,12 +1,16 @@
 from decimal import Decimal
 from django.conf import settings
-from shop.models import Category, Combo, ComboItem, Product, Product, ProductOption, ShopSetup, ConstructorCategory, Ingridients, FoodConstructor
+from shop.models import Category, Combo, ComboItem, Product, Product, ProductOption, ShopSetup, ConstructorCategory, Ingridients, FoodConstructor, DeliveryTimePrice
 from coupons.models import Coupon
 from accounts.models import LoyaltyCardSettings, LoyaltyCard, UserProfile
 import decimal
 from delivery.models import Delivery
 import math
-import json
+
+from django.utils import timezone
+from datetime import datetime, time
+import pytz
+from main.local_settings import TIME_ZONE
 
 try: 
     delivery_integrations = Delivery.objects.filter(active=True).first()
@@ -33,6 +37,31 @@ except:
     price_delivery = 0
     free_delivery = 0
     min_delivery = 0
+
+
+def delivery_time_price():
+    current_time = timezone.now()
+    time_zone = pytz.timezone(TIME_ZONE)
+    current_time = current_time.astimezone(time_zone)
+    current_datetime = datetime.combine(current_time.date(), current_time.time())
+
+    delivery_time_prices = DeliveryTimePrice.objects.all()
+
+    try:
+        price_delivery = ShopSetup.objects.get().price_delivery
+    except:
+        price_delivery = 0
+
+    
+    for dtp in delivery_time_prices:
+        start_datetime = datetime.combine(current_time.date(), dtp.start_delivery)
+        end_datetime = datetime.combine(current_time.date(), dtp.end_delivery)
+        if start_datetime <= current_datetime <= end_datetime:
+            price_delivery = dtp.price_delivery
+
+
+    return price_delivery
+
 
 class Cart(object):
 
@@ -108,7 +137,7 @@ class Cart(object):
         
         if not get_delivery_sum:
             if get_d == 1:
-                self.get_delivery_sum = price_delivery
+                self.get_delivery_sum = delivery_time_price()
             else:
                 self.get_delivery_sum = 0
             

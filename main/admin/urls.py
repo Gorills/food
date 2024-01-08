@@ -123,6 +123,12 @@ urlpatterns = [
     path('add_worksday/', views.add_worksday, name='add_worksday'),
     path('edit_worksday/<int:pk>/', views.edit_worksday, name='edit_worksday'),
     path('delete_worksday/<int:pk>/', views.delete_worksday, name='delete_worksday'),
+
+    # delivery time prices
+    path('delivery_time_price/', views.delivery_time_price, name='delivery_time_price'),
+    path('add_delivery_time_price/', views.add_delivery_time_price, name='add_delivery_time_price'),
+    path('edit_delivery_time_price/<int:pk>/', views.edit_delivery_time_price, name='edit_delivery_time_price'),
+    path('delete_delivery_time_price/<int:pk>/', views.delete_delivery_time_price, name='delete_delivery_time_price'),
   
 
     # Комбо

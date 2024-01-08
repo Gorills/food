@@ -3,7 +3,7 @@ from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
-from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
@@ -12,6 +12,25 @@ from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
 from delivery.models import Delivery
 
+
+
+class DeliveryTimePriceForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryTimePrice
+        fields = '__all__'
+
+        widgets = {
+           
+            'start_delivery': forms.TimeInput(attrs={
+                'class': 'input',
+            }),
+            'end_delivery': forms.TimeInput(attrs={
+                'class': 'input',
+            }),
+            'price_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+        }
 
 
 class IngridientsForm(forms.ModelForm):
