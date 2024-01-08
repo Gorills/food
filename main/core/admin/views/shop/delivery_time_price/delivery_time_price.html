@@ -47,6 +47,12 @@
                 <div class="col col-2">
                     Цена
                 </div>
+                <div class="col col-2" style="text-align: center;">
+                    Бесплатно от <br> (999999, если нет)
+                </div>
+                <div class="col col-2">
+                    Минимальная сумма заказа
+                </div>
                 
               <div class="col col-5">Действие</div>
             </li>
@@ -69,6 +75,16 @@
                 <div class="col col-2" data-label="">
                     
                     {{ time.price_delivery }}
+                    
+                </div>
+                <div class="col col-2" data-label="">
+                    
+                    {{ time.free_delivery }}
+                    
+                </div>
+                <div class="col col-2" data-label="">
+                    
+                    {{ time.min_delivery }}
                     
                 </div>
                 

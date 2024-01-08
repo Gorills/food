@@ -386,7 +386,7 @@
                         {% endwith %}
                     {% endfor %}
 
-                    {% if cart.get_free != 0 %}
+                    
                     <div class="cart__delivery cart__delivery--top">
                         Сумма заказа: {{ cart.get_total_price | floatformat:"2" }}₽
                         <br>
@@ -417,9 +417,9 @@
                         Доставка: {{ cart.get_delivery | floatformat:"2" }}₽
                         <br>
                         
-                        {% if cart.get_free != '0' and cart.get_delivery != 0 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }}₽</span>){% endif %}
+                        {% if cart.get_free != '0' and cart.get_delivery != 0 and cart.get_free != 999999 %}<span>(Бесплатно от {{ cart.get_free | floatformat:"2" }}₽</span>){% endif %}
                     </div>
-                    {% endif %}
+                    
                 </div>
 
                 

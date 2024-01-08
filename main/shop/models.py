@@ -76,7 +76,9 @@ class DeliveryTimePrice(models.Model):
     start_delivery = models.TimeField(default="10:00:00", verbose_name='Время начала периода')
     end_delivery = models.TimeField(default="21:00:00", verbose_name='Время окончания периода')
     price_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость доставки', default=0)
-
+    
+    free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)
+    min_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Минимальная сумма заказа для доставки', default=0)
 
     class Meta:
         verbose_name = 'Период доставки'

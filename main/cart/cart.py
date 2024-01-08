@@ -28,15 +28,6 @@ except:
     del_zones = False
 
 
-try:
-    price_delivery = ShopSetup.objects.get().price_delivery
-    free_delivery = ShopSetup.objects.get().free_delivery
-    min_delivery = ShopSetup.objects.get().min_delivery
-    
-except:
-    price_delivery = 0
-    free_delivery = 0
-    min_delivery = 0
 
 
 def delivery_time_price():
@@ -49,8 +40,12 @@ def delivery_time_price():
 
     try:
         price_delivery = ShopSetup.objects.get().price_delivery
+        free_delivery = ShopSetup.objects.get().free_delivery
+        min_delivery = ShopSetup.objects.get().min_delivery
     except:
         price_delivery = 0
+        free_delivery = 0
+        min_delivery = 0
 
     
     for dtp in delivery_time_prices:
@@ -59,17 +54,28 @@ def delivery_time_price():
 
 
         if start_datetime < end_datetime:
-            
             if start_datetime <= current_datetime <= end_datetime:
                 price_delivery = dtp.price_delivery
+                free_delivery = dtp.free_delivery
+                min_delivery = dtp.min_delivery
 
         else:
             
             if start_datetime <= current_datetime or current_datetime <= end_datetime:
                 price_delivery = dtp.price_delivery
+                free_delivery = dtp.free_delivery
+                min_delivery = dtp.min_delivery
+                
 
 
-    return price_delivery
+    data = {
+        'price_delivery': price_delivery,
+        'free_delivery': free_delivery,
+        'min_delivery': min_delivery
+
+    }
+
+    return data
 
 
 class Cart(object):
@@ -146,7 +152,7 @@ class Cart(object):
         
         if not get_delivery_sum:
             if get_d == 1:
-                self.get_delivery_sum = delivery_time_price()
+                self.get_delivery_sum = delivery_time_price()['price_delivery']
             else:
                 self.get_delivery_sum = 0
             
@@ -165,7 +171,7 @@ class Cart(object):
         # Сумма для бесплатной доставки
         self.free_delivery = request.session.get('free_delivery')
         if not self.free_delivery:
-            self.free_delivery = Decimal(free_delivery)
+            self.free_delivery = Decimal(delivery_time_price()['free_delivery'])
 
         
 
@@ -173,7 +179,7 @@ class Cart(object):
         self.min_delivery = request.session.get('min_delivery')
         if not self.min_delivery:
             
-            self.min_delivery = min_delivery    
+            self.min_delivery = delivery_time_price()['min_delivery']
         
         
 

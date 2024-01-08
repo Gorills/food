@@ -32,6 +32,12 @@ class DeliveryTimePriceForm(forms.ModelForm):
             'price_delivery': forms.NumberInput(attrs={
                 'class': 'input',
             }),
+            'free_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'min_delivery': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
         }
 
 
