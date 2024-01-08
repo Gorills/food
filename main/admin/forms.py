@@ -23,9 +23,11 @@ class DeliveryTimePriceForm(forms.ModelForm):
            
             'start_delivery': forms.TimeInput(attrs={
                 'class': 'input',
+                'type': 'time',
             }),
             'end_delivery': forms.TimeInput(attrs={
                 'class': 'input',
+                'type': 'time',
             }),
             'price_delivery': forms.NumberInput(attrs={
                 'class': 'input',

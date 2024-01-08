@@ -56,8 +56,17 @@ def delivery_time_price():
     for dtp in delivery_time_prices:
         start_datetime = datetime.combine(current_time.date(), dtp.start_delivery)
         end_datetime = datetime.combine(current_time.date(), dtp.end_delivery)
-        if start_datetime <= current_datetime <= end_datetime:
-            price_delivery = dtp.price_delivery
+
+
+        if start_datetime < end_datetime:
+            
+            if start_datetime <= current_datetime <= end_datetime:
+                price_delivery = dtp.price_delivery
+
+        else:
+            
+            if start_datetime <= current_datetime or current_datetime <= end_datetime:
+                price_delivery = dtp.price_delivery
 
 
     return price_delivery
