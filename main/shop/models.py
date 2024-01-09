@@ -181,7 +181,14 @@ class Category(models.Model):
     
 
     def all_active_products(self):
-        return self.products.filter(status=True, stock__gt=0)
+
+        products = self.products.filter(status=True, stock__gt=0)
+        childrens = Category.objects.filter(parent=self)
+        children_products = Product.objects.filter(parent__in=childrens)
+        products = products | children_products
+
+
+        return products
 
     # def get_parent_path(self, list=None):
     #     parenturl = []

@@ -69,12 +69,12 @@ def delivery_time_price():
            
 
             if start_datetime <= current_datetime <= pred_end:
-                
                 price_delivery = dtp.price_delivery
                 free_delivery = dtp.free_delivery
                 min_delivery = dtp.min_delivery
 
             elif pred_start <= current_datetime <= end_datetime:
+            
                 price_delivery = dtp.price_delivery
                 free_delivery = dtp.free_delivery
                 min_delivery = dtp.min_delivery

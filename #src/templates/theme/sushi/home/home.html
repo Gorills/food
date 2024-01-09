@@ -271,22 +271,35 @@
 
 {% if shop_setup.all_menus %}
     {% for cat in categorys %}
-        {% if cat.all_active_products.count > 0 %}
-        <div class="block gray" id="{{ cat.id }}">
-            <div class="container">
-                <div class="block__inner">
-                    <div class="block__justify">
-                        <h2 class="title">{{ cat.name }}</h2>
-                        
+   
+        {% if not cat.parent %}
 
+           
+
+            {% if cat.all_active_products.count > 0 %}
+
+            
+                <div class="block gray" id="{{ cat.id }}">
+                    <div class="container">
+                        <div class="block__inner">
+                            <div class="block__justify">
+                                <h2 class="title">{{ cat.name }}</h2>
+                                
+
+                            </div>
+                            {% include 'components/product_list.html' with category=cat slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
+
+                            
+                        </div>
                     </div>
-                    {% include 'components/product_list.html' with category=cat slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
-
-                    
                 </div>
-            </div>
-        </div>
+
+            {% endif %}
+
+        
+        
         {% endif %}
+
     {% endfor %}
 {% else %}
 
