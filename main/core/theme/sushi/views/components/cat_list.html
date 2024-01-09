@@ -8,7 +8,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -34,7 +34,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -60,7 +60,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -86,7 +86,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -112,7 +112,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -138,7 +138,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
@@ -163,7 +163,7 @@
 
             {% for cat in home_cats %}
                 
-                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
                     <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
 
                     {% if cat.image %}
