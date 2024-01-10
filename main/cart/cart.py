@@ -931,7 +931,7 @@ class Cart(object):
         else:
             result = 0
 
-        return result
+        return Decimal(result).quantize(Decimal("1"))
 
     def get_discount_on_pickup_persent(self):
         if self.get_d == 0:
