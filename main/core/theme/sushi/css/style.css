@@ -5318,6 +5318,7 @@ td.product-thumbnail img {
   display: flex;
   max-height: 100vh;
   height: 550px;
+  max-width: 750px;
   background-color: #fff;
   color: #222;
   position: relative;

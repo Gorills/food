@@ -48,7 +48,7 @@
             
             
         </div>
-        <a href="#" class="btn btn--primary product-list__constructor">Собрать</a>
+        <a href="#" class="btn btn--primary product-list__constructor">{{ constructor.btn_text }}</a>
 
 
         <div class="constructor-popup" data-id="{{ constructor.id }}" data-price="{{ constructor.price | floatformat:0 }}">
@@ -114,7 +114,7 @@
                                         <p class="constructor-popup__checkbox-desc">{{ category.description }}</p>
                                         {% endif %}
                                     </div>
-                                    <div class="constructor-popup__checkbox-row">
+                                    <div class="constructor-popup__checkbox-row" data-min="{{ category.minimum }}" data-max="{{ category.maximum }}">
                                         {% for ingridient in category.ingridients.all %}
 
                                         <div class="constructor-popup__checkbox-item" data-id="{{ ingridient.id }}" data-noingridient="{% for no in ingridient.not_ingridient.all %}{% if forloop.last %}{{ no.id }}{% else %}{{ no.id }},{% endif %}{% endfor %}" data-saveprice="{{ ingridient.price | floatformat:0 }}" data-price="{{ ingridient.price | floatformat:0 }}" data-min="{{ ingridient.parent.minimum }}" data-max="{{ ingridient.parent.maximum }}">
@@ -126,9 +126,10 @@
                                             <img src="{{ ingridient.get_thumb_mini }}" alt="" class="constructor-popup__checkbox-img">
 
                                             <p class="constructor-popup__checkbox-item-title">{{ ingridient.name }}</p>
-
+                                            
+                                            {% if ingridient.price != 0 %}
                                             <p class="constructor-popup__checkbox-price"><span class="constructor-popup__replace-price">{{ ingridient.price | floatformat:0 }}</span> ₽</p>
-
+                                            {% endif %}
 
                                         </div>
                                         {% endfor %}

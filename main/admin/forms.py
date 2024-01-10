@@ -117,6 +117,12 @@ class FoodConstructorForm(forms.ModelForm):
             'weight': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'btn_text': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
             'parent': forms.Select(attrs={
                 'class': 'input',
             }),

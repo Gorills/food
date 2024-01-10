@@ -2647,6 +2647,43 @@ function replaceImg(context) {
     }
 }
 
+function checkMinIngred(context) {
+    var minIngr = context.attr('data-min');
+    var items = context.find('.constructor-popup__checkbox-item');
+
+    var items_count = context.find('.constructor-popup__checkbox-item--active').length;
+
+    console.log(items_count)
+
+    count = 0
+
+    items.each(function() {
+        var max = $(this).data('max');
+
+        var active = $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item--active').length;
+        
+
+
+        if (active >= max) {
+            $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').not(".constructor-popup__checkbox-item--active").addClass('deactivate')
+
+        } else {
+            
+            $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').removeClass('deactivate')
+        }
+        
+        if (count < minIngr) {
+            if($(this).hasClass('deactivate') || $(this).hasClass('deactivate-ingredient')) {
+                return
+            } else {
+                $(this).addClass('constructor-popup__checkbox-item--active')
+                count += 1
+            }
+            
+        }
+    })
+
+}
 
 
 
@@ -2798,6 +2835,14 @@ $(document).on('click','.product-list__constructor',function(e){
     
     replaceDesc($(this));
     findNoIngr($(this).next('.constructor-popup'))
+    
+
+
+    var checkboxes = $(this).next('.constructor-popup').find('.constructor-popup__checkbox-row');
+    checkboxes.each(function() {
+        checkMinIngred($(this))
+    })
+
     countPrice($(this).next('.constructor-popup').find('.constructor-popup__inner'))
 
 })
@@ -2867,22 +2912,15 @@ $(document).on('click','.constructor-popup__checkbox-item',function(){
     } else {
         $(this).toggleClass('constructor-popup__checkbox-item--active');
     }
-    
-    var min = $(this).data('min');
-    var max = $(this).data('max');
 
-    var active = $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item--active').length;
-    
-
-
-    if (active >= max) {
-        $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').not(".constructor-popup__checkbox-item--active").addClass('deactivate')
-
-    } else {
+    var checkboxes = $(this).closest('.constructor-popup__checkbox-row');
+    checkboxes.each(function() {
         
-        $(this).closest('.constructor-popup__checkbox-row').find('.constructor-popup__checkbox-item').removeClass('deactivate')
-    }
+        checkMinIngred($(this))
+    })
+    
 
+    
     findNoIngr($(this))
     countPrice($(this).closest('.constructor-popup').find('.constructor-popup__inner'));
 })

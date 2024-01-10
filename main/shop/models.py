@@ -914,6 +914,7 @@ class FoodConstructor(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
     weight = models.CharField(max_length=250, verbose_name='Вес', null=True, blank=True)
     parent = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='constructors', null=True, blank=True, verbose_name='Категория')
+    btn_text = models.CharField(max_length=250, default='Собрать', verbose_name='Текст кнопки', null=True, blank=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена', default=0)
     meta_h1 = models.CharField(max_length=350, null=True, blank=True, verbose_name='Заголовок h1') 
