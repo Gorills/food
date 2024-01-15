@@ -152,7 +152,9 @@ class Cart(object):
             self.first_delivery = 0
 
         
-
+        if ShopSetup.objects.get().summ_discount:
+            self.first_delivery = 0
+        
 
         # сохранение текущего примененного купона
         self.coupon_id = self.session.get('coupon_id')
@@ -909,7 +911,10 @@ class Cart(object):
     
     def get_first_delivery_summ(self):
 
-        summ = self.get_total_price() / 100 * self.first_delivery
+        if ShopSetup.objects.get().summ_discount:
+            summ = 0
+        else:
+            summ = self.get_total_price() / 100 * self.first_delivery
 
         return summ
 

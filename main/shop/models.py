@@ -55,6 +55,7 @@ class ShopSetup(SingletonModel):
     sales_hits = models.BooleanField(default=True, verbose_name='Включить хиты продаж')
     first_delivery = models.PositiveIntegerField(default=0, verbose_name='Скидка на первый заказ')
     discount_on_pickup = models.PositiveIntegerField(default=0, verbose_name='Скидка при самовывозе')
+    summ_discount = models.BooleanField(default=False, verbose_name='Не суммировать скидки за самовывоз и первый заказ') 
 
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
 
