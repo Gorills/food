@@ -141,19 +141,7 @@ class Cart(object):
             self.active_balls = Decimal('0.00')
 
         
-        try:
-            self.first_delivery = request.session['first_delivery']
-        except:
-            self.first_delivery = 0
-            
-        # print(self.first_delivery)
-        if not self.first_delivery:
-
-            self.first_delivery = 0
-
         
-        if ShopSetup.objects.get().summ_discount:
-            self.first_delivery = 0
         
 
         # сохранение текущего примененного купона
@@ -188,7 +176,23 @@ class Cart(object):
             self.free_delivery = Decimal(delivery_time_price()['free_delivery'])
 
         
+        try:
+            self.first_delivery = request.session['first_delivery']
+        except:
+            self.first_delivery = 0
+            
+        # print(self.first_delivery)
+        if not self.first_delivery:
 
+            self.first_delivery = 0
+
+        
+        if ShopSetup.objects.get().summ_discount and self.get_d == 0:
+            self.first_delivery = 0
+
+
+
+            
         # Минимальная сумма для доставки
         self.min_delivery = request.session.get('min_delivery')
         if not self.min_delivery:
@@ -911,7 +915,7 @@ class Cart(object):
     
     def get_first_delivery_summ(self):
 
-        if ShopSetup.objects.get().summ_discount:
+        if ShopSetup.objects.get().summ_discount and self.get_d == 0:
             summ = 0
         else:
             summ = self.get_total_price() / 100 * self.first_delivery
