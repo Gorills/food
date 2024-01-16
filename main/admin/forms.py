@@ -5,13 +5,57 @@ from orders.models import Order
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
-from home.models import PlaceImages, SliderSetup, Slider, Page
+from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
 from delivery.models import Delivery
 
+
+
+class ReviewsForm(forms.ModelForm):
+    text = forms.CharField(label='Текст', required=False, widget=CKEditorUploadingWidget())
+    class Meta:
+        model = Reviews
+        fields = [
+            'name',
+            'image',
+            'text',
+            'scores',
+            'date',
+            'link',
+            'page',
+            'platform',
+            'view_home',
+            'status'
+
+        ]
+
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'text': forms.Textarea(attrs={
+                'class': 'input',
+            }),
+            'scores': forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            'date': forms.DateInput(attrs={
+                'class': 'input',
+                'type': 'date',
+            }),
+            'link': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'page': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'platform': forms.Select(attrs={
+                'class': 'input',
+            }),
+        }
 
 
 class DeliveryTimePriceForm(forms.ModelForm):

@@ -7,7 +7,7 @@ from accounts.models import LoyaltyCardSettings
 from orders.models import Order
 from shop.models import Category, Manufacturer, ProductSale, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
-from .models import SliderSetup, Slider, Page, PlaceImages
+from .models import SliderSetup, Slider, Page, PlaceImages, Reviews
 from blog.models import BlogSetup, Post
 from setup.models import ThemeSettings
 from django.http import JsonResponse
@@ -335,6 +335,7 @@ def home(request):
         'hit_products': hit_products,
         'order_get': order_get,
         'get_domain': get_subdomain(request),
+        'reviews': Reviews.objects.filter(view_home=True),
     }
     
     return render(request, 'home/home.html', context)

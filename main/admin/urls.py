@@ -68,6 +68,13 @@ urlpatterns = [
     path('loyalty_card_status_delete/<int:pk>/', views.loyalty_card_status_delete, name='loyalty_card_status_delete'),
 
 
+    # reviews
+    path('admin_reviews/', views.admin_reviews, name='admin_reviews'),
+    path('add_reviews/', views.add_reviews, name='add_reviews'),
+    path('edit_reviews/<int:pk>/', views.edit_reviews, name='edit_reviews'),
+    path('delete_reviews/<int:pk>/', views.delete_reviews, name='delete_reviews'),
+
+
     # CSV UPLOAD
     path('csv_upload/', views.csv_upload, name='csv_upload'),
     

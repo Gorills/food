@@ -357,12 +357,15 @@
 {% endif %}
 
 
+{% include 'components/reviews.html' with reviews=reviews %}
+
+
 
 {% if news.count > 0 %}
 <div class="block">
     <div class="container">
         <div class="block__inner">
-            <h2 class="title">Недавиние новости</h2>
+            <h2 class="title">Недавние новости</h2>
             
 
             <div class="news">

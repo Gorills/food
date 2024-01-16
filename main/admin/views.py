@@ -6,9 +6,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
-from home.models import Page, PlaceImages, Slider, SliderSetup
+from home.models import Page, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 from integrations.models import Integrations
 from subdomains.models import Subdomain
@@ -3197,3 +3197,63 @@ def delete_delivery_time_price(request, pk):
     delivery_time_price = DeliveryTimePrice.objects.get(id=pk)
     delivery_time_price.delete()
     return redirect('delivery_time_price')
+
+
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_reviews(request):
+
+    context = {
+        'reviews': Reviews.objects.all()
+    }
+
+    return render(request, 'marketing/reviews/reviews.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_reviews(request):
+
+    if request.method == 'POST':
+        form = ReviewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_reviews')
+        else:
+            return render(request, 'marketing/reviews/add_reviews.html', {'form': form})
+
+    form = ReviewsForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/reviews/add_reviews.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_reviews(request, pk):
+
+    review = Reviews.objects.get(id=pk)
+
+    if request.method == 'POST':
+        form = ReviewsForm(request.POST, request.FILES, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_reviews')
+        else:
+            return render(request, 'marketing/reviews/add_reviews.html', {'form': form})
+
+    form = ReviewsForm(instance=review)
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/reviews/add_reviews.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_reviews(request, pk):
+    review = Reviews.objects.get(id=pk)
+    review.delete()
+    return redirect('admin_reviews')

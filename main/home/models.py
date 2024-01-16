@@ -129,7 +129,7 @@ class Page(models.Model):
     image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение')
     
     def __str__(self):
-        return self.name
+        return self.type
 
     def get_absolute_url(self):
         return reverse("page_detail", kwargs={"slug": self.type})
@@ -176,3 +176,67 @@ class PlaceImages(models.Model):
 
 #     def __str__(self):
 #         return self.name
+    
+
+import random
+class Reviews(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Имя')
+    text = models.TextField(verbose_name='Текст отзыва')
+    scores = models.PositiveIntegerField(default=0, verbose_name='Оценка')
+    date = models.DateField(verbose_name='Дата отзыва')
+    link = models.CharField(max_length=250, null=True, blank=True, verbose_name='Ссылка на отзыв (не обязательно)')
+    image = models.ImageField(upload_to='reviews', null=True, blank=True, verbose_name='Изображение (не обязательно)')
+
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='reviews', verbose_name='Страница')
+    view_home = models.BooleanField(default=True, verbose_name='Отображать на главной странице')
+    status = models.BooleanField(default=True, verbose_name='Активный')
+
+
+    REVIEW_CLASS = (
+        ('2gis', '2gis'),
+        ('yandex', 'yandex'),
+
+    )
+    platform = models.CharField(max_length=200, choices=REVIEW_CLASS, verbose_name='Тип отзыва')
+
+
+
+    bg_color = models.CharField(max_length=200, null=True, blank=True, verbose_name='Цвет')
+
+    def __str__(self):
+        return self.name
+    
+
+    def save(self, *args, **kwargs):
+        # Здесь можно добавить логику выбора цвета в зависимости от каких-то условий
+        # Например, можно использовать случайный выбор из списка цветов
+        color_list = [
+            '#FBCEB1', 
+            '#FDD9B5', 
+            '#B5B8B1', 
+            '#7FFFD4', 
+            '#78DBE2', 
+            '#E32636', 
+            '#AB274F', 
+            '#E52B50',
+            '#ffdecf',
+            '#ba7967',
+            '#5e6f64',
+            '#3f4441',
+            '#ff9a76',
+            '#679b9b',
+            '#8d93ab',
+            '#16213e',
+            '#ff847c',
+            '#99b898',
+            '#ee6f57',
+            '#836f6f',
+            '#bbd196',
+            '#ababcb',
+            
+            ]
+
+        if not self.bg_color:
+            self.bg_color = random.choice(color_list)
+
+        super().save(*args, **kwargs)

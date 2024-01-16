@@ -6,12 +6,21 @@ from datetime import datetime, time
 import pytz
 from main.local_settings import TIME_ZONE
 
+
+current_time = timezone.now()
+# Определяем временную зону для сравнения
+time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
+# Конвертируем текущее время в нужную временную зону
+current_time = current_time.astimezone(time_zone)
+
+
+# current_time = datetime.combine(current_time.date(), datetime.strptime('22:35', "%H:%M").time())
+# print(current_time)
+
+
+
 def get_work_active(request):
-    current_time = timezone.now()
-    # Определяем временную зону для сравнения
-    time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
-    # Конвертируем текущее время в нужную временную зону
-    current_time = current_time.astimezone(time_zone)
+    
 
     if not ShopSetup.objects.get().delivery_full:
         try:
@@ -133,6 +142,7 @@ def generate_time_intervals(start_datetime, end_datetime, interval):
 def generate_now_intervals(current_time, delay, start_datetime, end_datetime, interval):
     current_datetime = datetime.strptime(current_time.time().strftime('%H:%M'), "%H:%M").time()
 
+
     if start_datetime.time() > current_datetime:
         now_start_time = start_datetime
     else:
@@ -184,9 +194,6 @@ def get_hours(request):
 
     workdays = WorkDay.objects.all()
 
-    current_time = timezone.now()
-    time_zone = pytz.timezone(TIME_ZONE)
-    current_time = current_time.astimezone(time_zone)
 
     days = {
         0: 'Понедельник',
