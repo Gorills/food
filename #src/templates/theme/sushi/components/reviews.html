@@ -1,5 +1,6 @@
 
 {% load thumbnail %}
+{% load theme_static %}
 
 {% if reviews.count > 0 %}
 <div class="reviews">
@@ -10,7 +11,65 @@
             <div class="reviews__row">
 
                 {% for review in reviews %}
+                    {% if review.link %}
+                    <a href="{{ review.link }}" class="reviews__item">
+
+                        {% if review.platform == '2gis' %}
+                        <img src="{% get_static 'images/2gis.png' %}" alt="" class="reviews__platform">
+                        {% elif review.platform == 'yandex' %}
+                        <img src="{% get_static 'images/ya.png' %}" alt="" class="reviews__platform">
+                        {% endif %}
+                        
+
+                        <div class="reviews__top">
+
+
+                            {% if review.image %}
+                                {% thumbnail review.image "40x40" crop="center" as im %}
+                                    <img class="reviews__img" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                                {% endthumbnail %}
+
+                            {% else %}
+                            <div class="reviews__avatar" style="background-color: {{ review.bg_color }}">
+                                {{ review.name | slice:"0:1" | upper }}
+                            </div>
+
+
+                            {% endif %}
+
+                            <p class="reviews__name">{{ review.name }}</p>
+
+                        </div>
+                        <div class="reviews__middle">
+                            <div class="rating-result">
+                                <span {% if review.scores >= 1 %}{% if review.scores >= 1 %}class="actives"{% endif %}{% endif %}></span>	
+                                <span {% if review.scores >= 2 %}class="actives"{% endif %}></span>    
+                                <span {% if review.scores >= 3 %}class="actives"{% endif %}></span>  
+                                <span {% if review.scores >= 4 %}class="actives"{% endif %}></span>    
+                                <span {% if review.scores >= 5 %}class="actives"{% endif %}></span>
+                            </div>
+
+
+                            <p class="reviews__date">{{ review.date }}</p>
+                        </div>
+
+
+                        <div class="reviews__bottom">
+                           {{ review.text | safe }}
+                        </div>
+
+                    </a>
+                    
+                    {% else %}
                     <div class="reviews__item">
+
+                        {% if review.platform == '2gis' %}
+                        <img src="{% get_static 'images/2gis.png' %}" alt="" class="reviews__platform">
+                        {% elif review.platform == 'yandex' %}
+                        <img src="{% get_static 'images/ya.png' %}" alt="" class="reviews__platform">
+                        {% endif %}
+                        
+
                         <div class="reviews__top">
 
 
@@ -49,6 +108,9 @@
                         </div>
 
                     </div>
+                    
+                    {% endif %}
+                    
     
 
 
