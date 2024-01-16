@@ -38,11 +38,11 @@
                 <a href="" class="col col-5">
                     Имя 
                 </a>
-                <a href="" class="col col-5 sort" data-sort="{% if sort == 'valid_from' %}-valid_from{% else %}valid_from{% endif %}">
+                {% comment %} <a href="" class="col col-5 sort" data-sort="{% if sort == 'valid_from' %}-valid_from{% else %}valid_from{% endif %}">
                     Текст 
 
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"/></svg>
-                </a>
+                </a> {% endcomment %}
                 <a href="" class="col col-5 sort" data-sort="{% if sort == 'valid_to' %}-valid_to{% else %}valid_to{% endif %}">
                     Дата
 
@@ -77,7 +77,7 @@
                 </div>
                 
                 <div class="col col-5" data-label="">{{ review.name }}</div>
-                <div class="col col-5" data-label="">{{ review.text | safe }}</div>
+                {% comment %} <div class="col col-5" data-label="" style="white-space: wrap;">{{ review.text | safe }}</div> {% endcomment %}
                 <div class="col col-5" data-label="">{{ review.date }}</div>
                 <div class="col col-5" data-label="">{{ review.platform }}</div>
                 <div class="col col-5" data-label="">
