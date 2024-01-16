@@ -4102,6 +4102,7 @@ td.product-thumbnail img {
   height: 55px;
   text-align: center;
   font-size: 18px;
+  color: #222;
   -webkit-appearance: none;
   -moz-appearance: textfield;
   background: none;

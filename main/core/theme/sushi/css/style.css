@@ -5082,6 +5082,7 @@ td.product-thumbnail img {
 }
 
 .counter__input {
+  color: #222;
   outline: none;
   padding: 8px;
   width: 85px;
