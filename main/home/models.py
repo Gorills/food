@@ -100,6 +100,7 @@ class Page(models.Model):
        ('o-nas', 'О нас'),
        ('bron-stolika', 'Бронь столика'),
        ('oplata', 'Оплата'),
+       ('otzivi', 'Отзывы'),
        ('politic', 'Политика конфиденциальности'),
        ('dostavka', 'Доставка'),
        ('kontakty', 'Контакты'),

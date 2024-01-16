@@ -3,6 +3,13 @@
     margin: 0 auto;
     padding: 25px 0 15px;
     
+    // .breadcrumbs--reviews
+
+    &--reviews {
+        background-color: #fff;
+    }
+
+    // .breadcrumbs--gray
 
     &--gray {
         background-color: var(--color-body);

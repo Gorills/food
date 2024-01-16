@@ -3212,6 +3212,10 @@ a {
   padding: 25px 0 15px;
 }
 
+.breadcrumbs--reviews {
+  background-color: #fff;
+}
+
 .breadcrumbs--gray {
   background-color: var(--color-body);
 }
