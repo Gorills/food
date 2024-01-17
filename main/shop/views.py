@@ -1,5 +1,5 @@
-from django.shortcuts import get_object_or_404, render
-from .models import Category, Product, ProductChar, ProductOption, ShopSetup, OptionType
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import Category, Combo, FoodConstructor, Likes, Product, ProductChar, ProductOption, ShopSetup, OptionType
 from cart.forms import CartAddProductForm
 from django.core.paginator import Paginator
 from cart.cart import Cart
@@ -193,3 +193,60 @@ def product_detail(request, parent, slug):
         }
 
     return render(request, 'shop/product_detail.html', context)
+
+
+
+
+
+
+def set_like(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+
+        id = request.POST['id']
+        like_type = request.POST['like_type']
+        toggle = request.POST['toggle']
+
+        if like_type == 'product':
+            try:
+                product = Product.objects.get(id=id)
+                like = Likes.objects.get(product=product)
+            except:
+                like = Likes.objects.create(product=product)
+                like.save()
+        elif like_type == 'combo':
+            try:
+                combo = Combo.objects.get(id=id)
+                like = Likes.objects.get(combo=combo)
+            except:
+                like = Likes.objects.create(combo=combo)
+                like.save()
+        elif like_type == 'constructor':
+            try:
+                constructor = FoodConstructor.objects.get(id=id)
+                like = Likes.objects.get(constructor=constructor)
+            except:
+                like = Likes.objects.create(constructor=constructor)
+                like.save()
+    
+
+        
+
+        if int(toggle) == 0:
+            like.likes_count += 1
+            like.save()
+        else:
+            
+            like.likes_count -= 1
+            like.save()
+
+
+        cart.add_likes(id, like_type)
+
+
+        # print(id, like_type, toggle)
+        
+        return redirect('home')
+    
+    else:
+        return redirect('home')

@@ -3022,3 +3022,42 @@ $(document).on('click','.plus_constructor',function(e){
         })
 })
 
+
+
+
+$(document).on('submit', '.like-form', function (e) {
+
+    e.preventDefault();
+
+    var $form = $(this); // Сохраняем ссылку на форму
+
+    var toggle_value = $form.find('.like-form__toggle').val();
+    toggle_value = parseInt(toggle_value);
+    
+
+    $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        data: $form.serialize()
+    }).done(function () {
+        var count = parseInt($form.find('.like-form__count').text());
+        // Используем сохраненную ссылку на форму
+        if (toggle_value == 1) {
+            $form.find('.like-form__toggle').val(0);
+            $form.find('.like-form__btn').removeClass('like-form__btn--active');
+            count -= 1;
+
+        } else {
+            $form.find('.like-form__toggle').val(1);
+            $form.find('.like-form__btn').addClass('like-form__btn--active');
+            count += 1;
+        }
+
+        // Обновляем значение лайка
+        $form.find('.like-form__count').text(count)
+        
+
+    }).fail(function () {
+        console.log('fail');
+    });
+})

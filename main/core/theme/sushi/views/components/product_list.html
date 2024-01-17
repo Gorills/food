@@ -18,6 +18,41 @@
             >
 
         </a>
+        
+        
+
+        <form action="{% url 'set_like' %}" method="POST" class="like-form">
+            {% csrf_token %}
+            <input type="text" name="id" value="{{ constructor.id }}" hidden>
+            <input type="text" name="like_type" value="constructor" hidden>
+            <input type="text" class="like-form__toggle" name="toggle" value="{% if constructor.id in cart.constructor_likes %}1{% else %}0{% endif %}" hidden>
+            <button class="like-form__btn {% if constructor.id in cart.constructor_likes %}like-form__btn--active{% else %}{% endif %}">
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M458.4 64.3C400.6 15.7 311.3 23 256 79.3 200.7 23 111.4 15.6 53.6 64.3-21.6 127.6-10.6 230.8 43 285.5l175.4 178.7c10 10.2 23.4 15.9 37.6 15.9 14.3 0 27.6-5.6 37.6-15.8L469 285.6c53.5-54.7 64.7-157.9-10.6-221.3zm-23.6 187.5L259.4 430.5c-2.4 2.4-4.4 2.4-6.8 0L77.2 251.8c-36.5-37.2-43.9-107.6 7.3-150.7 38.9-32.7 98.9-27.8 136.5 10.5l35 35.7 35-35.7c37.8-38.5 97.8-43.2 136.5-10.6 51.1 43.1 43.5 113.9 7.3 150.8z"/></svg>
+            
+            </button>
+            
+                
+            {% for like in constructor.likes.all %}
+                {% if like.likes_count != 0 %}
+                    <div class="like-form__popup">
+                        Всего лайков:
+                        <div class="like-form__refresh">
+                            <div class="like-form__count">
+                                {{like.likes_count}}
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M458.4 64.3C400.6 15.7 311.3 23 256 79.3 200.7 23 111.4 15.6 53.6 64.3-21.6 127.6-10.6 230.8 43 285.5l175.4 178.7c10 10.2 23.4 15.9 37.6 15.9 14.3 0 27.6-5.6 37.6-15.8L469 285.6c53.5-54.7 64.7-157.9-10.6-221.3zm-23.6 187.5L259.4 430.5c-2.4 2.4-4.4 2.4-6.8 0L77.2 251.8c-36.5-37.2-43.9-107.6 7.3-150.7 38.9-32.7 98.9-27.8 136.5 10.5l35 35.7 35-35.7c37.8-38.5 97.8-43.2 136.5-10.6 51.1 43.1 43.5 113.9 7.3 150.8z"/></svg>
+            
+                    </div>
+                {% endif %}
+                
+                
+            {% endfor %}
+               
+            
+
+        </form>
         <div class="product-list__bottom">
             <h3 class="product-list__title">
                 <a href="{{ constructor.get_absolute_url }}">
@@ -219,6 +254,43 @@
                 
 
             </a>
+
+            
+
+            
+            
+
+            <form action="{% url 'set_like' %}" method="POST" class="like-form">
+                {% csrf_token %}
+                <input type="text" name="id" value="{{ product.id }}" hidden>
+                <input type="text" name="like_type" value="product" hidden>
+                <input type="text" class="like-form__toggle" name="toggle" value="{% if product.id in cart.product_likes %}1{% else %}0{% endif %}" hidden>
+                <button class="like-form__btn {% if product.id in cart.product_likes %}like-form__btn--active{% else %}{% endif %}">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M458.4 64.3C400.6 15.7 311.3 23 256 79.3 200.7 23 111.4 15.6 53.6 64.3-21.6 127.6-10.6 230.8 43 285.5l175.4 178.7c10 10.2 23.4 15.9 37.6 15.9 14.3 0 27.6-5.6 37.6-15.8L469 285.6c53.5-54.7 64.7-157.9-10.6-221.3zm-23.6 187.5L259.4 430.5c-2.4 2.4-4.4 2.4-6.8 0L77.2 251.8c-36.5-37.2-43.9-107.6 7.3-150.7 38.9-32.7 98.9-27.8 136.5 10.5l35 35.7 35-35.7c37.8-38.5 97.8-43.2 136.5-10.6 51.1 43.1 43.5 113.9 7.3 150.8z"/></svg>
+                
+                </button>
+
+                {% for like in product.likes.all %}
+                    {% if like.likes_count != 0 %}
+                        <div class="like-form__popup">
+                            Всего лайков:
+                            <div class="like-form__refresh">
+                                <div class="like-form__count">
+                                    {{like.likes_count}}
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M458.4 64.3C400.6 15.7 311.3 23 256 79.3 200.7 23 111.4 15.6 53.6 64.3-21.6 127.6-10.6 230.8 43 285.5l175.4 178.7c10 10.2 23.4 15.9 37.6 15.9 14.3 0 27.6-5.6 37.6-15.8L469 285.6c53.5-54.7 64.7-157.9-10.6-221.3zm-23.6 187.5L259.4 430.5c-2.4 2.4-4.4 2.4-6.8 0L77.2 251.8c-36.5-37.2-43.9-107.6 7.3-150.7 38.9-32.7 98.9-27.8 136.5 10.5l35 35.7 35-35.7c37.8-38.5 97.8-43.2 136.5-10.6 51.1 43.1 43.5 113.9 7.3 150.8z"/></svg>
+            
+                        </div>
+                    {% endif %}
+                    
+                    
+                {% endfor %}
+
+            </form>
+
+
 
             <div class="product-list__bottom">
                 <h3 class="product-list__title">

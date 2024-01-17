@@ -108,6 +108,7 @@ def robots_txt(request):
                 "Disallow: *?page=",
                 "Disallow: *?limit=",
                 "Disallow: *?order=",
+                "Disallow: /catalog/set_like/",
 
                 "User-Agent: Yandex",
                 "Disallow: /admin/",
@@ -125,6 +126,7 @@ def robots_txt(request):
                 "Disallow: *?page=",
                 "Disallow: *?limit=",
                 "Disallow: *?order=",
+                "Disallow: /catalog/set_like/",
                 "Clean-Param: utm_source&utm_medium&utm_campaign",
 
                 sitemap_txt

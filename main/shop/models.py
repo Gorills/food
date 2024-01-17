@@ -1039,3 +1039,18 @@ class Ingridients(models.Model):
 
         
         return res
+    
+
+
+
+class Likes(models.Model):
+    
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт', related_name='likes', null=True, blank=True)
+    combo = models.ForeignKey(Combo, on_delete=models.CASCADE, verbose_name='Комплект', related_name='likes', null=True, blank=True)
+    constructor = models.ForeignKey(FoodConstructor, on_delete=models.CASCADE, verbose_name='Конструктор', related_name='likes', null=True, blank=True)
+
+    likes_count = models.PositiveIntegerField(default=0)
+
+
+    def __str__(self):
+        return self.likes_count

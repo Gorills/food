@@ -265,6 +265,24 @@ class Cart(object):
         self.options = options
 
 
+        # Лайки для комбо, для конструктора и для товара
+        product_likes = request.session.get('product_likes')
+        if not product_likes:
+            product_likes = self.session['product_likes'] = []
+        self.product_likes = product_likes
+
+        combo_likes = request.session.get('combo_likes')
+        if not combo_likes:
+            combo_likes = self.session['combo_likes'] = []
+        self.combo_likes = combo_likes
+
+        constructor_likes = request.session.get('constructor_likes')
+        if not constructor_likes:
+            constructor_likes = self.session['constructor_likes'] = []
+        self.constructor_likes = constructor_likes
+        
+
+
         # Перебираем все ключи и ищем товары, которые были удалены 
         product_ids = self.cart.keys()
         empty = []
@@ -280,6 +298,28 @@ class Cart(object):
         for em in empty:
             product = str(em)
             self.remove(product)
+
+
+    def add_likes(self, id, like_type):
+        if like_type=='product':
+            if int(id) not in self.product_likes:
+                self.product_likes.append(int(id))
+            else:
+                self.product_likes.remove(int(id))
+
+        elif like_type=='combo':
+            if int(id) not in self.combo_likes:
+                self.combo_likes.append(int(id))
+            else:
+                self.combo_likes.remove(int(id))
+                
+        elif like_type=='constructor':
+            if int(id) not in self.constructor_likes:
+                self.constructor_likes.append(int(id))
+            else:
+                self.constructor_likes.remove(int(id))
+
+    
     
     def add_options(self, options_id, options, products, quantity, price):
         self.session['active_balls'] = '0.00'
