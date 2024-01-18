@@ -264,21 +264,34 @@ class Cart(object):
             }
         self.options = options
 
-
+        self.clear_likes()
         # Лайки для комбо, для конструктора и для товара
         product_likes = request.session.get('product_likes')
+        
         if not product_likes:
-            product_likes = self.session['product_likes'] = []
+            product_likes = self.session['product_likes'] = {
+                    '0': {
+                        '0': 0
+                    }
+                }
         self.product_likes = product_likes
 
         combo_likes = request.session.get('combo_likes')
         if not combo_likes:
-            combo_likes = self.session['combo_likes'] = []
+            combo_likes = self.session['combo_likes'] = {
+                    '0': {
+                        '0': 0
+                    }
+                }
         self.combo_likes = combo_likes
 
         constructor_likes = request.session.get('constructor_likes')
         if not constructor_likes:
-            constructor_likes = self.session['constructor_likes'] = []
+            constructor_likes = self.session['constructor_likes'] = {
+                    '0': {
+                        '0': 0
+                    }
+                }
         self.constructor_likes = constructor_likes
         
 
@@ -299,26 +312,49 @@ class Cart(object):
             product = str(em)
             self.remove(product)
 
+    def clear_likes(self):
+        """
+        Очищает лайки для комбо, конструктора и товара из сессии
+        """
+        if 'product_likes' in self.session:
+            del self.session['product_likes']
+
+        if 'combo_likes' in self.session:
+            del self.session['combo_likes']
+
+        if 'constructor_likes' in self.session:
+            del self.session['constructor_likes']
 
     def add_likes(self, id, like_type):
         id = str(id)
         if like_type=='product':
             if id not in self.product_likes:
-                self.product_likes.append(id)
+                self.product_likes[id] = {
+                    '0':0
+                }
             else:
-                self.product_likes.remove(id)
+               
+                del self.product_likes[id]
 
         elif like_type=='combo':
             if id not in self.combo_likes:
-                self.combo_likes.append(id)
+                self.combo_likes[id] = {
+                    '0':0
+                }
             else:
-                self.combo_likes.remove(id)
+              
+                del self.combo_likes[id]
                 
         elif like_type=='constructor':
             if id not in self.constructor_likes:
-                self.constructor_likes.append(id)
+                self.constructor_likes[id] = {
+                    '0':0
+                }
             else:
-                self.constructor_likes.remove(id)
+                del self.constructor_likes[id]
+
+        self.session.modified = True
+        self.save()
 
     
     
