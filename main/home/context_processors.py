@@ -14,7 +14,7 @@ time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на в
 current_time = current_time.astimezone(time_zone)
 
 
-# current_time = datetime.combine(current_time.date(), datetime.strptime('22:35', "%H:%M").time())
+# current_time = datetime.combine(current_time.date(), datetime.strptime('22:05', "%H:%M").time())
 # print(current_time)
 
 
@@ -120,13 +120,16 @@ def custom_round_time(current_time, interval):
         current_datetime = current_datetime.replace(minute=rounded_minutes % 60, hour=(current_datetime.hour + rounded_minutes // 60) % 24)
 
     rounded_time = current_datetime.time()
+
+    
+
     return rounded_time
 
 
 def generate_time_intervals(start_datetime, end_datetime, interval):
     time_list = []
     current_time_while = start_datetime
-
+    
     while current_time_while < end_datetime:
         end_time = current_time_while + timedelta(minutes=interval)
         end_time_str = end_time.time().strftime('%H:%M')
@@ -154,15 +157,38 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
     time_intervals_now = []
     current_time_while = now_start_time
 
-    while current_time_while < end_datetime:
+
+    while current_time_while <= end_datetime:
         end_time = current_time_while + timedelta(minutes=interval)
         end_time_str = end_time.time().strftime('%H:%M')
+
         if interval == 60:
             start_time_str = current_time_while.time().strftime('%H:%M')
-            time_intervals_now.append(f'{start_time_str} - {end_time_str}')
+
+            if current_time_while >= end_datetime:
+
+                print(end_time.time().strftime('%H:%M'), end_datetime.strftime('%H:%M'))
+
+                time_intervals_now.append(f'До {start_time_str}')
+            else:
+                time_intervals_now.append(f'{start_time_str} - {end_time_str}')
         else:
-            time_intervals_now.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time_str}')
+
+            start_time_str = current_time_while.time().strftime('%H:%M')
+            if current_time_while >= end_datetime:
+
+                print(end_time.time().strftime('%H:%M'), end_datetime.strftime('%H:%M'))
+
+                time_intervals_now.append(f'До {start_time_str}')
+            else:
+                time_intervals_now.append(f'{start_time_str} - {end_time_str}')
+            
+
+            # time_intervals_now.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time_str}')
+
         current_time_while = end_time
+
+        
 
     return time_intervals_now
 
@@ -290,7 +316,7 @@ def get_hours(request):
 
                 elif count == 1:
                    
-                    days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                    days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + dop_time_list + time_intervals})
 
                 else:
                     days.append({'while':f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
@@ -318,10 +344,10 @@ def get_hours(request):
                     days.append({'while':'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
                 
             elif count == 1:
-                days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                days.append({'while':f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] +  dop_time_list + time_intervals})
                 
             else:
-                days.append({'while':f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                days.append({'while':f'{day_now} {months[month_now]}', 'times': ['Как можно скорее'] + dop_time_list + time_intervals})
 
             dop_time_list = generate_dop_intervals(start_datetime, end_datetime, interval)
 
