@@ -265,6 +265,7 @@ class Cart(object):
         self.options = options
 
         self.clear_likes()
+        self.clear()
         # Лайки для комбо, для конструктора и для товара
         product_likes = request.session.get('product_likes')
         
