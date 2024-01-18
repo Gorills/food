@@ -167,7 +167,7 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
 
             if current_time_while >= end_datetime:
 
-                print(end_time.time().strftime('%H:%M'), end_datetime.strftime('%H:%M'))
+                
 
                 time_intervals_now.append(f'До {start_time_str}')
             else:
@@ -177,7 +177,7 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
             start_time_str = current_time_while.time().strftime('%H:%M')
             if current_time_while >= end_datetime:
 
-                print(end_time.time().strftime('%H:%M'), end_datetime.strftime('%H:%M'))
+                
 
                 time_intervals_now.append(f'До {start_time_str}')
             else:
