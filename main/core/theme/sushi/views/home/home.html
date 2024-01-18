@@ -238,7 +238,7 @@
                             </div>
 
 
-                            <form action="{% url 'set_like' %}" method="POST" class="like-form">
+                            {% comment %} <form action="{% url 'set_like' %}" method="POST" class="like-form">
                                 {% csrf_token %}
                                 <input type="text" name="id" value="{{ combo.id }}" hidden>
                                 <input type="text" name="like_type" value="combo" hidden>
@@ -268,7 +268,7 @@
                                 {% endfor %}
 
 
-                            </form>
+                            </form> {% endcomment %}
 
                             <div class="product-list__bottom">
                                 <h3 class="product-list__title">{{ combo.name }}</h3>

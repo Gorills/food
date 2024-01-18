@@ -21,7 +21,7 @@
         
         
 
-        <form action="{% url 'set_like' %}" method="POST" class="like-form">
+        {% comment %} <form action="{% url 'set_like' %}" method="POST" class="like-form">
             {% csrf_token %}
             <input type="text" name="id" value="{{ constructor.id }}" hidden>
             <input type="text" name="like_type" value="constructor" hidden>
@@ -52,7 +52,7 @@
                
             
 
-        </form>
+        </form> {% endcomment %}
         <div class="product-list__bottom">
             <h3 class="product-list__title">
                 <a href="{{ constructor.get_absolute_url }}">
@@ -260,7 +260,7 @@
             
             
 
-            <form action="{% url 'set_like' %}" method="POST" class="like-form">
+            {% comment %} <form action="{% url 'set_like' %}" method="POST" class="like-form">
                 {% csrf_token %}
                 <input type="text" name="id" value="{{ product.id }}" hidden>
                 <input type="text" name="like_type" value="product" hidden>
@@ -288,7 +288,7 @@
                     
                 {% endfor %}
 
-            </form>
+            </form> {% endcomment %}
 
 
 
