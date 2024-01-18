@@ -177,9 +177,11 @@ class Cart(object):
 
         
         try:
-            self.first_delivery = request.session['first_delivery']
+            first_delivery = request.session['first_delivery']
         except:
-            self.first_delivery = 0
+            first_delivery = 0
+
+        self.first_delivery = first_delivery
             
         # print(self.first_delivery)
         if not self.first_delivery:
