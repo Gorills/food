@@ -112,13 +112,15 @@ def get_status(pay_id):
     r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
     status_pay = r.json()['OrderStatus']  
 
+    telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
+    telegram_group_work = '-1001850576262'
+    
     count = 0
     while status == False and status_pay != 2:
         if status_pay == 6 or count == 48:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-            telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
-            telegram_group_work = '-1001850576262'
+            
             send_message(telegram_bot_work, telegram_group_work, message)
             break
         else:
@@ -136,8 +138,7 @@ def get_status(pay_id):
             yandex_create_order(order)
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-            telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
-            telegram_group_work = '-1001850576262'
+        
             send_message(telegram_bot_work, telegram_group_work, message)
             break
         
@@ -145,8 +146,7 @@ def get_status(pay_id):
         time.sleep(20)
 
         message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-        telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
-        telegram_group_work = '-1001850576262'
+      
         send_message(telegram_bot_work, telegram_group_work, message)
         # print(status_pay)
         # print(count)

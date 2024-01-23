@@ -20,19 +20,21 @@ try:
 except:
     theme_address = 'sushi'
 
-try:
-    sms_text = BaseSettings.objects.get().sms_text
-except:
-    sms_text = 'Ваш заказ принят в обработку'
 
-def sms_text(order_id):
+
+
+def sms_text(order_id, summ):
+
     try:
         text = BaseSettings.objects.get().sms_text
-        text = text.replace('{order}', str(order_id))
-
     except:
         text = f'Ваш заказ принят. Ему присвоен № {order_id}.'
+
+    text = text.replace('{order}', str(order_id)).replace('{summ}', str(summ))
+    
     return text
+
+
 
 try:
     telegram_bot = BaseSettings.objects.get().telegram_bot
@@ -294,7 +296,7 @@ def order_create(request):
                         pass
                         
 
-                    send_sms(sms_text(order.id), phone)
+                    send_sms(sms_text(order.id, order.summ), phone)
                     
                     # очистка корзины
                     
@@ -433,7 +435,7 @@ def order_confirm(request, pk):
 
             order_telegram(telegram_bot, telegram_group, order)
             
-            send_sms(sms_text(order.id), order.phone)
+            send_sms(sms_text(order.id, order.summ), order.phone)
 
             return redirect(f'/?order=True&id={order.id}')
 
@@ -491,7 +493,7 @@ def order_webhook(request):
 
                 order_telegram(telegram_bot, telegram_group, order)
                 yandex_create_order(order)
-                send_sms(sms_text(order.id), order.phone)
+                send_sms(sms_text(order.id, order.summ), order.phone)
 
                 if LoyaltyCardSettings.objects.get().active == True:
                     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
@@ -608,7 +610,7 @@ def order_success(request):
         order.save()
 
         # order_telegram(telegram_bot, telegram_group, order)
-        send_sms(sms_text(order.id), order.phone)
+        send_sms(sms_text(order.id, order.summ), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
 
@@ -651,7 +653,7 @@ def paykeeper_success(request):
     except:
         telegram_group = BaseSettings.objects.get().telegram_group
     
-    print(pay_id)
+    
 
     data = get_status(pay_id)
 
@@ -693,7 +695,7 @@ def paykeeper_success(request):
 
         order_telegram(telegram_bot, telegram_group, order)
         
-        send_sms(sms_text(order.id), order.phone)
+        send_sms(sms_text(order.id, order.summ), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
 
@@ -725,6 +727,6 @@ def tinkoff_success(request, pk):
     order.save()
     order_telegram(telegram_bot, telegram_group, order)
     
-    send_sms(sms_text(order.id), order.phone)
+    send_sms(sms_text(order.id, order.summ), order.phone)
     
     return redirect(f'/?order=True&id={order.id}')
