@@ -2037,7 +2037,7 @@ class SetupForm(forms.ModelForm):
             }),
             'sms_text': forms.TextInput(attrs={
                 'class': 'input',
-                'placeholder': 'Ключевые слова',
+                'placeholder': 'Текст сообщения. Например: Поступил заказ на сумму {summ}. Номер заказа {order}',
                 
             }),
             'logo_height': forms.TextInput(attrs={
