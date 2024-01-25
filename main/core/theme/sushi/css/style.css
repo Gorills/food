@@ -5642,6 +5642,7 @@ td.product-thumbnail img {
 .reviews {
   background-color: #fff;
   padding: 80px 0;
+  color: #222;
 }
 
 .reviews__row {
