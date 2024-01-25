@@ -318,8 +318,11 @@
                     <div class="container">
                         <div class="block__inner">
                             <div class="block__justify">
+                                {% if shop_setup.hide_cat_names %}
+
+                                {% else %}
                                 <h2 class="title">{{ cat.name }}</h2>
-                                
+                                {% endif %}
 
                             </div>
                             {% include 'components/product_list.html' with category=cat slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
