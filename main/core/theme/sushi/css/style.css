@@ -275,6 +275,10 @@ a {
   margin-left: 5px;
 }
 
+.mobile-show {
+  display: none !important;
+}
+
 @font-face {
   font-family: "Roboto";
   src: local("../fonts/roboto/Roboto Thin"), local("Roboto-Thin"), url("../fonts/roboto/Robotothin.woff2") format("woff2"), url("../fonts/roboto/Robotothin.woff") format("woff"), url("../fonts/roboto/Robotothin.ttf") format("truetype");
@@ -5777,6 +5781,10 @@ td.product-thumbnail img {
 @media screen and (max-width: 768px) {
   .container-fluid {
     padding: 0 15px;
+  }
+
+  .mobile-show {
+    display: block !important;
   }
 
   .cart {
