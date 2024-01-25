@@ -42,6 +42,7 @@
             bottom: 0;
             width: 100%;
             max-width: 320px;
+            overflow-y: scroll;
             justify-content: center;
             box-shadow: 0px 10px 20px 0px rgb(8 0 42 / 8%);
             transition: all .5s ease;
@@ -57,12 +58,23 @@
    
             }
             .header-bottom__dropdown-item + .header-bottom__dropdown-item {
-                margin-top: 20px;
+                margin-top: 10px;
             }
 
             .header-bottom__link {
                 color: var(--color-mobile-menu-font);
             }
+        }
+    }
+
+    // .header-bottom__list-mobile-title
+    &__list-mobile-title {
+        display: none;
+        @media screen and (max-width: 768px) {
+            display: block;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            font-weight: 700;
         }
     }
 

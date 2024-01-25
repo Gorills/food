@@ -2856,6 +2856,8 @@ a {
 .header__contacts-wrapper-inner {
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .header__contacts {
@@ -4990,6 +4992,10 @@ td.product-thumbnail img {
   width: 100%;
 }
 
+.header-bottom__list-mobile-title {
+  display: none;
+}
+
 .header-bottom__dropdown-item {
   display: inline-block;
 }
@@ -6035,6 +6041,7 @@ td.product-thumbnail img {
     bottom: 0;
     width: 100%;
     max-width: 320px;
+    overflow-y: scroll;
     justify-content: center;
     box-shadow: 0px 10px 20px 0px rgba(8, 0, 42, 0.08);
     transition: all 0.5s ease;
@@ -6049,11 +6056,18 @@ td.product-thumbnail img {
   }
 
   .header-bottom__list .header-bottom__dropdown-item + .header-bottom__dropdown-item {
-    margin-top: 20px;
+    margin-top: 10px;
   }
 
   .header-bottom__list .header-bottom__link {
     color: var(--color-mobile-menu-font);
+  }
+
+  .header-bottom__list-mobile-title {
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-weight: 700;
   }
 
   .header-bottom__dropdown-item {
@@ -6365,7 +6379,8 @@ td.product-thumbnail img {
 
   .header__work-time {
     font-size: 14px;
-    margin: 0 auto;
+    margin-right: 0;
+    margin-left: 0;
   }
 
   .header__contacts {

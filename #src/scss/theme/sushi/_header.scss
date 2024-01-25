@@ -491,7 +491,8 @@
         @media screen and (max-width:480px) {
             // display: flex;
             font-size: 14px;
-            margin: 0 auto;
+            margin-right: 0;
+            margin-left: 0;
         }
         @media screen and (max-width:390px) {
             font-size: 12px;
@@ -519,6 +520,8 @@
     &__contacts-wrapper-inner {
         display: flex;
         align-items: center;
+        width: 100%;
+        justify-content: space-between;
     }
     // .header__contacts
 

@@ -58,6 +58,7 @@ class ShopSetup(SingletonModel):
     summ_discount = models.BooleanField(default=False, verbose_name='Не суммировать скидки за самовывоз и первый заказ') 
 
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
+    hide_cat_names = models.BooleanField(default=False, verbose_name='Скрыть названия категорий')
 
     start_bonus = models.PositiveIntegerField(default=0, verbose_name='Количество бонусов при регистрации')
 
