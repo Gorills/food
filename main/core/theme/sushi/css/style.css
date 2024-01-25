@@ -6069,7 +6069,7 @@ td.product-thumbnail img {
     margin-bottom: 20px;
     margin-top: 20px;
     font-weight: 700;
-    color: #222;
+    color: var(--color-mobile-menu-font);
   }
 
   .header-bottom__dropdown-item {
