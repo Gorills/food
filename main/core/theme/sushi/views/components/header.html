@@ -319,7 +319,15 @@
             <nav class="header-bottom__inner" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
                 <ul class="header-bottom__list" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
 
-                    <div class="header-bottom__list-mobile-title mobile-show">О нас</div>
+                    {% comment %} <div class="header-bottom__list-mobile-title mobile-show">О нас</div> {% endcomment %}
+                    <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                        <a class="header-bottom__link" itemprop="url" href="{% url "home" %}">Главная</a>
+                        <meta itemprop="name" content="Главная" />
+                    </li>
+                    <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                        <a class="header-bottom__link" itemprop="url" href="{% url "catalog" %}">Меню</a>
+                        <meta itemprop="name" content="Меню" />
+                    </li>
                     {% for page in pages %}
                         {% if page.top_link == True %}
                             <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
@@ -328,7 +336,7 @@
                             </li>
                         {% endif %}
                     {% endfor %}
-                    <div class="header-bottom__list-mobile-title mobile-show">Меню</div>
+                    {% comment %} <div class="header-bottom__list-mobile-title mobile-show">Меню</div> {% endcomment %}
                     {% if combos %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
                             <a class="header-bottom__link" itemprop="url" href="{% url 'home' %}#combo">Комбо</a>

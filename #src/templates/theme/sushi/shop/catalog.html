@@ -56,9 +56,9 @@
     </div>
 
 
-
+    {% if not shop_setup.hide_cat_names %}
     {% include 'components/cat_list.html' with home_cats=categorys  %}
-
+    {% endif %}
 
 
 
