@@ -319,6 +319,37 @@
             <nav class="header-bottom__inner" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
                 <ul class="header-bottom__list" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
 
+                    {% if request.path == '/' %}
+                        {% if setup.logo_dark %}
+                            
+                            
+                                <img src="{{ setup.get_logo.url }}" 
+                                    alt="{{ setup.name }}" 
+                                    title="{{ setup.name }}" 
+                                    style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                    class="header__logo mobile-show">
+
+                            
+                        {% else %}
+                        <div class="header__logo mobile-show">{{ setup.name }}</div>
+                        {% endif %}
+                    {% else %}
+                        {% if setup.logo_dark %}
+                        <a href="{{ site }}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
+                            
+                                <img 
+                                    src="{{ setup.get_logo.url }}" 
+                                    alt="{{ setup.name }}" 
+                                    title="{{ setup.name }}" 
+                                    style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                    class="header__logo mobile-show">
+                        </a>
+                        {% else %}
+                        <a href="{% url 'home' %}" class="header__logo">{{ setup.name }}</a>
+                        {% endif %}
+                    {% endif %}
+                        <br>
+
                     {% comment %} <div class="header-bottom__list-mobile-title mobile-show">О нас</div> {% endcomment %}
                     <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
                         <a class="header-bottom__link" itemprop="url" href="{% url "home" %}">Главная</a>
