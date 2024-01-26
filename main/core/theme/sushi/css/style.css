@@ -3589,7 +3589,8 @@ a {
 
 .product-list__item {
   padding: 24px;
-  background-color: #fff;
+  background-color: var(--color-product-card);
+  color: var(--color-product-card-font);
   width: 100%;
   position: relative;
   margin-bottom: 30px;
@@ -3597,6 +3598,10 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.product-list__item .btn--primary {
+  background-color: var(--color-product-card);
 }
 
 .product-list__item:hover {
@@ -3795,11 +3800,11 @@ a {
   font-size: 18px;
   margin-bottom: 10px;
   font-weight: 700;
-  color: #222;
+  color: var(--color-product-card-font);
 }
 
 .product-list__title a {
-  color: #222;
+  color: var(--color-product-card-font);
 }
 
 .product-list .btn {
@@ -3816,9 +3821,9 @@ a {
 }
 
 .product-list__desc {
-  font-size: 14px;
+  font-size: 13px;
   min-height: 60px;
-  color: #76777b;
+  color: var(--color-product-card-font);
   line-height: 17px;
   margin-bottom: 15px;
 }
@@ -3826,7 +3831,7 @@ a {
 .product-list__prices {
   display: flex;
   justify-content: space-between;
-  color: #222;
+  color: var(--color-product-card-font);
   font-size: 18px;
   margin-bottom: 20px;
   font-weight: 500;
@@ -5653,9 +5658,9 @@ td.product-thumbnail img {
 }
 
 .reviews {
-  background-color: #fff;
+  background-color: var(--color-body);
+  color: var(--color-font);
   padding: 80px 0;
-  color: #222;
 }
 
 .reviews__row {
@@ -5666,10 +5671,10 @@ td.product-thumbnail img {
 
 .reviews__item {
   padding: 20px;
-  background-color: #f1f2f2;
+  background-color: var(--color-product-card);
+  color: var(--color-product-card-font);
   border-radius: 8px;
   position: relative;
-  color: #222;
 }
 
 .reviews__item:hover {

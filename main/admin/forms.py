@@ -1700,11 +1700,16 @@ class ColorsForm(forms.ModelForm):
             'footer_font',
             'body_bg',
             'body_font',
-            'gray',
+            
             'search_bg',
             'search_font',
             'mobile_menu_bg',
             'mobile_menu_font',
+
+            'product_card_bg',
+            'product_card_font',
+            'gray',
+
             'bg_btn',
             'border_btn',
             'color_btn',
@@ -1823,6 +1828,14 @@ class ColorsForm(forms.ModelForm):
                 'placeholder': 'Цвет шрифтов в кнопках без фона',
                 'type': 'color'
             }),
+            'product_card_bg': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'product_card_font': forms.TextInput(attrs={
+                'type': 'color'
+
+            }),
+            
         }
         labels = {
             'search_bg': 'Цвет поиска',
@@ -1837,7 +1850,10 @@ class ColorsForm(forms.ModelForm):
             'info': 'Цвет инфо',
             'header_bg': 'Цвет header',
             'header_font': 'Цвет шрифтов в header',
-
+            'product_card_bg': 'Цвет карточки товара',
+            'product_card_font': 'Цвет шрифтов в карточке',
+            'catalog_bg': 'Цвет каталога',
+            'cart_bg': 'Цвет фона корзины',
             'body_bg': 'Цвет фона сайта',
             'body_font': 'Цвет шрифтов сайта',
             'gray': 'Цвет каталогов',

@@ -218,6 +218,9 @@ class Colors(SingletonModel):
 
     gray = models.CharField(max_length=50, default='#f1f2f2')
 
+    product_card_bg = models.CharField(max_length=50, default='#ffffff')
+    product_card_font = models.CharField(max_length=50, default='#222222')
+    catalog_bg = models.CharField(max_length=50, default='#ffffff')
 
     bg_btn = models.CharField(max_length=50, default='#222222')
     border_btn = models.CharField(max_length=50, default='#222222')
@@ -230,6 +233,7 @@ class Colors(SingletonModel):
     header_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
     footer_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
     product_detail_image = models.ImageField(upload_to='images_bg', blank=True, null=True)
+    
 
 
 
