@@ -30,6 +30,11 @@
         justify-content: space-between;
         width: 100%;
         
+        .header__logo {
+            width: 100%;
+            max-width: none;
+            max-height: 80px;
+        }
 
         @media screen and (max-width: 768px) {
             position: fixed;

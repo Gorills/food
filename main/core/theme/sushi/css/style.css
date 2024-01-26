@@ -5004,6 +5004,12 @@ td.product-thumbnail img {
   width: 100%;
 }
 
+.header-bottom__list .header__logo {
+  width: 100%;
+  max-width: none;
+  max-height: 80px;
+}
+
 .header-bottom__list-mobile-title {
   display: none;
 }
