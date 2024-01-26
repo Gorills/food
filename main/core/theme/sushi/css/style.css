@@ -5008,6 +5008,7 @@ td.product-thumbnail img {
   width: 100%;
   max-width: none;
   max-height: 80px;
+  margin-bottom: 20px;
 }
 
 .header-bottom__list-mobile-title {
