@@ -139,7 +139,6 @@ a {
 }
 
 .btn--primary {
-  background: #fff;
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
 }
@@ -2610,8 +2609,8 @@ a {
 }
 
 .header__logo {
-  max-height: 60px;
-  min-height: 60px;
+  max-height: var(--logo-height);
+  min-height: var(--logo-height);
   object-fit: contain;
   margin-right: 55px;
 }
@@ -5917,7 +5916,7 @@ td.product-thumbnail img {
   .header__logo {
     margin-right: 0;
     margin-bottom: 20px;
-    max-height: 60px;
+    max-height: var(--logo-height);
   }
 
   .header__logo-wrap {
@@ -6379,8 +6378,8 @@ td.product-thumbnail img {
   }
 
   .header__logo {
-    max-height: 50px;
-    min-height: 50px;
+    max-height: var(--logo-height);
+    min-height: var(--logo-height);
     margin-bottom: 10px;
     max-width: 100%;
   }
