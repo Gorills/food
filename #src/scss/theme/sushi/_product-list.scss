@@ -52,6 +52,10 @@
 
         &:hover {
             box-shadow: 2px 6px 20px rgba(47,59,88,.15);
+
+            .product-list__thumb {
+                transform: scale(1.1);
+            }
             
             
         }
