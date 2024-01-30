@@ -114,7 +114,7 @@
             right: 0;
             z-index: 98;
             bottom: 75px;
-            background-color: #fff;
+            background-color: var(--color-body);
             text-align: center;
             justify-content: center;
             padding: 5px;
@@ -324,7 +324,7 @@
         @media screen and (max-width:480px) {
             position: fixed;
             z-index: 98;
-            background-color: #fff;
+            background-color: var(--color-body);
             bottom: 0;
             left: 0;
             right: 0;
@@ -362,6 +362,7 @@
 
     &__button {
         min-width: 234px;
+        background: none;
     }
    
 

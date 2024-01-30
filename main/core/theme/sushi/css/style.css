@@ -4615,6 +4615,7 @@ a {
 
 .product-detail__button {
   min-width: 234px;
+  background: none;
 }
 
 .product-detail__minus {
@@ -6562,7 +6563,7 @@ td.product-thumbnail img {
     right: 0;
     z-index: 98;
     bottom: 75px;
-    background-color: #fff;
+    background-color: var(--color-body);
     text-align: center;
     justify-content: center;
     padding: 5px;
@@ -6583,7 +6584,7 @@ td.product-thumbnail img {
   .product-detail .wrapper_to_count {
     position: fixed;
     z-index: 98;
-    background-color: #fff;
+    background-color: var(--color-body);
     bottom: 0;
     left: 0;
     right: 0;
