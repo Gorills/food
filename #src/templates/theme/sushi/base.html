@@ -103,7 +103,9 @@
             --color-catalog: {{ colors.catalog_bg }};
 
             --logo-height: {{ setup.logo_height }}px;
+            {% if setup.logo_width %}
             --logo-width: {{ setup.logo_width }}px;
+            {% endif %}
         }
     </style>
     {% comment %} Fonts {% endcomment %}
