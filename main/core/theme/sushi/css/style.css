@@ -5006,7 +5006,7 @@ td.product-thumbnail img {
 .header-bottom__list .header__logo {
   width: 100%;
   max-width: none;
-  max-height: 80px;
+  max-height: var(--logo-height);
   margin-bottom: 20px;
 }
 
