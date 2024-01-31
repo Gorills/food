@@ -98,7 +98,7 @@ class Cart(object):
         """
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
-
+        
 
         if not cart:
             # save an empty cart in the session
@@ -315,6 +315,9 @@ class Cart(object):
             product = str(em)
             self.remove(product)
 
+        
+        # self.combo_clear()
+
     def clear_likes(self):
         """
         Очищает лайки для комбо, конструктора и товара из сессии
@@ -530,10 +533,14 @@ class Cart(object):
         
         return combo_list
     
+
+    
     def combo_summ(self):
+
         
-        
-        return sum((Decimal(item['price']) * item['quantity']) for item in self.combos.values())
+        return sum((Decimal(str(item['price'])) * item['quantity']) for item in self.combos.values())
+      
+
 
 
     def options_summ(self):

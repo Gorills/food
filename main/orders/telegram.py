@@ -32,6 +32,7 @@ def order_telegram(telegram_bot, telegram_group, order):
 
             pr_dict = {
                 'Название': pr_name,
+                'Категория': item.product.parent.name,
                 'Количество': pr_quantity,
                 'Цена': pr_price,
                 'Итого': str(pr_summ),
@@ -80,8 +81,13 @@ def order_telegram(telegram_bot, telegram_group, order):
                 'Итого': str(pr_summ),
             })
 
-    res = re.sub(r"[#%!@*{}]", "\n", str(pr))
-    res = re.sub(r"[',]", "", res)
+    # res = re.sub(r"[#%!@*{}]", "\n", str(pr))
+    # res = re.sub(r"[',]", "", res)
+            
+    # Преобразование списка товаров в текст с переносами строк
+    res = "\n\n".join(["\n".join([f"{key}: {value}" for key, value in product.items()]) for product in pr])
+
+    
 
     if order.address_comment:
         address_comment = "\n" + "*Комментарий к адресу*: " + str(order.address_comment) 
@@ -132,14 +138,20 @@ def order_telegram(telegram_bot, telegram_group, order):
     else:
         not_pay = ""
 
+    phone = order.phone
+    phone = str(phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+     
+    
     if order.delivery_method == 'Доставка':
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
 
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(order.phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n" + "*Итого*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
     
     try:
         send_message(telegram_bot, telegram_group, message)
+        
     except Exception as e:
         # print(e)
         pass
