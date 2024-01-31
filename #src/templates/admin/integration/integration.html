@@ -93,6 +93,11 @@
                 Обновить и очистить категории товаров
                 <input type="checkbox" class="checkbox" name="clean">
             </label>
+            <br>
+            <label for="">
+                Обновить и очистить товары
+                <input type="checkbox" class="checkbox" name="product_clean">
+            </label>
             
             {% csrf_token %}
             <button class="btn-to-synch">Синхронизировать каталоги</button>

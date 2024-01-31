@@ -47,7 +47,11 @@ from pytils.translit import slugify
 from django.core.files.base import ContentFile
 from shop.models import Category, OptionImage, OptionType, Product, ProductOption
 import json
-def load_menu(clean):
+def load_menu(clean, product_clean):
+
+    if product_clean:
+        products = Product.objects.all()
+        products.delete()
 
     if clean:
         categories = Category.objects.all()
@@ -117,6 +121,7 @@ def load_menu(clean):
                 product_save.name = product_name
                 product_save.slug = product_slug
                 product_save.price = price
+                product_save.short_description=product_description
                 product_save.iiko_type = product['orderItemType']
                 product_save.save()
 

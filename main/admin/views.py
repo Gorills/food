@@ -2837,12 +2837,22 @@ def catalogs_synch(request):
     if request.method == 'POST':
 
         clean = request.POST.get('clean')
-        print(clean)
-        if clean == 'on':
-            load_menu(True)
-        else:
-            load_menu(False)
+        product_clean = request.POST.get('product_clean')
 
+        if clean == 'on':
+            status_clean = True
+        else:
+            status_clean = False
+
+        if product_clean == 'on':
+            product_status = True
+        else:
+            product_status = False
+
+
+      
+        load_menu(status_clean, product_status)
+      
         
 
         return redirect('integration')
