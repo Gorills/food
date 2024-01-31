@@ -97,6 +97,8 @@ def load_menu(clean):
             )
         i = 0
         for product in cat['items']:
+
+            
             product_name = product['name']
             product_slug = slugify(product_name)
             product_id = product['itemId']
@@ -115,7 +117,7 @@ def load_menu(clean):
                 product_save.name = product_name
                 product_save.slug = product_slug
                 product_save.price = price
-                product_save.type = product['orderItemType']
+                product_save.iiko_type = product['orderItemType']
                 product_save.save()
 
             except:
