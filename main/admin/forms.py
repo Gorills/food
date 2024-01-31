@@ -2062,6 +2062,12 @@ class SetupForm(forms.ModelForm):
             'logo_width': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'image_compression': forms.NumberInput(attrs={
+                'class': 'input',
+                'min': 1,
+                'max': 10
+
+            }),
            
            
         }
@@ -2090,6 +2096,7 @@ class SetupForm(forms.ModelForm):
             'logo_height': 'Высота логотипа (по умолчанию 60px)',
             'logo_width': 'Ширина логотипа',
             'logo_light': 'Логотип в подвале',
+            'image_compression': 'Улучшить качество изображений в Х раз',
             
             'icon_ico': 'Иконка .ico',
             'icon_png': 'Иконка .png',

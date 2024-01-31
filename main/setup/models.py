@@ -47,6 +47,7 @@ class BaseSettings(SingletonModel):
 
     logo_height = models.CharField(max_length=250, blank=True, null=True)
     logo_width = models.CharField(max_length=250, blank=True, null=True)
+    image_compression = models.PositiveIntegerField(blank=True, null=True, default=1)
     
     logo_dark = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
     icon_ico = models.FileField(upload_to=get_image_upload_path, blank=True, null=True)
@@ -67,15 +68,16 @@ class BaseSettings(SingletonModel):
         res = None
         try:
             if self.logo_height and not self.logo_width:
-                res = get_thumbnail(self.logo_dark, f'x{self.logo_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.logo_dark, f'x{int(self.logo_height)*self.image_compression}', format="WEBP", crop='center', quality=100)
             elif self.logo_width and not self.logo_height:
-                res = get_thumbnail(self.logo_dark, f'{self.logo_width}x', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.logo_dark, f'{int(self.logo_width)*self.image_compression}x', format="WEBP", crop='center', quality=100)
             elif self.logo_height and self.logo_width:
-                res = get_thumbnail(self.logo_dark, f'{self.logo_width}x{self.logo_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.logo_dark, f'{int(self.logo_width)*self.image_compression}x{int(self.logo_height)*self.image_compression}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.logo_dark, 'x60', crop='center', format="WEBP", quality=100)
 
-        except:
+        except Exception as e:
+            print(e)
             pass
 
         return res

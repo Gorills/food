@@ -4,6 +4,7 @@ from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.utils import timezone
 from admin.singleton_model import SingletonModel
+from setup.models import BaseSettings
 from subdomains.models import Subdomain
 from sorl.thumbnail import get_thumbnail
 from main.transliterate_filename import transliterate_file
@@ -66,7 +67,7 @@ class ShopSetup(SingletonModel):
     min_height = models.PositiveIntegerField(null=True, blank=True, default=193, verbose_name='Высота миниатюры')
     max_width = models.PositiveIntegerField(null=True, blank=True, default=750, verbose_name='Ширина основного изображения')
     max_height = models.PositiveIntegerField(null=True, blank=True, default=500, verbose_name='Высота основного изображения')
-
+    image_compression = models.PositiveIntegerField(blank=True, null=True, default=1, verbose_name='Качество изображений')
 
     delivery_blocked = models.BooleanField(default=False, verbose_name='Заблокировать доставку')
     delivery_blocked_text = models.TextField(null=True, blank=True, verbose_name='Текст блокировки доставки')
@@ -481,13 +482,15 @@ class Product(models.Model):
     def get_thumb_mini(self):
         res = None
         setup = ShopSetup.objects.get()
+        image_compression = setup.image_compression
+        
         try:
             if setup.min_height and not setup.min_width:
-                res = get_thumbnail(self.thumb, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             elif setup.min_width and not setup.min_height:
-                res = get_thumbnail(self.thumb, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.min_width)*image_compression}x', format="WEBP", crop='center', quality=100)
             elif setup.min_height and setup.min_width:
-                res = get_thumbnail(self.thumb, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.min_width)*image_compression}x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.thumb, '290x193', crop='center', format="WEBP", quality=100)
 
@@ -501,13 +504,14 @@ class Product(models.Model):
     def get_thumb_maxi(self):
         res = None
         setup = ShopSetup.objects.get()
+        image_compression = setup.image_compression
         try:
             if setup.max_height and not setup.max_width:
-                res = get_thumbnail(self.thumb, f'x{setup.max_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'x{int(setup.max_height)*image_compression}', format="WEBP", crop='center', quality=100)
             elif setup.max_width and not setup.max_height:
-                res = get_thumbnail(self.thumb, f'{setup.max_width}x', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.max_width)*image_compression}x', format="WEBP", crop='center', quality=100)
             elif setup.max_height and setup.max_width:
-                res = get_thumbnail(self.thumb, f'{setup.max_width}x{setup.max_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.max_width)*image_compression}x{int(setup.max_height)*image_compression}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.thumb, '750x500', crop='center', format="WEBP", quality=100)
 
@@ -844,13 +848,14 @@ class Combo(models.Model):
     def get_thumb_mini(self):
         res = None
         setup = ShopSetup.objects.get()
+        image_compression = setup.image_compression
         try:
             if setup.min_height and not setup.min_width:
-                res = get_thumbnail(self.thumb, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             elif setup.min_width and not setup.min_height:
-                res = get_thumbnail(self.thumb, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.min_width)*image_compression}x', format="WEBP", crop='center', quality=100)
             elif setup.min_height and setup.min_width:
-                res = get_thumbnail(self.thumb, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.thumb, f'{int(setup.min_width)*image_compression}x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.thumb, '290x193', crop='center', format="WEBP", quality=100)
 
@@ -930,13 +935,14 @@ class FoodConstructor(models.Model):
     def get_thumb_mini(self):
         res = None
         setup = ShopSetup.objects.get()
+        image_compression = setup.image_compression
         try:
             if setup.min_height and not setup.min_width:
-                res = get_thumbnail(self.image, f'x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.image, f'x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             elif setup.min_width and not setup.min_height:
-                res = get_thumbnail(self.image, f'{setup.min_width}x', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.image, f'{int(setup.min_width)*image_compression}x', format="WEBP", crop='center', quality=100)
             elif setup.min_height and setup.min_width:
-                res = get_thumbnail(self.image, f'{setup.min_width}x{setup.min_height}', format="WEBP", crop='center', quality=100)
+                res = get_thumbnail(self.image, f'{int(setup.min_width)*image_compression}x{int(setup.min_height)*image_compression}', format="WEBP", crop='center', quality=100)
             else:
                 res = get_thumbnail(self.image, '290x193', crop='center', format="WEBP", quality=100)
 
