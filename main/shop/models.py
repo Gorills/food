@@ -30,6 +30,7 @@ class ShopSetup(SingletonModel):
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')
     info_to_order_anyway = models.BooleanField(default=False, verbose_name='Отправлять информацию о заказе в телеграм, даже если оплата не прошла')
     zones_delivery = models.BooleanField(default=False, verbose_name='Включить зоны доставки')
+    hide_delivery_choosing = models.BooleanField(default=False, verbose_name='Скрывать выбор доставки при заходе на сайт')
 
     price_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость доставки', default=0)
     free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)

@@ -5,6 +5,8 @@
 
 {% comment %} {{ cart.min_delivery }} {% endcomment %}
 
+{% if not shop_setup.hide_delivery_choosing %}
+
 <div class="check-delivery__refresh">
     {% if request.session.delivery != 1 and request.session.delivery != 0 %}
     <div class="check-delivery">
@@ -42,7 +44,7 @@
     {% endif %}
 
 </div>
-
+{% endif %}
 
 <div class="setup-address">
 
