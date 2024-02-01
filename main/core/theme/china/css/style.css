@@ -2292,6 +2292,11 @@ a {
   color: var(--color-primary);
 }
 
+.header__contacts-phone {
+  font-weight: 700;
+  display: flex;
+}
+
 .header__contacts-btn {
   font-weight: 600;
   border: 2px solid var(--color-header-font);
