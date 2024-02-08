@@ -39,7 +39,7 @@ class Order(models.Model):
     paid = models.BooleanField(default=False)
 
     summ = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
+    sale_percent = models.PositiveIntegerField(null=True, blank=True, default=0, verbose_name="Процент скидки")
     bonuses_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     STATUS_CLASS = (

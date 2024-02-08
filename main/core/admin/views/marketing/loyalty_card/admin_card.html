@@ -73,13 +73,13 @@
             <div class="card-statuses__inner">{{ status.name }}</div>
             <div class="card-statuses__inner">{{ status.summ }}</div>
             {% if setting.status_down == True %}
-            <div class="card-statuses__inner">{{ status.percent_down }}%</div>
+            <div class="card-statuses__inner">{{ status.percent_down }}% / {{ status.percent_down_pickup }}%</div>
             {% endif %}
             {% if setting.status_up == True %}
-            <div class="card-statuses__inner">{{ status.percent_up }}%</div>
+            <div class="card-statuses__inner">{{ status.percent_up }}% </div>
             {% endif %}
             {% if setting.status_up == True %}
-            <div class="card-statuses__inner">{{ status.percent_pay }}%</div>
+            <div class="card-statuses__inner">{{ status.percent_pay }}% / {{ status.percent_pay_pickup }}%</div>
             {% endif %}
             <div class="card-statuses__inner">
                 <a href="{% url 'loyalty_card_status_edit' status.id %}" class="edit">

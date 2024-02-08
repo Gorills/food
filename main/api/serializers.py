@@ -27,3 +27,46 @@ class ShopSetupSerializer(serializers.ModelSerializer):
         model = ShopSetup
         fields = '__all__'
 
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
+class OptionImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OptionImage
+        fields = '__all__'
+
+class ProductOptionSerializer(serializers.ModelSerializer):
+    option_images = OptionImageSerializer(many=True, read_only=True)
+    class Meta:
+        model = ProductOption
+        fields = '__all__'
+
+class CharGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CharGroup
+        fields = ['name']
+
+class CharNameSerializer(serializers.ModelSerializer):
+    group = CharGroupSerializer()
+
+    class Meta:
+        model = CharName
+        fields = ['text_name', 'group']
+
+class ProductCharSerializer(serializers.ModelSerializer):
+    char_name = CharNameSerializer()
+    class Meta:
+        model = ProductChar
+        fields = '__all__'
+
+class ProductSerializer(serializers.ModelSerializer):
+    options = ProductOptionSerializer(many=True, read_only=True)
+    chars = ProductCharSerializer(many=True, read_only=True)
+    class Meta:
+        model = Product
+        fields = '__all__'

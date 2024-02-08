@@ -40,7 +40,8 @@ def create_payment(order, request):
     total = str(order.summ)
     total = total.replace('.', '')
 
-    print(total)
+    print('Скидка: ' + str(order.sale_percent))
+    print('total: ' + str(total))
 
     
     # print(items.count())
@@ -66,7 +67,7 @@ def create_payment(order, request):
 
         else:
            
-            price = item.price
+            price = item.price - (item.price / 100 * order.sale_percent)
             price = str(price)
             price = price.replace('.', '')
 
@@ -99,8 +100,8 @@ def create_payment(order, request):
         # print(item.free)
         # print('quantity')
         # print(quantity)
-        # print('Amount:')
-        # print(amount)
+        print('Amount:')
+        print(amount)
 
 
 
@@ -149,7 +150,7 @@ def create_payment(order, request):
     
 
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
-    # print(response.text)
+    print(response.text)
     res = response.json()
     
     url = res['PaymentURL']

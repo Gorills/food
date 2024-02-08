@@ -32,11 +32,23 @@ def order_telegram(telegram_bot, telegram_group, order):
 
             pr_dict = {
                 'Название': pr_name,
-                'Категория': item.product.parent.name,
                 'Количество': pr_quantity,
                 'Цена': pr_price,
                 'Итого': str(pr_summ),
             }
+            try:
+                pr_dict['Категория'] = item.product.parent.name
+            except:
+                pass
+
+            if item.product.related:
+                pr_dict['Категория'] = 'Сопутствующий товар'
+
+                
+            # Далее переместим 'Категория' после 'Название', если оно было добавлено
+            if 'Категория' in pr_dict:
+                pr_dict = {key: pr_dict[key] for key in ['Название', 'Категория', 'Количество', 'Цена', 'Итого'] if key in pr_dict}
+
             if pr_opt is not None:
                 pr_dict['Опции'] = pr_opt
 
@@ -58,6 +70,7 @@ def order_telegram(telegram_bot, telegram_group, order):
             pr.append({
                 
                 'Название':pr_name,
+                'Категория': 'Комбо',
                 'Состав':pr_sost,
                 'Количество':pr_quantity,
                 'Цена':pr_price,
@@ -75,6 +88,7 @@ def order_telegram(telegram_bot, telegram_group, order):
             pr.append({
                 
                 'Название':pr_name,
+                'Категория': 'Конструктор блюд',
                 'Состав':pr_sost,
                 'Количество':pr_quantity,
                 'Цена':pr_price,

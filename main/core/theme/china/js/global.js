@@ -519,14 +519,14 @@ $(document).on('click','.cart__order-line__balls-link',function(e){
     e.preventDefault();
     var url = $(this).attr('href')
     $.get(url, function() {
-        $(".cart__inner").load(location.href + " .cart__refresh");
+        
         
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         
-        updateMinDelivery()
+        
     });
 
    
@@ -1226,13 +1226,24 @@ $(document).ready(function(){
         // $.get( "/cart/set_delivery/1/", function() {});
     })
 
-    $(document).on('click','.cart__close, .cart__closer, #cancel',function(e){
+    $(document).on('click','.cart__close, .cart__closer',function(e){
         e.preventDefault()
 
         $('#cartData').html('')
+      
 
         // $.get( "/cart/set_delivery/1/", function() {});
         $('body').removeClass('body')
+    })
+
+    $(document).on('click','#cancel',function(e){
+        e.preventDefault()
+
+        // $('#cartData').html('')
+        $('.cart__form').css("display", "none")
+        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+        // $.get( "/cart/set_delivery/1/", function() {});
+        // $('body').removeClass('body')
     })
 
     $(document).on('click','.cart__order',function(e){

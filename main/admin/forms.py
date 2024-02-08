@@ -468,7 +468,13 @@ class LoyaltyCardStatusForm(forms.ModelForm):
             'percent_down': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'percent_down_pickup': forms.TextInput(attrs={
+                'class': 'input',
+            }),
             'percent_pay': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'percent_pay_pickup': forms.TextInput(attrs={
                 'class': 'input',
             }),
         }

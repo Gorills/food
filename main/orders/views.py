@@ -122,6 +122,11 @@ def order_create(request):
                 order.user_pr = user_pr
                 order.summ = cart.get_total_price_after_discount()
                 order.delivery_price = Decimal(cart.get_delivery())
+                try:
+                    order.sale_percent = cart.get_discount_on_pickup_persent() + cart.first_delivery
+                except:
+                    order.sale_percent = 0
+                
 
                 # Бонусы сохраняем в заказ
                 if cart.active_balls > 0:

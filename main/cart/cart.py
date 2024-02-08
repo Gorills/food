@@ -99,7 +99,7 @@ class Cart(object):
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         
-
+        
         if not cart:
             # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
@@ -234,7 +234,7 @@ class Cart(object):
                 }
             }
         self.combos = combos
-
+        # self.combo_clear()
         # Инициализируем пустой конструктор
         constructors = request.session.get('constructors')
         if not constructors:
