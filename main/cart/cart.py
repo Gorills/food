@@ -110,11 +110,21 @@ class Cart(object):
         try:
             user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
             loyalty_card = LoyaltyCard.objects.get(user=user_profile)
-            
+            loyalty_card_settings = LoyaltyCardSettings.objects.get()
 
             percent_up = loyalty_card.status().percent_up
             percent_down = loyalty_card.status().percent_down
+            percent_down_pickup = loyalty_card.status().percent_down_pickup
+
             percent_pay = loyalty_card.status().percent_pay
+            percent_pay_pickup = loyalty_card.status().percent_pay_pickup
+
+
+            balls_min_summ = loyalty_card_settings.balls_min_summ
+            exclude_combos = loyalty_card_settings.exclude_combos
+            exclude_sales = loyalty_card_settings.exclude_sales
+            remove_sale_price = loyalty_card_settings.remove_sale_price
+
             balls = loyalty_card.balls
             
 
@@ -125,13 +135,32 @@ class Cart(object):
 
             percent_up = 0
             percent_down = 0
+            percent_down_pickup = 0
             percent_pay = 0
+            percent_pay_pickup = 0
+
+            balls_min_summ = 0
+            exclude_combos = False
+            exclude_sales = False
+            remove_sale_price = False
+            
+
+
             balls = 0
 
         
         self.percent_up = percent_up
         self.percent_down = percent_down
+        self.percent_down_pickup = percent_down_pickup
+
         self.percent_pay = percent_pay
+        self.percent_pay_pickup = percent_pay_pickup
+        self.exclude_combos = exclude_combos
+        self.exclude_sales = exclude_sales
+        self.remove_sale_price = remove_sale_price
+
+        self.balls_min_summ = balls_min_summ
+
         self.balls = balls
 
 
@@ -764,6 +793,16 @@ class Cart(object):
                 free_item = (item['free'] - item['quantity']) * item['price']
 
             item['total_price'] = (item['price'] * item['quantity']) - free_item
+
+            if item['product'].old_price:
+                item['old_total_price'] = item['product'].old_price * item['quantity']
+            else:
+                item['old_total_price'] = None
+
+            remove_sale_price = self.remove_sale_price
+            if remove_sale_price and item['product'].old_price:
+                item['total_price'] = item['product'].old_price * item['quantity']
+            
             yield item
 
         
@@ -933,7 +972,12 @@ class Cart(object):
 
         total_pr = Decimal(res)
 
+
+
         return total_pr + self.combo_summ() + self.options_summ() + self.constructors_summ()
+    
+
+    
 
 
     def clear(self):
@@ -963,22 +1007,91 @@ class Cart(object):
         
 
         result = Decimal(self.balls) - Decimal(self.active_balls)
+        
 
         return result
         
+    
+    def get_personal_balls_summ(self):
+
+
+        exclude_combos = self.exclude_combos
+        exclude_sales = self.exclude_sales
+        remove_sale_price = self.remove_sale_price
         
+
+        """
+        Подсчет стоимости товаров в корзине.
+        """
+        res = Decimal('0')
+        for item in self.cart.values():
+            free_item = (Decimal(item['price']) * item['free'])
+
+    
+            if item['quantity'] < item['free']:
+                free_item = (item['free'] - item['quantity']) * Decimal(item['price'])
+            item_price = Decimal(item['price']) * item['quantity']
+            res += item_price - free_item
+
+            try:
+                old_price = item['product'].old_price
+            except:
+                old_price = None
+
+            if old_price and exclude_sales:
+                res = 0
+
+            
+
+        total_pr = Decimal(res)
+
+        total_pr = total_pr + self.options_summ() + self.constructors_summ()
+
+        if exclude_combos == False:
+            total_pr = total_pr + self.combo_summ()
+
+        return total_pr
+    
+
     
     # Активируем баллы для списания
     def get_max_balls(self):
+
+        balls_min_summ = self.balls_min_summ
+        # print(balls_min_summ)
         
-        a = self.get_total_price()
+        get_d = self.get_d
+
+        percent_down = self.percent_down
+        percent_down_pickup = self.percent_down_pickup
+
+        percent_pay = self.percent_pay
+        percent_pay_pickup = self.percent_pay_pickup
+        
+        
+        if get_d == 1:
+            persent = percent_pay
+        else:
+            persent = percent_pay_pickup
+
+        a = self.get_personal_balls_summ()
         # print(a)
-        max_bonus = (Decimal(a) / Decimal('100')) * Decimal(self.percent_pay)
+
+        total_price = self.get_total_price()
+
+
+        max_bonus = (Decimal(a) / Decimal('100')) * Decimal(persent)
+
+        # print(total_price, max_bonus)
+        if total_price - max_bonus <= balls_min_summ:
+            max_bonus = total_price - balls_min_summ
+
+            
 
         if Decimal(max_bonus) >= Decimal(self.balls):
             max_bonus = self.balls
 
-
+        print(max_bonus)
         return Decimal(max_bonus)
 
        

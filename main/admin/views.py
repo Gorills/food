@@ -744,10 +744,12 @@ def order_detail(request, pk):
 
 
 import decimal
+from sms.views import send_sms
+from setup.models import BaseSettings
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
-
+    order_prev_status = order.status
     loyalty_settings = LoyaltyCardSettings.objects.get()
 
     if request.method == 'POST':
@@ -755,36 +757,70 @@ def order_status_change(request, pk):
         if form.is_valid():
             
 
-
             if loyalty_settings.active == True:
-                status = request.POST['status']
+                status = form.cleaned_data['status']
 
+                user = order.user_pr
+                card = LoyaltyCard.objects.get(user=user)
+                user_orders = Order.objects.filter(user_pr=user)
+
+                card = LoyaltyCard.objects.get(user=user)
+
+                
+                order_count = user_orders.count()
+
+                enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
+                balls_after_first_order = loyalty_settings.balls_after_first_order
+                first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
+                send_sms_status = loyalty_settings.send_sms
+                sms_text = loyalty_settings.sms_text
+                balls_summ = 0
                 if status == 'Выполнен':
-                    user = order.user_pr
-                    card = LoyaltyCard.objects.get(user=user)
-                    # Накапливаем сумму на карту лояльности
-                    card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                    
+                    if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                        card.balls = card.balls + balls_after_first_order
+                        card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                        balls_summ = balls_after_first_order
 
-                    if loyalty_settings.status_up == True:
-                        card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
 
-                    card.save()
+                   
+                    else:
+                        if loyalty_settings.status_up == True:
+                            card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                            card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                            balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+
+
+
+                    if send_sms_status == True:
+                        try:
+                            site_name = BaseSettings.objects.get().name
+                        except:
+                            site_name = ''    
+                        
+                        if site_name:
+                            sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('{sitename}', site_name)
+                        else:
+                            sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('- {sitename}', '')
+                        phone = order.phone
+                        if balls_summ != 0:
+                            send_sms(sms_text, phone)
+                        
 
                 if status == 'Отказ':
-
                     
-                    user = order.user_pr
-                    card = LoyaltyCard.objects.get(user=user)
-                    
-                    if order.status == 'Выполнен':
-                        # Накапливаем сумму на карту лояльности
-                        card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                        
-                        if loyalty_settings.status_up == True:
-                            card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                    if order_prev_status == 'Выполнен':
+                      
+                        if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                            card.balls = card.balls - balls_after_first_order
+                            card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                        else:
+                            if loyalty_settings.status_up == True:
+                                card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                                card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
 
 
-                    card.save()
+                card.save()
 
             form.save()
 

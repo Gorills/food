@@ -42,6 +42,9 @@ class LoyaltyCardSettings(SingletonModel):
     exclude_sales = models.BooleanField(default=False, verbose_name='Исключить акционные товары')
     remove_sale_price = models.BooleanField(default=False, verbose_name='Отменить скидку у акционных товаров при применении бонусов')
 
+    enable_add_balls_after_first_order = models.BooleanField(default=False, verbose_name='Разрешить добавлять баллы только после первого заказа')
+    balls_after_first_order = models.PositiveIntegerField(default=0, verbose_name='Колличество баллов после первого заказа')
+    first_order_summ_for_add_balls = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Сумма первого заказа для начисления баллов')
 
     send_sms = models.BooleanField(default=True, verbose_name='Отправлять СМС при начислении баллов')
     sms_text = models.TextField(verbose_name='СМС текст при начислении баллов', blank=True, null=True, default='Вам начислено {balls} баллов - {sitename}')

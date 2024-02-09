@@ -239,7 +239,7 @@ def order_create(request):
 
                     # отправлять заказ в телеграм бот, даже если не прошла оплата
                     info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
-                    print(info_to_order_anyway)
+                    
                     if info_to_order_anyway:
                         order_telegram(telegram_bot, telegram_group, order)
 
@@ -252,7 +252,7 @@ def order_create(request):
                         order.payment_id = payment_id
                         order.payment_dop_info = confirmation_url
                         order.save()
-                        print(data['path'])
+                        # print(data['path'])
                         return redirect(confirmation_url)
                         
                     if pay_name == 'alfabank':

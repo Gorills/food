@@ -295,6 +295,8 @@ def set_delivery_detail(request):
 
 def set_delivery(request, value): 
     request.session['delivery'] = value
+    cart = Cart(request)
+    cart.session['active_balls'] = '0.00'
     return redirect('home')
 
 

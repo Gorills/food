@@ -323,6 +323,19 @@ a {
   color: var(--color-cart-font);
 }
 
+.cart__total-price {
+  display: flex;
+  align-items: center;
+}
+
+.cart__total-price small {
+  margin-left: 5px;
+  text-decoration: line-through;
+  color: #797979;
+  font-size: 10px;
+  line-height: 1;
+}
+
 .cart__title {
   font-size: 20px;
   font-weight: 600;

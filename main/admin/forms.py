@@ -462,6 +462,7 @@ class LoyaltyCardStatusForm(forms.ModelForm):
             'summ': forms.TextInput(attrs={
                 'class': 'input',
             }),
+           
             'percent_up': forms.TextInput(attrs={
                 'class': 'input',
             }),
@@ -490,7 +491,18 @@ class LoyaltyCardSettingsForm(forms.ModelForm):
         fields = '__all__'
         
 
-
+        widgets = {
+             'balls_min_summ': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'sms_text': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'balls_after_first_order': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            
+        }
 
 
 # Сопутствующие товары

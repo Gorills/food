@@ -73,7 +73,7 @@
                                     </a>
                                 </div>
                                 <div class="cart__bottom">
-                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }}₽</p>
+                                    <div class="cart__total-price"><p>{{ item.total_price | floatformat:"2" }}₽</p> {% if item.old_total_price and item.old_total_price != item.total_price %}<small>({{ item.old_total_price | floatformat:"2" }}₽){% endif %} </small></div>
 
                                     <div class="cart-plus-minus">
                                                             
@@ -350,7 +350,7 @@
                                     </a>
                                 </div>
                                 <div class="cart__bottom">
-                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }}₽</p>
+                                    <p class="cart__total-price">{{ item.total_price | floatformat:"2" }}₽ </p>
 
                                     <div class="cart-plus-minus">
                                                             
