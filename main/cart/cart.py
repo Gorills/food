@@ -1091,7 +1091,7 @@ class Cart(object):
         if Decimal(max_bonus) >= Decimal(self.balls):
             max_bonus = self.balls
 
-        print(max_bonus)
+        # print(max_bonus)
         return Decimal(max_bonus)
 
        
