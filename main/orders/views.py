@@ -98,7 +98,7 @@ def order_create(request):
             try:
                 pay_change = request.POST['pay_change']
             except:
-                pay_change = None
+                pay_change = Decimal(0)
             
 
             try:
