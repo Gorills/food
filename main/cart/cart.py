@@ -1052,17 +1052,17 @@ class Cart(object):
         
         options_summ = Decimal('0')
 
-        # for item in self.get_options():
+        for item in self.get_options():
             
-        #     product = item['products']
+            product = item['products']
             
-        #     options_summ += Decimal(item['price']) * item['quantity']
+            options_summ += Decimal(item['price']) * item['quantity']
             
-        #     try:
-        #         if exclude_combos and product.parent.name == 'Комбо':
-        #             options_summ -= Decimal(item['price']) * item['quantity']
-        #     except:
-        #         pass
+            try:
+                if exclude_combos and product.parent.name == 'Комбо':
+                    options_summ -= Decimal(item['price']) * item['quantity']
+            except:
+                pass
 
         
 
