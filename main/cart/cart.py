@@ -1042,14 +1042,31 @@ class Cart(object):
                 old_price = None
 
             if old_price and exclude_sales:
-                res = 0
+                res = res - item_price 
 
-            if exclude_combos and item['product'].parent.name == 'Комбо':
-                res = 0
+            try:
+                if exclude_combos and item['product'].parent.name == 'Комбо':
+                    res = res - item_price
+            except:
+                pass
+        
+        # options_summ = Decimal('0')
 
-            
+        # for item in self.options.values():
+
+        #     product = Product.objects.get(id=item['products'])
+
+        #     print(item)
+
+        #     options_summ += Decimal(item['price']) * item['quantity']
+
+        #     print(product.name)
+
+        # print(options_summ)
 
         total_pr = Decimal(res)
+
+             
 
         total_pr = total_pr + self.options_summ() + self.constructors_summ()
 
