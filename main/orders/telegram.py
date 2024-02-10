@@ -140,6 +140,11 @@ def order_telegram(telegram_bot, telegram_group, order):
     else:
         flat = ''
 
+    if order.pay_change:
+        pay_change = "\n" + "*Сдача c*: " + str(order.pay_change)
+    else:
+        pay_change = ''
+
     if order.pay_method == 'Оплата картой на сайте':
         if ShopSetup.objects.get().info_to_order_anyway == True:
             
@@ -158,10 +163,10 @@ def order_telegram(telegram_bot, telegram_group, order):
     
     if order.delivery_method == 'Доставка':
         
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
 
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
     
     try:
         send_message(telegram_bot, telegram_group, message)

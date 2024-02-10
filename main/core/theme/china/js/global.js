@@ -1331,7 +1331,18 @@ $(document).ready(function(){
         $('.cart__select-item--card').removeClass('cart__select-item--active')
         $(this).addClass('cart__select-item--active')
         
+
+
         var getPay = $(this).text()
+
+        if (getPay.toLowerCase().includes("наличными")) {
+            $('#pay_change').show()
+        } else {
+            $('#pay_change').hide()
+        }
+
+
+
 
         $('#pay').text(getPay)
 

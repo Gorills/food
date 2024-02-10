@@ -1164,6 +1164,10 @@ a {
   cursor: pointer;
 }
 
+#pay_change {
+  display: none;
+}
+
 .error {
   width: 100%;
   padding: 80px 0;

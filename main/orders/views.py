@@ -95,6 +95,11 @@ def order_create(request):
             pay_method = request.POST['pay_method']
             phone = request.POST['phone']
             name = request.POST['name']
+            try:
+                pay_change = request.POST['pay_change']
+            except:
+                pay_change = None
+            
 
             try:
                 domofon = request.POST['door_code']
@@ -121,6 +126,7 @@ def order_create(request):
 
                 order.user_pr = user_pr
                 order.summ = cart.get_total_price_after_discount()
+                order.pay_change = pay_change
                 order.delivery_price = Decimal(cart.get_delivery())
                 try:
                     order.sale_percent = cart.get_discount_on_pickup_persent() + cart.first_delivery
