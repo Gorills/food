@@ -1335,11 +1335,11 @@ $(document).ready(function(){
 
         var getPay = $(this).text()
 
-        if (getPay.toLowerCase().includes("наличными")) {
-            $('#pay_change').show()
-        } else {
-            $('#pay_change').hide()
-        }
+        // if (getPay.toLowerCase().includes("наличными")) {
+        //     $('#pay_change').show()
+        // } else {
+        //     $('#pay_change').hide()
+        // }
 
 
 
