@@ -1025,9 +1025,12 @@ class Cart(object):
         """
         res = Decimal('0')
         for item in self.cart.values():
+
             free_item = (Decimal(item['price']) * item['free'])
 
-    
+
+            
+
             if item['quantity'] < item['free']:
                 free_item = (item['free'] - item['quantity']) * Decimal(item['price'])
             item_price = Decimal(item['price']) * item['quantity']
@@ -1039,6 +1042,9 @@ class Cart(object):
                 old_price = None
 
             if old_price and exclude_sales:
+                res = 0
+
+            if exclude_combos and item['product'].parent.name == 'Комбо':
                 res = 0
 
             
