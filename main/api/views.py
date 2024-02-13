@@ -59,11 +59,17 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+    
+
     def perform_update(self, serializer):
         # Вызываем вашу стороннюю функцию для обработки данных
 
         order_id = self.kwargs['pk']
-        self.process_data(order_id, self.request.POST)
+        
+
+        if not getattr(self, 'reverted_status_actions_done', False):
+            self.process_data(order_id, self.request.POST)
+            setattr(self, 'reverted_status_actions_done', True)
 
         # Продолжаем обновление объекта Order
         serializer.save()
@@ -90,15 +96,16 @@ class OrderViewSet(viewsets.ModelViewSet):
         balls_summ = 0
         if status == 'Выполнен':
             
-            if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                card.balls = card.balls + balls_after_first_order
-                card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
-                balls_summ = balls_after_first_order
+            if loyalty_settings.status_up == True:
+                if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                    card.balls = card.balls + balls_after_first_order
+                    card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                    balls_summ = balls_after_first_order
 
 
-            
-            else:
-                if loyalty_settings.status_up == True:
+                
+                else:
+                
                     card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
                     card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
                     balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
@@ -119,25 +126,24 @@ class OrderViewSet(viewsets.ModelViewSet):
                 if balls_summ != 0:
                     send_sms(sms_text, phone)
                 
-
+        
         if status == 'Отказ':
             
             if order_prev_status == 'Выполнен':
-                
-                if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                    card.balls = card.balls - balls_after_first_order
-                    card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                else:
-                    if loyalty_settings.status_up == True:
+
+                if loyalty_settings.status_up == True:
+
+                    if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                        card.balls = card.balls - balls_after_first_order
+                        card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                    else:
+                        
                         card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
                         card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
 
 
         card.save()
 
-
-        
-        pass
 
 class BaseSettingsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
