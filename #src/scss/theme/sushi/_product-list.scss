@@ -322,6 +322,14 @@
         padding: 20px 0 0 0;
     }
 
+    .option_setup {
+        svg {
+            path {
+                fill: var(--color-product-card-font);
+            }
+        }
+    }
+
     // .product-list__title
 
     &__title {

@@ -1,8 +1,9 @@
-from rest_framework import viewsets
+from decimal import Decimal, ROUND_DOWN
+from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import BaseSettingsSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
+from .serializers import BaseSettingsSerializer, ComboSerializer, FoodConstructorSerializer, OrderSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
@@ -11,10 +12,9 @@ from home.models import SliderSetup, Slider, Page
 from orders.models import Order, OrderItem
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper, Tinkoff
 from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
-from shop.models import ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
+from shop.models import FoodConstructor, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
 from shop.models import WorkDay
 from subdomains.models import Subdomain
-
 
 
 from django.db.models import Sum
@@ -26,17 +26,119 @@ from rest_framework.decorators import api_view, permission_classes
 
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+
+
+
+# !!! All users !!!
+
+class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Product.objects.filter(related=False, status=True)
     serializer_class = ProductSerializer
 
 
-# Create your views here.
+class ComboViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Combo.objects.all()
+    serializer_class = ComboSerializer
+
+
+class FoodConstructorSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = FoodConstructor.objects.all()
+    serializer_class = FoodConstructorSerializer
+
+
+# !!! Is admin !!! 
+from sms.views import send_sms
+class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def perform_update(self, serializer):
+        # Вызываем вашу стороннюю функцию для обработки данных
+
+        order_id = self.kwargs['pk']
+        self.process_data(order_id, self.request.POST)
+
+        # Продолжаем обновление объекта Order
+        serializer.save()
+
+    def process_data(self, order_id, post_data):
+
+        order = Order.objects.get(id=order_id)
+        order_prev_status = order.status
+        loyalty_settings = LoyaltyCardSettings.objects.get()
+        
+        user = order.user_pr
+        card = LoyaltyCard.objects.get(user=user)
+        user_orders = Order.objects.filter(user_pr=user)
+
+        order_count = user_orders.count()
+
+        status = post_data['status']
+
+        enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
+        balls_after_first_order = loyalty_settings.balls_after_first_order
+        first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
+        send_sms_status = loyalty_settings.send_sms
+        sms_text = loyalty_settings.sms_text
+        balls_summ = 0
+        if status == 'Выполнен':
+            
+            if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                card.balls = card.balls + balls_after_first_order
+                card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                balls_summ = balls_after_first_order
+
+
+            
+            else:
+                if loyalty_settings.status_up == True:
+                    card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                    card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
+                    balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
+
+
+
+            if send_sms_status == True:
+                try:
+                    site_name = BaseSettings.objects.get().name
+                except:
+                    site_name = ''    
+                
+                if site_name:
+                    sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('{sitename}', site_name)
+                else:
+                    sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('- {sitename}', '')
+                phone = order.phone
+                if balls_summ != 0:
+                    send_sms(sms_text, phone)
+                
+
+        if status == 'Отказ':
+            
+            if order_prev_status == 'Выполнен':
+                
+                if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                    card.balls = card.balls - balls_after_first_order
+                    card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                else:
+                    if loyalty_settings.status_up == True:
+                        card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                        card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), ROUND_DOWN) 
+
+
+        card.save()
+
+
+        
+        pass
+
 class BaseSettingsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -57,8 +159,8 @@ class ShopSetupViewSet(viewsets.ModelViewSet):
 def get_statistic(request):
     
     products = Product.objects.all().count()
-    orders = Order.objects.all().count()
-    sales = Order.objects.all().aggregate(Sum('summ'))
+    orders = Order.objects.filter(status='Выполнен').count()
+    sales = Order.objects.filter(status='Выполнен').aggregate(Sum('summ'))
 
     summ_res = sales['summ__sum']
 
@@ -88,111 +190,3 @@ def get_statistic(request):
 
 
 
-from datetime import datetime, timedelta
-
-
-def get_month_mame(month):
-    if month == 'Nov':
-        month = 'ноября'
-    if month == 'Dec':
-        month = 'декабря'
-    if month == 'Jan':
-        month = 'января'
-    if month == 'Feb':
-        month = 'февраля'
-    if month == 'Mar':
-        month = 'марта'
-    if month == 'Apr':
-        month = 'апреля'
-    if month == 'May':
-        month = 'мая'
-    if month == 'Jun':
-        month = 'июня'
-    if month == 'Jul':
-        month = 'июля'
-    if month == 'Aug':
-        month = 'августа'
-    if month == 'Sep':
-        month = 'сентября'
-    if month == 'Oct':
-        month = 'октября'
-    
-    return month
-
-
-@api_view(['GET'])
-def get_works_time(request):
-    work_days = WorkDay.objects.all().order_by('day')
-
-    # день недели
-    current_day = datetime.now().weekday()
-    # Число сегодня
-    day_month = datetime.now().day
-    
-    # Час сейчас
-    time_now = datetime.now().hour
-    
-    # Задержка на оформление заказа
-    delay = ShopSetup.objects.get().delay
-    delivery_full = ShopSetup.objects.get().delivery_full
-    
-    current_day = 4
-    if work_days:
-        res = {}
-        count = 0
-        for work_day in work_days:
-            get_day = datetime.now() + timedelta(days=count)
-            
-            get_month = get_day.strftime("%b")
-            month = get_month_mame(get_month)
-            
-            
-            if work_day.day >= current_day:
-                count += 1
-
-                time_intervals = []
-
-                if current_day == work_day.day:
-                    day_name = 'Сегодня'
-                    time_interval_two = f"Как можно скорее"
-                    time_intervals.append(time_interval_two)
-                elif current_day + 1 == work_day.day:
-                    day_name = f'Завтра, {get_day.day} {month}'
-                else:
-                    day_name = f'{get_day.day}'
-
-
-                if delivery_full:
-                    start_delivery = 0
-                    end_delivery = 23
-                else:
-                    start_delivery = int(work_day.start_delivery)
-                    end_delivery = int(work_day.end_delivery)
-                
-                while start_delivery < end_delivery:
-                    
-                    if current_day == work_day.day:
-
-                        if start_delivery > time_now:
-                            time_interval_two = f"{start_delivery:02d}:00-{start_delivery + 1:02d}:00"
-                            time_intervals.append(time_interval_two)
-                            start_delivery += 1
-                        else:
-                            start_delivery += 1
-
-
-                    else:
-                        time_interval_two = f"{start_delivery:02d}:00-{start_delivery + 1:02d}:00"
-                        time_intervals.append(time_interval_two)
-                        start_delivery += 1
-
-                if delivery_full:
-                    time_interval_two = f"23:00-00:00"
-                    time_intervals.append(time_interval_two)
-                    start_delivery += 1
-
-                res[day_name] = time_intervals
-
-        return Response(res)
-    else:
-        return Response({"error": "No work days found"}, status=400)

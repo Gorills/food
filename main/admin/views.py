@@ -31,6 +31,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import user_passes_test
 
 from django.db.models import Sum
+import decimal
+from sms.views import send_sms
+
 
 
 # Сессия с хранением состояния сайдбара в админке
@@ -743,9 +746,7 @@ def order_detail(request, pk):
     return render(request, 'order/order_detail.html', context)
 
 
-import decimal
-from sms.views import send_sms
-from setup.models import BaseSettings
+
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)

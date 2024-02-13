@@ -1181,6 +1181,7 @@ a {
   font-size: 26px;
   margin-bottom: 40px;
   text-align: center;
+  color: #222;
 }
 
 .login label {
@@ -3824,6 +3825,10 @@ a {
 
 .product-list__bottom {
   padding: 20px 0 0 0;
+}
+
+.product-list .option_setup svg path {
+  fill: var(--color-product-card-font);
 }
 
 .product-list__title {

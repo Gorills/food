@@ -193,6 +193,8 @@ class Category(models.Model):
 
 
         return products
+    
+    
 
     # def get_parent_path(self, list=None):
     #     parenturl = []
