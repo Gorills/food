@@ -18,6 +18,9 @@ class BaseSettings(SingletonModel):
     sms_pilot_apikey = models.CharField(blank=True, null=True, max_length=350)
     sms_text = models.CharField(blank=True, null=True, max_length=350)
 
+    order_done_title = models.CharField(max_length=350, blank=True, null=True, default="Заказ успешно оформлен!")
+    order_done_text = models.TextField(blank=True, null=True, default="Мы свяжемся с Вами в ближайшее время.")
+
     copy_year = models.CharField(max_length=350, blank=True, null=True)
     copy = models.CharField(max_length=350, blank=True, null=True)
     city = models.CharField(max_length=350, blank=True, null=True)
@@ -28,6 +31,7 @@ class BaseSettings(SingletonModel):
     telegram = models.CharField(max_length=350, blank=True, null=True)
     viber = models.CharField(max_length=350, blank=True, null=True)
     ok = models.CharField(max_length=350, blank=True, null=True)
+    
         
     meta_title = models.CharField(max_length=350, blank=True, null=True)
     meta_description = models.TextField(blank=True, null=True)

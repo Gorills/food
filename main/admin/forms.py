@@ -2074,6 +2074,14 @@ class SetupForm(forms.ModelForm):
                 'placeholder': 'Текст сообщения. Например: Поступил заказ на сумму {summ}. Номер заказа {order}',
                 
             }),
+            'order_done_title': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Заголовок',
+            }),
+            'order_done_text': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Текст',
+            }),
             'logo_height': forms.TextInput(attrs={
                 'class': 'input',
             }),
@@ -2098,6 +2106,10 @@ class SetupForm(forms.ModelForm):
             'telegram_group': 'Группа в телеграм',
             'sms_pilot_apikey': 'API ключ от smspilot.ru',
             'sms_text': 'Текст сообщения при оформлении заказа (Зарегистрируйте шаблон на сайте https://smspilot.ru/. Сообщение будет отправляться только после регистрации шаблона. В тексте сообщения используйте {order}, для указания номера заказа, {summ} для указания суммы)',
+            
+            'order_done_title': 'Заголовок в сообщении об оформлении заказа',
+            'order_done_text': 'Текст в сообщении об оформлении заказа',
+            
             'copy_year': 'Год копирайта',
             'copy': 'Копирайт',
             'city': 'Город',
