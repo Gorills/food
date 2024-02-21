@@ -206,45 +206,13 @@ def home(request):
     # cart.combo_clear()
 
 
-    try:
-        setup = BaseSettings.objects.get()
-        shop_setup = ShopSetup.objects.get()
-        blog_setup = BlogSetup.objects.get()
-        email = EmailSettings.objects.get()
-        theme = ThemeSettings.objects.get()
-        colors = Colors.objects.get()
-    except:
-        setup = BaseSettings()
-        shop_setup = ShopSetup()
-        blog_setup = BlogSetup()
-        email = EmailSettings()
-        theme = ThemeSettings()
-        colors = Colors()
-        colors.save()
-        theme.save()
-        email.save()
-        setup.save()
-        shop_setup.save()
-        blog_setup.save()
+
 
 
     order_get = request.GET.getlist('order')
     home_cats = Category.objects.filter(home=True).order_by('sort_order')
 
-    try:
-        slider_setup = SliderSetup.objects.get()
-    except:
-        slider_setup = SliderSetup.objects.create()
 
-    try:
-        loyal = LoyaltyCardSettings.objects.get()
-    except:
-        loyal = LoyaltyCardSettings.objects.create()
-
-    try:
-        shop_setup = ShopSetup.objects.get()
-    except:
-        shop_setup = ShopSetup.objects.create()
 
     sliders = Slider.objects.filter(day__in=[7, current_day]).order_by('order')
 
@@ -322,7 +290,7 @@ def home(request):
     
 
     # print(order_object)
-
+    slider_setup = SliderSetup.objects.get()
 
     context = {
         'current_day': current_day,
@@ -330,7 +298,7 @@ def home(request):
         'home_cats': home_cats,
         'slider_setup': slider_setup,
         'sliders': sliders,
-        'shop_setup': shop_setup,
+        
         'new_products': new_products,
         'sale_products': sale_products,
         'news': news,

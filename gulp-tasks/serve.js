@@ -29,6 +29,17 @@ gulp.task("serve", () => {
     gulp.watch(paths.chinaimages.watch, gulp.parallel("chinaimages"));
     gulp.watch(paths.chinafonts.watch, gulp.parallel("chinafonts"));
 
+    gulp.watch(paths.fast_views.watch, gulp.parallel("fast_views"));
+    gulp.watch(paths.global_fast_views.watch, gulp.parallel("global_fast_views"));
+    gulp.watch(paths.fast_js.watch, gulp.parallel("fast_js"));
+    gulp.watch(paths.fast_styles.watch, gulp.parallel("fast_styles"));
+    gulp.watch(paths.fast_change_fonts.watch, gulp.parallel("fast_change_fonts"));
+    gulp.watch(paths.fast_scripts.watch, gulp.parallel("fast_scripts"));
+    gulp.watch(paths.fast_sprites.watch, gulp.parallel("fast_sprites"));
+    gulp.watch(paths.fast_images.watch, gulp.parallel("fast_images"));
+    gulp.watch(paths.fast_fonts.watch, gulp.parallel("fast_fonts"));
+
+
     gulp.watch(paths.sushi_views.watch, gulp.parallel("sushi_views"));
     gulp.watch(paths.global_sushi_views.watch, gulp.parallel("global_sushi_views"));
     gulp.watch(paths.sushi_js.watch, gulp.parallel("sushi_js"));

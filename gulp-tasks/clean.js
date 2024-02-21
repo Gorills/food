@@ -7,7 +7,8 @@ gulp.task("clean", () => {
     return del([
         "./main/core/theme/default/*",
         "./main/core/theme/china/*",
-        "./main/core/theme/sushi/*"
+        "./main/core/theme/sushi/*",
+        "./main/core/theme/fast_theme/*"
     
     ]);
 });

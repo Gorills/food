@@ -1,0 +1,88 @@
+<div class="sort">
+    <div class="sort__item">
+        <div class="sort__title">
+            {% if sort %}
+                {% for s in sort %}
+                    {% if s == 'name' %}
+                    Название (А - Я)
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif s == '-name' %}
+                    Название (Я - А)
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif s == '-new' %}
+                    Сначала новинки
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif s == '-sales' %}
+                    Сначала популярные
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif s == 'price' %}
+                    Цена (низкая &gt; высокая)
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif s == '-price' %}
+                    Цена (высокая &gt; низкая)
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% endif %}
+            
+                {% endfor %}
+            {% else %}
+            По умолчанию  
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+            {% endif %}
+        </div>
+        <div class="sort__options">
+            <div class="sort__option" data-url="?sort=-sales{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">Сначала популярные</div>
+            <div class="sort__option" data-url="?sort=-new{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}" >Сначала новинки</div>
+            <div class="sort__option" data-url="?sort=name{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">Название (А - Я)</div>
+            <div class="sort__option" data-url="?sort=-name{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">Название (Я - А)</div>
+            <div class="sort__option" data-url="?sort=price{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">Цена (низкая &gt; высокая)</div>
+            <div class="sort__option" data-url="?sort=-price{% for key,value in request.GET.items %}{% ifnotequal key 'sort' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">Цена (высокая &gt; низкая)</div>                                                                            
+        </div>
+
+    </div>
+
+    <div class="sort__limit">
+        {% if products.end_index > 0 %}
+        <div class="d-none d-md-block">
+            <p>Показано с {{ products.start_index }} по {{ products.end_index }} из
+                {{ products.paginator.count}} (всего {{ products.paginator.num_pages}} страниц)</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="sort__item">
+        {% comment %} <p>Товаров на странице:</p> {% endcomment %}
+        <div class="sort__title">
+            {% if limit %}
+                {% for l in limit %}
+                    {% if l == '16' %}
+                    16
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif l == '32' %}
+                    32
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif l == '64' %}
+                    64
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% elif l == '128' %}
+                    128
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+                    {% endif %}
+                
+                {% endfor %}
+            {% else %}
+            16
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"/></svg>
+            {% endif %}
+
+
+        </div>
+        <div class="sort__options">
+            <div class="sort__option" data-url="?limit=16{% for key,value in request.GET.items %}{% ifnotequal key 'limit' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">16</div>
+            <div class="sort__option" data-url="?limit=32{% for key,value in request.GET.items %}{% ifnotequal key 'limit' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">32</div>
+            <div class="sort__option" data-url="?limit=64{% for key,value in request.GET.items %}{% ifnotequal key 'limit' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">64</div>
+            <div class="sort__option" data-url="?limit=128{% for key,value in request.GET.items %}{% ifnotequal key 'limit' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">128</div>
+        </div>
+        
+
+    </div>
+</div>

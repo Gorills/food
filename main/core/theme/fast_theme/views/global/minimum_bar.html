@@ -1,0 +1,35 @@
+
+
+
+
+
+
+    <div class="minimum-bar__wrapper">
+        
+                
+        <div class="minimum-bar">
+            {% if request.session.delivery == 1 %}
+                {% if cart.get_min_delivery > 0 %}
+
+                    <div class="minimum-bar__wrap">
+                        <div class="minimum-bar__refresh" data-width="{% if cart.get_minimum_persent < 100 %}{{ cart.get_minimum_persent }}{% else %}100{% endif %}%"></div>
+                    </div>
+
+                    <div class="minimum-bar__bar" style="background-color: #02874C;"></div>
+                
+                    <div class="container">
+
+                        <div class="minimum-bar__inner">
+                            <p class="minimum-bar__text">
+                                Минимальная сумма для заказа доставки 
+                            </p>
+                            <p class="minimum-bar__summ">{{ cart.get_min_delivery | floatformat:"0" }} ₽</p>
+                        </div>
+
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+            
+    </div>
+    

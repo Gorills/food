@@ -28,6 +28,14 @@ gulp.task("sushi_fonts", () => {
         }));
 });
 
+gulp.task("fast_fonts", () => {
+    return gulp.src(paths.fast_fonts.src)
+        .pipe(gulp.dest(paths.fast_fonts.dist))
+        .pipe(debug({
+            "title": "Fonts"
+        }));
+});
+
 gulp.task("adminfonts", () => {
     return gulp.src(paths.adminfonts.src)
         .pipe(gulp.dest(paths.adminfonts.dist))

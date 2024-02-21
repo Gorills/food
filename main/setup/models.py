@@ -203,6 +203,7 @@ class ThemeSettings(SingletonModel):
        ('default', 'Стандартная'),
        ('china', 'Китайский ресторан'),
        ('sushi', 'Суши'),
+       ('fast_theme', 'Фаст Тема'),
        
     )
     name = models.CharField(max_length=250, choices=THEME_CLASS, default='sushi')
@@ -219,6 +220,9 @@ class Colors(SingletonModel):
 
     header_bg = models.CharField(max_length=50, default='#ffffff')
     header_font = models.CharField(max_length=50, default='#222222')
+
+    phone_color = models.CharField(max_length=50, default='#222222', verbose_name='Цвет телефона')
+    phone_decorations = models.BooleanField(default=False, verbose_name='Подчеркивание телефона')
 
     footer_color = models.CharField(max_length=50, default='#24262b', verbose_name='Цвет футера')
     footer_font = models.CharField(max_length=50, default='#ffffff', verbose_name='Цвет шрифта футера')

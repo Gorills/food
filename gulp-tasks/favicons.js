@@ -68,6 +68,27 @@ gulp.task("sushi_favicons", () => {
         }));
 });
 
+gulp.task("fast_favicons", () => {
+    return gulp.src(paths.fast_favicons.src)
+        .pipe(favicons({
+            icons: {
+                appleIcon: true,
+                favicons: true,
+                online: false,
+                appleStartup: false,
+                android: false,
+                firefox: false,
+                yandex: false,
+                windows: false,
+                coast: false
+            }
+        }))
+        .pipe(gulp.dest(paths.fast_favicons.dist))
+        .pipe(debug({
+            "title": "Favicons"
+        }));
+});
+
 gulp.task("adminfavicons", () => {
     return gulp.src(paths.adminfavicons.src)
         .pipe(favicons({

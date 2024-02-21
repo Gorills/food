@@ -86,6 +86,21 @@ def admin(request):
         shop_setup.save()
         blog_setup.save()
 
+    try:
+        slider_setup = SliderSetup.objects.get()
+    except:
+        slider_setup = SliderSetup.objects.create()
+
+    try:
+        loyal = LoyaltyCardSettings.objects.get()
+    except:
+        loyal = LoyaltyCardSettings.objects.create()
+
+    try:
+        shop_setup = ShopSetup.objects.get()
+    except:
+        shop_setup = ShopSetup.objects.create()
+
 
     products = Product.objects.all().count()
     orders = Order.objects.all().count()

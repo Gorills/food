@@ -1714,6 +1714,8 @@ class ColorsForm(forms.ModelForm):
             'info',
             'header_bg',
             'header_font',
+            'phone_color',
+            'phone_decorations',
             'footer_color',
             'footer_font',
             'body_bg',
@@ -1748,6 +1750,9 @@ class ColorsForm(forms.ModelForm):
                 'type': 'color'
             }),
             'cart_bg': forms.TextInput(attrs={
+                'type': 'color'
+            }),
+            'phone_color': forms.TextInput(attrs={
                 'type': 'color'
             }),
 

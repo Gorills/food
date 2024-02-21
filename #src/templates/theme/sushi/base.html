@@ -64,6 +64,14 @@
             --color-header: {{ colors.header_bg }};
             --color-header-font: {{ colors.header_font }};
 
+            --color-phone: {{ colors.phone_color }};
+            {% if colors.phone_decorations %}
+            --color-phone-decorations: underline;
+            {% else %}
+            --color-phone-decorations: none;
+            {% endif %}
+            
+
             --color-footer: {{ colors.footer_color }};
             --color-footer-font: {{ colors.footer_font }};
 

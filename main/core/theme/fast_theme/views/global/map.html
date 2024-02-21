@@ -1,0 +1,95 @@
+
+
+{% load theme_static %}
+
+
+{% comment %} {{ cart.min_delivery }} {% endcomment %}
+
+{% if not shop_setup.hide_delivery_choosing %}
+
+<div class="check-delivery__refresh">
+    {% if request.session.delivery != 1 and request.session.delivery != 0 %}
+    <div class="check-delivery">
+
+        <div class="check-delivery__overlay"></div>
+        <div class="check-delivery__inner">
+            <a href="" class="check-delivery__closer"></a>
+
+            <p class="check-delivery__title">Выберите способ доставки</p>
+            
+            
+            <div class="check-delivery__row">
+                {% if shop_setup.zones_delivery %}
+                <div class="check-delivery__item check-delivery__item--delivery">
+                    <img src="{% get_static 'images/delivery_icon.webp' %}" alt="" class="check-delivery__img">
+                    <p class="check-delivery__item-title">Доставка</p>
+                    
+                </div>
+                {% else %}
+                <div class="check-delivery__item check-delivery__item--delivery-nozones">
+                    <img src="{% get_static 'images/delivery_icon.webp' %}" alt="" class="check-delivery__img">
+                    <p class="check-delivery__item-title">Доставка</p>
+                    
+                </div>
+                {% endif %}
+                <div class="check-delivery__item check-delivery__item--pickup">
+                    <img src="{% get_static 'images/pickup_icon.webp' %}" alt="" class="check-delivery__img">
+                    <p class="check-delivery__item-title">Самовывоз</p>
+
+
+                </div>
+            </div>
+        </div>
+    </div>    
+    {% endif %}
+
+</div>
+{% endif %}
+
+<div class="setup-address">
+
+    <div class="setup-address__overlay"></div>
+
+    <div class="setup-address__inner">
+
+        <div class="setup-address__close">
+            <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </div>
+
+        <form action="{% url 'cart:set_delivery_detail' %}" method="post" id="set_address" data-csrf="{{ csrf_token }}" class="save-delivery">
+            
+            
+            <p class="setup-address__title">Введите адрес доставки</p>
+
+            <div class="cart__input-address-wrap">
+                <input data-min="{{ cart.get_min_delivery | floatformat:"0" }}" data-third-party-delivery="{% if delivery %}true{% else %}false{% endif %}" data-free="0" data-delivery="0" data-value="" value="" {% if request.session.delivery == 1 %}required{% endif %} type="text" {% if shop_setup.zones_delivery %}data-zones="true"{% else %}data-zones="false"{% endif %} data-file-zones="{% if subdomain %}{{ subdomain.zone_file.url }}{% else %}/core/libs/delivery.json{% endif %}" data-city="{% if subdomain %}{{ subdomain.city }}{% else %}{{ setup.city }}{% endif %}" data-csrf="{{ csrf_token }}" class="cart__input" placeholder="Улица, дом" id="suggest">
+                <div id="addressError" class="address-error"></div>
+                
+            </div>
+            {% comment %} <div class="cart__input-wrap">
+                <div class="cart__input-col">
+        
+                    <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
+                    <input name="flat" type="text" class="cart__input" placeholder="Квартира">
+                    
+                </div>
+                
+                <div class="cart__input-col">
+        
+                    <input name="floor" type="text" class="cart__input" placeholder="Этаж">
+                    <input name="domofon" type="text" class="cart__input" placeholder="Домофон">
+                </div>
+                
+        
+            </div>
+            <textarea name="address_comment" class="cart__input" name="" id="" cols="30" rows="3" placeholder="Комментарий к адресу"></textarea> {% endcomment %}
+        
+            <button class="btn btn--primary">Сохранить</button>
+
+        </form>
+        
+        <div id="map" style="width: 100%;max-width:1200px;height: 300px;position:relative;z-index:1;"></div> 
+    </div>
+</div>

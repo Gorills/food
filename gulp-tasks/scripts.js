@@ -60,12 +60,33 @@ gulp.task("sushi_scripts", () => {
 		.pipe(browsersync.stream());
 });
 
+
+
 gulp.task("sushi_js", () => {
     return gulp.src(paths.sushi_js.src)
     
 		.pipe(gulp.dest(paths.sushi_js.dist))
 
 		.pipe(gulp.dest(paths.sushi_js.dist))
+		.pipe(browsersync.stream());
+});
+
+gulp.task("fast_scripts", () => {
+    return gulp.src(paths.fast_scripts.src)
+		.pipe(gulp.dest(paths.fast_scripts.dist))
+
+		.pipe(gulp.dest(paths.fast_scripts.dist))
+		.pipe(browsersync.stream());
+});
+
+
+
+gulp.task("fast_js", () => {
+    return gulp.src(paths.fast_js.src)
+    
+		.pipe(gulp.dest(paths.fast_js.dist))
+
+		.pipe(gulp.dest(paths.fast_js.dist))
 		.pipe(browsersync.stream());
 });
 

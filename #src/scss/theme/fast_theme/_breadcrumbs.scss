@@ -1,0 +1,63 @@
+.breadcrumbs {
+    width: 100%;
+    margin: 0 auto;
+    padding: 25px 0 15px;
+    
+    // .breadcrumbs--reviews
+
+    &--reviews {
+        background-color: #fff;
+    }
+
+    // .breadcrumbs--gray
+
+    &--gray {
+        background-color: var(--color-body);
+    }
+    // .breadcrumbs__inner
+
+    &__inner {
+    }
+
+    // .breadcrumbs__list
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    // .breadcrumbs__item
+
+    &__item {
+        display: inline-block;
+        position: relative;
+        font-size: 12px;
+        &:last-child {
+            a {
+                color: rgb(124, 124, 124);
+            }
+            
+        }
+    }
+
+    &__item + &__item {
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-bottom: 2px;
+        }
+    }
+    // .breadcrumbs__link
+
+    &__link {
+        color: var(--color-font);
+    }
+}

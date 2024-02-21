@@ -1,0 +1,142 @@
+
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% load thumbnail %}
+{% block title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block description %}{% if category.meta_description %}{{ category.meta_description }}{% else %} Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
+{% block keywords %}{{ category.meta_keywords }}{% endblock %}
+{% block canonical %}{{ category.get_absolute_url }}{% endblock %}
+{% block og:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block og:description %}{% if category.meta_description %}{{ category.meta_description }}{% else %}Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
+{% block og:url %}{{ category.get_absolute_url }}{% endblock %}
+{% block twitter:title %}{% if category.meta_title %}{{ category.meta_title }}{% else %}{{ category.name }} заказать с доставкой в г. {{ setup.city }}{% endif %}{% endblock %}
+{% block twitter:description %}{% if category.meta_description %}{{ category.meta_description }}{% else %}Закажите доставку {{ category.name }} в г. {{ setup.city }}. Бонусы и акции для постоянных клиентов{% endif %}{% endblock %}
+
+{% block og:image %}{% if category.image %}{% thumbnail category.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block og:image:secure_url %}{% if category.image %}{% thumbnail category.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+{% block twitter:image %}{% if category.image %}{% thumbnail category.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
+
+
+{% block body %}
+{% load static %}
+
+<div class="gray">
+
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="breadcrumbs__inner">
+                <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                    <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="breadcrumbs__link" href="{{ site }}" title="Главная" itemprop="item">
+                            <span itemprop="name">Главная</span>
+                            <meta itemprop="position" content="0">
+                        </a>
+                    </li>
+                    
+                    <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
+                            <span itemprop="name">Меню</span>
+                            <meta itemprop="position" content="1">
+                        </a>
+                    </li>
+                    <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="breadcrumbs__link" href="{{ category.get_absolute_url }}" title="{{ category.name }}" itemprop="item">
+                            <span itemprop="name">{{ category.name }}</span>
+                            <meta itemprop="position" content="2">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="banner">
+        <div class="container">
+            <div class="banner__inner">
+
+                <h1 class="banner__title">{% if category.meta_h1 %}{{ category.meta_h1 }}{% else %}{{ category.name }}{% endif %}</h1>
+
+            </div>
+        </div>
+    </div>
+    
+    {% if category.products.count != 0 or category.constructors.count != 0 %}
+    <div class="catalog">
+        
+        <div class="container">
+            <div class="catalog__inner">
+
+                {% comment %} {% include 'components/catalog__sidebar.html'  %} {% endcomment %}
+
+                
+                <div class="catalog__list">
+                    <div class="catalog__refresh">
+                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
+                        {% include 'components/product_list.html' with category=category products=products big='' size=image_size %}
+                        {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
+                    </div>
+
+                </div>
+
+                
+
+
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
+    
+            
+{% if category_children %}
+
+
+    {% for children in category_children  %}
+        <div class="banner">
+            <div class="container">
+                <div class="banner__inner">
+
+                   
+                    <h2 class="banner__title banner__title--child">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h2>
+                    
+                    
+                    
+
+                </div>
+            </div>
+        </div>
+        <div class="catalog">
+
+            <div class="container">
+                
+                <div class="catalog__list">
+                    <div class="catalog__refresh">
+                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
+                        {% include 'components/product_list.html' with category=children products=children.products.all big='' size=image_size %}
+                        {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+    
+
+    {% if category.description %}
+    <div class="cat-desc">
+        <div class="container">
+            <div class="cat-desc__inner">
+                {{ category.description | safe }}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

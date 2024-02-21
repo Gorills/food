@@ -575,14 +575,15 @@
     // .header__contacts-phone
 
     &__contacts-phone {
-        font-weight: 700;
+        // font-weight: 700;
         display: flex;
         align-items: center;
-        // color: var(--color-primary);
+        color: var(--color-phone);
+        text-decoration: var(--color-phone-decorations);
         svg {
             margin-right: 5px;
             path {
-                // fill: var(--color-primary);
+                fill: var(--color-phone);
             }
         }
     }

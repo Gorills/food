@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{% load l10n %}
+<yml_catalog date="{% now 'Y-m-dTh:i' %}">
+    <shop>
+        <name>{{ setup.name }}</name>
+        <company>{{ setup.name }}</company>
+        <url>http://best.seller.ru</url>
+        <platform>ProfIT Platform</platform>
+        <categories>
+          {% for cat in cats %}
+          <category id="{{ cat.id }}">{{ cat.name }}</category>
+          {% endfor %}
+        </categories>
+        
+        
+        <offers>
+            {% for product in products %}
+            <offer id="{{ product.id }}">
+                <name>{{ product.name }}</name>
+                {% if profuct.product_manufacturer %}
+                <vendor>{{ product.product_manufacturer.name }}</vendor>
+                {% endif %}
+                <url>{{ product.get_absolute_url }}</url>
+
+                <price>{{ product.price |unlocalize }}</price>
+                {% if product.old_price %}
+                <oldprice>{{ product.old_price |unlocalize }}</oldprice>
+                {% endif %}
+                <currencyId>RUR</currencyId>
+                <categoryId>{{ product.parent.id }}</categoryId>
+                <picture>{{ product.thumb.url }}</picture>
+                
+                <pickup>true</pickup>
+                <delivery>true</delivery>
+              
+                <adult>true</adult>
+                <description>
+                <![CDATA[
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.short_description | safe }}</p>
+                <p>{{ product.description | safe }}</p>
+                ]]>
+                </description>
+              
+                
+                {% if product.lenght %}
+                <param name="Длина">{{ product.lenght }}</param>
+                {% endif %}
+                {% if product.width %}
+                <param name="Ширина">{{ product.width }}</param>
+                {% endif %}
+                {% if product.height %}
+                <param name="Высота">{{ product.height }}</param>
+                {% endif %}
+                {% if product.weight %}
+                <param name="Вес">{{ product.weight }}</param>
+                {% endif %}
+                
+                <sales_notes>Необходима предоплата.</sales_notes>
+                <manufacturer_warranty>true</manufacturer_warranty>
+                
+              
+            </offer>
+          {% endfor %}
+        </offers>
+    </shop>
+</yml_catalog>

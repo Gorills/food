@@ -171,6 +171,93 @@ const requireDir = require("require-dir"),
             dist: "./main/core/img/fav/",
         },
 
+        // Тема fast
+        fast_views: {
+            src: [
+                "./#src/templates/theme/fast_theme/**/*.html",
+                "./#src/templates/theme/fast_theme/pages/*.html"
+            ],
+            dist: "./main/core/theme/fast_theme/views/",
+            watch: [
+                "./#src/templates/theme/fast_theme/**/*.html",
+                "./#src/templates/theme/fast_theme/pages/*.html"
+            ]
+        },
+        global_fast_views: {
+            src: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ],
+            dist: "./main/core/theme/fast_theme/views/global/",
+            watch: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ]
+        },
+        fast_js: {
+            src: [
+                "./#src/js/theme/global/**/*.js",
+                
+            ],
+            dist: "./main/core/theme/fast_theme/js/",
+            watch: [
+                "./#src/js/theme/global/**/*.js",
+            ]
+        },
+        fast_styles: {
+            src: "./#src/scss/theme/fast_theme/style.{scss,sass}",
+            dist: "./main/core/theme/fast_theme/css/",
+            watch: [
+                "./#src/scss/theme/fast_theme/**/*.{scss,sass}",
+                "./#src/scss/theme/fast_theme/**/*.{scss,sass}",
+                "./#src/scss/theme/global/**/*.{scss,sass}"
+
+                
+            ]
+        },
+        fast_change_fonts: {
+            src: "./#src/scss/theme/fast_theme/fonts/**/*.{scss,sass}",
+            dist: "./main/core/theme/fast_theme/css/fonts/",
+            watch: [
+                "./#src/scss/theme/fast_theme/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/fast_theme/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/fast_theme/fonts/**/*.{scss,sass}"
+
+                
+            ]
+        },
+        fast_scripts: {
+            src: "./#src/js/theme/fast_theme/app.js",
+            dist: "./main/core/theme/fast_theme/js/",
+            watch: [
+                "./#src/js/theme/fast_theme/**/*.js",
+                "./#src/js/theme/fast_theme/**/*.js",
+              
+            ]
+        },
+        fast_images: {
+            src: [
+                "./#src/images/theme/fast_theme/**/*.{jpg,jpeg,png,gif,tiff,svg,webp}",
+                "!./#src/images/theme/fast_theme/fav/*.{jpg,jpeg,png,gif,tiff,webp}"
+            ],
+            dist: "./main/core/theme/fast_theme/images/",
+            watch: "./#src/images/theme/fast_theme/**/*.{jpg,jpeg,png,gif,svg,tiff,webp}"
+        },
+        fast_sprites: {
+            src: "./#src/images/theme/fast_theme/sprites/*.svg",
+            dist: "./main/core/theme/fast_theme/images/sprites/",
+            watch: "./#src/images/theme/fast_theme/sprites/*.svg"
+        },
+        fast_fonts: {
+            src: "./#src/fonts/theme/fast_theme/**/*.{woff,woff2,ttf,TTF,otf}",
+            dist: "./main/core/theme/fast_theme/fonts/",
+            watch: "./#src/fonts/theme/fast_theme/**/*.{woff,woff2,ttf,TTF,otf}"
+        },
+        fast_favicons: {
+            src: "./#src/img/theme/fast_theme/fav/*.{jpg,jpeg,png,gif}",
+            dist: "./main/core/img/fav/",
+        },
+
         // theme china
         chinaviews: {
             src: [
@@ -326,6 +413,17 @@ export const development = gulp.series("clean", "adminclean",
         "sushi_sprites",
         "sushi_fonts",
         "sushi_favicons",
+        "fast_views",
+        'global_fast_views',
+        "fast_js",
+        "fast_styles",
+        "fast_change_fonts",
+        "fast_scripts",
+        "fast_webp", 
+        "fast_images",
+        "fast_sprites",
+        "fast_fonts",
+        "fast_favicons",
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',
@@ -371,6 +469,17 @@ export const prod = gulp.series("clean", "adminclean",
         "sushi_sprites",
         "sushi_fonts",
         "sushi_favicons",
+        "fast_views",
+        'global_fast_views',
+        "fast_js",
+        "fast_styles",
+        "fast_change_fonts",
+        "fast_scripts",
+        "fast_webp", 
+        "fast_images",
+        "fast_sprites",
+        "fast_fonts",
+        "fast_favicons",
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',
