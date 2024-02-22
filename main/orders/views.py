@@ -306,12 +306,13 @@ def order_create(request):
 
                 else:
                     order_telegram(telegram_bot, telegram_group, order)
+
                     try:
                         send_order_email(order)
                     except Exception as e:
                         pass
                         
-
+                    yandex_create_order(order)
                     send_sms(sms_text(order.id, order.summ), phone)
                     
                     # очистка корзины
@@ -536,6 +537,7 @@ def order_webhook(request):
 
                 return HttpResponse(status=200)
         except Exception as e:
+            
             logger.info(e)
             return HttpResponse(status=200)
 
@@ -627,7 +629,7 @@ def order_success(request):
 
         # order_telegram(telegram_bot, telegram_group, order)
         send_sms(sms_text(order.id, order.summ), order.phone)
-
+        
         return redirect(f'/?order=True&id={order.id}')
 
     else:
@@ -710,7 +712,7 @@ def paykeeper_success(request):
         order.save()
 
         order_telegram(telegram_bot, telegram_group, order)
-        
+        yandex_create_order(order)
         send_sms(sms_text(order.id, order.summ), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
@@ -742,7 +744,7 @@ def tinkoff_success(request, pk):
     order.paid = True
     order.save()
     order_telegram(telegram_bot, telegram_group, order)
-    
+    yandex_create_order(order)
     send_sms(sms_text(order.id, order.summ), order.phone)
     
     return redirect(f'/?order=True&id={order.id}')

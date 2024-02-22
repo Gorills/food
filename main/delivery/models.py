@@ -25,6 +25,8 @@ class Delivery(SingletonModel):
     email = models.CharField(max_length=250, verbose_name='Email', null=True, blank=True)
     phone = models.CharField(max_length=250, verbose_name='Телефон', null=True, blank=True)
 
+    delay = models.PositiveIntegerField(verbose_name='Задержка доставки (30/60 минут) для готовки', null=True, blank=True, default=30)
+    
 
     sale_persent = models.PositiveIntegerField(verbose_name='Процент скидки на доставку (компенсация за доставку)', null=True, blank=True)
     summ_persent = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа, от которой начинает работать компенсация за доставку', null=True, blank=True)

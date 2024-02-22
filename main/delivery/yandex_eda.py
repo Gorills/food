@@ -21,6 +21,7 @@ try:
     emergency_phone = yandex.phone
     emergency_name = yandex.name
     emergency_email = yandex.email
+    delay = yandex.delay
 except:
     pass
 
@@ -84,8 +85,30 @@ def delivery_methods():
 
 # delivery_methods()
 
+def get_due():
+
+    now_time = datetime.datetime.now()
+
+    
+
+    # Добавить задержку к текущему времени
+    delay_time = datetime.timedelta(minutes=delay)
+    new_time = now_time + delay_time
+
+    # Форматировать новое время и время задержки в строку в нужном формате (ISO 8601)
+    formatted_time = new_time.strftime('%Y-%m-%dT%H:%M:%S%z')
+    formatted_delay = delay_time.seconds // 3600, (delay_time.seconds % 3600) // 60
+
+    due = f'{formatted_time}+{formatted_delay[0]:02d}:{formatted_delay[1]:02d}'
+
+
+    return due
+
+
 
 def check_price(request):
+    # Получить текущее время
+    
 
     if request.method == 'POST':
         dotaddress = request.POST['dotaddress']
@@ -123,20 +146,20 @@ def check_price(request):
                 "id": 2
                 }
             ],
-            "skip_door_to_door": False
+            "skip_door_to_door": False,
+            'due': get_due(),
             }
         
         
         
         response = requests.post(url, json=data, headers=headers)
+        
 
+        
         return HttpResponse(response, content_type='application/json') 
 
 
 # check_price('Томск, проспект Ленина, 1')
-
-
-
 
 
 def yandex_create_order(order):
@@ -213,7 +236,7 @@ def yandex_create_order(order):
                         
                         
                         
-                        "flat": int(yandex.flat),
+                        
                         "floor": int(yandex.floor),
                         "fullname": f'{yandex.city}, {yandex.address}',
                         
@@ -286,6 +309,7 @@ def yandex_create_order(order):
             "skip_act": True,
             "skip_client_notify": False,
             "skip_door_to_door": False,
+            'due': get_due(),
             "skip_emergency_notify": False
             }
         
@@ -346,8 +370,8 @@ def yandex_create_order(order):
         response = requests.post(url, json=data, headers=headers)
 
         print(response.json())
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 
-# create_order(Order.objects.get(id=118))
+# yandex_create_order(Order.objects.get(id=59))
