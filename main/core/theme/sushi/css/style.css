@@ -2889,6 +2889,10 @@ a {
   align-items: center;
 }
 
+.header__contacts-link-wrap {
+  display: flex;
+}
+
 .header__contacts-link {
   font-size: 14px;
   display: inline-block;
