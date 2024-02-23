@@ -22,8 +22,10 @@ try:
     emergency_name = yandex.name
     emergency_email = yandex.email
     delay = yandex.delay
+
+    yandex_active = True
 except:
-    pass
+    yandex_active = False
 
 def format_str_coord(coord):
 
@@ -34,26 +36,31 @@ def format_str_coord(coord):
     return sorted_pos
 
 def get_geo(query):
-    
-    
-    search_str = f'{query.replace(" ", "+")}'
-    
 
-    geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=b0ace043-1020-4411-ac5e-80354ec8241c&geocode={search_str}&format=json'
-
-    response = requests.get(geo_url)
-
-    if response.status_code == 200:
-        pos = response.json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
-
+    if yandex_active:
         
-        sorted_list = pos.split(' ')
-        sorted_pos = [
-            float(sorted_list[0]), float(sorted_list[1])
-        ]
+        search_str = f'{query.replace(" ", "+")}'
         
+
+        geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=b0ace043-1020-4411-ac5e-80354ec8241c&geocode={search_str}&format=json'
+
+        response = requests.get(geo_url)
+
+        if response.status_code == 200:
+            pos = response.json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
+
+            
+            sorted_list = pos.split(' ')
+            sorted_pos = [
+                float(sorted_list[0]), float(sorted_list[1])
+            ]
+            
+            
+            return sorted_pos
         
-        return sorted_pos
+    else:
+
+        return []
 
     
 
@@ -374,4 +381,4 @@ def yandex_create_order(order):
         print(e)
 
 
-yandex_create_order(Order.objects.get(id=61))
+# yandex_create_order(Order.objects.get(id=61))
