@@ -39,7 +39,7 @@ def get_geo(query):
     search_str = f'{query.replace(" ", "+")}'
     
 
-    geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e&geocode={search_str}&format=json'
+    geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=b0ace043-1020-4411-ac5e-80354ec8241c&geocode={search_str}&format=json'
 
     response = requests.get(geo_url)
 
@@ -92,8 +92,8 @@ def get_due():
     
 
     # Добавить задержку к текущему времени
-    delay_time = datetime.timedelta(minutes=delay)
-    new_time = now_time + delay_time
+    delay_time = datetime.timedelta(minutes=60)
+    new_time = now_time
 
     # Форматировать новое время и время задержки в строку в нужном формате (ISO 8601)
     formatted_time = new_time.strftime('%Y-%m-%dT%H:%M:%S%z')
@@ -374,4 +374,4 @@ def yandex_create_order(order):
         print(e)
 
 
-# yandex_create_order(Order.objects.get(id=59))
+yandex_create_order(Order.objects.get(id=61))
