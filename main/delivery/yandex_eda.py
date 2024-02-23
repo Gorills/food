@@ -25,7 +25,7 @@ try:
 
     yandex_active = True
 except:
-    pass
+    yandex_active = False
 
 def format_str_coord(coord):
 
