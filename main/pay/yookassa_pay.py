@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.shortcuts import render
 
 from .models import PaymentSet, Yookassa
-from shop.models import Product
+from shop.models import Product, Combo, ProductOption
 from subdomains.utilites import get_protocol
 
 # Create your views here.
@@ -27,15 +27,18 @@ def create_payment(order, cart, request):
 
     digits_only = ''.join(char for char in phone if char.isdigit())
     
-
+    sale_percent = order.sale_percent
+    print(sale_percent)
     for item in cart:
         product = Product.objects.get(id=item['product'].id)
+        
+        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
 
         i = {
             "description": product.name,
             "quantity": int(item['quantity']),
             "amount": {
-                "value": str(Decimal(item['price'])),
+                "value": price,
                 "currency": "RUB"
             },
             "vat_code": Yookassa.objects.get().vat_code,
@@ -44,7 +47,38 @@ def create_payment(order, cart, request):
         }
         
         items.append(i)
-        
+
+    for item in cart.get_combos():
+        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
+        i = {
+            "description": item['combo'].name,
+            "quantity": int(item['quantity']),
+            "amount": {
+                "value": price,
+                "currency": "RUB"
+            },
+            "vat_code": Yookassa.objects.get().vat_code,
+            "payment_mode": "full_payment",
+            "payment_subject": "commodity"
+        }
+        items.append(i)
+    
+    for item in cart.get_options():
+        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
+        i = {
+            "description": item['products'].name,
+            "quantity": int(item['quantity']),
+            "amount": {
+                "value": price,
+                "currency": "RUB"
+            },
+            "vat_code": Yookassa.objects.get().vat_code,
+            "payment_mode": "full_payment",
+            "payment_subject": "commodity"
+        }
+        items.append(i)
+
+
 
     payment = Payment.create({
         "amount": {
@@ -62,6 +96,7 @@ def create_payment(order, cart, request):
         }, 
         "receipt": {
             "customer": {
+                "full_name": order.name,
                 "phone": str(digits_only)
             },
             "items": items
@@ -75,7 +110,7 @@ def create_payment(order, cart, request):
         
     }
 
-    
+    print(data)
 
     return data
 

@@ -42,7 +42,7 @@ def get_geo(query):
         search_str = f'{query.replace(" ", "+")}'
         
 
-        geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=b0ace043-1020-4411-ac5e-80354ec8241c&geocode={search_str}&format=json'
+        geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=c49d80f0-26f7-42fb-b987-8af6aad1074d={search_str}&format=json'
 
         response = requests.get(geo_url)
 
@@ -80,7 +80,7 @@ def delivery_methods():
     data = {
         
         "fullname": string,
-        "start_point": [56.504537, 84.948083],
+        "start_point": format_str_coord(yandex.adress_dot),
        
     }
 
@@ -91,6 +91,20 @@ def delivery_methods():
 
 
 # delivery_methods()
+    
+
+def calculate():
+    
+    url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/offers/calculate'
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Accept-Language": "ru",
+    }
+
+
+
+
 
 def get_due():
 
@@ -99,16 +113,19 @@ def get_due():
     
 
     # Добавить задержку к текущему времени
-    delay_time = datetime.timedelta(minutes=60)
+    delay_time = datetime.timedelta(minutes=0)
     new_time = now_time
 
     # Форматировать новое время и время задержки в строку в нужном формате (ISO 8601)
-    formatted_time = new_time.strftime('%Y-%m-%dT%H:%M:%S%z')
+    formatted_time = new_time.strftime('%Y-%m-%dT%H:%M')
+
+    formatted_time = f'{formatted_time}:00'
+
     formatted_delay = delay_time.seconds // 3600, (delay_time.seconds % 3600) // 60
 
     due = f'{formatted_time}+{formatted_delay[0]:02d}:{formatted_delay[1]:02d}'
 
-
+    print(due)
     return due
 
 
@@ -316,7 +333,7 @@ def yandex_create_order(order):
             "skip_act": True,
             "skip_client_notify": False,
             "skip_door_to_door": False,
-            'due': get_due(),
+            # 'due': get_due(),
             "skip_emergency_notify": False
             }
         
@@ -366,7 +383,7 @@ def yandex_create_order(order):
         #     data['due'] = order_time_list[1].replace('Завтра, ', '')
             
         
-        print(data)
+        # print(data)
         url = f'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/claims/create?request_id={order.id}'
 
         headers = {
