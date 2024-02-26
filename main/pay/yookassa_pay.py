@@ -78,7 +78,19 @@ def create_payment(order, cart, request):
         }
         items.append(i)
 
-
+    if order.delivery_method == 'Доставка':
+        delivery = {
+            "description": 'Доставка',
+            "quantity": 1,
+            "amount": {
+                "value": order.delivery_price,
+                "currency": "RUB"
+            },
+            "vat_code": Yookassa.objects.get().vat_code,
+            "payment_mode": "full_payment",
+            "payment_subject": "commodity"
+        }
+        items.append(delivery)
 
     payment = Payment.create({
         "amount": {
