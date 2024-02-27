@@ -898,17 +898,17 @@ $(document).ready(function(){
 
 
       if (selectedOption == 'Новый') {
-        $('.table-row').addClass('table-row--new')
+        $(this).closest('li').addClass('table-row--new')
       } else if (selectedOption == 'В работе') {
-        $('.table-row').removeClass('table-row--work')
+        $(this).closest('li').removeClass('table-row--work')
       } else if (selectedOption == 'Обработан') {
-        $('.table-row').addClass('table-row--obr')
+        $(this).closest('li').addClass('table-row--obr')
       } else if (selectedOption == 'Выполнен') {
-        $('.table-row').addClass('table-row--done')
+        $(this).closest('li').addClass('table-row--done')
       } else if (selectedOption == 'Отказ') {
-        $('.table-row').addClass('table-row--cancel')
+        $(this).closest('li').addClass('table-row--cancel')
       } else if (selectedOption == 'Готов к доставке') {
-        $('.table-row').addClass('table-row--work')
+        $(this).closest('li').addClass('table-row--work')
       }
       
   });
