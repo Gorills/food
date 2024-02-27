@@ -78,6 +78,9 @@ class SignUpView(generic.CreateView):
     
 
 class Login(LoginView):
+
+
+    
     template_name = 'account/login.html'
 
 
