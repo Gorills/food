@@ -22,6 +22,7 @@ try:
     emergency_name = yandex.name
     emergency_email = yandex.email
     delay = yandex.delay
+    auto_accept = yandex.auto_accept
 
     yandex_active = True
 except:
@@ -105,15 +106,19 @@ def calculate():
 
 
 
+import pytz    
+
 
 def get_due():
 
-    now_time = datetime.datetime.now()
 
-    
+    now_time = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
+    # now_time = datetime.datetime.now()
 
     # Добавить задержку к текущему времени
-    delay_time = datetime.timedelta(minutes=0)
+    delay_time = datetime.timedelta(minutes=delay)
+    
+
     new_time = now_time
 
     # Форматировать новое время и время задержки в строку в нужном формате (ISO 8601)
@@ -128,7 +133,7 @@ def get_due():
     print(due)
     return due
 
-
+# get_due()
 
 def check_price(request):
     # Получить текущее время
@@ -178,12 +183,14 @@ def check_price(request):
         
         response = requests.post(url, json=data, headers=headers)
         
-
+        print(response.json())
         
         return HttpResponse(response, content_type='application/json') 
 
 
 # check_price('Томск, проспект Ленина, 1')
+    
+
 
 
 def yandex_create_order(order):
@@ -224,7 +231,7 @@ def yandex_create_order(order):
 
         
         data = {
-            "auto_accept": False,
+            "auto_accept": auto_accept,
             # "callback_properties": {
             #     "callback_url": f'{get_protocol(request)}://{request.META["HTTP_HOST"]}/delivery/check_order/'
             # },
@@ -393,9 +400,9 @@ def yandex_create_order(order):
 
         response = requests.post(url, json=data, headers=headers)
 
-        print(response.json())
+        # print(response.json())
     except Exception as e:
         print(e)
 
 
-# yandex_create_order(Order.objects.get(id=61))
+# yandex_create_order(Order.objects.get(id=83))

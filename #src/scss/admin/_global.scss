@@ -78,14 +78,16 @@ a   {
     // .content__inner
 
     &__inner {
-        margin-left: 270px;
+        // margin-left: 270px;
         width: 100%;
         min-height: 100vh;
         position: relative;
         transition: $transition;
         // .content__inner--max
         &--max {
-            margin-left: 136px;
+            // margin-left: 136px;
+            
+
         }
         
     }
@@ -101,6 +103,9 @@ a   {
     display: flex;
     gap: 20px;
     align-items: flex-start;
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+    }
 
     // .page__wrap
     &__wrap {
@@ -128,6 +133,11 @@ a   {
      &__static {
         display: flex;
         justify-content: space-between;
+
+        @media screen and (max-width: 768px) {
+            flex-direction: column;
+            
+        }
     }
 
     // .page__static-item
@@ -137,6 +147,12 @@ a   {
         background-color: #fff;
         width: 100%;
         max-width: 350px;
+
+        @media screen and (max-width: 768px) {
+            max-width: 100%;
+            margin-bottom: 20px;
+            
+        }
     }
 
     // .page__static-top
@@ -643,3 +659,64 @@ label {
 #id_not_ingridient {
     height: 350px;
 }
+
+
+
+
+.order-status {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    select {
+        margin-bottom: 0;
+    }
+
+    // .order-status__link
+
+    &__link {
+        display: flex;
+        align-items: center;
+        color: #222;
+        text-decoration: underline;
+
+        svg {
+            width: 15px;
+            height: 15px;
+            path {
+                fill: #222;
+            }
+        }
+    }
+
+    // .order-status__text
+
+    &__text {
+    }
+    // .order-status__drop
+
+    &__drop {
+        position: absolute;
+        z-index: 999;
+        background-color: #fff;
+        box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        top: 30px;
+
+        display: none;
+
+        &--active {
+            display: block;
+        }
+    }
+
+    // .order-status__drop-item
+
+    &__drop-item {
+        padding: 5px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+}
+
+

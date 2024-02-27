@@ -86,6 +86,17 @@
         display: flex;
         align-items: center;
         gap: 5px;
+
+        @media screen and (max-width: 480px) {
+          flex-basis: 100%!important;
+          display: block;
+          text-align: center;
+          justify-content: center;
+          width: 100%;
+          
+        }
+
+
         img {
           width: 40px;
         }
@@ -149,7 +160,7 @@
     }
     .col-5 {
         flex-basis: 8%;
-        display: flex;
+        display: flex!important;
         gap: 5px;
     }
     .col-6 {

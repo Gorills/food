@@ -762,6 +762,8 @@ def order_detail(request, pk):
 
 
 
+from delivery.yandex_eda import yandex_create_order
+
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
@@ -771,10 +773,16 @@ def order_status_change(request, pk):
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
         if form.is_valid():
-            
+            status = form.cleaned_data['status']
+
+
+            if status == 'Готов к доставке':
+                yandex_create_order(order)
+
+
 
             if loyalty_settings.active == True:
-                status = form.cleaned_data['status']
+                
 
                 user = order.user_pr
                 card = LoyaltyCard.objects.get(user=user)
@@ -791,6 +799,9 @@ def order_status_change(request, pk):
                 send_sms_status = loyalty_settings.send_sms
                 sms_text = loyalty_settings.sms_text
                 balls_summ = 0
+
+
+
                 if status == 'Выполнен':
                     
                     if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:

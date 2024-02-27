@@ -245,6 +245,8 @@ $(document).on('change','#id_status',function(){
 
 
     $(this).parent('form').submit()
+
+    
   
   
 })
@@ -381,6 +383,11 @@ $(document).on('click','.sidebar__title--min',function(){
 })
 // end Выпадающее меню в sidebar
 
+
+$(document).on('click','.content__body',function(){
+  $('.sidebar__drop').removeClass('sidebar__drop--active')
+ 
+})
 
 // Размер sidebar и content
 $(document).on('click','.tabs',function(){
@@ -866,5 +873,43 @@ $(document).ready(function() {
         // ...
       }
     });
+  });
+});
+
+
+
+$(document).on('click','.order-status__link',function(e){
+  e.preventDefault();
+
+  $(this).next('.order-status__drop').toggleClass('order-status__drop--active')
+  
+});
+
+
+
+
+$(document).ready(function(){
+  $(".change_input").change(function(){
+      var selectedOption = $(this).val();
+
+      $(this).closest('li').removeClass()
+      $(this).closest('li').addClass('table-row')
+
+
+
+      if (selectedOption == 'Новый') {
+        $('.table-row').addClass('table-row--new')
+      } else if (selectedOption == 'В работе') {
+        $('.table-row').removeClass('table-row--work')
+      } else if (selectedOption == 'Обработан') {
+        $('.table-row').addClass('table-row--obr')
+      } else if (selectedOption == 'Выполнен') {
+        $('.table-row').addClass('table-row--done')
+      } else if (selectedOption == 'Отказ') {
+        $('.table-row').addClass('table-row--cancel')
+      } else if (selectedOption == 'Готов к доставке') {
+        $('.table-row').addClass('table-row--work')
+      }
+      
   });
 });

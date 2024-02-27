@@ -10,6 +10,7 @@ class Delivery(SingletonModel):
     )
     
     active = models.BooleanField(default=False, verbose_name='Активная')
+    auto_accept = models.BooleanField(default=False, verbose_name='Автоматическое подтверждение заказа')
     name = models.CharField(max_length=50, verbose_name='Название организации или контактного лица', choices=NAME_CLASS)
     api_key = models.CharField(max_length=250, verbose_name='Ключ API/token', null=True, blank=True)
 

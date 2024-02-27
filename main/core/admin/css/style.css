@@ -82,15 +82,10 @@ a {
 }
 
 .content__inner {
-  margin-left: 270px;
   width: 100%;
   min-height: 100vh;
   position: relative;
   transition: all 0.5s ease;
-}
-
-.content__inner--max {
-  margin-left: 136px;
 }
 
 .content__body {
@@ -596,10 +591,55 @@ label span {
   height: 350px;
 }
 
+.order-status {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.order-status select {
+  margin-bottom: 0;
+}
+
+.order-status__link {
+  display: flex;
+  align-items: center;
+  color: #222;
+  text-decoration: underline;
+}
+
+.order-status__link svg {
+  width: 15px;
+  height: 15px;
+}
+
+.order-status__link svg path {
+  fill: #222;
+}
+
+.order-status__drop {
+  position: absolute;
+  z-index: 999;
+  background-color: #fff;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  top: 30px;
+  display: none;
+}
+
+.order-status__drop--active {
+  display: block;
+}
+
+.order-status__drop-item {
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .sidebar {
   width: 270px;
   background-color: #fff;
-  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
@@ -611,7 +651,7 @@ label span {
 .sidebar--min {
   overflow-y: visible;
   z-index: 999999999;
-  width: 136px;
+  width: 64px;
   text-align: center;
 }
 
@@ -634,7 +674,7 @@ label span {
 
 .sidebar--min .sidebar__drop {
   position: absolute;
-  left: 136px;
+  left: 64px;
   top: 0;
   background-color: #fff;
   padding: 20px;
@@ -1100,7 +1140,7 @@ label span {
 
 .responsive-table .col-5 {
   flex-basis: 8%;
-  display: flex;
+  display: flex !important;
   gap: 5px;
 }
 
@@ -1936,6 +1976,25 @@ label span {
   background-color: #9AFDD2;
 }
 
+@media screen and (max-width: 768px) {
+  .page {
+    flex-direction: column;
+  }
+
+  .page__static {
+    flex-direction: column;
+  }
+
+  .page__static-item {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .form--mini {
+    max-width: 100%;
+  }
+}
+
 @media all and (max-width: 767px) {
   .responsive-table .table-header {
     display: none;
@@ -1960,6 +2019,54 @@ label span {
     content: attr(data-label);
     flex-basis: 50%;
     text-align: right;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .sidebar {
+    overflow-y: visible;
+    z-index: 999999999;
+    width: 64px;
+    text-align: center;
+  }
+
+  .sidebar .sidebar__logo {
+    display: none;
+  }
+
+  .sidebar .sidebar__mini-logo {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .sidebar .sidebar__title span {
+    display: none;
+  }
+
+  .sidebar .sidebar__title {
+    justify-content: center;
+  }
+
+  .sidebar .sidebar__drop {
+    position: absolute;
+    left: 64px;
+    top: 0;
+    background-color: #fff;
+    padding: 20px;
+    white-space: nowrap;
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  }
+
+  .sidebar .sidebar__link {
+    padding: 10px 10px 10px 10px;
+  }
+
+  .responsive-table .col {
+    flex-basis: 100% !important;
+    display: block;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
   }
 }
 /*# sourceMappingURL=maps/style.css.map */
