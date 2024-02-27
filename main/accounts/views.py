@@ -110,15 +110,7 @@ class Login(LoginView):
     except:
         slider_setup = SliderSetup.objects.create()
 
-    try:
-        loyal = LoyaltyCardSettings.objects.get()
-    except:
-        loyal = LoyaltyCardSettings.objects.create()
-
-    try:
-        shop_setup = ShopSetup.objects.get()
-    except:
-        shop_setup = ShopSetup.objects.create()
+   
 
 
     template_name = 'account/login.html'
