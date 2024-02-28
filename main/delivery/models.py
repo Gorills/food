@@ -17,6 +17,8 @@ class Delivery(SingletonModel):
     min_summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Минимальная сумма', null=True, blank=True)
     free_summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма бесплатной доставки', null=True, blank=True)
 
+    dinamic_price = models.BooleanField(default=True, verbose_name='Запрашивать цену у службы доставки')
+
     city = models.CharField(max_length=250, verbose_name='Город', null=True, blank=True)
     address = models.CharField(max_length=250, verbose_name='Адрес', null=True, blank=True)
     adress_dot = models.CharField(max_length=250, verbose_name='Адрес в формате координат', null=True, blank=True)

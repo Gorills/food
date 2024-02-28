@@ -40,11 +40,3 @@ def fonts(request):
         
     return {'font': font}
 
-
-def delivery(request):
-    try:
-        delivery_object = Delivery.objects.get()
-        delivery = delivery_object.active
-    except:
-        delivery = None
-    return {'delivery': delivery}

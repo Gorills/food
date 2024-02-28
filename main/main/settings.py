@@ -221,7 +221,7 @@ TEMPLATES = [
                 'setup.context_processors.colors',
                 'setup.context_processors.theme',
                 'setup.context_processors.fonts',
-                'setup.context_processors.delivery',
+                'delivery.context_processors.delivery',
                 'shop.context_processors.categorys',
                 'shop.context_processors.categorys_top',
                 'shop.context_processors.combos',
