@@ -552,13 +552,13 @@
                                 <div class="cart__input-col">
 
                                     <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
-                                    <input name="flat" type="text" class="cart__input" placeholder="Квартира" {% if delivery %}required{% endif %}>
+                                    <input name="flat" type="text" class="cart__input" placeholder="Квартира" {% if delivery and request.session.delivery == 1 %}required{% endif %}>
                                     
                                 </div>
                                 
                                 <div class="cart__input-col">
 
-                                    <input name="floor" type="text" class="cart__input" placeholder="Этаж" {% if delivery %}required{% endif %}>
+                                    <input name="floor" type="text" class="cart__input" placeholder="Этаж" {% if delivery and request.session.delivery == 1 %}required{% endif %}>
                                     <input name="door_code" type="text" class="cart__input" placeholder="Домофон">
                                 </div>
                                 
@@ -576,13 +576,13 @@
                                 <div class="cart__input-col">
 
                                     <input name="entrance" type="text" class="cart__input" placeholder="Подъезд">
-                                    <input name="flat" type="text" class="cart__input" placeholder="Квартира" {% if delivery %}required{% endif %}>
+                                    <input name="flat" type="text" class="cart__input" placeholder="Квартира" {% if delivery and request.session.delivery == 1 %}required{% endif %}>
                                     
                                 </div>
                                 
                                 <div class="cart__input-col">
 
-                                    <input name="floor" type="text" class="cart__input" placeholder="Этаж" {% if delivery %}required{% endif %}>
+                                    <input name="floor" type="text" class="cart__input" placeholder="Этаж" {% if delivery and request.session.delivery == 1 %}required{% endif %}>
                                     <input name="domofon" type="text" class="cart__input" placeholder="Домофон">
                                 </div>
                                 
