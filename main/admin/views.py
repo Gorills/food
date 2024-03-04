@@ -72,34 +72,19 @@ def admin(request):
         email = EmailSettings.objects.get()
         theme = ThemeSettings.objects.get()
         colors = Colors.objects.get()
-    except:
-        setup = BaseSettings()
-        shop_setup = ShopSetup()
-        blog_setup = BlogSetup()
-        email = EmailSettings()
-        theme = ThemeSettings()
-        colors = Colors()
-        colors.save()
-        theme.save()
-        email.save()
-        setup.save()
-        shop_setup.save()
-        blog_setup.save()
-
-    try:
         slider_setup = SliderSetup.objects.get()
-    except:
-        slider_setup = SliderSetup.objects.create()
-
-    try:
         loyal = LoyaltyCardSettings.objects.get()
     except:
+        setup = BaseSettings.objects.create()
+        shop_setup = ShopSetup.objects.create()
+        blog_setup = BlogSetup.objects.create()
+        email = EmailSettings.objects.create()
+        theme = ThemeSettings.objects.create()
+        colors = Colors.objects.create()
+        slider_setup = SliderSetup.objects.create()
         loyal = LoyaltyCardSettings.objects.create()
 
-    try:
-        shop_setup = ShopSetup.objects.get()
-    except:
-        shop_setup = ShopSetup.objects.create()
+
 
 
     products = Product.objects.all().count()
