@@ -83,23 +83,42 @@ from home.models import Page, PlaceImages, Slider, SliderSetup, Reviews
 
 class Login(LoginView):
 
-
     try:
         setup = BaseSettings.objects.get()
+    except:
+        setup = BaseSettings()
+        setup.save()
+    try:
         shop_setup = ShopSetup.objects.get()
+    except:
+        shop_setup = ShopSetup()
+        shop_setup.save()
+    try:
         blog_setup = BlogSetup.objects.get()
+    except:
+        blog_setup = BlogSetup()
+        blog_setup.save()
+    try:
         email = EmailSettings.objects.get()
+    except:
+        email = EmailSettings()
+        email.save()
+    try:
         theme = ThemeSettings.objects.get()
+    except:
+        theme = ThemeSettings()
+        theme.save()
+    try:
         colors = Colors.objects.get()
+    except:
+        colors = Colors()
+        colors.save()
+    try:
         slider_setup = SliderSetup.objects.get()
     except:
-        setup = BaseSettings.objects.create()
-        shop_setup = ShopSetup.objects.create()
-        blog_setup = BlogSetup.objects.create()
-        email = EmailSettings.objects.create()
-        theme = ThemeSettings.objects.create()
-        colors = Colors.objects.create()
-        slider_setup = SliderSetup.objects.create()
+        slider_setup = SliderSetup()
+        slider_setup.save()
+    
        
 
         

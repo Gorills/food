@@ -65,24 +65,42 @@ def faq(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin(request):
+    
     try:
         setup = BaseSettings.objects.get()
-        shop_setup = ShopSetup.objects.get()
-        blog_setup = BlogSetup.objects.get()
-        email = EmailSettings.objects.get()
-        theme = ThemeSettings.objects.get()
-        colors = Colors.objects.get()
-        slider_setup = SliderSetup.objects.get()
-        loyal = LoyaltyCardSettings.objects.get()
     except:
-        setup = BaseSettings.objects.create()
-        shop_setup = ShopSetup.objects.create()
-        blog_setup = BlogSetup.objects.create()
-        email = EmailSettings.objects.create()
-        theme = ThemeSettings.objects.create()
-        colors = Colors.objects.create()
-        slider_setup = SliderSetup.objects.create()
-        loyal = LoyaltyCardSettings.objects.create()
+        setup = BaseSettings()
+        setup.save()
+    try:
+        shop_setup = ShopSetup.objects.get()
+    except:
+        shop_setup = ShopSetup()
+        shop_setup.save()
+    try:
+        blog_setup = BlogSetup.objects.get()
+    except:
+        blog_setup = BlogSetup()
+        blog_setup.save()
+    try:
+        email = EmailSettings.objects.get()
+    except:
+        email = EmailSettings()
+        email.save()
+    try:
+        theme = ThemeSettings.objects.get()
+    except:
+        theme = ThemeSettings()
+        theme.save()
+    try:
+        colors = Colors.objects.get()
+    except:
+        colors = Colors()
+        colors.save()
+    try:
+        slider_setup = SliderSetup.objects.get()
+    except:
+        slider_setup = SliderSetup()
+        slider_setup.save()
 
 
 
