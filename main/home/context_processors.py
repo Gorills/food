@@ -13,6 +13,10 @@ time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на в
 # Конвертируем текущее время в нужную временную зону
 current_time = current_time.astimezone(time_zone)
 
+try:
+    delivery_full = ShopSetup.objects.get().delivery_full
+except:
+    delivery_full = False
 
 # current_time = datetime.combine(current_time.date(), datetime.strptime('22:05', "%H:%M").time())
 # print(current_time)
@@ -22,7 +26,7 @@ current_time = current_time.astimezone(time_zone)
 def get_work_active(request):
     
 
-    if not ShopSetup.objects.get().delivery_full:
+    if not delivery_full:
         try:
             try:
                 workday = WorkDay.objects.get(day=current_time.weekday())
@@ -249,7 +253,12 @@ def get_hours(request):
     
     now_date = datetime.now()
 
-    shop_setup = ShopSetup.objects.get()
+    try:
+        shop_setup = ShopSetup.objects.get()
+    except:
+        shop_setup = ShopSetup.objects.create()
+        
+
     start = shop_setup.start_delivery
     end = shop_setup.end_delivery
     delay = shop_setup.delay
@@ -257,7 +266,7 @@ def get_hours(request):
 
     
 
-    if ShopSetup.objects.get().delivery_full:
+    if delivery_full:
         start = time(0, 0)
         end = time(23, 59)
         

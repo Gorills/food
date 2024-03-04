@@ -69,39 +69,39 @@ def admin(request):
     try:
         setup = BaseSettings.objects.get()
     except:
-        setup = BaseSettings()
+        setup = BaseSettings.objects.create()
         setup.save()
 
     try:
         shop_setup = ShopSetup.objects.get()
     except:
-        shop_setup = ShopSetup()
+        shop_setup = ShopSetup.objects.create()
         shop_setup.save()
-        
+
     try:
         blog_setup = BlogSetup.objects.get()
     except:
-        blog_setup = BlogSetup()
+        blog_setup = BlogSetup.objects.create()
         blog_setup.save()
     try:
         email = EmailSettings.objects.get()
     except:
-        email = EmailSettings()
+        email = EmailSettings.objects.create()
         email.save()
     try:
         theme = ThemeSettings.objects.get()
     except:
-        theme = ThemeSettings()
+        theme = ThemeSettings.objects.create()
         theme.save()
     try:
         colors = Colors.objects.get()
     except:
-        colors = Colors()
+        colors = Colors.objects.create()
         colors.save()
     try:
         slider_setup = SliderSetup.objects.get()
     except:
-        slider_setup = SliderSetup()
+        slider_setup = SliderSetup.objects.create()
         slider_setup.save()
 
 

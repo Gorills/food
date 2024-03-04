@@ -290,7 +290,11 @@ def home(request):
     
 
     # print(order_object)
-    slider_setup = SliderSetup.objects.get()
+    try:
+        slider_setup = SliderSetup.objects.get()
+    except:
+        slider_setup = SliderSetup()
+        slider_setup.save()
 
     context = {
         'current_day': current_day,
