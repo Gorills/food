@@ -71,11 +71,13 @@ def admin(request):
     except:
         setup = BaseSettings()
         setup.save()
+
     try:
         shop_setup = ShopSetup.objects.get()
     except:
         shop_setup = ShopSetup()
         shop_setup.save()
+        
     try:
         blog_setup = BlogSetup.objects.get()
     except:
