@@ -92,18 +92,14 @@ class Login(LoginView):
         theme = ThemeSettings.objects.get()
         colors = Colors.objects.get()
     except:
-        setup = BaseSettings()
-        shop_setup = ShopSetup()
-        blog_setup = BlogSetup()
-        email = EmailSettings()
-        theme = ThemeSettings()
-        colors = Colors()
-        colors.save()
-        theme.save()
-        email.save()
-        setup.save()
-        shop_setup.save()
-        blog_setup.save()
+        setup = BaseSettings.objects.create()
+        shop_setup = ShopSetup.objects.create()
+        blog_setup = BlogSetup.objects.create()
+        email = EmailSettings.objects.create()
+        theme = ThemeSettings.objects.create()
+        colors = Colors.objects.create()
+
+       
     
     try:
         slider_setup = SliderSetup.objects.get()
