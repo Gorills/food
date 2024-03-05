@@ -154,7 +154,7 @@ def general_settings_block(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def general_settings(request):
-
+    setup = BaseSettings.objects.get()
 
     # Сохранение основных настроек
     if request.method == 'POST':
@@ -167,7 +167,7 @@ def general_settings(request):
             return redirect ('general_settings')
 
     # Заполнение форм значениями, для отображения уже сохраненных настроек
-    setup = BaseSettings.objects.get()
+    
     email = EmailSettings.objects.get()
     recaptcha = RecaptchaSettings.objects.get()
     
