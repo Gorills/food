@@ -104,7 +104,11 @@ def admin(request):
         slider_setup = SliderSetup.objects.create()
         slider_setup.save()
 
-
+    try:
+        lo_settings = LoyaltyCardSettings.objects.get()
+    except:
+        lo_settings = LoyaltyCardSettings.objects.create()
+        lo_settings.save()
 
 
     products = Product.objects.all().count()
@@ -151,21 +155,6 @@ def general_settings_block(request):
 @user_passes_test(lambda u: u.is_superuser)
 def general_settings(request):
 
-    # Пытаемся выбрать модели настроек, если не получается - создаем новые. (для первого захода на сайт)
-    try:
-        setup = BaseSettings.objects.get()
-        shop_settings = ShopSetup.objects.get()
-        email = EmailSettings.objects.get()
-        recaptcha = RecaptchaSettings.objects.get()
-    except:
-        setup = BaseSettings()
-        email = EmailSettings()
-        recaptcha = RecaptchaSettings()
-        shop_settings = ShopSetup()
-        email.save()
-        setup.save()
-        recaptcha.save()
-        shop_settings.save()
 
     # Сохранение основных настроек
     if request.method == 'POST':
