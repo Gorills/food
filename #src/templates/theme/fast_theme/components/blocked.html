@@ -1,0 +1,17 @@
+
+{% if setup.block == True %}
+{% load theme_static %}
+<div class="blocked">
+    <div class="blocked__inner">
+
+
+        <div class="blocked__title">Сожалеем, но сайт временно не работает!</div>
+        <p class="blocked__desc">Если Вы являетесь владельцем сайта, свяжитесь с <a href="https://profit-platform.ru/">разработчиком</a> для 
+            уточнения деталей.
+        </p>
+
+        <img src="{% get_static 'images/block.png' %}" alt="" class="blocked__img">
+
+    </div>
+</div>
+{% endif %}

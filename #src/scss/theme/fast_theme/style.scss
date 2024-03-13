@@ -27,12 +27,12 @@
 @import "../global/blocked";
 @import "../global/delivery-popup";
 @import "../global/setup-address";
-@import "../global/check-delivery";
 @import "../global/minimum-bar";
 @import "../global/delivery-blocked";
 
 
 // theme
+@import "check-delivery";
 @import "app-menu";
 @import "header";
 @import "toggle";

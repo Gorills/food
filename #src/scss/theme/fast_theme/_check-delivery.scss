@@ -1,0 +1,128 @@
+.check-delivery {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    
+
+
+    
+
+    // .check-delivery__overlay
+
+    &__overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 10000;
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    // .check-delivery__inner
+
+    &__inner {
+        position: relative;
+        z-index: 10001;
+        
+        padding: 40px;
+        border-radius: 8px;
+        background-color: #fff;
+
+        @media screen and (max-width: 420px) {
+            padding: 20px;
+            
+        }
+
+    }
+
+    // .check-delivery__title
+
+    &__title {
+        font-size: 24px;
+        color: #222;
+        margin-bottom: 20px;
+    }
+
+    // .check-delivery__closer
+
+    &__closer {
+    }
+
+    // .check-delivery__row
+
+    &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    // .check-delivery__item
+
+    &__item {
+        cursor: pointer;
+        padding: 40px;
+        box-shadow: 7px 7px 20px 5px rgba(208, 205, 221, .5), -10px -10px 30px rgba(255, 255, 255, .15);
+        text-align: center;
+        border-radius: 8px;
+        transition: all .2s ease;
+
+        @media screen and (max-width: 420px) {
+            padding: 20px;
+            
+        }
+
+        &:hover {
+            box-shadow: 0 10px 10px rgba(208, 205, 221, .5), 0 0 20px 10px rgba(150, 147, 160, .3), -10px -10px 30px rgba(255, 255, 255, .15);
+        }
+    }
+    &__item + &__item {
+        margin-left: 20px;
+        @media screen and (max-width: 420px) {
+            margin-left: 10px;
+            
+        }
+    }
+
+    // .check-delivery__item-title
+    &__item-title {
+        color: #222;
+    }
+    // .check-delivery__item--delivery
+
+    &__item--delivery {
+    }
+
+    // .check-delivery__img
+
+    &__img {
+        width: 150px;
+
+        @media screen and (max-width: 576px) {
+            width: 100px;
+            
+        }
+        @media screen and (max-width: 480px) {
+            width: 80px;
+            
+        }
+
+        @media screen and (max-width: 420px) {
+            width: 50px;
+            
+        }
+    }
+
+    // .check-delivery__item--pickup
+
+    &__item--pickup {
+    }
+}

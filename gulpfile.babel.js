@@ -227,7 +227,7 @@ const requireDir = require("require-dir"),
             ]
         },
         fast_scripts: {
-            src: "./#src/js/theme/fast_theme/app.js",
+            src: "./#src/js/theme/fast_theme/*.js",
             dist: "./main/core/theme/fast_theme/js/",
             watch: [
                 "./#src/js/theme/fast_theme/**/*.js",

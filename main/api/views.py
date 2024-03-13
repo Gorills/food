@@ -16,6 +16,7 @@ from shop.models import FoodConstructor, ShopSetup, PickupAreas, PayMethod, Cate
 from shop.models import WorkDay
 from subdomains.models import Subdomain
 
+from .get_work_day import get_hours
 
 from django.db.models import Sum
 from django.contrib.auth import get_user_model
@@ -49,6 +50,96 @@ class ComboViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Ge
 class FoodConstructorSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = FoodConstructor.objects.all()
     serializer_class = FoodConstructorSerializer
+
+@api_view(['GET'])
+def get_shop_settings(request):
+    general_settings = BaseSettings.objects.first()
+    settings = ShopSetup.objects.first()
+    pay_methods = PayMethod.objects.all()
+    pickup_areas = PickupAreas.objects.all()
+    try:
+        pay = PaymentSet.objects.first().status
+        if pay:
+            pay_online = True
+        else:
+            pay_online = False
+    except:
+        pay_online = False
+    
+
+    pay_methods_arr = []
+
+    for pay_method in pay_methods:
+        pay_methods_arr.append({
+           
+            'name': pay_method.name,
+            'in_pay_delivery': pay_method.in_pay_delivery,
+            'in_pay_pickup': pay_method.in_pay_pickup
+        })
+    
+    if not pay_methods_arr:
+
+        if settings.only_pay_with_delivery:
+            in_pay_delivery = False
+        else:
+            in_pay_delivery = True
+       
+        pay_methods_arr.append({
+            'name': 'Картой при получении',
+            'in_pay_delivery': in_pay_delivery,
+            'in_pay_pickup': True
+        })
+
+        pay_methods_arr.append({
+            'name': 'Наличными при получении',
+            'in_pay_delivery': in_pay_delivery,
+            'in_pay_pickup': True
+        })
+
+    if pay_online:
+        pay_methods_arr.append({
+            'name': 'Картой на сайте',
+            'in_pay_delivery': True,
+            'in_pay_pickup': True
+        })
+
+
+    pickup_areas_arr = []
+
+    for pickup_area in pickup_areas:
+        pickup_areas_arr.append({
+            'name': pickup_area.name
+        })
+
+    
+    if not pickup_areas_arr:
+        pickup_areas_arr.append({
+            'name': general_settings.address
+        })
+
+    hours = get_hours(request)
+
+
+
+    item = {
+        
+        'price_delivery': settings.price_delivery,
+        'free_delivery': settings.free_delivery,
+        'min_delivery': settings.min_delivery,
+        'zones_delivery': settings.zones_delivery,
+        'hide_delivery_choosing': settings.hide_delivery_choosing,
+        'first_delivery': settings.first_delivery,
+        'discount_on_pickup': settings.discount_on_pickup,
+        'summ_discount': settings.summ_discount,
+
+        
+        'pay_methods': pay_methods_arr,
+        'pickup_areas': pickup_areas_arr,
+        'work_hours': hours,
+    }
+
+    return Response(item, status=status.HTTP_200_OK)
+
 
 
 # !!! Is admin !!! 

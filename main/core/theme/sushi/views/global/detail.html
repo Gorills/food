@@ -392,6 +392,13 @@
                         <br>
                         
                     </div>
+                    {% if cart.get_discount_on_pickup != 0 %}
+                    <div class="cart__delivery" style="display: flex;">
+                        <p class="cart__order-line-text" style="margin-right: 5px">Скидка за самовывоз:</p>
+                        <p class="cart__order-line-summ">{{ cart.get_discount_on_pickup | floatformat:"2" }}₽ ({{ cart.get_discount_on_pickup_persent }}%)</p>
+
+                    </div>
+                    {% endif %}
                     {% if shop_setup.zones_delivery %}
                         {% if cart.get_min_delivery >= cart.get_total_price and request.session.delivery == 1 %}
 
