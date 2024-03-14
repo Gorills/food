@@ -1943,7 +1943,9 @@ $(document).on('click','.cookie__btn',function(e){
 
 $(document).on('click','.open-combo',function(e){
     e.preventDefault();
-    $(this).prev().prev().prev('.combo-popup').addClass('combo-popup--active')
+
+    $(this).closest('.product-list__item').find('.combo-popup').addClass('combo-popup--active')
+    
 
 })
 
@@ -2274,30 +2276,7 @@ $(document).on('click','.check-delivery__item--delivery-nozones',function(){
     
 })
 
-$(document).on('click','.setup-address__close, .setup-address__overlay',function(){
-    $('.setup-address').removeClass('setup-address--active')
-    $('#suggest').val('');
-    $('#suggest').attr('data-value', '');
 
-    var csrf = $('#suggest').attr('data-csrf')
-    address_data = {
-        delivery_address: '',
-        csrfmiddlewaretoken: csrf,
-    }
-
-    $.post('/cart/set_address/', address_data)
-    $('#finaladress').val('')
-    
-    $('.cart__inner').load('/cart/ .cart__refresh', function() {});
-    $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-    $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
-    $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-    $('.cart__form-delivery-in-session').load('/cart/ .cart__form-delivery-in-session-ref', function() {});
-
-    $('.minimum-bar__wrapper').load(location.href + ' .minimum-bar', function() {});
-    updateMinDelivery()
-
-})
 
 
 

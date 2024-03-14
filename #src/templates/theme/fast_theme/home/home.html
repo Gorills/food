@@ -201,6 +201,9 @@
                                                 </button>
                                             </div>
 
+                                            <div data-cart-id="{{combo.id}}" data-type="combo" data-name="{{combo.name}}" data-price="{{combo.price}}" data-image="{{ combo.get_thumb_mini }}">
+                                                <button onclick="addToCart({{combo.id}})">Добавить</button>
+                                            </div>
 
                                             <div class="btn btn--primary combo-popup__btn" data-name="{{ combo.name }}" data-price="{{ combo.price }}" data-token="{{ csrf_token }}" data-id="{{ combo.id }}">Добавить</div>
                                         </div>
@@ -239,6 +242,8 @@
 
 
                             
+
+                           
 
                             <div class="product-list__bottom">
                                 <h3 class="product-list__title">{{ combo.name }}</h3>

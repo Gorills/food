@@ -1,4 +1,133 @@
 
+// Функции математики в корзине
+
+
+// Сумма всех скидок
+function getAllDiscount() {
+
+    var discountOnPickup = JSON.parse(localStorage.getItem('shopSettings')).discount_on_pickup;
+    var deliveryType = localStorage.getItem("deliveryType"); 
+    
+    var pickup_discount_summ = 0
+    if (deliveryType == '0') {
+
+        pickup_discount_summ = getTotalPrice() * discountOnPickup / 100
+        document.getElementById("discountOnPickup").innerText = `${pickup_discount_summ} - ${discountOnPickup}%`;
+
+    } else {
+        document.getElementById("discountOnPickup").innerText = '';
+    }
+
+
+
+    return pickup_discount_summ
+
+
+
+}
+
+
+// Сумма заказа без доставки и скидок
+function getTotalPrice() {
+    
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    let totalPrice = 0;
+
+    for (let itemId in cart) {
+        let item = cart[itemId];
+        
+
+        totalPrice += item.price * item.quantity;
+        
+    }
+
+    return totalPrice
+}
+
+
+
+// Общая сумма с доставкой и скидками
+function getTotalPriceAfterDiscount() {
+
+    var discountOnPickup = JSON.parse(localStorage.getItem('shopSettings')).discount_on_pickup; 
+
+
+    res = getTotalPrice() + getDeliverySumm() - getAllDiscount()
+
+    document.getElementById("total_price").innerText = res;
+
+    return res
+}
+
+
+
+
+
+
+// Возвращаем финальную стоимость доставки с учетом способа доставки и условий
+function getDeliverySumm() {
+    let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
+    
+
+    if (delivery.free_delivery > getTotalPrice()) {
+        var summ = delivery.price_delivery
+    } else {
+        var summ = 0
+    }
+
+    var deliveryType = localStorage.getItem("deliveryType");
+
+    
+
+    
+    if (deliveryType === "0") {
+        summ = 0
+    }
+    
+
+
+    document.getElementById("total_delivery").innerText = summ;
+    return summ
+
+}
+
+
+// Количество товаров в корзине
+function getTotalCount() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    var totalCount = 0
+
+    for (let itemId in cart) {
+        let item = cart[itemId];
+        
+
+        totalCount += item.quantity;
+        
+    }
+
+    return totalCount
+
+}
+
+// console.log(getDeliverySumm())
+
+
+function updateAll() {
+    displayCart();
+    getDeliverySumm();
+    getTotalPrice();
+    getTotalPriceAfterDiscount();
+    getTotalCount();
+
+}
+
+
+
+
+
+
+
 $(document).on('submit','.save-delivery',function(e){
   e.preventDefault();
   updateDeliveryType()
@@ -9,6 +138,19 @@ $(document).on('click','.check-delivery__item--delivery',function(e){
   document.getElementById("setup-address").style.display = 'flex';
 })
 
+$(document).on('click','.setup-address__close, .setup-address__overlay',function(){
+    document.getElementById("setup-address").style.display = 'none';
+
+})
+
+
+document.addEventListener('click', function(event) {
+    var target = event.target;
+    var setupAddress = document.getElementById("set_delivery");
+    if (target === setupAddress) {
+        document.getElementById("check-delivery").style.display = 'flex';
+    }
+});
 
 // Проверяем наличие типа доставки в localStorage
 function updateDeliveryType() {
@@ -29,6 +171,7 @@ updateDeliveryType()
 function saveToLocalStorage(deliveryType) {
   localStorage.setItem("deliveryType", deliveryType);
   retrieveFromLocalStorage();
+  updateAll()
 }
 
 function retrieveFromLocalStorage() {
@@ -50,47 +193,53 @@ function deliveryUpdate(deliveryPriceJson) {
   document.getElementById("free_delivery").innerText = deliveryPriceJson.free_delivery;
   document.getElementById("min_delivery").innerText = deliveryPriceJson.min_delivery;
   document.getElementById("first_delivery").innerText = deliveryPriceJson.first_delivery;
+  document.getElementById("delivery_address").innerText = deliveryPriceJson.delivery_address;
 }
 
 
 // Инициализируем стоимость доставки при первой загрузке
-function setDeliveryPrice(storedSettingsJson) {
+function setDeliveryPrice() {
 
-  var deliveryPrice = localStorage.getItem('deliveryPrice');
+    var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
-  var zones_delivery = storedSettingsJson.zones_delivery;
-  
-  var data_get = JSON.parse(deliveryPrice);
+    var deliveryPrice = localStorage.getItem('deliveryPrice');
 
-  var data = {
-    'price_delivery': 0,
-    'free_delivery': 0,
-    'min_delivery': 0,
-    'first_delivery': 0
-  }
-
-  if (!zones_delivery) {
-    data = {
-        'price_delivery': storedSettingsJson.price_delivery,
-        'free_delivery': storedSettingsJson.free_delivery,
-        'min_delivery': storedSettingsJson.min_delivery,
-        'first_delivery': storedSettingsJson.first_delivery
-    } 
-  } 
-
-  if (deliveryPrice) {
+    var zones_delivery = storedSettingsJson.zones_delivery;
     
+    var data_get = JSON.parse(deliveryPrice);
 
-    if (JSON.stringify(data_get) !== JSON.stringify(data) && !zones_delivery) {
-      // Если данные изменились на сервере, обновляем их в localStorage
-      localStorage.setItem('deliveryPrice', JSON.stringify(data));
+    var data = {
+        'price_delivery': 0,
+        'free_delivery': 0,
+        'min_delivery': 0,
+        'first_delivery': 0,
+        'delivery_address': ''
     }
 
-  } else {
-    localStorage.setItem('deliveryPrice', JSON.stringify(data));
-    
-  }
+    if (!zones_delivery) {
+        data = {
+            'price_delivery': storedSettingsJson.price_delivery,
+            'free_delivery': storedSettingsJson.free_delivery,
+            'min_delivery': storedSettingsJson.min_delivery,
+            'first_delivery': storedSettingsJson.first_delivery,
+            'delivery_address': ''
+        } 
+    } 
 
+    if (deliveryPrice) {
+        
+
+        if (JSON.stringify(data_get) !== JSON.stringify(data) && !zones_delivery) {
+        // Если данные изменились на сервере, обновляем их в localStorage
+        localStorage.setItem('deliveryPrice', JSON.stringify(data));
+        }
+
+    } else {
+        localStorage.setItem('deliveryPrice', JSON.stringify(data));
+        
+    }
+
+    
 }
 
 
@@ -119,15 +268,21 @@ function setDeliveryPrice(storedSettingsJson) {
             var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
 
+            // console.log(storedSettingsJson)
+
+
             // Вот тут пишем нужный код после обработки загрузки настроек.
             
-            setDeliveryPrice(storedSettingsJson)
+            setDeliveryPrice()
 
             
             
               
             var deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
             deliveryUpdate(deliveryPriceJson)
+
+
+            updateAll()
 
             // Подключаем загрузку всех данных в HTML
 
@@ -145,6 +300,120 @@ function setDeliveryPrice(storedSettingsJson) {
 
 
 
+
+//   Товары
+// Функция для добавления товара в корзину
+function addToCart(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    let dataType = document.querySelector(`[data-cart-id="${itemId}"]`);    
+    console.log(dataType)
+
+    let itemInfo = {
+        id: itemId,
+        type: document.querySelector(`[data-cart-id="${itemId}"]`).dataset.type,
+        name: document.querySelector(`[data-cart-id="${itemId}"]`).dataset.name,
+        price: parseFloat(document.querySelector(`[data-cart-id="${itemId}"]`).dataset.price),
+        image: document.querySelector(`[data-cart-id="${itemId}"]`).dataset.image,
+        quantity: cart[itemId] ? cart[itemId].quantity + 1 : 1,
+        options: {}
+    };
+
+    cart[itemId] = itemInfo;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    console.log(cart)
+    
+    updateAll()
+}
+
+
+
+
+
+
+// Функция для отображения содержимого корзины
+function displayCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    let cartItems = document.getElementById('cart-items');
+    
+    
+    let totalCount = getTotalCount()
+
+    cartItems.innerHTML = '';
+
+    if (totalCount === 0) {
+        cartItems.innerHTML = 'Корзина пуста';
+    } else {
+        for (let itemId in cart) {
+            let item = cart[itemId];
+            let cartItem = document.createElement('li');
+            cartItem.innerHTML = `
+                <img src="${item.image}" alt="${item.name}" style="width: 50px;">
+                <span>${item.name} - ${item.price} x ${item.quantity}</span>
+                <button onclick="minusFromCart(${itemId})">-</button>
+                <button onclick="plusFromCart(${itemId})">+</button>
+                <button onclick="removeFromCart(${itemId})">Удалить</button>
+            `;
+            cartItems.appendChild(cartItem);
+    
+            
+            
+        }
+    }
+    
+
+    // Отображаем общую стоимость и количество товаров
+    let totalInfo = document.createElement('li');
+
+    document.getElementById("cart_summ").innerText = getTotalPrice();
+    document.getElementById("cart_num").innerText = totalCount;
+
+    totalInfo.textContent = `Общая стоимость: ${getTotalPrice()}`;
+
+    cartItems.appendChild(totalInfo);
+
+    
+    setDeliveryPrice()
+}
+
+
+function minusFromCart(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    if (cart[itemId].quantity > 1) {
+        cart[itemId].quantity--;
+    } else {
+        delete cart[itemId];
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+   
+    updateAll()
+}
+
+function plusFromCart(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    cart[itemId].quantity++;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    updateAll()
+}
+
+// Функция для удаления товара из корзины
+function removeFromCart(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    delete cart[itemId];
+    localStorage.setItem('cart', JSON.stringify(cart));
+   
+    updateAll()
+}
+
+// Функция для очистки корзины
+function clearCart() {
+    localStorage.removeItem('cart');
+    
+    updateAll()
+}
+
+// При загрузке страницы отображаем содержимое корзины, если оно есть
 
 
 
@@ -382,15 +651,11 @@ function init() {
     
                                         
 
-                                        
-                                        $('#suggest').attr('data-delivery', sd)
-                                        $('#suggest').attr('data-free', fd)
-                                        $('#suggest').attr('data-value', suggestElement.val())
-
                                         var data = JSON.parse(localStorage.getItem('deliveryPrice'));
 
                                         data.price_delivery = sd
                                         data.free_delivery = fd
+                                        data.delivery_address = suggestElement.val()
     
                                         if(min_delivery) {
                                             var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
@@ -437,12 +702,7 @@ function init() {
 
 
 
-                                    headerCartElement.load('/cart/ .header__cart-wrap', function() {});
-                                    cartInnerElement.load('/cart/ .cart__refresh', function() {});
-                                    $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-                                    $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
-                                    $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-                                    $('.cart__form-delivery-in-session').load('/cart/ .cart__form-delivery-in-session-ref', function() {});
+                                 
                                     
 
                                     

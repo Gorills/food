@@ -4,7 +4,7 @@
 
 // global
 @import "../global/font";
-@import "../global/cart";
+
 @import "../global/error";
 @import "../global/login";
 @import "../global/account";
@@ -12,8 +12,7 @@
 @import "../global/odred-done";
 @import "../global/thank";
 @import "../global/order-detail";
-@import "../global/cart-top";
-@import "../global/cart-total";
+
 @import "../global/cat-desc";
 @import "../global/search";
 @import "../global/popup";
@@ -32,6 +31,7 @@
 
 
 // theme
+@import "cart";
 @import "check-delivery";
 @import "app-menu";
 @import "header";

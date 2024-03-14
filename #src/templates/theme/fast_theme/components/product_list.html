@@ -258,7 +258,10 @@
 
             
 
-            
+            <div data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-options="" data-image="{{ product.get_thumb_mini }}">
+                <button onclick="addToCart({{product.id}})">Добавить в корзину</button>
+            </div>
+        
           
             
             <form action="{% url 'set_like' %}" method="POST" class="like-form">
