@@ -8,50 +8,77 @@
 
 
 <div class="cart">
-    <div class="cart__closer">
-        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-    </div>
+
+    <div class="cart__owerlay"></div>
+
+
+    
 
     <div class="cart__inner">
-        <p>Цена доставки</p>
-        <div id="price_delivery"></div>
-        <br>
-        <p>Бестплатно от</p>
-        <div id="free_delivery"></div>
-        <br>
-
-        <p>Минимальная сумма для доставки</p>
-        <div id="min_delivery"></div>
-        <br>
-
-        <p>Первый заказ</p>
-        <div id="first_delivery"></div>
-        <br>
-
-        <p>Скидка за самовывоз</p>
-        <div id="discountOnPickup"></div>
-        <br>
-
-        <p></p>
-        <div id="delivery_address"></div>
-        <br>
-
-        <p>Cумма за доставку</p>
-
-        <div id="total_delivery"></div>
-
-        <p>Итого к оплате</p>
-        <div id="total_price"></div>
-        <div id="output"></div>
         
-        <div id="set_delivery">Настроить доставку</div>
+        <div class="cart__top">
+            <div class="cart__title">Мой заказ</div>
+            <div class="cart__closer">
+                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+        </div>
 
+
+
+        {% comment %} <div class="cart__inner">
+            <p>Цена доставки</p>
+            <div id="price_delivery"></div>
+            <br>
+            <p>Бестплатно от</p>
+            <div id="free_delivery"></div>
+            <br>
+
+            <p>Минимальная сумма для доставки</p>
+            <div id="min_delivery"></div>
+            <br>
+
+            <p>Первый заказ</p>
+            <div id="first_delivery"></div>
+            <br>
+
+            <p>Скидка за самовывоз</p>
+            <div id="discountOnPickup"></div>
+            <br>
+
+            <p></p>
+            <div id="delivery_address"></div>
+            <br>
+
+            <p>Cумма за доставку</p>
+
+            <div id="total_delivery"></div>
+
+            <p>Итого к оплате</p>
+            <div id="total_price"></div>
+            <div id="output"></div>
+            
+            <div id="set_delivery">Настроить доставку</div>
+
+        </div> {% endcomment %}
+        <ul id="cart-items" class="cart__items">
+            
+        </ul>
+
+
+        <div class="cart__bottom" id="cart-bottom">
+
+
+            <div class="cart__total">
+                <div class="cart__total-title">Итого сумма заказа:</div>
+                <div class="cart__total-price"><span id="total_price"></span> ₽</div>
+            </div>
+
+            <a href="#" class="btn btn--primary">Оформить заказ</a>
+        </div>
+
+        {% comment %} <button onclick="clearCart()">Очистить корзину</button> {% endcomment %}
     </div>
-    <ul id="cart-items">
-        <!-- Элементы корзины будут отображены здесь -->
-    </ul>
-    <button onclick="clearCart()">Очистить корзину</button>
 
 </div>

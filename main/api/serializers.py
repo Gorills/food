@@ -32,7 +32,8 @@ class OptionTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OptionType
         fields = [
-            'option_class'
+            'option_class',
+            'name',
         ]
 
 class ProductOptionSerializer(serializers.ModelSerializer):

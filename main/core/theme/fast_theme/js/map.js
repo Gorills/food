@@ -470,48 +470,48 @@ $(function() {
     });
 });
 
-//   Удаление из корзины
-$(document).on('click','.cart__remove, .product-remove a',function(e){
-    e.preventDefault();
-    var id = $(this).attr('data-id')
-    var name = $(this).attr('data-name')
-    var price = $(this).attr('data-price')
-    var category = $(this).attr('data-category')
-    var quantity = $(this).attr('data-quantity')
+// //   Удаление из корзины
+// $(document).on('click','.cart__remove, .product-remove a',function(e){
+//     e.preventDefault();
+//     var id = $(this).attr('data-id')
+//     var name = $(this).attr('data-name')
+//     var price = $(this).attr('data-price')
+//     var category = $(this).attr('data-category')
+//     var quantity = $(this).attr('data-quantity')
 
-    var url = $(this).attr('href')
-    $.get(url, function() {
+//     var url = $(this).attr('href')
+//     $.get(url, function() {
      
         
-        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-        $('.cart__inner').load('/cart/ .cart__refresh', function() {});
-        $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-        $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
-        $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-        updateMinDelivery()
+//         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+//         $('.cart__inner').load('/cart/ .cart__refresh', function() {});
+//         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
+//         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
+//         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
+//         updateMinDelivery()
 
 
 
-        // $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
-        removeCart(id, name, price, category, quantity) 
-        updateMinDelivery()
-    });
+//         // $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
+//         removeCart(id, name, price, category, quantity) 
+//         updateMinDelivery()
+//     });
 
-    count = 0
-    $('.cart__item').each(function(index){
-        count = index
-    })
-    if (count==0) {
-        // function remove(){
-            $('.cart').removeClass('cart--active')
-            $('.cart__form').hide()
-            $('#map').hide()
-            $('body').removeClass('body')
+//     count = 0
+//     $('.cart__item').each(function(index){
+//         count = index
+//     })
+//     if (count==0) {
+//         // function remove(){
+//             $('.cart').removeClass('cart--active')
+//             $('.cart__form').hide()
+//             $('#map').hide()
+//             $('body').removeClass('body')
 
-        // }
-        // setTimeout(remove, 1000);
-    }
-});
+//         // }
+//         // setTimeout(remove, 1000);
+//     }
+// });
 
 
 //   Применение баллов
@@ -819,6 +819,8 @@ $(document).on('click','.select-wrap__item',function(){
     $('.product-detail__price-old').html(oldPrice + '₽');
     $('.product-detail__price').html(totalPrice + '₽');
     $('.options_btn').attr('data-price', totalPrice).attr('data-options-id', optionsIds).attr('data-options', options).attr('data-quantity', quantity);
+
+
 });
 
 $(document).ready(function() {
@@ -1078,7 +1080,7 @@ $(document).on('click','.product-options__item',function(e){
     var res_price = price + pr_price;
     var res_old_price = old_price + price;
 
-    $productItem.find('.product-options__btn').attr('data-price', res_price).attr('data-options', value).attr('data-options-id', id)
+    $productItem.find('.btn-wrap').attr('data-price', res_price).attr('data-optionsid', id)
 
     $productItem.find('.product-list__price').html(res_price + ' ₽')
     $productItem.find('.product-list__old').html(res_old_price + ' ₽')
@@ -1094,7 +1096,7 @@ $(document).on('click','.product-options__item',function(e){
     $productItem.find('.product-options-popup__old-price').text(res_old_price + ' ₽')
 
     // .product-options-popup_btn
-    $productItem.find('.product-options-popup_btn').attr('data-price', res_price).attr('data-options-id', id).attr('data-options', value)
+    $productItem.find('.product-options-popup_btn').attr('data-price', res_price).attr('data-optionsid', id)
     
 
     
@@ -1112,7 +1114,7 @@ $(document).ready(function() {
         
         
         // Найти родительский элемент всех выбранных checkbox
-        var $parent = $(this).parents('.product-options-popup__inner');
+        var $parent = $(this).parents('.product-list__item');
 
 
         var checked_select_id = $parent.find('.product-options-popup__options-select--active').data('id');
@@ -1134,7 +1136,7 @@ $(document).ready(function() {
 
         
         // Записать новую цену в атрибут data-price кнопки .btn
-        $parent.find('.btn').attr('data-price', new_price.toFixed(2));
+        $parent.find('.btn-wrap').attr('data-price', new_price.toFixed(2));
         $parent.find('.product-options-popup__price').html(new_price + ' ₽');
         $parent.find('.product-options-popup__old-price').html(new_old_price + ' ₽');
         
@@ -1145,7 +1147,7 @@ $(document).ready(function() {
         });
         
         // Записать значения data-id через запятую в атрибут data-options-id кнопки .btn
-        $parent.find('.btn').attr('data-options-id', ids.join(','));
+        $parent.find('.btn-wrap').attr('data-optionsid', ids.join(','));
         
         // Собрать названия выбранных значений через запятую
         var options = [];
@@ -1154,15 +1156,15 @@ $(document).ready(function() {
         });
         
         // Записать названия выбранных значений через запятую в атрибут data-options кнопки .btn
-        $parent.find('.btn').attr('data-options', options.join(', '));
+        $parent.find('.btn-wrap').attr('data-options', options.join(', '));
 
         if (checked_select_id != undefined && checked_select_value != undefined) {
-            var id_now = $parent.find('.btn').attr('data-options-id');
-            var options_now = $parent.find('.btn').attr('data-options');
+            var id_now = $parent.find('.btn-wrap').attr('data-optionsid');
+            var options_now = $parent.find('.btn-wrap').attr('data-options');
             
     
-            $parent.find('.btn').attr('data-options-id', checked_select_id + ',' + id_now);
-            $parent.find('.btn').attr('data-options', checked_select_value + ',' + options_now);
+            $parent.find('.btn-wrap').attr('data-optionsid', checked_select_id + ',' + id_now);
+            // $parent.find('.btn').attr('data-options', checked_select_value + ',' + options_now);
         }
 
         
@@ -1226,15 +1228,7 @@ $(document).ready(function(){
         // $.get( "/cart/set_delivery/1/", function() {});
     })
 
-    $(document).on('click','.cart__close, .cart__closer',function(e){
-        e.preventDefault()
-
-        $('#cartData').html('')
-      
-
-        // $.get( "/cart/set_delivery/1/", function() {});
-        $('body').removeClass('body')
-    })
+    
 
     $(document).on('click','#cancel',function(e){
         e.preventDefault()
