@@ -418,13 +418,18 @@ function displayCart() {
         for (let itemId in cart) {
             let item = cart[itemId];
             let cartItem = document.createElement('li');
+
+
             let options_name = item.options_name
 
             let options_str = ''
 
-            for (const item of options_name) {
+            if (options_name) {
 
-                options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                for (const item of options_name) {
+
+                    options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                }
             }
                 
             
