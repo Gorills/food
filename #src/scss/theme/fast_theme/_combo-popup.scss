@@ -198,8 +198,9 @@
 
 .counter {
     margin-right: 25px;
-    display: flex;
+    display: none;
     align-items: center;
+
     @media screen and (max-width: 576px) {
         margin-right: 0;
         margin-bottom: 15px;

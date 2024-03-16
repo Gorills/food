@@ -318,35 +318,109 @@ function setDeliveryPrice() {
 
 
 //   Товары
+
+
+$(document).on('click','.add_to_cart',function(){
+    var id = $(this).parent('.btn-wrap').attr('data-cart-id')
+    var type = $(this).parent('.btn-wrap').attr('data-type')
+    addToCart($(this), id, type);
+    
+})
+
+$(document).on('click','.combo-popup__btn',function(){
+    var id = $(this).parent('.btn-wrap').attr('data-cart-id')
+    var type = $(this).parent('.btn-wrap').attr('data-type')
+
+    if ($(this).hasClass('combo-popup__btn--active')) {
+        addToCart($(this), id, type);
+
+    } else {
+        
+        return
+    }
+})
+
+
+
+
 // Функция для добавления товара в корзину
+
+// Функция для получения опций товаров
 async function getProductOptionsId(itemId, optionsIdArray) {
     
     try {
         const response = await fetch(`/api/v1/products/${itemId}/`);
         const data = await response.json();
 
-        return data.options.filter(option => optionsIdArray.includes(option.id));
+        var res = data.options.filter(option => optionsIdArray.includes(option.id));
+
+        console.log(res)
+        return res
 
     } catch (error) {
-        console.error('Ошибка загрузки настроек:', error);
+        console.error('Ошибка загрузки опций:', error);
         throw error;
     }
 }
-async function addToCart(itemId) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-    let itemElement = document.querySelector(`[data-cart-id="${itemId}"]`);
+
+async function getComboOptionsId(comboId, optionsIdArray) {
+    
+    try {
+        const response = await fetch(`/api/v1/combos/${comboId}/`);
+        const data = await response.json();
+        var res = data.items.filter(option => optionsIdArray.includes(option.id));
+        return res
+
+    } catch (error) {
+        console.error('Ошибка загрузки опций:', error);
+        throw error;
+    }
+}
+
+async function getConstructioOptionsId(constructioId, optionsIdArray) {
+    
+    try {
+        const response = await fetch(`/api/v1/constructors/${constructioId}/`);
+        const data = await response.json();
+
+        var res = data.ingredients.filter(option => optionsIdArray.includes(option.id));
+
+        return res
+    } catch (error) {
+        console.error('Ошибка загрузки опций:', error);
+        throw error;
+    }
+}
+
+
+async function addToCart(context, itemId, type) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    
+
+    let itemElement = document.querySelector(`[data-cart-id="${itemId}"][data-type="${type}"]`);
+
+
+    console.log(itemElement)
+    
+
     let optionsIdString = itemElement.dataset.optionsid;
     let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
 
 
     let id = itemId;
+    if (type === 'product') {
+        id += '00000';
+    } else if (type === 'combo') {
+        id += '11111';
+    } else if (type === 'constructor') {
+        id += '22222';
+    }
     
     var optionsNameArray = [];
     if (optionsIdArray.length > 0) {
         id += optionsIdArray.join('');
-        
-        if (itemElement.dataset.type === 'product') {
+        if (type === 'product') {
             try {
                 optionsNameArray = await getProductOptionsId(itemId, optionsIdArray);
                 
@@ -355,10 +429,27 @@ async function addToCart(itemId) {
                 console.error('Ошибка при получении настроек продукта:', error);
                 // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
             }
+
+        } else if (type === 'combo') {
+            try {
+                optionsNameArray = await getComboOptionsId(itemId, optionsIdArray);
+                
+            } catch (error) {
+                console.error('Ошибка при получении настроек комбо:', error);
+                // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
+            }
+        } else if (type === 'constructor') {
+            try {
+                optionsNameArray = await getConstructioOptionsId(itemId, optionsIdArray);
+                
+            } catch (error) {
+                console.error('Ошибка при получении настроек конструктора:', error);
+                // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
+            }
         }
     }
     
-    console.log(id)
+    
     let itemInfo = {
         id: id,
         type: itemElement.dataset.type,
@@ -435,33 +526,41 @@ function displayCart() {
             
 
             cartItem.innerHTML = `
-                <img src="${item.image}" alt="${item.name}" style="width: 100px;">
+                <div class="cart__left">
+                    <div class="cart__left-wrap">
+                        <img src="${item.image}" alt="${item.name}" style="width: 100px;">
 
-                <div class="cart__item-info">
+                        <div class="cart__item-info">
 
-                    <span class="cart__item-name">${item.name}</span>
+                            <span class="cart__item-name">${item.name}</span>
 
-                    <div class="cart__item-options">${options_str}</div>
+                            <div class="cart__item-options">${options_str}</div>
 
-                </div>
-                <div class="cart__btn-wrapper">
-                    <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
-                    <div class class="cart__quantity">${item.quantity}</div>
-                    <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
-                </div>
-
-                <div class="cart__summ">${item.price * item.quantity} ₽</div>
-                <button class="cart__remove" onclick="removeFromCart(${itemId})">
+                        </div>
+                    </div>
+                
                     
-                    <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20.5001 6H3.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M9.5 11L10 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M14.5 11L14 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="#1C274C" stroke-width="1.5"/>
-                    <path d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                </button>
+                </div>
+
+                <div class="cart__items-wrap">
+                    <div class="cart__btn-wrapper">
+                        <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
+                        <div class class="cart__quantity">${item.quantity}</div>
+                        <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
+                    </div>
+                    <div class="cart__summ">${item.price * item.quantity} ₽</div>
+                    <button class="cart__remove" onclick="removeFromCart(${itemId})">
+                        
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.5001 6H3.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M9.5 11L10 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M14.5 11L14 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="#1C274C" stroke-width="1.5"/>
+                        <path d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
             `;
             
             cartItems.appendChild(cartItem);

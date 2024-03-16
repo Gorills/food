@@ -134,40 +134,53 @@ class CategorySerializer(serializers.ModelSerializer):
         ]
 
 
+class ComboProductsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+
 class ComboItemSerializer(serializers.ModelSerializer):
+    product = ComboProductsSerializer(read_only=True)
+    option_value = serializers.SerializerMethodField()
+
     class Meta:
         model = ComboItem
         fields = '__all__'
 
+    def get_option_value(self, obj):
+        return obj.product.name
 
 class ComboSerializer(serializers.ModelSerializer):
     items = ComboItemSerializer(many=True, read_only=True)
+
     class Meta:
         model = Combo
         fields = '__all__'
 
 
 
-class IngridientsSerializer(serializers.ModelSerializer):
+class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingridients
         fields = '__all__'
 
-
-class ConstructorCategorySerializer(serializers.ModelSerializer):
-    ingridients = IngridientsSerializer(many=True, read_only=True)
-    class Meta:
-        model = ConstructorCategory
-        fields = '__all__'
-
-
-
 class FoodConstructorSerializer(serializers.ModelSerializer):
-    constructor_categorys = ConstructorCategorySerializer(many=True, read_only=True)
-    parent = CategorySerializer(read_only=True)
+    ingredients = serializers.SerializerMethodField()
+
     class Meta:
         model = FoodConstructor
         fields = '__all__'
+
+    def get_ingredients(self, obj):
+        ingredients_list = []
+        for category in obj.constructor_categorys.all():
+            for ingredient in category.ingridients.all():
+                ingredient_data = IngredientSerializer(ingredient).data
+                ingredient_data['option_value'] = ingredient_data.pop('name')  # Переименовываем ключ
+                ingredients_list.append(ingredient_data)
+        return ingredients_list
 
 
 # Базовые настройки сайта
