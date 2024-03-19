@@ -169,7 +169,7 @@ def general_settings(request):
     # Заполнение форм значениями, для отображения уже сохраненных настроек
     
     email = EmailSettings.objects.get()
-    recaptcha = RecaptchaSettings.objects.get()
+    
     
     form = SetupForm(instance=setup)
     email_form = EmailSettingsForm(instance=email)
@@ -178,7 +178,7 @@ def general_settings(request):
         'form': form,
         'setup': setup,
         'email_form': email_form,
-        'recaptcha_form': recaptcha_form,
+        
     }
     return render(request, 'settings/general_settings.html', context)
 

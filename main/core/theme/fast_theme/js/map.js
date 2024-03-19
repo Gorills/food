@@ -2114,12 +2114,15 @@ $(document).on('hover','.header__cart-no-active::after',function(){
 
 
 // Настройка адреся доставки в сессии
-$(document).on('click','.check-delivery__overlay',function(){
+$(document).on('click','.check-delivery__overlay',function(){    
+
     $('.check-delivery__inner').css('transform', 'scale(1.05)');
 
     setTimeout(function(){
         $('.check-delivery__inner').css('transform', 'scale(1)');
     }, 100)
+
+
 })
 
 
