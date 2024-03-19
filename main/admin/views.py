@@ -173,7 +173,7 @@ def general_settings(request):
     
     form = SetupForm(instance=setup)
     email_form = EmailSettingsForm(instance=email)
-    recaptcha_form = RecaptchaSettingsForm(instance=recaptcha)
+    
     context = {
         'form': form,
         'setup': setup,
