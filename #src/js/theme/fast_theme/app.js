@@ -113,17 +113,13 @@ function getTotalCount() {
 // console.log(getDeliverySumm())
 
 
-function updateAll() {
-    displayCart();
-    getDeliverySumm();
-    getTotalPrice();
-    getTotalPriceAfterDiscount();
-    getTotalCount();
-
-}
 
 
 
+
+
+
+// Обработка нажатий кнопок
 
 
 $(document).on('click','.cart__btn',function(e){
@@ -140,7 +136,7 @@ $(document).on('click','.cart__owerlay, .cart__closer',function(e){
     
   
 
-    // $.get( "/cart/set_delivery/1/", function() {});
+    
     $('body').removeClass('body')
 })
 
@@ -168,6 +164,28 @@ document.addEventListener('click', function(event) {
     }
 });
 
+
+$(document).on('click','.order__checkup',function(e){
+    e.preventDefault();
+    $('.order').addClass('order--active');
+    $('body').addClass('body');
+    $('.cart').removeClass('cart--active');
+})
+
+$(document).on('click','.order__closer, .order__owerlay',function(e){
+    e.preventDefault();
+    $('.order').removeClass('order--active')
+    $('body').removeClass('body');
+
+})
+
+
+
+$(document).on('click','.show-map',function(e){
+    $('#setup-address').css('display', 'flex');
+})
+
+
 // Проверяем наличие типа доставки в localStorage
 function updateDeliveryType() {
   var deliveryType = localStorage.getItem("deliveryType");
@@ -194,10 +212,54 @@ function retrieveFromLocalStorage() {
   var retrievedDeliveryType = localStorage.getItem("deliveryType");
   if (retrievedDeliveryType !== null) {
     var deliveryTypeText = (retrievedDeliveryType === "1") ? "1" : "0";
-    document.getElementById("output").innerText = deliveryTypeText;
-  } else {
-    document.getElementById("output").innerText = "Тип доставки не выбран.";
-  }
+    
+
+    updateDeliveryInfo(deliveryTypeText)
+  } 
+
+
+}
+
+// Обновление информации о доставке в html
+function updateDeliveryInfo(deliveryTypeText) {
+    if (deliveryTypeText === "1") {
+        document.querySelector('.order-delivery').classList.add('order__delivery-check-item--active');
+        document.querySelector('.order-pickup').classList.remove('order__delivery-check-item--active');
+
+        document.getElementById("order_delivery").style.display = 'block';
+        document.getElementById("order_pickup").style.display = 'none';
+
+
+        var deliveryPrice = JSON.parse(localStorage.getItem('deliveryPrice'));
+        var shopSetup = JSON.parse(localStorage.getItem('shopSettings'));
+
+        console.log(shopSetup)
+
+        var street = document.getElementById("street")
+        // .attr('readonly', 'readonly')
+        if (shopSetup.zones_delivery) {
+            street.value = deliveryPrice.delivery_address;
+            street.readOnly = true;
+            street.style.cursor = 'pointer';
+            street.classList.add('show-map');
+        } else {
+            street.value = deliveryPrice.delivery_address;
+            street.readOnly = false;
+            street.style.cursor = 'auto';
+            
+        }
+       
+        
+
+
+    } else {
+        document.querySelector('.order-delivery').classList.remove('order__delivery-check-item--active');
+        document.querySelector('.order-pickup').classList.add('order__delivery-check-item--active');
+
+        document.getElementById("order_delivery").style.display = 'none';
+        document.getElementById("order_pickup").style.display = 'block';
+
+    }
 }
 
 
@@ -284,12 +346,12 @@ function setDeliveryPrice() {
             var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
 
-            // console.log(storedSettingsJson)
+            console.log(storedSettingsJson)
 
 
             // Вот тут пишем нужный код после обработки загрузки настроек.
             
-            setDeliveryPrice()
+            
 
             
             
@@ -622,7 +684,6 @@ function clearCart() {
     updateAll()
 }
 // clearCart()
-// При загрузке страницы отображаем содержимое корзины, если оно есть
 
 
 
@@ -631,7 +692,16 @@ function clearCart() {
 
 
 
+// Обновление всех значений при изменении корзины
+function updateAll() {
+    
+    displayCart();
+    getDeliverySumm();
+    getTotalPrice();
+    getTotalPriceAfterDiscount();
+    getTotalCount();
 
+}
 
 
 

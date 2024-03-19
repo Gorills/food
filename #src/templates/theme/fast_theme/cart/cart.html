@@ -2,28 +2,159 @@
 
 
 
+<div class="order">
 
-
-
-
-
-<div class="cart">
-
-    <div class="cart__owerlay"></div>
-
+    <div class="order__owerlay"></div>
 
     
+    <div class="order__container">
 
-    <div class="cart__inner">
-        
-        <div class="cart__top">
-            <div class="cart__title">Мой заказ</div>
-            <div class="cart__closer">
-                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
+        <div class="order__inner">
+
+            <div class="order__top">
+
+                <div class="order__title">
+                    Оформление заказа
+                </div>
+
+
+                <div class="order__closer">
+                    <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </div>
+
             </div>
+            
+
+
+            
+
+            <div class="order__body">
+
+                <div class="order__delivery-check">
+                    <div class="order__delivery-check-item order-delivery" onclick="saveToLocalStorage(1)">Доставка</div>
+                    <div class="order__delivery-check-item order-pickup" onclick="saveToLocalStorage(0)">Самовывоз</div>
+                </div>
+                
+
+                <div class="order__body-wrap">
+
+                    <div class="order__delivery" id="order_delivery">
+                        
+                        <div class="order__checkup-item ">
+                            <p class="order__checkup-title">Клиент</p>
+
+                            <div class="order__checkup-item-wrap order__checkup-item-wrap--grid-two">
+
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Телефон *</p>
+                                    <input type="text" class="order__input phone required" placeholder="+7 (___) ___-__-__">
+                                </label>
+
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Имя *</p>
+                                    <input type="text" class="order__input required">
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="order__checkup-item ">
+                            <p class="order__checkup-title">Адрес</p>
+
+                            <div class="order__checkup-item-wrap">
+
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Улица *</p>
+                                    <input type="text" class="order__input required" id="street" placeholder="">
+                                </label>
+
+                               
+
+                            </div>
+                            <div class="order__checkup-item-wrap order__checkup-item-wrap--grid-four">
+
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Подъезд</p>
+                                    <input type="text" class="order__input" placeholder="">
+                                </label>
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Этаж</p>
+                                    <input type="text" class="order__input" placeholder="">
+                                </label>
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Квартира</p>
+                                    <input type="text" class="order__input" placeholder="">
+                                </label>
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Домофон</p>
+                                    <input type="text" class="order__input" placeholder="">
+                                </label>
+
+                               
+
+                            </div>
+                            <div class="order__checkup-item-wrap">
+
+                                <label for="" class="order__label">
+                                    <p class="order__label-title">Комментарий к адресу</p>
+                                    <textarea type="text" class="order__input order__textarea required" id="street" placeholder=""></textarea>
+                                </label>
+
+                               
+
+                            </div>
+
+                        </div>
+
+                        <div class="order__checkup-item ">
+                            <p class="order__checkup-title">Привезти</p>
+
+                            <div class="checkout__radio-list">
+                                <label class="checkout__radio-wrap">
+                                    <input type="radio" class="checkout__radio" name="checkouttime" value="Как можно быстрее" data-tab="checkout-time-1" checked="">
+                                    <span>Как можно быстрее</span>
+                                </label>
+                                <label class="checkout__radio-wrap">
+                                    <input type="radio" class="checkout__radio" name="checkouttime" value="Заказ на время" data-tab="checkout-time-2">
+                                    <span>Заказ на время</span>
+                                </label>
+                            </div>
+
+                            <div class="form__acceptance">
+                                <label>
+                                    <input type="checkbox" class="required" checked="">
+                                    <span>С <a href="#">условиями использования персональных данных</a> согласен *</span>
+                                </label>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="order__pickup" id="order_pickup">
+                        самовывоз
+
+                    </div>
+                </div>
+
+            </div>
+            
+            
+
         </div>
+        <div class="order__bottom">
+
+            <a href="#" class="btn btn--primary order__next">Далее</a>
+        </div>
+
+    </div>
+
+    
+</div>
 
 
 
@@ -62,6 +193,30 @@
             <div id="set_delivery">Настроить доставку</div>
 
         </div> {% endcomment %}
+
+
+<div class="cart">
+
+
+
+    <div class="cart__owerlay"></div>
+
+
+    
+
+    <div class="cart__inner">
+        
+        <div class="cart__top">
+            <div class="cart__title">Мой заказ</div>
+            <div class="cart__closer">
+                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+        </div>
+
+
+
         <ul id="cart-items" class="cart__items">
             
         </ul>
@@ -75,10 +230,11 @@
                 <div class="cart__total-price"><span id="total_price"></span> ₽</div>
             </div>
 
-            <a href="#" class="btn btn--primary">Оформить заказ</a>
+            <a href="#" class="btn btn--primary order__checkup">Оформить заказ</a>
         </div>
 
         {% comment %} <button onclick="clearCart()">Очистить корзину</button> {% endcomment %}
     </div>
+
 
 </div>

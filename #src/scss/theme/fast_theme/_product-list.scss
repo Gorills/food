@@ -323,7 +323,13 @@
     }
 
     .option_setup {
+        color: var(--color-fonts);
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
         svg {
+            margin-left: 10px;
             path {
                 fill: var(--color-product-card-font);
             }
@@ -447,10 +453,10 @@
             text-align: center;
             line-height: 1;
             padding: 5px;
-            background-color: #fff;
+            
             border-bottom-left-radius: 4px;
             border-bottom-right-radius: 4px;
-            background-color: #fff;
+            background-color: var(--color-product-card);
             color: var(--color-primary);
             font-weight: 600;
             font-size: 11px;
