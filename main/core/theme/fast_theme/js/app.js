@@ -577,12 +577,13 @@ function getAllDiscount() {
 
     var discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
 
-    var first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100
+    var first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
 
-    // console.log(first_delivery_summ)
-    
+    // Округляем сумму скидки первой доставки
+    first_delivery_summ = Math.floor(first_delivery_summ);
+
     if (shopSettings.summ_discount == true && deliveryType == '0') {
-        first_delivery_summ = 0
+        first_delivery_summ = 0;
     }
 
     if (first_delivery_summ != 0) {
@@ -592,32 +593,27 @@ function getAllDiscount() {
         document.getElementById("discountOnFirstDelivery").innerText = '';
         document.getElementById("first_delivery_discount_info").style.display = 'none';
     }
-
-
     
-    
-    var summ = 0
+    var summ = 0;
 
     if (deliveryType == '0') {
-        summ = summ + (getTotalPrice() * discountOnPickup / 100)
+        var pickup_discount = getTotalPrice() * discountOnPickup / 100;
+        // Округляем сумму скидки при самовывозе
+        pickup_discount = Math.floor(pickup_discount);
+        summ = summ + pickup_discount;
 
-        document.getElementById("discountOnPickup").innerText = `${summ}₽ (${discountOnPickup}%)`;
+        document.getElementById("discountOnPickup").innerText = `${pickup_discount}₽ (${discountOnPickup}%)`;
         document.getElementById("pickup_discount_info").style.display = 'flex';
-
     } else {
         document.getElementById("discountOnPickup").innerText = '';
         document.getElementById("pickup_discount_info").style.display = 'none';
     }
 
-    summ = summ + first_delivery_summ
+    summ = summ + first_delivery_summ;
 
-    
-    
-    return summ
-
-
-
+    return summ;
 }
+
 
 
 // Сумма заказа без доставки и скидок
