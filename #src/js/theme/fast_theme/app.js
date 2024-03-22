@@ -120,7 +120,7 @@ function setOrder() {
 
     }
 
-    console.log(order)
+    // console.log(order)
 
 }
 
@@ -383,7 +383,7 @@ $(document).on('click', '.order__pickup-row', function() {
 $(document).on('click', '.order__input-dropdown', function() {
     var order = JSON.parse(localStorage.getItem('order'));
     var value = $(this).val();
-    console.log(value)
+    // console.log(value)
 
     $('.order__pickup-areas-input').val(value);
 
@@ -1037,7 +1037,7 @@ $(document).on('click', '.order_create', function(e) {
 
 
 
-    console.log(order)
+    // console.log(order)
 
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
@@ -1304,7 +1304,7 @@ async function addToCart(context, itemId, type) {
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    console.log(cart)
+    // console.log(cart)
     
     updateAll();
 }
