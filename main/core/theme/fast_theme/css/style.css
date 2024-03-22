@@ -5609,6 +5609,10 @@ td.product-thumbnail img {
   margin-bottom: 10px;
 }
 
+.order__info-item .open_cart {
+  margin-left: 10px;
+}
+
 .order__info-item p {
   color: #767E91;
   margin-right: 10px;
@@ -5649,7 +5653,6 @@ td.product-thumbnail img {
 .order .open_cart {
   font-size: 12px;
   display: block;
-  margin-top: 20px;
   color: #E90C4E;
   text-decoration: underline;
 }

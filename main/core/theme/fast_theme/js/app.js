@@ -120,6 +120,8 @@ function setOrder() {
 
     }
 
+    console.log(order)
+
 }
 
 setOrder()
@@ -160,8 +162,10 @@ function updateDeliveryType() {
   
       if (deliveryTypeText == '0') {
           order.delivery_method = 'Самовывоз'
+          order.delivery_type == '0'
       } else {
           order.delivery_method = 'Доставка'
+          order.delivery_type == '1'
       }
       
       localStorage.setItem('order', JSON.stringify(order));
@@ -295,6 +299,8 @@ function payMethodUpdate() {
                 // Выполняем нужное действие
                 $('#pay_change').show()
                 // Добавьте здесь свои действия
+            } else {
+                $('#pay_change').hide()
             }
         }
 
@@ -346,7 +352,7 @@ function setPickupPoints() {
         if (count === 0) {
             input.classList.add('order__input');
 
-            order.pickup_point = area.name;
+            order.address_pickup = area.name;
             localStorage.setItem('order', JSON.stringify(order));
 
             document.querySelector('.order__pickup-areas-input').value = area.name;
@@ -383,7 +389,7 @@ $(document).on('click', '.order__input-dropdown', function() {
 
     $('.order__pickup-areas').slideToggle();
 
-    order.pickup_point = value;
+    order.address_pickup = value;
     localStorage.setItem('order', JSON.stringify(order));
 
 
@@ -526,7 +532,7 @@ $(document).ready(function() {
     var order = JSON.parse(localStorage.getItem('order'));
 
     // Обработчик события change для каждого поля ввода
-    $('.order__input').on('change', function() {
+    $('.order__input').on('change input', function() {
         var dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
         var value = $(this).val(); // Получаем значение поля ввода
 
@@ -536,6 +542,8 @@ $(document).ready(function() {
         // Сохраняем обновленный объект order в локальное хранилище
         localStorage.setItem('order', JSON.stringify(order));
     });
+
+    
 
     // При загрузке страницы устанавливаем сохраненные значения в поля ввода, если они есть
     $('.order__input').each(function() {
@@ -562,6 +570,7 @@ $(document).ready(function() {
 
 // Сумма всех скидок
 function getAllDiscount() {
+    var deliveryType = localStorage.getItem("deliveryType"); 
 
     var shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     var discountOnPickup = shopSettings.discount_on_pickup;
@@ -569,9 +578,14 @@ function getAllDiscount() {
     var discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
 
     var first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100
-    
 
-    if (discountOnFirstDelivery != 0) {
+    // console.log(first_delivery_summ)
+    
+    if (shopSettings.summ_discount == true && deliveryType == '0') {
+        first_delivery_summ = 0
+    }
+
+    if (first_delivery_summ != 0) {
         document.getElementById("discountOnFirstDelivery").innerText = `${first_delivery_summ}₽ (${discountOnFirstDelivery}%)`;
         document.getElementById("first_delivery_discount_info").style.display = 'flex';
     } else {
@@ -580,12 +594,12 @@ function getAllDiscount() {
     }
 
 
-    var deliveryType = localStorage.getItem("deliveryType"); 
+    
     
     var summ = 0
 
     if (deliveryType == '0') {
-        summ =  summ + (getTotalPrice() * discountOnPickup / 100)
+        summ = summ + (getTotalPrice() * discountOnPickup / 100)
 
         document.getElementById("discountOnPickup").innerText = `${summ}₽ (${discountOnPickup}%)`;
         document.getElementById("pickup_discount_info").style.display = 'flex';
@@ -610,6 +624,7 @@ function getAllDiscount() {
 function getTotalPrice() {
     
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    
     let totalPrice = 0;
 
     for (let itemId in cart) {
@@ -635,7 +650,12 @@ function getTotalPriceAfterDiscount() {
     res = getTotalPrice() + getDeliverySumm() - getAllDiscount()
 
     document.getElementById("total_price_after_discount").innerText = res + '₽';
-    
+
+
+    let order = JSON.parse(localStorage.getItem('order'));
+
+    order.summ = res
+    localStorage.setItem('order', JSON.stringify(order));
 
     return res
 }
@@ -727,6 +747,15 @@ function getDeliverySumm() {
 
 
     document.getElementById("total_delivery").innerText = summ + '₽';
+
+
+    var order = JSON.parse(localStorage.getItem('order'));
+    order.delivery_price = summ
+
+    localStorage.setItem('order', JSON.stringify(order));
+
+    
+
     return summ
 
 }
@@ -979,7 +1008,7 @@ $(document).on('click', '.order__next', function(e) {
         var htmlInner = 
         `
         <a href="#" class="btn order__back">Назад</a>
-        <a href="#" class="btn btn--primary order__next">Оформить</a>
+        <a href="#" class="btn btn--primary order__next order_create">Оформить</a>
         `
 
         $('.checkout__counter-item:nth-child(2)').addClass('checkout__counter-item--active checkout__counter-item--line');
@@ -991,16 +1020,48 @@ $(document).on('click', '.order__next', function(e) {
 
         $('.order__pay-methods').show()
 
-        // Если все поля заполнены, продолжаем выполнение другого кода
-        if ($(this).hasClass('order__next--pickup')) {
-            
 
-        } else if ($(this).hasClass('order__next--delivery')) {
+        
 
-            
-        }
+
+        
+        
     }
 });
+
+
+$(document).on('click', '.order_create', function(e) {
+    e.preventDefault();
+    var order = localStorage.getItem('order') || {}; // Проверка на null
+    var cart = localStorage.getItem('cart') || {}; // Проверка на null
+
+
+
+    console.log(order)
+
+    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+
+    data = {
+        csrfmiddlewaretoken: csrfToken,
+        'order': order,
+        'cart': cart
+    }
+
+    
+
+
+    $.ajax({
+        method: "POST",
+        url: "/orders/create/fast/",
+        data: data
+    })
+    .done(function( msg ) {
+
+        console.log(msg)
+
+    });
+
+})
 
 
 $(document).on('click', '.order__back', function(e) {
@@ -1065,6 +1126,11 @@ $(document).on('keyup', '#check_user_status' ,function(e){
     
     if (min.length == 13) {
         
+        var order = JSON.parse(localStorage.getItem('order'));
+        order.user_phone = phone;
+        localStorage.setItem('order', JSON.stringify(order));
+
+
         
         fetch(`/api/v1/first_delivery/${phone}/`)
             .then(response => response.json())
@@ -1092,7 +1158,7 @@ $(document).on('keyup', '#check_user_status' ,function(e){
                 var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
                 updateAll()
                 
-                console.log(get_del)
+                // console.log(get_del)
               
 
 
@@ -1225,6 +1291,7 @@ async function addToCart(context, itemId, type) {
     
     let itemInfo = {
         id: id,
+        itemId: itemId,
         type: itemElement.dataset.type,
         name: itemElement.dataset.name,
         price: parseFloat(itemElement.dataset.price),
@@ -1236,6 +1303,8 @@ async function addToCart(context, itemId, type) {
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
+
+    console.log(cart)
     
     updateAll();
 }
@@ -1398,8 +1467,15 @@ function clearCart() {
 
 
 
-
-
+window.addEventListener('pageshow', function(event) {
+    // Проверяем, является ли этот event.persisted событием,
+    // что означает, что страница загружается из кэша браузера
+    if (event.persisted) {
+        // Обновляем состояние LocalStorage до актуального состояния
+      
+        updateAll()
+    }
+});
 
 
 

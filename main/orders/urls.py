@@ -1,12 +1,13 @@
 from django.urls import path
 from . import views
-
+from . import order_fast
 from pay.models import PaymentSet
 
 
 
 urlpatterns = [
     path('create/', views.order_create, name='order_create'),
+    path('create/fast/', order_fast.order_create, name='order_create_fast'),
     path('callback/', views.order_callback, name='order_callback'),
     path('thank/', views.thank, name='thank'),
     path('alpha_check/<int:pk>/', views.alpha_check, name='alpha_check'),

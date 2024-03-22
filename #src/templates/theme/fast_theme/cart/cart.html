@@ -12,7 +12,7 @@
         <div class="order__inner">
 
             <div class="order__top">
-
+               
                 <div class="order__title">
                     Оформление заказа
                 </div>
@@ -96,7 +96,7 @@
                         <div class="order__checkup-item-wrap" id="pay_change">
                             <label for="" class="order__label">
                                 <p class="order__label-title">Подготовить сдачу с</p>
-                                <input type="text" data-name="pay_change" class="order__input" placeholder="">
+                                <input type="number" data-name="pay_change" class="order__input" placeholder="">
                             </label>
 
 
@@ -172,11 +172,11 @@
                                 </label>
                                 <label for="" class="order__label">
                                     <p class="order__label-title">Квартира</p>
-                                    <input type="text" data-name="apartment" class="order__input" placeholder="">
+                                    <input type="text" data-name="flat" class="order__input" placeholder="">
                                 </label>
                                 <label for="" class="order__label">
                                     <p class="order__label-title">Домофон</p>
-                                    <input type="text" data-name="domofon" class="order__input" placeholder="">
+                                    <input type="text" data-name="door_code" class="order__input" placeholder="">
                                 </label>
 
                                
@@ -186,7 +186,7 @@
 
                                 <label for="" class="order__label">
                                     <p class="order__label-title">Комментарий к адресу</p>
-                                    <textarea type="text" data-name="comment" class="order__input order__textarea" placeholder=""></textarea>
+                                    <textarea type="text" data-name="address_comment" class="order__input order__textarea" placeholder=""></textarea>
                                 </label>
 
                                
@@ -309,7 +309,7 @@
                 </div>
                 <div class="order__info-item" id="free_delivery_info">
                     <p>Бестплатная доставка от:</p>
-                    <div id="free_delivery"></div>
+                    <div id="free_delivery"></div> <a href="#" class="open_cart">(Изменить заказ)</a>
                 </div>
                 <div class="order__info-item" id="first_delivery_discount_info">
                     <p>Скидка за первый заказ:</p>
@@ -333,9 +333,9 @@
           
 
           
+            {% csrf_token %}
 
-
-            
+          
 
             
            <div class="order__next-wrap">
