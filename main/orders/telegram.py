@@ -177,5 +177,5 @@ def order_telegram(telegram_bot, telegram_group, order):
         
     except Exception as e:
         
-        pass
+        send_message(telegram_bot, telegram_group, e)
         
