@@ -1,26 +1,605 @@
 
+
+
+// Сначала загружаем все настройки
+
+function fetchAndSaveSettings() {
+    fetch('/api/v1/get_shop_settings/')
+        .then(response => response.json())
+        .then(data => {
+
+            // Прогружаем общие нстройки
+            var storedSettings = localStorage.getItem('shopSettings');
+            if (storedSettings) {
+                var storedData = JSON.parse(storedSettings);
+                if (JSON.stringify(storedData) !== JSON.stringify(data)) {
+                    // Если данные изменились на сервере, обновляем их в localStorage
+                    localStorage.setItem('shopSettings', JSON.stringify(data));
+                }
+            } else {
+                // Если данных в localStorage нет, сохраняем их
+                localStorage.setItem('shopSettings', JSON.stringify(data));
+            }
+            var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+
+
+            // console.log(storedSettingsJson)
+
+
+            // Вот тут пишем нужный код после обработки загрузки настроек.
+            
+            
+
+            
+            
+              
+            
+
+            setDeliveryPrice()
+            setPickupPoints()
+            
+            
+            deliveryUpdate()
+            deliveryTimeUpdate();
+            getDeliverySumm()
+
+
+            updateAll()
+            
+            // Подключаем загрузку всех данных в HTML
+
+
+
+        })
+        .catch(error => console.error('Ошибка загрузки настроек:', error));
+}
+  
+fetchAndSaveSettings();
+
+
+// Инициализируем пустой заказ
+function setOrder() {
+    data = {
+        'order_id': '',
+        'user_id': '',
+        'user_name': '',
+        'user_phone': '',
+        'address': '',
+        'address_pickup': '',
+        'address_comment': '',
+        'delivery_type': '',
+        'entrance': '',
+        'floor': '',
+        'flat': '',
+        'door_code': '',
+        'data_time': 0,
+        'day': 'Сегодня',
+        'time': 'Как можно скорее',
+        'pay_method': '',
+        'pay_change': '',
+        'delivery_method': '',
+        'delivery_price': '',
+        'order_conmment': '',
+        'summ': '',
+        'sale_percent': '',
+        'bonuses_pay': '',
+        'status': 'Новый',
+        'coupon': '',
+        'discount': '',
+        'balls': '',
+        'percent_pay': '',
+        'delivery_status': '',
+    }
+
+    var order = localStorage.getItem('order');
+
+    if (!order) {
+        localStorage.setItem('order', JSON.stringify(data));
+    }
+
+    var order = JSON.parse(localStorage.getItem('order'));
+
+    // console.log(order)
+
+    
+    document.getElementById('day').innerHTML = order.day;
+    document.getElementById('time').innerHTML = order.time;
+
+
+    // Отображаем выбранное время и настройки для доставки
+    if (order.data_time == 0) {
+        document.getElementById('checkout__radio-bytime').checked = false;
+        document.getElementById('checkout__radio-now').checked = true;
+
+        document.getElementById('order__times-row').style.display = 'none';
+
+    } else {
+        document.getElementById('checkout__radio-bytime').checked = true;
+        document.getElementById('checkout__radio-now').checked = false;
+        document.getElementById('order__times-row').style.display = 'block';
+
+    }
+
+}
+
+setOrder()
+
+
+
+// Проверяем наличие типа доставки в localStorage
+function updateDeliveryType() {
+    var deliveryType = localStorage.getItem("deliveryType");
+  //   console.log(deliveryType)
+    if (deliveryType) {
+        document.getElementById("check-delivery").style.display = 'none';
+        document.getElementById("setup-address").style.display = 'none';
+    } else {
+        document.getElementById("check-delivery").style.display = 'flex';
+        
+    }
+    retrieveFromLocalStorage()
+    
+  }
+
+
+  updateDeliveryType()
+  
+      
+  function saveToLocalStorage(deliveryType) {
+    localStorage.setItem("deliveryType", deliveryType);
+    retrieveFromLocalStorage();
+    updateAll()
+  }
+  
+  function retrieveFromLocalStorage() {
+    var retrievedDeliveryType = localStorage.getItem("deliveryType");
+    if (retrievedDeliveryType !== null) {
+      var deliveryTypeText = (retrievedDeliveryType === "1") ? "1" : "0";
+      
+      var order = JSON.parse(localStorage.getItem('order'));
+  
+      if (deliveryTypeText == '0') {
+          order.delivery_method = 'Самовывоз'
+      } else {
+          order.delivery_method = 'Доставка'
+      }
+      
+      localStorage.setItem('order', JSON.stringify(order));
+  
+      updateDeliveryInfo(deliveryTypeText)
+    } 
+  
+  
+  }
+  
+  // Обновление информации о доставке в html
+  function updateDeliveryInfo(deliveryTypeText) {
+
+    $('.order__pay-methods').hide()
+    $('.order__body-wrap').show()
+
+    $('.checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
+    $('.checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
+
+    var htmlInner = 
+        `
+      
+        <a href="#" class="btn btn--primary order__next">Далее</a>
+        `
+
+    $('.order__next-wrap').html(htmlInner)
+
+      if (deliveryTypeText === "1") {
+
+
+          document.querySelector('.order-delivery').classList.add('order__delivery-check-item--active');
+          document.querySelector('.order-pickup').classList.remove('order__delivery-check-item--active');
+  
+          document.getElementById("order_delivery").style.display = 'block';
+          document.getElementById("order_pickup").style.display = 'none';
+
+          $('.order__next').addClass('order__next--delivery');
+          $('.order__next').removeClass('order__next--pickup');
+          
+          $('#total_delivery_info').show()
+  
+  
+          var deliveryPrice = JSON.parse(localStorage.getItem('deliveryPrice'));
+          var shopSetup = JSON.parse(localStorage.getItem('shopSettings'));
+            var order = JSON.parse(localStorage.getItem('order'));
+          // console.log(shopSetup)
+  
+          var street = document.getElementById("street")
+
+          $('#street').addClass('required')
+          // .attr('readonly', 'readonly')
+
+          if (shopSetup.zones_delivery) {
+              street.value = order.address;
+              street.readOnly = true;
+              street.style.cursor = 'pointer';
+              street.classList.add('show-map');
+          } else {
+              street.value = order.address;
+              street.readOnly = false;
+              street.style.cursor = 'auto';
+              
+          }
+         
+          
+  
+  
+      } else {
+          
+
+        $('#street').removeClass('required')
+          document.querySelector('.order-delivery').classList.remove('order__delivery-check-item--active');
+          document.querySelector('.order-pickup').classList.add('order__delivery-check-item--active');
+  
+          document.getElementById("order_delivery").style.display = 'none';
+          document.getElementById("order_pickup").style.display = 'block';
+
+          $('.order__next').removeClass('order__next--delivery');
+          $('.order__next').addClass('order__next--pickup');
+
+          $('#total_delivery_info').hide()
+  
+      }
+
+
+
+  }
+  
+  
+//   Заполнение способов оплаты
+function payMethodUpdate() {
+    var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+
+    var deliveryType = localStorage.getItem("deliveryType");
+    var order = JSON.parse(localStorage.getItem('order'));
+
+    // console.log(order)
+
+    
+    var payMethods = storedSettingsJson.pay_methods.filter(function(method) {
+        if (deliveryType === '0') {
+            return method.in_pay_pickup === true;
+        } else {
+            return method.in_pay_delivery === true;
+        }
+    });
+
+
+    var radioList = document.querySelector('.checkout__radio-list');
+    radioList.innerHTML = ''; // Очистка списка
+    var count = 0;
+    payMethods.forEach(function(method, index) {
+        var label = document.createElement('label');
+        label.classList.add('checkout__radio-wrap');
+
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.classList.add('checkout__radio');
+        input.name = 'checkoutpayment';
+        input.value = method.name;
+        input.dataset.tab = 'checkout-payment-1';
+        
+        // Если count равен 0, устанавливаем атрибут checked для первого радио
+        if (count === 0) {
+            input.checked = true;
+            order.pay_method = method.name;
+            localStorage.setItem('order', JSON.stringify(order));
+
+            // Проверяем, содержит ли method.name строку "наличн" в любом регистре
+            if (method.name.toLowerCase().includes("наличн")) {
+                // Выполняем нужное действие
+                $('#pay_change').show()
+                // Добавьте здесь свои действия
+            }
+        }
+
+        var span = document.createElement('span');
+        span.textContent = method.name;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        radioList.appendChild(label);
+
+        count++;
+    });
+
+}
+
+
+// Заполнение точек самовывоза
+function setPickupPoints() {
+    var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+
+    var order = JSON.parse(localStorage.getItem('order'));
+
+    
+
+    var pickup_areas = storedSettingsJson.pickup_areas;
+    var areaWrap = document.querySelector('.order__pickup-areas');
+
+    // Очищаем содержимое .order__pickup-areas
+    areaWrap.innerHTML = '';
+    var count = 0;
+    pickup_areas.forEach(function(area) {
+        var label = document.createElement('label');
+        label.classList.add('order__pickup-areas-item');
+
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.classList.add('order__input');
+        input.classList.add('order__input-dropdown');
+        input.name = 'pickup_point';
+        input.value = area.name;
+        input.readOnly = true; // добавлено readonly
+
+        var span = document.createElement('span');
+        span.textContent = area.name;
+
+        label.appendChild(input);
+        areaWrap.appendChild(label);
+
+        if (count === 0) {
+            input.classList.add('order__input');
+
+            order.pickup_point = area.name;
+            localStorage.setItem('order', JSON.stringify(order));
+
+            document.querySelector('.order__pickup-areas-input').value = area.name;
+        }
+
+        count++;
+    });
+
+    if (count == 1) {
+        var areaWrap = document.querySelector('.order__pickup-areas');
+        var svgItem = document.querySelector('.order__pickup-row svg');
+
+        areaWrap.innerHTML = '';
+        areaWrap.style.display = 'none';
+        svgItem.style.display = 'none';
+    }
+
+    
+}
+
+
+$(document).on('click', '.order__pickup-row', function() {
+    
+    $('.order__pickup-areas').slideToggle();
+})
+
+  
+$(document).on('click', '.order__input-dropdown', function() {
+    var order = JSON.parse(localStorage.getItem('order'));
+    var value = $(this).val();
+    console.log(value)
+
+    $('.order__pickup-areas-input').val(value);
+
+    $('.order__pickup-areas').slideToggle();
+
+    order.pickup_point = value;
+    localStorage.setItem('order', JSON.stringify(order));
+
+
+})
+  
+ 
+  
+  
+  
+  
+  
+  
+  // Инициализируем стоимость доставки при первой загрузке
+  function setDeliveryPrice() {
+
+    
+  
+      var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+  
+      var deliveryPrice = localStorage.getItem('deliveryPrice');
+  
+      var zones_delivery = storedSettingsJson.zones_delivery;
+      
+      var data_get = JSON.parse(deliveryPrice);
+  
+      var data = {
+          'price_delivery': 0,
+          'free_delivery': 0,
+          'min_delivery': 0,
+          'first_delivery': 0,
+          'delivery_address': '',
+          
+      }
+  
+      if (!zones_delivery) {
+          data = {
+              'price_delivery': storedSettingsJson.price_delivery,
+              'free_delivery': storedSettingsJson.free_delivery,
+              'min_delivery': storedSettingsJson.min_delivery,
+              'first_delivery': 0,
+              'delivery_address': ''
+          } 
+      } 
+  
+      if (deliveryPrice) {
+          
+  
+          if (JSON.stringify(data_get) !== JSON.stringify(data) && !zones_delivery) {
+          // Если данные изменились на сервере, обновляем их в localStorage
+          localStorage.setItem('deliveryPrice', JSON.stringify(data));
+          }
+  
+      } else {
+          localStorage.setItem('deliveryPrice', JSON.stringify(data));
+          
+      }
+
+      
+      
+  }
+  
+  
+
+  function deliveryUpdate() {
+    var deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
+    
+    
+    document.getElementById("free_delivery").innerText = deliveryPriceJson.free_delivery + '₽';
+    
+    
+    
+  }
+  
+  
+  
+  
+  // Обновление времени доставки из настроек
+  function deliveryTimeUpdate() {
+      var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+      if (!storedSettingsJson) {
+          fetchAndSaveSettings();
+      }
+      var work_hours = storedSettingsJson.work_hours;
+      
+  
+      count = 0
+      work_hours.forEach(function(item) { 
+          // Создаем элемент для дня
+          var dayElement = document.createElement('div');
+          dayElement.classList.add('order__times-drop-day');
+          dayElement.classList.add('drop_item');
+  
+  
+          dayElement.textContent = item.while;
+          dayElement.textContent = item.while;
+          dayElement.id = `day-${count}`;
+          dayElement.setAttribute('data-id', count);
+  
+          // Добавляем элемент дня в родительский контейнер для дней
+          document.getElementById('day_items').appendChild(dayElement);
+  
+          // Создаем элементы времени для текущего дня
+          var timeElementWrapper = document.createElement('div');
+  
+          timeElementWrapper.classList.add('order__times-drop-time-wrap');
+          
+          if (count == 0) {
+              timeElementWrapper.classList.add('order__times-drop-time-wrap--active');
+          }
+  
+          timeElementWrapper.id = `time-${count}`;
+          timeElementWrapper.setAttribute('data-id', count); 
+          
+          item.times.forEach(function(time) {
+              if (count == 0 && time == "Как можно скорее") {
+                  return
+              }
+              var timeElement = document.createElement('div');
+              timeElement.classList.add('order__times-drop-time-item');
+              timeElement.classList.add('drop_item');
+              timeElement.textContent = time;
+  
+              
+  
+              timeElementWrapper.appendChild(timeElement);
+          });
+  
+          // Добавляем элементы времени в родительский контейнер для времени
+          document.getElementById('time_items').appendChild(timeElementWrapper);
+          count += 1
+      });
+  }
+  
+
+
+// Динамическое добавление полей в order
+
+$(document).ready(function() {
+    // Получаем объект order из локального хранилища
+    var order = JSON.parse(localStorage.getItem('order'));
+
+    // Обработчик события change для каждого поля ввода
+    $('.order__input').on('change', function() {
+        var dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
+        var value = $(this).val(); // Получаем значение поля ввода
+
+        // Обновляем соответствующее значение в объекте order
+        order[dataName] = value;
+
+        // Сохраняем обновленный объект order в локальное хранилище
+        localStorage.setItem('order', JSON.stringify(order));
+    });
+
+    // При загрузке страницы устанавливаем сохраненные значения в поля ввода, если они есть
+    $('.order__input').each(function() {
+        var dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
+        
+        // Проверяем, есть ли соответствующее значение в объекте order
+        if (order && order[dataName] !== undefined) {
+            // Устанавливаем значение в поле ввода
+            $(this).val(order[dataName]);
+        }
+    });
+
+    // Применяем маску для поля ввода телефонного номера при фокусе на нем
+    $(document).on('focus', '.phone', function(e) {
+        $(this).mask("+7 (999) 999 99-99");
+    });
+});
+
+
+
+
 // Функции математики в корзине
 
 
 // Сумма всех скидок
 function getAllDiscount() {
 
-    var discountOnPickup = JSON.parse(localStorage.getItem('shopSettings')).discount_on_pickup;
-    var deliveryType = localStorage.getItem("deliveryType"); 
+    var shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
+    var discountOnPickup = shopSettings.discount_on_pickup;
+
+    var discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
+
+    var first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100
     
-    var pickup_discount_summ = 0
-    if (deliveryType == '0') {
 
-        pickup_discount_summ = getTotalPrice() * discountOnPickup / 100
-        // document.getElementById("discountOnPickup").innerText = `${pickup_discount_summ} - ${discountOnPickup}%`;
-
+    if (discountOnFirstDelivery != 0) {
+        document.getElementById("discountOnFirstDelivery").innerText = `${first_delivery_summ}₽ (${discountOnFirstDelivery}%)`;
+        document.getElementById("first_delivery_discount_info").style.display = 'flex';
     } else {
-        // document.getElementById("discountOnPickup").innerText = '';
+        document.getElementById("discountOnFirstDelivery").innerText = '';
+        document.getElementById("first_delivery_discount_info").style.display = 'none';
     }
 
 
+    var deliveryType = localStorage.getItem("deliveryType"); 
+    
+    var summ = 0
 
-    return pickup_discount_summ
+    if (deliveryType == '0') {
+        summ =  summ + (getTotalPrice() * discountOnPickup / 100)
+
+        document.getElementById("discountOnPickup").innerText = `${summ}₽ (${discountOnPickup}%)`;
+        document.getElementById("pickup_discount_info").style.display = 'flex';
+
+    } else {
+        document.getElementById("discountOnPickup").innerText = '';
+        document.getElementById("pickup_discount_info").style.display = 'none';
+    }
+
+    summ = summ + first_delivery_summ
+
+    
+    
+    return summ
 
 
 
@@ -41,24 +620,76 @@ function getTotalPrice() {
         
     }
     document.getElementById("total_price").innerText = totalPrice;
+    
     return totalPrice
 }
-
+getTotalPrice()
 
 
 // Общая сумма с доставкой и скидками
 function getTotalPriceAfterDiscount() {
 
-    var discountOnPickup = JSON.parse(localStorage.getItem('shopSettings')).discount_on_pickup; 
+    
 
 
     res = getTotalPrice() + getDeliverySumm() - getAllDiscount()
 
+    document.getElementById("total_price_after_discount").innerText = res + '₽';
     
 
     return res
 }
 
+
+function getMinimalDelivery() {
+
+    let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
+
+    var minimalDelivery = delivery.min_delivery
+    var totalPrice = getTotalPrice()
+
+    var deliveryType = localStorage.getItem("deliveryType");
+
+
+    if (totalPrice < minimalDelivery && deliveryType == '1') {
+        
+        $('.order__bottom').hide()
+        $('.order__checkup-item').hide()
+
+        var text = `
+
+        <div class="cart__empty cart__min">
+
+        <svg width="217" height="217" viewBox="0 0 217 217" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="217" height="217" fill="url(#pattern0)"/>
+        <defs>
+        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+        <use xlink:href="#image0_80_2" transform="scale(0.00195312)"/>
+        </pattern>
+        <image id="image0_80_2" width="512" height="512" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAIABJREFUeJzt3XuwnlWd4PvvDrkRCDEJAQOIERigQYhCD9AyA5YOM6GA4SCCc5ymOQ1ij4ojKFrHC1OtxzO0rVQXNRSKraDjoaxGZ4QSEATGsRHs8kZruEtugpCYmBsBct/nj99OZ7s7O3u/737WWs/l+6latQOV/Wb9nmet9Vvvc1kLJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJElSPgOlKyCpZ5OA2cCBw8o8YH9gCjANmDr0c/if9/T/ALYAW4d+Dv/znv7fNmATsBpYM6ysA3Ymi1hS5ZwASPUxB1gAvAF4PbsT+4EjyhxiElAnO4G1/OGkYA27JworgGXA8qG/J6kwJwBSPjPZneDfMOzPu34eUKheuW1k92Rg+M9df36pUL2kTnECIFVvGnAccAJw4rCfry1ZqQZZCfwKWDzs5xPELQhJFXECIPVvgLhUPzzJnwAcDexTsF5ttAN4hj+cFPyKuLUwWLBeUmM5AZDG72Dg9KFyGpHsZxatkV4iJgP/ADw8VFYVrZHUEE4ApD0bIC7jnz6sHFm0RhqvJeyeDDxM3D7wKoE0ghMAKUwHTmF3sn8L8aqdmm8d8Ai7JwQ/ATYXrZFUA04A1GXHAmcPlTPY/V682m0L8PfA94bKU2WrI5XhBEBdsh/wNnYn/QVFa6O6WM7uycD/Al4uWhspEycAarvjgEXs/pY/tWx1VHNb2X114F7i+QGplZwAqG0GiCf0LwYuIF7Tk/q1AvgOcDvxpoEPE6o1nACoLU4hkv7FwOsK10Xt9BwxEbideJBQajQnAGqyk9md9BeUrYo6Zjm7JwM/L1sVqT9OANQ0bwLeBVyE7+WrHpYA3wL+DvjHwnWRxs0JgJpgHnApcDnx6p5UV08BXwW+TuyEKEnq0QBwFnGJdQvx8JXF0pSyhWi7Z+EXLdWUDVN1Mx/4c+A9xBa5UtMtA74C3Aq8WLguklQr+wDnAHcA2yj/7c1iSVG2EW38HNwtUjXgFQCVNB/4T8BlwGGF6yLl9DxwC/AlvCqgQpwAqITjgY8A/xFX5kthkFjRbss4CsQeCGOVqThepLAVuA24Hni8cF3UMXZo5fQ24BpiWV6Nz3rgd8DvgTXDymj/vZFIKilMBQ4ADgTmDv08cC//fRDwmkR1aaPvAV8g9iOQknMCoNQmEwv1XAO8uXBd6mgTsajMsqEy/M/LiITeZAcQD3PuKgtG/Hn/UhWrsUeJicDtwPbCdVGLOQFQKjOBK4APAYcXrksd/Bb4FbB46OczRIJfU7JSNXAgMRk4GjgROGHo56ElK1UTvwFuAP4WeKlwXdRCTgBUtXnEt/2/AGYVrksJm4DH2J3sdyX8dSUr1UCz2T0h2DUpeCPdvGKwAbiZuCrg4kKSamcOcB2RAEu/bpXzta6fEt/SLgaOwEl1SgPEMb6YOOY/pVuvjW4i+ticiR5ISarCLODTxLeU0gNk6rIWuBv4BPBWYMbED58maAZxLj5BnJu1lG8nqcsGos918QqbpBqYCXyKuLRdekBMVZYQq7e9BzgOv903wQBxrt5DnLsllG9Hqco6og/OrOTISdIYZgAfIx5eKz0AVl1eAe4BPggcVdUBU3FHEef0HuIcl25nVZc1RJ/0ipSkJKYBVwOrKD/gVVmeIe4nLwKmV3a0VFfTiXN9A3HuS7e/Kssqoo9Oq+xoSeq8dwBLKT/AVVG2EN8ErwSOrPIgqZGOJNrCPbRn18mlRJ+VpL4tBH5A+QFtomUr8YDYpfjglEY3i2gjdxNtpnS7nWj5AdGHJWnc5hHvHe+g/CDWb9kG3EtsNDS72sOjDphNtJ17afarhjuIvjyv2sMjqW2mEJv0rKf8wNVP2Q7cT6xAOLfiY6Pumku0qfuJNla6nfdT1hN9e0rFx0ZSC5xLcx+KepS4j+u3HKU2j2hrj1K+3fdTniH6uiRxLHAf5QemXssG4IvAydUfEmlcTibaYBMXwbqP6PuSOmgKcC2wmfKDUS/lIeJBLd95Vl3MINrkQ5TvH72UzcQY4G0BqUNOIzapKT0AjbesAj4PHJPiYEgVOoZoq01aL2MxMSZIarH9iQVQmvJ0/4+Ad+I3FDXPFKLt/ojy/Wg8ZQcxNnRxt0Wp9c4GVlB+oBnPQPRt/Eai9jiNaNNNmHivIMYKSS0wD7iN8gPLWOVl4EZcnU/tdSTRxl+mfH8bq9yGb9VIjXYJ9d+0ZyXwSdzjXN0xh2jzKynf//ZW1hBjiKQGOYT6v9r3BHA5blyi7ppG9IEnKN8f91buI8YUSTV3AfX+1v8kcDGxb7uk6AsXE32jdP8crawhxhZJNTSDWPO79EAxWnmWuJw4KdUBkBpuEtFHnqV8fx2t3IxrcEi18mbq++1hBbGO+uRk0UvtMpnoM3V9a+dJYsyRVNAAcA313Mf8BWLN9KnJopfabSrRh16gfH8eWbYQY4+38qQCDiF2Jys9EIwsq4mBYd90oUudsi/Rp1ZTvn+PLPfjA4JSVudTvwf9tgLXA7MSxi112Syij22lfH8fXtYQY5KkhKYQC4mU7vAjy13A0QnjlrTb0USfK93vR5YbcdluKYlDgEco38mHlyeARSmDljSqRdRvDYFH8JaAVKkzqNeqYWuBD+GT/VJpk4m+uJby48KuspIYsyRN0FXANsp36kFgO3ATMDdpxJJ6NZfom9spP04MEmPWVUkjllpsP+CblO/Iu8pDwAlJI5Y0UScQfbX0eLGrfJMYyySN01HAYsp33kFgA/A+fN9XaooBos9uoPz4MUiMZUcljVhqifOA9ZTvtIPAncChacOVlMihRB8uPY4MEmPaeWnDlZrtWmAn5TvrSuCixLFKyuMi6vEQ8U5ijJM0zBTga5TvoIPALcDspNFKym020bdLjy+DxFjnegESsbrXA5TvlEuAtyeOVVJZbyf6eunx5gFcNVQddzjwGOU745dwi0+pK2YQfb70uPMYMQZKnXMy8CJlO+BqXMNb6qrzKb/B0IvEWCh1xrnAJsp2vPuA+akDlVRr84mxoORYtIkYE6XW+wBlV+vaDFyN7/VLCgPEmLCZcuPSdmJslFppErGVZ8mZ9uPAwtSBSmqkhcQYUXKMup4YK6XWmAJ8i7Id60ZgeupAJTXadMpvOf4tfE1QLTEduJtynWk1cE7yKCW1yTmUfUDwbvzCoobbD3iQcp3oJ/iajaT+HE6MIaXGrwdxIyE11CzgYcp1ni8D05JHKanNphFjSalx7GFcMEgNMxf4GWU6zKvAZelDlNQhlxFjS4kx7WfEmCrV3sGU28p3GXBS+hAlddBJxBhTYmxbTIytUm0dBjxNmQ5yLzAnfYiSOmwOMdaUGOOeJsZYqXaOoMzseCfwGXx3VlIek4gxp8TW5cuIsVaqjSOA58jfGV4BLswQnySNdCExBuUe957DSYBq4jDKfPNfBZyaIT5JGs2pxFhU4kqAtwNU1MGUuef/FM6AJdXDEcSYlHscfBofDFQhcynztP8PgdkZ4pOk8ZpNjE25x8PF+IqgMptFmff8bwOmZohPkno1lRijco+LP8PFgpTJfpRZ4e+zuIWvpHobIMaq3OPjw7hssBKbTv61/bfhyn6SmuUyYuzKOVY+iBsIKZEp5N/V7xVgUY7gJKlii8j/muDduJWwKjaJ2KM6Z0PeCJyZIzhJSuRMYizLOXZ+CxdGU4WuJ28DXovv+Etqh1OJMS3nGHp9lsjUeh8gb8P9HbAwS2SSlMdCYmzLOZZ+IEtkaq1zge3ka7DPA8dmiUyS8jqWGONyjafbiTFc6tnJwCbyNdaluLqfpHY7ghjrco2rm4ixXBq3w4EXyddIn8J1rSV1w2HkXTr4RWJMl8Y0C3iMfI3zMeCgLJFJUj0cRP5x1tUCtVdTgAfI+83f5C+piw4i75WAB3CNAO3F18jXGJfiZX9J3XYYeZ8J+FqWqNQ415KvET6PD/xJEsRYmPPtgGvzhKWmOA/YSZ7G9zt81U+ShjuWfOsE7CTGfImjgPXkaXhrcZEfSdqTheRbMXA9Mfarw/YDFpOnwW3E5X0laW9OJd/eAYtxC+FO+yZ5GtoruLGPJI3HmeTbRfCbmWJSzVxFnga2Dbf0laReLCLGzhxj9FWZYlJNnEG+xnVZppgkqU0uI9+XtDMyxaTCDgFWkqdhfTZTTJLURp8lz1i9ksgNarEpwCPkaVC3AQN5wpKkVhogxtIcY/YjuFJgq91Inob0Q2Bqppgkqc2mEmNqjrH7xkwxKbPzydOAngJmZ4pJkrpgNvn2DTg/U0zK5BBgDekbzipc4leSUjiCGGNTj+Nr8HmA1hgA7id9o3kFF/qRpJROJc8aAffjM1ytcA3pG8tO4MJcAUlSh11Inr1brskVkNJ4M7CF9A3lM7kCkiTxGdKP61uIHKIGmgE8SfpGci8wKVNMkqQYc+8l/fj+JJFL1DA3k75xLAPm5ApIkvRP5hBjcOpx/uZcAakaF5C+UbwKnJQrIEnSP3MSMRanHu8vyBWQJibXK3+u8S9J5eXYM8BXAxviPtI3hi9ni0aSNJYvk37cvy9bNOrLJaRvBD8BpuUKSJI0pmnE2Jx6/L8kV0DqzTzSX/pfDRyeKyBJ0rgdTozRKXPAGiLXqGZy7Bh1TrZoJEm9Oof0eeC2bNFoXM4m/Ul3lyhJqr8cu76enS0a7dX+wArSnuzHgem5ApIk9W06MWanzAkriNyjwm4g7YneDCzMFo0kaaIWEmN3ytxwQ7ZotEenATtIe5KvzhaNJKkqV5M2N+wgcpAKmAIsJu0J/j5uCSlJTTRA+nVhFhO5SJldS9oTuxqYny0aSVLV5pP+1cBrs0UjAI4l/f2d87NFI0lK5XzS5orNRE5SJqkv63wpXyiSpMS+RNqc4TLBmZxL2hO5BPd/lqQ2mUGM7Slzx7nZoumoKcAzpD2Jb88WjSQpl7eTNnc8gw8EJvUR0p7AW/KFIknK7BbS5pCP5AulW+YB60l34lYCs7NFI0nKbTYx1qfKI+txs6AkbibtzO2ifKFIkgq5iLS55OZ8oXTDQtKu+HdnvlAkSYXdSbp8sgOXj6/UD0h3sjYAh+YLRZJU2KHE2J8qr/wgXyjt9g7SXq55X75QJEk18T7S5pZ35AulnaYBS0l3gh7Ctf4lqYsGiByQKr8sJXKY+pRyN6ftwAn5QpEk1cwJRC5IlWfcTbZPM4BVpDsxN+ULRZJUUzeRLs+swpVl+/Ix0p2UtcDcfKFIkmpqLpETUuWbj+ULpR1mAmtId0I+lC8USVLNfYh0+WYNkdM0Tp8i3cl4ApicLxRJUs1NJnJDqrzzqXyhNNssYB3pTsSifKFIkhpiEenyzjoit2kMnybdSbgrYxySpGa5i3T559MZ42ikOaRbnWkrcHS+UCRJDXM0kStS5KANRI7TKK4j3ezr+oxxSJKa6XrS5aHrMsbRKPOATaQ56Kvx/oskaWyziJyRIhdtwu2C9+hzpJt1XZMxDklSs11Dunz0uYxxNMJMYD1pDvYLwL75QpEkNdy+RO5IkZPW47oAf+DDpJttXZkxDklSO1xJurz04Yxx1NpkYAVpDvIKYGq+UCRJLTGVtLnJBemAd5NulnVFxjgkSe1yBeny07szxlFbvyDNwX0WZ1iSpP5NJnJJihz1i4xx1NLbSDe7uiRjHJKkdrqEdHnqbRnjqJ17SHNQnwQmZYxDktROk4ickiJX3ZMxjlo5nnSzqoszxiFJareLSZevjs8YR23cQpqD+QQwkDEOSVK7DZBuu+BbMsZRC/OBLaQ5mJdnjEOS1A2XkyZnbSFyYmek2vJ3JTAtYxySpG6YRuSYFLmrM1sF7wM8R5qD+MmMcUiSuuWTpMldzxG5sfXOIc0BfBn3WpYkpTOHyDUpctg5GeMo5g7SHLwbcwYhSeqkG0mTw+7IGUQJ84FtVH/gdgBHZoxDktRNRxI5p+o8to3MDwPmXiznz0mzPO93gCUJPleSpOGWEDmnapOJHNlKA8BS0lw6OS1jHJKkbjuNNLlsKS1dx+Ys0hywH+UMQpIkIvekyGln5Qwil9tJc7DemTMISZKI3JMip92eM4gc5pFm5b9VwJSMcUiSBJF7VlF9XttC5Mzkcj0EeCkwNcHn/nfiyUlJknLaRuSgqk0lcmZrpNpK8ZicQUiSNMwxpMltT+YMIqU3keYAPZQzCEmS9uAh0uS4N6WueI5bAO9K9LlfSfS5kiSNV6pclCp3ZvUs1c+MNgAzcgYhSdIezCByUtV57tmcQaRwMmkujXwxZxCSJO3FF0mT605OWenUtwAuTvS5Xv6XJNVFqpyUKodmsYzqZ0SPZo1AkqSxPUr1+W5Z1ggqdAppLolcmTMISZLG4UrS5LxTcgZRlS9Q/YHYTqYVkiRJ6sE8IkdVnfe+kDOIKgwAv6H6A3F/ziAkSerB/VSf935Doh0CUz0EeBrwugSf27pNEiRJrZEiR72Ohm15/zdUPwvaBszNGYQkST2YS+SqqvPf3+QMYqKWU/0BuDdnAJIk9eFeqs9/y1NUNMUtgOOA1yf4XC//S5LqLkWuej2RW2vvw1Q/+9kKzM4ZhCRJfZhN5Kyq8+CHq65oiisAZyf4zPuBdQk+V5KkKq0jzRtrKXJrpfYDtlD9zOfSnEFIkjQBl1J9HtxC5NjaOo80Qc/KGYQkSRMwizRfhs+rspJV3wJIcYniQWKrRUmSmmADkbuqVmmObcIE4J4EnylJUkopcldtnwM4luovdwwCR+YMQpKkChxJmpx4bFUVrPIKQIqZya+BJQk+V5KklJYQOaxqleXauk8AvpfgMyVJyiFFDqss11a1w9B0YD0wraLP2+VsXAJYYS5wCDB/6OcU4IVhZTWws1jt1CWTiK1fDxlWthHt8MWhn78vVjvVySKqnwRsAV4DbK74c/t2BtXf53iFmFioew4CLgPuJNbA3szY7WUb8DzwAPAhYEHmOqu9FhBt6gGijY1ns5fNRNu9k2jLB2Wus+phOpHLqs6PZ+QMYiwfp/oAffq/W/4F8FHgR8AOqmlD/wh8GjgpYxxqh5OItvOPVNMWdxBt+6NEW1d33EP1+fHjWSMYw11UH+AHs0agUv4IuIPq28/I8ghweqaY1FynE20ldXu8g2j7ar8PUn37uStrBHsxAKyl+gCPyhmEspsP3AxsJ/1gO7x8hwpfo1FrHEu0jZxtcTvRB+ZniE/lHEX1bWct1T3DNyHHU31wvvrXXjOAzwCbyDvYDi/bgC8RD3Kp2+YRbWE89/VTlU1En5iROFaVs4Tq283xWSMYxXupPrBbs0agXA4HHqXcQDuyPIfPB3TZSUQbKN0Od5VHiT6i9rmV6tvLe7NGMIqvU31g78kagXL4V8Aqyg+yI8srwLsSxq16ehdpns6eaFlF9BW1y3uovq18PWsEo3iW6gM7LmsESu1y0uyMVWX5LDW5p6akBohzXbq97a1sIfqM2uM4qm8nz2aNYA8OpvqgavNwgyrxecoPqOMt/xOYnOYwqAYmE+e4dDsbb/l8msOgAlI9LH9wziBGescolZpIuTtrBErpP1N+EO213JTkSKgObqJ8++q1/OckR0Il3E317eMdWSMY4fpRKjWR8omsESiVf0v+V/yqKu9PcDxU1vsp3676KduJvqTm+wTVt4/rs0YwwsOjVGoi5a05A1ASRwPrKD949lu2AW+r/KiolLdR9jW/iZZ1RJ9Ss72V6tvGwzkDGG4A2DiOCvY68PoubLO9Bnia8oPmRMvvcTGqNjiKOJel29NEy9NE31JzzaD6iehGCj0zt6DHio6n/DRnAEriVsoPllWVH1d8bJTfjynfjqoqt1Z8bJTfT6m+XSzotzKT+v1F4MQJ/O5oHknwmcrnjcCfla5EhU6j8EM2mpB3EOewLf6M6GNqrhQ5ru9cPJEJwAkT+N3RFLufoUpcx8TaVB39V2Cf0pVQz/Yhzl2bTCL6mJorRY5LkYvH9HdUfynjiKwRqEpnUP4SaapyRYXHSXlcQfl2k6rUai949eQIqm8Pf5c1giFP9FnZ0cpLuABQk7XpXuvI8lt8OLVJZhDnrHS7SVV8NqW5BohcV2V7eCJrBMA0qn/H20bdXP+G8oNi6nJlZUdLqV1J+faSuvybyo6Wcqv6y9J2Iif3rN/7tcdR/X3RX1X8ecrnwtIVyKALMbZFF85VF2Jsq6pz3T70uX9OvxOAFA8dLE7wmUpvADi/dCUy+NfA3NKV0JjmEueq7c7HW6ZNlSLX9ZWT+50ApHgF0AlAM50CzC9diQz2Ac4tXQmN6Vy68dbGfKLvqXlS5Lq+cnKdrgB4C6CZLihdgYy6FGtTdekcdSnWNkmR67K+Cvgi1T7E8HzOyqtST1H+gahc5RV8G6DOZhDnqHQ7yVWequawqYDnqbYtvNhPJfq5AjATeG0//9he+O2/mWYDx5SuREb7Am8qXQmN6k3EOeqKY4g+qOapOue9lsjNPelnArCgj98Zi/f/m6kL9/5HOqR0BTSqLp6bLvbBNkiR8xb0+gv9TADe0MfvjMUrAM3UxcGni0mmKbp4brrYB9sgRc7rOTfXZQLwTILPVHpV3wpqgi4mmabo4rnpYh9sgxQ5L8sEYEEfvzOWZQk+U+l18dtHF2Nuii6emy7G3AYpct6CXn+hDlcANgFrKv5M5dHFbx9d/JbZFF08N13sg22whsh9VWrkFYDlFX+e8tm/dAUK6PlJW2XTxXPTxT7YFssr/rwFvf5CHa4AePm/uX5XugIFrCxdAY2qi+emi32wLarOfcmvAMwBDuj1HxmDE4Dm6mvxiYZ7oXQFNKounpsu9sG2qDr3HUDk6HHrdQKwoMe/Px7LE3ym8uji4NPFJNMUXTw3XeyDbbE8wWcu6OUv9zoBSPEKoFcAmquLl1y7mGSaoovnpot9sC1S5L6ecnSvE4DX9/j3x8MJQHN18dtHF2Nuii6emy7G3BYpcl9PObrXCcCBPf798XAC0FwvAltKVyKzpaUroFF17dxswQlAk6XIfT3l6F4nAPN6/PtjWQ9srPgzlc9W4MHSlchoKfB06UpoVE/TrUnAg0QfVDNtJHJglXrK0aWvAPgKS/N9p3QFMupSrE3VpXPUpVjbquocmPQKQNUTgN9X/HnK77vAztKVyOSO0hXQmLpyjnYSfU/NVnUObNQEwCWAm28V8OPSlcjgd8AjpSuhMT1CN64s/pjoe2q2qnOgEwBl14VvXV260tFkXflm3IU+1wWNmQBMosdVhsbBCUA7fBPYXLoSid1augIat7afq81En1PzVZ0D59BDXu9lAjC7x78/Hj4D0A6/BW4sXYmE7gIeLl0JjdvDxDlrqxuJPqfmqzoHTiJydeWOAQYrLpenqKiKmAOso/o2UrrsAN5Y4XFSHm8kzl3p9lN1WUf1V2JVzuVU30aOGe8/3ss3+hSLAHkLoD3WAn9VuhIJ/HfgsdKVUM8eI85d2/wV0dfUDilyYIpczflUP1M5PUVFVcy+wPOU/5ZUVXkVeF2lR0g5vY44h6XbUVXleaKPqT1Op/p2cv54//FergBUvQog+AxA27wKfLR0JSr018BzpSuhvj1HnMO2+CjRx9QeKXJgilzNVVQ/U0lyqULFXU/5b0sTLd+l+odeld8k4lyWbk8TLddXfWBUCwdSfVu5KkVFP5qgolNTVFTFTQLuofyg2W95DJhZ+VFRKTOJc1q6XfVb7sHJaFtNpfr2Mu6rsL00qmk9/N3xGMSNLNpqJ/AfgCdLV6QPa4DzgJdKV0SVeYk4p0186PhJoi+5CFU7bSVyYZXGnat7mQBU/W3d5N9uG4F/T7OeWN4GvBO3qG6jZcS53Va6Ij1YS/Qhd0xtt6pz4bhzdckrAF3bR76LngXeSjMS6jrgHOCHpSuiZH5InON1pSsyDsuIvvNs4XoovapzYZIrAE4A1I/FwCnUO7E+BZwK3F+6IkrufuJcP1W6InvxQ6LPLC5dEWXRiAlA1bcAnAB0xxrgLODm0hXZg+8BpwG/Ll0RZfNr4px/r3RF9uBmoq808XkF9afqXJjk4fqvUu2Til7a6qb3A69Q/snq7cDn8OnqLptEtIHtlG+PrxB9Q93zLNW2pa+mqOQ3Kq7k4ykqqUY4DLiFcmu13wUcnzxKNcXxRJso0RZ3EH3hsORRqq4ep9o29Y0Ulby94kr+IkUl1ShvBO4m32D7E+DMLJGpic4k2kiu9ng3bjSlyIVVtqvbU1Tyzoor+eMUlVQjvZUYDDdT/SC7Hfh74GJgIFM8aq4Boq38PWluDWwm2vpbM8Wj+vsx1baxO1NU8nsVV/J/p6ikGm1/4l3tbxDvQPfbtl4G7gD+L1xuWv07kGhDdxBtqt/2uJZo0+8k2rg03P+m2tw67odbJ/dQSV8DVGqbgG8PlcnAvwYWAvOBQ4bKrj9PAV4YVl4c+vkU8CBumqKJWwN8bajsC7wdOJY/bIe7yjb+sB3u+vMvgYeIqwnSnhR7DbCXCYCU03bgB0NFKu1V4kHBu0pXRKpKL69AFZulSJLUUsWurvcyAah6vWInAJKkrqs6F447V3sFQJKkchpxBcAJgCRJ1WrEBMBbAJIkVctbAJIkdZBXACRJ6iCvAEiS1EGNuALgBECSpGo1YgJQ9S2AqRV/niRJTVN1LmzELYABnARIkrprKtXvUprkCsC2PioylgMSfKYkSU2QIgeOO1f3MgHY1EdFxuJWrZKkrkqRA8edq3uZAKzuoyJjmZvgMyVJaoIUOXDcubqXCcCaPioyFq8ASJK6KkUOHHeudgIgSVIZTgAkSeqgxkwA1gE7e6/LXvkMgCSpq6rOgTuJXD0uvUwAdgJre67O3nkFQJLUVVXnwLX08EW9lwkAVH8bwAmAJKmrqs6BPeVoJwCSJJXR6QmAzwBIkrqq6hzYqAnAQRV/niRJTVF1Dkw6Aah6NcDX4H4AkqTuOYDIgVXqKUeXvgIA8IYEnylJUp2lyH3peUxEAAAdF0lEQVRJrwCs6PHvj4cTAElS16TIfT3l6F4nAMt6/Pvj4QRAktQ1KXJfTzm61wnA8h7//ngsSPCZkiTV2YIEn7m8l7/c6wRgLbCxx98Zi1cAJEldU3Xu20iPq/X2OgGA6m8DOAGQJHVN1bmv59zczwRgeR+/szcLKv48SZLqbkHFn7e811+owxWA/XFJYElSdxxI5L4qNfIKAHgbQJLUHSly3vJef6EOVwAAjk7wmZIk1VGKnJflCkCKCcCJCT5TkqQ6SpHzGnsL4IQEnylJUh2lyHnLE3zmHr0IDFZYns9VcUmSCnueanPoi/1Uop8rAAC/6vP3RnMoMLviz5QkqW5mEzmvSn3l5H4nAIv7/L298TkASVLbpch1feXkulwBAJ8DkCS1X4pc1/grAE4AJEltlyLXpcjJo5oGbKfahxh+nDMASZIK+DHV5s7tRE7O6okKKj68vAQMZI1AkqR8BohcV2XufKLfyvR7CwCqv+SwPy4JLElqrzdQ/R4AfefiiUwAUjwI+McJPlOSpDpIkeP6zsV1ugIAcHqCz5QkqQ5S5LjWXAF4S4LPlCSpDlLkuBS5eEwDwEaqfZhhGzAjZxCSJGUwg8hxVebMjUzg4fmJXAEYpPrbAJOBUyr+TEmSSjuFyHFVWkzk4r5MZAIA8A8T/P098TaAJKltUuS2CeXgic5GHgY+PMHPGMkHAaXezAAOHypzh/57PGXfod9/FXhlnOX3wG+GyivJI5PaI0Vue3givzzRhXcOBlZO8DNGWkcMYn1f1pBa5jXA64eVBSP+e16heq0GVgwry0f89/pC9ZLqZoCYPFe96+1rgVX9/nIVK+89CxxZwecMdzwTWN1IaqgB4Gjg5GHlRJq7VfY64gnlnw8rz+DkXt1zHPB4xZ+5BDhqIh9QxQMJD1P9BOAtOAFQu00CjgFOYneyfzMws2SlKjYbOHOo7PIS8Ci7JwS/AJ4GdmavnZRPivv/E7r8X5X3Uu1rDYPArVkjkNKbTNwD/Evgh1S/HniTy0tDx+Qvh45R1U9KS6XdSvX95r1ZIxjF8VQf2JKsEUhpHAW8H7gD2ED5RNuUsmHomL2fCV7ilGpiCdX3k+OzRjCKAWAt1Qdnx1fTzAbeCdwMLKN8Im1LWTZ0TN9Jc5+HUHcdRfV9Yi012j33LqoP8INZI5D6cxDxTfWHxL7cpZNl28v2oWP9/qFjL9XdB6m+H9yVNYIxfJzqA7wnawTS+M0GLge+j0m/ZNk+dA4uxysDqq97qL7tfzxrBGM4g+oDfAWYnjMIaS9mAn8KfBfYSvnkZ/nDsnXo3Pwp7XqTQs02nchlVbf3M3IGMZbpwGaqD3JRziCkEQaAs4BvEavllU5ylvGVV4fO2VnU6D6pOmkR1bfvzdTwy/H3qT7QG7JGIIU5xBLXuxatsTS3PDN0Lucg5XcD1bfp72eNYJyuJk3nlXL5l8T7uiku2VnKlleGzu2/RMonxZeIq7NGME7HkqbjVr3KoDTcvsBlwM8on6QsecrPhs75rs2QpBSOJE37PTZnEL1YRvXBXpk1AnXFTOCTwBrKJyRLmbKGaAM+NKgUrqT6NrssawQ9uonqA/Z1QFVpf+D/xsRv2V3WEG1if6TqpHj976asEfToPKoPeAswK2cQaqUZwEeJLWxLJxxLPctqoo3MQJqYWUTuqrqNnpcziF7tR5qgL80ZhFplX+AjxJ7ZpROMpRllFdFmfEZA/bqU6tvlFiLH1tr9VB/43VkjUBtMB64CVlI+oViaWVYSbah271yr9u6m+vZ4f9YI+vRhqg98Ky71qfGZRqy9/QLlE4ilHeUFok1NQxrbbNKsFvrhqiuaYpWs44DHE3zu5cAtCT5X7TAVuIJYI/vQwnWpk23EO/CjFYh73qOVKZnrW2e/Ba4D/pYY4KU9uQz4aoLPPR54osoPTLVM5nLg9RV/5n24NLD+ucnAe4BPAK8rXJecNgMriL626+eu8hywkUjw2yf470wmJgIHEMd3wbDy+mE/u3SZ/DngvwJfYeLHV+1zL/DvKv7MFURfa4S/ofrLH9uAuTmDUO2dQcyIS18iTlnWAQ8Cfw28GzgNeC31WuN+gKjTaUQd/5qo8zrKH7+U5QlqtimLiptL5Kqq29rf5Axiov6ENB3uipxBqLZmE9++dlI+CVRZfk+s8/1XwEXAEVUdsIKOIGL5KyK231P+OFdZdhJt0WeUBJGjUrSzP8kZxEQNAL+h+oPQiKcgldT/SXte6VtBJI930aDLexVYQMT8FeIYlD4PVZRVRNtUt6V4C+431OuK37h8geoPxHZgXs4gVBtvIO6tlR7oJ1I2AncSS4QeU+3habRjiGNyJ3GMSp+niZR7ibaq7plH5Kiq29QXcgZRlVNI08HcG6BbJgMfA16m/ODeT3kM+Azwr4Zi0d5NJo7VZ4hjV/r89VNeJtqs57tbUqz9P0jk0kZaRvUH49GsEaikU4BfUn5A77X8Gvgs8MbqD0nnvJE4lr+m/HnttfySBg/e6tmjVN+GlmWNoGKfI03HOjlnEMpuJvDfgB2UH8THW1YAn8e2mdLJxDFu0nMDO4i27I6D7XYyadrP53IGUbVUB+WLOYNQVv8H8DzlB+7xlHXE4P4WGviQToMNEMf8v9GcVw2fJ9q22umLpGk3jf9C8SzVH5QNuGNX2+wPfIPyA/V4ys+JlSltg+XNIM7FzynfLsZTvoHbDrfNDCInVd1Wns0ZRCrXkaYjXZozCCX1JuBpyg/OeyuvAl8HTk10DDRxpxLn6FXKt5e9laeJNq92uJQ07eS6nEGk8ibSHJyHcgahZN5PLGtbelAerSwl9oh3FcrmmEucs6WUbz+jlc1E21fzPUSaNtKaSeKTpDlAvkvdXLOAb1N+IB6tLCM29fBVruaaTJzDZZRvT6OVbxN9Qc10DGnaxZM5g0jtGtIcpM/nDEKVOYX6fjv7DfAXuAtem0whzmmK1UmrKEvxdcGm+jxp2sQ1OYNIbR6wheoP0iocqJtkgNjTOsVe2RMtvwU+QGwrrHaaSpzj31K+vY0sW4m+4dskzTGFNMuSb6GFK97eTpqO886cQahvc4DvUn6gHVlWAlfRre1su246cc5XUr79jSzfJfqK6u+dpGkDt+cMIpezSHOwfpQzCPXlX1C/ldxWEw+K+Spfd80g2sBqyrfH4eXXRJ9Rvf2INOf/rJxB5DJAuvu+p2WMQ705HVhD+UF1V/k98HF8F1u77U+0iTptVbyG6Duqp9NIc96X0uLbQJ8gzUH7ds4gNG4XU593sjcA/wU4IGnEarIDiDaSYlGXfsqrRB9S/aR6g+kTOYPIbT6wjeoP2g7gyIxxaGwfA3ZSfhAdJDrrIWnDVYscQn1eUd1J9CXVx5Gk2adkG5EjW+0O0nSUG3MGoVHtQ7p1sXstK4Bz04arFjuX+mw89EWib6m8G0lzju/IGUQp55Dm4L2MT8+Wtj9wN+UHy+3AF4D90oarDtiPaEvbKd+u78ZnV0qbQ+SaFOf3nIxxFLMP8BxpDuAnM8ahP3Qg8AvKD5I/oUVLaKo23kS0rdLt+xd4O6ukT5LmvD5Hh67wfJo0B3ElMC1jHNrtf1J2YNwIfBCYlDpQddYkoo1tpGxbf5QOJYsamUa6tSM+nTGO4uaTZmXAQWJrUOX1Z5QdEP8HcGjyKKVwKNHmSrZ5NxLK73LSnMstdODhv5FuIc3BfIIWv0dZQ68D1lNmEHwOOC99iNIenUe625ljlbXEbTflMUDklhTn8paMcdTG8aTrHL47m8cA8ABlBsA78aFPlTeHaIsl+sDfZohP4WLSncfjM8ZRK/eQ5oA+ifeCcziU/IPeFmIdd6lOriLdbc3Ryg5cMjiHSaTb0v6ejHHUzttI1zkuyRhHV72ZvAPeEuCPs0Qm9e6PiTaas0+cmSWybruEdOfvbRnjqKVUr449C0zOGEcX/VvyDXS3A7PyhCX1bRbpdj7dU/l3ecLqrMlELklx7n6RMY7aejfpOscVGePooj8l/QD3KvC+XAFJFXkfefbB+Pe5AuqoK0h37t6dMY7amky65TZXAFPzhdI5V5N2cHsaWJgtGqlaC4k2nLKP+MBzOlNJm5uKX6Guw4Ny24EbEn324cB7E3224PmEn/0gcArwy4T/hpTSL4k2/GDCf8MFgdJ5L5FDUriByH0CZpLuXfIXgH3zhdIp+xD7V1d9zm4FpmSMQ0ppCtGmq+4nq3F761T2JXJHipy0nsh5GuZzpLtMdk3GOLrmA1R7rq7NW30pm2uptq98OG/1O+Ua0uWjz2WMozHmAZtIc8BX4xPkqcwgju9Ez9EW4qFCqc3+lGrWC/gN7nuSyiyqGdP2VDYRuU57cB3pZl3XZ4yja/4LEzs364C35q60VMhbiTY/kT5zWe5Kd8j1pMtD12WMo3HmABtIc+C3AkfnC6VT9iEub26j9/OyDPij/FWWivojou33M5bdig//pXI0kStS5KANuHz5mFJtFTwI3JUxji76E8b/UOBW4JvAwUVqKpU3h/hG+BLj6zNLgbOK1LQ77iJd/unUlr/9msXEL4/trSzKF0onHQD8f8Q65Xs6/i8Cf0kHt7+URjEX+H+Bjey5z2wnLkvPKFXBjlhEuryzjho+h1bXbXM/Bfw/iT77SeBEfAcztcnAIcR7tK8b+rmC2Ed9W8F6SXU1B7iQ6B8bh5UXiW2Hlc5k4Fekux15LfDZRJ/dOjOBNaSbjX0oXyiSpJr7EOnyzRp8779nHyPdCVlLXHaTJHXbXCInpMo3H8sXSnvMAFaR7qTclC8USVJN3US6PLMKn93oW8rNZrYDJ+QLRZJUMycQuSBVnrk6XyjtM400a83vKg9R3wchJUnpDBA5IFV+WYqrNU7YO0h3ggZxr3lJ6qL3kTa3vCNfKO32A9KdpA3AoflCkSQVdijpVp0dJHKWKrKQ0ReWqaLcmS8USVJhd5Iun+wgcpYqdDNpL9dclC8USVIhF5E2l9ycL5TumAesJ91JWwnMzhaNJCm32cRYnyqPrMftfpP5CGlnbrfkC0WSlNktpM0hH8kXSvdMAZ4h7Ql8e7ZoJEm5vJ20ueMZIkcpoXNJexKX4MpNktQmM4ixPWXuODdbNB13H2lP5JfyhSJJSuxLpM0Z9+ULRccCm0l7Qs/PFo0kKZXzSZsrNhM5SRldS9qTuhqYny0aSVLV5hNjecpccW22aPRPpgCLSXtiv497BUhSEw2Q/nbxYnzwr5jTSLtC4CDu5iRJTZRyN9lBIvecli0a7dENpD3Jm3FZR0lqkoWkf07shmzRaFT7AytIe6IfB6bnCkiS1LfpxJidMiesIHKPauBs0p7sQeDGbNFIkvp1I+nzwdnZotG43Eb6k35OtmgkSb06h/R54LZs0Wjc5gFrSHviVwOH5wpIkjRuh5P+lb81uNlPbV1C+tnfT4BpuQKSJI1pGjE2px7/L8kVkPqT+r3PQeDL2aKRJI3ly6Qf913utwEOIf2tgEHgslwBSZJGdRnpx/s1RG5RA1xA+gbxKnBSroAkSf/MScRYnHq8vyBXQKrGzaRvFMuAObkCkiT9kznEGJx6nL85V0CqzgzgSdI3jnuBSZlikiTFmHsv6cf3J4lcogZ6M7CF9I3kM7kCkiTxGdKP61uIHKIGu4b0DWUncGGugCSpwy4kxtzU4/o1uQJSOgPA/aRvLK8Ap2aKSZK66FRirE09nt+PW8G3Rq5XA1cBR2SKSZK65AhijE09jvvKXwudT/qGMwg8BczOFJMkdcFsYmzNMYafnykmZZZjl6hB4IfA1EwxSVKbTSXG1Bxjt7u+ttgU4BHyNKTb8B6SJE3EAHl2eh0kcsOUPGGplEOAleRpUJ/NFJMktdFnyTNWr8T7/p1xBrCNPA3LPQMkqXc51vgfJHLBGZliUk1cRb7GtShTTJLUBovI9yXtqkwxqWa+SZ4G9gpwZqaYJKnJziTPu/6DRA5QR+0HLCZPQ9uICwVJ0t6cSoyVOcbkxUQOUIcdBawnT4NbCyzME5YkNcpCYozMMRavJ8Z+ifPIs7b0IPA74Ng8YUlSIxxLjI05xuCdxJgv/ZNrydP4BoHncclgSYIYC58n3/h7bZ6w1DRfI18jXAocliUqSaqnw4ixMNe4+7UsUamRpgAPkK8xPgUclCUySaqXg8i3vv8gMba70p/2ahbwGPka5WM4CZDULQeRf5ydlSUyNd7hwIvkvRLg7QBJXXAYeb/5v0iM6dK4nQxsIl8jXYoPBkpqtyPIe89/EzGWSz07F9hOvsb6PL4iKKmdjiXv0/7biTFc6tsHyNdgB4l3YV0sSFKbLCTfe/67ygeyRKbWu568DXctLhssqR1OJd8Kf7vK9VkiUydMAr5F3ga8ETcQktRsZ5Jvbf9d5VvEmC1VZgpwN3kb8iu4lbCkZlpEvl39dpW78V1/JTIdeJC8DXobcFmO4CSpIpcRY1fOsfJBYoyWktkPeJi8DXsQ+CwwkCE+SerXADFW5R4fH8atfZXJLOBn5G/ktwFTM8QnSb2aSoxRucfFn+Eqf8psLrCY/I39h8DsDPFJ0njNJsam3OPhYmIslrI7GHia/I3+KVw1UFI9HEHepX13laeJMVgq5jBgGfkb/ypcK0BSWacSY1Hu8W8Z7p+imjgCeI78neAV4MIM8UnSSBeS/zW/QWKs9QqoauUIylwJ2Al8Bhe+kJTHJGLM2UmZb/4mf9XSYZR5JmAQuBeYkz5ESR02hxhrSoxxT+Nlf9XcwZR5O2DX7Pik9CFK6qCTKHOVc5AYU33gT40wlzLrBAwCr+LKgZKqdRkxtpQY036Gr/qpYWZRZsXAXeXLwLTkUUpqs2nEWFJqHHsYF/lRQ+1H/r0DhpefAIcnj1JSGx1OjCGlxq8HcXlfNdx08u8iOLysBs5JHqWkNjmHGDtKjVt348Y+aokpxB7VpTrTIHAjdihJezedGCtKjlXfwi191TKTgOsp27EeBxamDlRSIy0kxoiSY9T1uKaJWuwDwHbKdbDNwNW4tbCkMECMCZspNy5tJ8ZGqfXOBTZRdqZ9HzA/daCSam0+MRaUHIs2EWOi1BknAy9StuOtBs5PHaikWjqfsg/6DRJj4MmpA5Xq6HDgMcp2wEHgS8CMxLFKqocZRJ8vPe48hq8pq+NmAQ9QvjMuAd6eOFZJZb2d6Oulx5sHcIEfCYhXXr5G+U45CNwCzE4araTcZhN9u/T4MkiMdb7mJ41wLWW22BxZVgIXJY5VUh4XEX269LiykxjjJI3iPGA95TvrIHAncGjacCUlcijRh0uPI4PEmHZe2nCldjiKclsKjywbgPfhugFSUwwQfXYD5cePQWIsOyppxFLL7Ad8k/Kdd1d5CDghacSSJuoEoq+WHi92lW/ihj5S364CtlG+Iw8Sq3XdhHtzS3Uzl+ibJVcZHV62EWOXpAk6g3o8xLOrrAU+BExOGbSkMU0m+uJayo8Lu8pKYsySVJFDgEco37mHlyeARSmDljSqRUQfLD0ODC+PEGOVpIpNofxWnXsqdwFHJ4xb0m5HE32udL8fWW7E9/ul5M4H1lC+ww8vW4mtPF3dS0pjFtHHtlK+vw8va3BPESmrQ4D7Kd/5R5bVwDXAvulClzplX6JPld64Z0/lfrzkLxUxQAwMWyg/EIwsLwBXAlOTRS+121SiD71A+f48smwhxh7XB5EKezPwJOUHhT2VFcAV+MaANF6TiT6zgvL9d0/lSWLMkVQTM4CbKT84jFaeBS4BJqU6AFLDTSL6yLOU76+jlZtx63Cpti6gfg8Ijvz2cDFeOpR2GSD6RF2v4g0SY8oFqQ6ApOocAtxH+UFjb+UJ4HJgWqJjINXdNKIP1O1d/pHlPnzQT2qcS6j31YBBYtWwTwJzEh0DqW7mEG2+Tqt77qmsIcYQSQ01D7iN8oPJWOVlYiGRI9McBqm4I4k2/jLl+9tY5TZi7JDUAmdT36eKh5cdwLeB09IcBim704g2vYPy/WussoIYKyS1zP7ADTRjIBoEfgS8E5cXVfNMIdrujyjfj8Y78b6BGCMktdhpwGLKDzrjLauAzwPHpDgYUoWOIdrqKsr3m/GWxXjFTeqUKcC1wGbKD0C9lIeAS/FdZNXHDKJNPkT5/tFL2UyMAV5hkzrqWOr/yuCeygbgi8DJ1R8SaVxOJtrgBsr3h17LfUTflyTOBZ6h/MDUT3mUWDPdp5aV2jyirT1K+XbfT3mG6OuS9AemAB8B1lN+oOqnbCd2J7sCmFvxsVF3zSXa1P1EGyvdzvsp64m+7eV+SXs1j1jzuylvC+ypbAPuBS4DZld7eNQBs4m2cy/Rlkq3537LDqIve3VMUk8WAj+g/CA20bIVuJt4UGtWpUdIbTKLaCN3E22mdLudaPkB0YclqW/vAJZSfkCromwB7iHu47rqoI4k2sI9RNso3T6rKEuJPitJlZgGXE2z3m8eT3mGWABlETC9sqOluppOnOsbaO5Dr6OVVUQfdYMtSUnMAD5G/TcZ6qe8QnwT/CBwVFUHTMUdRZzTe4hzXLqdVV3WEH3StTEkZTET+BSwjvIDYKqyBLgVeA9wHLFvu+ptgDhX7yHO3RLKt6NUZR3RB2dWcuQkqUezgE/TzMVQei1riQfEPgG8Fb9x1cEM4lx8gjg3aynfTlKXDUSf84FWSbUwB7gO2ET5ATJX2Qb8lLiffDFwBF4lSGmAOMYXE8f8pzT7Fb1eyyaij82Z6IGUwMFK1ZsHXAP8Bd38hrIJeAz4FbHJyuKhP68rWakGmg2cCJwwVE4E3kg3d6vbQLzL/wVgdeG6qEWcACiVmcTqaR8CDi9clzr4LbsnBb8inkBfRjzA1WUHAm8AjmZ3wj8ROLRkpWriN8SVjr8FXipcF7WQEwClNpm4ZHsN8ObCdamjTcByYjKwbMSflwEbS1WsIgcQCX5XWTDiz138Rj+WR4lv+7cTSw9LSTgBUE5vIyYCZ5euSIOsB34H/J64WrCrjPbfG4lV7FKYSiT0A4n18Q8cVvb03wcBr0lUlzb6HpH4/1fpiqgbnACohOOJjUn+I5FUVK1BYhKwZRwFYuGYscpUHC9S2ArcBlwPPF64LuoYO7RKmg/8J2LTlcMK10XK6XngFuBLwIuF6yJJxewDnAPcQbde67J0q2wj2vg5RJuXivIKgOpmPvDnxEpubyhcF6kKy4CvECsT+m1fksYwAJxFPAndll3aLN0pW4i2exZ+0VJN2TDVBPOIfdovB44tXBdpb54Cvgp8HRftUc05AVDTvAl4F3ARsZe7VNoS4FvA3wH/WLgu0rg5AVCTnUwsMnQxsaiMlMty4hL/7cDPy1ZF6o8TALXFKeyeDLyucF3UTs+xO+n/pHBdpAlzAqC2GQBOIyYCFwCvL1sdNdwK4DtE0v8H4gE/qRWcAKjtjgMWEcsPn4ErD2rvtgJ/TyzLey/wRNnqSOk4AVCX7EfsR3D2UFlQtDaqi+VEwv8esQ7/y0VrI2XiBEBddiy7JwNnEGveq/22sPtb/veIV/ekznECIIXpxIOEpw+VtwCzi9ZIVVkHPAI8PFR+AmwuWiOpBpwASHs2QDw/cPqw4roDzbCE3cn+YeI+vg/vSSM4AZDG72B2TwZOA04AZhatkV4CFhNP6O9K+KuK1khqCCcAUv8GiNcMTyQmA7t+Ho27vVVtB/AMkex/NeznCvx2L/XFCYBUvWnE7YPhk4ITgdeWrFSDrOQPk/xi4jL+lpKVktrGCYCUz0zi1cM3DJUFI34eUKheuW0ktshdPuLnrj+/VKheUqc4AZDqYw67JwOvBw4kdkI8cESZA0wqU8VR7QTWAmtGlNVDP1ewO8GvLVNFScM5AZCaZxLxiuLwScE8YH9gCnELYurQz+F/3tP/g7i0vnXo5/A/7+n/bQM2sTux7yrriEmAJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSpH/m/wenIHogIjqqRgAAAABJRU5ErkJggg=="/>
+        </defs>
+        </svg>
+
+        <p>Минимальная сумма для оформления заказа составляет <b>${minimalDelivery} ₽</b></p>
+        <a href="#" class="cart__min-btn open_cart">Посмотреть корзину</a>
+        </div>
+
+        `
+        $('#cart__min').html(text)
+        
+    } else {
+
+        $('.cart__min').remove()
+        $('.order__bottom').show()
+        $('.order__checkup-item').show()
+    }
+
+
+
+
+
+    return minimalDelivery
+}
 
 
 
@@ -66,9 +697,11 @@ function getTotalPriceAfterDiscount() {
 
 // Возвращаем финальную стоимость доставки с учетом способа доставки и условий
 function getDeliverySumm() {
-    let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
     
 
+    let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
+    
+    // console.log(delivery)
     if (delivery.free_delivery > getTotalPrice()) {
         var summ = delivery.price_delivery
     } else {
@@ -84,9 +717,16 @@ function getDeliverySumm() {
         summ = 0
     }
     
+    if (summ == 0) {
+
+        document.getElementById("free_delivery_info").style.display = 'none';
+    } else {
+
+        document.getElementById("free_delivery_info").style.display = 'flex';
+    }
 
 
-    // document.getElementById("total_delivery").innerText = summ;
+    document.getElementById("total_delivery").innerText = summ + '₽';
     return summ
 
 }
@@ -122,7 +762,7 @@ function getTotalCount() {
 // Обработка нажатий кнопок
 
 
-$(document).on('click','.cart__btn',function(e){
+$(document).on('click','.cart__btn, .open_cart',function(e){
     e.preventDefault();
     $('.cart').addClass('cart--active')
     $('body').addClass('body')
@@ -170,6 +810,8 @@ $(document).on('click','.order__checkup',function(e){
     $('.order').addClass('order--active');
     $('body').addClass('body');
     $('.cart').removeClass('cart--active');
+
+    
 })
 
 $(document).on('click','.order__closer, .order__owerlay',function(e){
@@ -186,202 +828,85 @@ $(document).on('click','.show-map',function(e){
 })
 
 
-// Проверяем наличие типа доставки в localStorage
-function updateDeliveryType() {
-  var deliveryType = localStorage.getItem("deliveryType");
-//   console.log(deliveryType)
-  if (deliveryType) {
-      document.getElementById("check-delivery").style.display = 'none';
-      document.getElementById("setup-address").style.display = 'none';
-  } else {
-      document.getElementById("check-delivery").style.display = 'flex';
-      
-  }
-  retrieveFromLocalStorage()
-}
-updateDeliveryType()
 
+$(document).on('click','.order__times-active',function(){
     
-function saveToLocalStorage(deliveryType) {
-  localStorage.setItem("deliveryType", deliveryType);
-  retrieveFromLocalStorage();
-  updateAll()
-}
+    $('.order__times-drop').toggleClass('order__times-drop--active')
+    $('.order__times-drop-owerlay').toggleClass('order__times-drop-owerlay--active')
 
-function retrieveFromLocalStorage() {
-  var retrievedDeliveryType = localStorage.getItem("deliveryType");
-  if (retrievedDeliveryType !== null) {
-    var deliveryTypeText = (retrievedDeliveryType === "1") ? "1" : "0";
+})
+
+$(document).on('click','.order__times-drop-owerlay',function(){
+
+    $('.order__times-drop').removeClass('order__times-drop--active')
+    $('.order__times-drop-owerlay').removeClass('order__times-drop-owerlay--active')
+})
+
+
+
+$(document).on('click', '.order__times-drop-day', function(e){
+    var day = $(this).text();
+    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    order.day = day;
+    
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+    setOrder();
+
+    $('.order__times-drop-day').removeClass('drop_item--active')    
+    $(this).addClass('drop_item--active')
+
+
+    var dataId = $(this).attr('data-id');
+    $('.order__times-drop-time-wrap').removeClass('order__times-drop-time-wrap--active');
+    $('.order__times-drop-time-wrap[data-id="' + dataId + '"]').addClass('order__times-drop-time-wrap--active');
     
 
-    updateDeliveryInfo(deliveryTypeText)
-  } 
 
+});
 
-}
-
-// Обновление информации о доставке в html
-function updateDeliveryInfo(deliveryTypeText) {
-    if (deliveryTypeText === "1") {
-        document.querySelector('.order-delivery').classList.add('order__delivery-check-item--active');
-        document.querySelector('.order-pickup').classList.remove('order__delivery-check-item--active');
-
-        document.getElementById("order_delivery").style.display = 'block';
-        document.getElementById("order_pickup").style.display = 'none';
-
-
-        var deliveryPrice = JSON.parse(localStorage.getItem('deliveryPrice'));
-        var shopSetup = JSON.parse(localStorage.getItem('shopSettings'));
-
-        console.log(shopSetup)
-
-        var street = document.getElementById("street")
-        // .attr('readonly', 'readonly')
-        if (shopSetup.zones_delivery) {
-            street.value = deliveryPrice.delivery_address;
-            street.readOnly = true;
-            street.style.cursor = 'pointer';
-            street.classList.add('show-map');
-        } else {
-            street.value = deliveryPrice.delivery_address;
-            street.readOnly = false;
-            street.style.cursor = 'auto';
-            
-        }
-       
-        
-
-
-    } else {
-        document.querySelector('.order-delivery').classList.remove('order__delivery-check-item--active');
-        document.querySelector('.order-pickup').classList.add('order__delivery-check-item--active');
-
-        document.getElementById("order_delivery").style.display = 'none';
-        document.getElementById("order_pickup").style.display = 'block';
-
-    }
-}
-
-
-
-
-
-function deliveryUpdate(deliveryPriceJson) {
-//   document.getElementById("price_delivery").innerText = deliveryPriceJson.price_delivery;
-//   document.getElementById("free_delivery").innerText = deliveryPriceJson.free_delivery;
-//   document.getElementById("min_delivery").innerText = deliveryPriceJson.min_delivery;
-//   document.getElementById("first_delivery").innerText = deliveryPriceJson.first_delivery;
-//   document.getElementById("delivery_address").innerText = deliveryPriceJson.delivery_address;
-}
-
-
-// Инициализируем стоимость доставки при первой загрузке
-function setDeliveryPrice() {
-
-    var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
-
-    var deliveryPrice = localStorage.getItem('deliveryPrice');
-
-    var zones_delivery = storedSettingsJson.zones_delivery;
+$(document).on('click', '.order__times-drop-time-item', function(e){
+    var time = $(this).text();
+    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    order.time = time;
     
-    var data_get = JSON.parse(deliveryPrice);
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+    setOrder();
 
-    var data = {
-        'price_delivery': 0,
-        'free_delivery': 0,
-        'min_delivery': 0,
-        'first_delivery': 0,
-        'delivery_address': ''
-    }
+    $('.order__times-drop-time-item').removeClass('drop_item--active')    
+    $(this).addClass('drop_item--active')
 
-    if (!zones_delivery) {
-        data = {
-            'price_delivery': storedSettingsJson.price_delivery,
-            'free_delivery': storedSettingsJson.free_delivery,
-            'min_delivery': storedSettingsJson.min_delivery,
-            'first_delivery': storedSettingsJson.first_delivery,
-            'delivery_address': ''
-        } 
-    } 
 
-    if (deliveryPrice) {
-        
 
-        if (JSON.stringify(data_get) !== JSON.stringify(data) && !zones_delivery) {
-        // Если данные изменились на сервере, обновляем их в localStorage
-        localStorage.setItem('deliveryPrice', JSON.stringify(data));
-        }
+    $('.order__times-drop').removeClass('order__times-drop--active')
+    $('.order__times-drop-owerlay').removeClass('order__times-drop-owerlay--active')
+});
 
-    } else {
-        localStorage.setItem('deliveryPrice', JSON.stringify(data));
-        
-    }
 
+$(document).on('click', '#checkout__radio-now', function(e){
+    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    order.data_time = 0;
+    order.day = 'Сегодня';
+    order.time = 'Как можно скорее';
     
-}
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+
+    $('.order__times-drop').removeClass('order__times-drop--active')
+    setOrder();
+    
+})
+
+$(document).on('click', '#checkout__radio-bytime', function(e){
+    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    order.data_time = 1;
+    
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+    setOrder();
+    
+})
 
 
 
-
-
-
-
-  function fetchAndSaveSettings() {
-    fetch('/api/v1/get_shop_settings/')
-        .then(response => response.json())
-        .then(data => {
-
-            // Прогружаем общие нстройки
-            var storedSettings = localStorage.getItem('shopSettings');
-            if (storedSettings) {
-                var storedData = JSON.parse(storedSettings);
-                if (JSON.stringify(storedData) !== JSON.stringify(data)) {
-                    // Если данные изменились на сервере, обновляем их в localStorage
-                    localStorage.setItem('shopSettings', JSON.stringify(data));
-                }
-            } else {
-                // Если данных в localStorage нет, сохраняем их
-                localStorage.setItem('shopSettings', JSON.stringify(data));
-            }
-            var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
-
-
-            console.log(storedSettingsJson)
-
-
-            // Вот тут пишем нужный код после обработки загрузки настроек.
-            
-            
-
-            
-            
-              
-            var deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
-            deliveryUpdate(deliveryPriceJson)
-
-
-            updateAll()
-
-            // Подключаем загрузку всех данных в HTML
-
-
-
-        })
-        .catch(error => console.error('Ошибка загрузки настроек:', error));
-  }
-  
-  fetchAndSaveSettings();
-
-
-
-
-
-
-
-
-//   Товары
-
-
+// Добавление в корзину
 $(document).on('click','.add_to_cart',function(){
     var id = $(this).parent('.btn-wrap').attr('data-cart-id')
     var type = $(this).parent('.btn-wrap').attr('data-type')
@@ -404,8 +929,189 @@ $(document).on('click','.combo-popup__btn',function(){
 
 
 
+// Обработка обязательных полей
+$(document).on('click', '.order__next', function(e) {
+    e.preventDefault();
+    
+    // Переменная для отслеживания пустых полей
+    var hasEmptyFields = false;
 
-// Функция для добавления товара в корзину
+    // Проверяем каждое поле ввода с классом "required"
+    $('.order__input.required').each(function() {
+        // Проверяем, является ли поле с именем "address" обязательным для заполнения
+        if ($(this).attr('name') !== 'address' || !$(this).closest('.order__next').hasClass('order__next--pickup')) {
+            // Если поле не является обязательным для заполнения или это не кнопка "pickup",
+            // то проверяем его на пустоту и добавляем класс "error" при необходимости
+            if ($(this).val().trim() === '') {
+                $(this).addClass('order__input--error');
+                hasEmptyFields = true;
+            } else {
+                // Если поле не пустое и имеет класс "error", удаляем класс "error"
+                $(this).removeClass('order__input--error');
+            }
+        }
+    });
+
+    // Проверяем каждый checkbox с классом "required"
+    $('.required_checkbox').each(function() {
+        // Если checkbox не отмечен, добавляем класс "error" и устанавливаем hasEmptyFields в true
+        if (!$(this).is(':checked')) {
+            $(this).parent('label').addClass('required_checkbox--error');
+            hasEmptyFields = true;
+        } else {
+            // Если checkbox отмечен и имеет класс "error", удаляем класс "error"
+            $(this).parent('label').removeClass('required_checkbox--error');
+        }
+    });
+
+    // Если есть пустые поля, выводим сообщение или выполняем действие
+    if (hasEmptyFields) {
+        // Здесь можно выполнить действие, например, показать сообщение об ошибке или что-то еще
+        $(this).text('Заполните обязательные поля');
+        $(this).addClass('order__next--error');
+
+        $('.order__pay-methods').hide()
+        $('.order__body-wrap').show()
+
+
+    } else {
+
+        var htmlInner = 
+        `
+        <a href="#" class="btn order__back">Назад</a>
+        <a href="#" class="btn btn--primary order__next">Оформить</a>
+        `
+
+        $('.checkout__counter-item:nth-child(2)').addClass('checkout__counter-item--active checkout__counter-item--line');
+        $('.checkout__counter-item:nth-child(1)').addClass('checkout__counter-item--line');
+
+        $('.order__next-wrap').html(htmlInner)
+
+        $('.order__body-wrap').hide()
+
+        $('.order__pay-methods').show()
+
+        // Если все поля заполнены, продолжаем выполнение другого кода
+        if ($(this).hasClass('order__next--pickup')) {
+            
+
+        } else if ($(this).hasClass('order__next--delivery')) {
+
+            
+        }
+    }
+});
+
+
+$(document).on('click', '.order__back', function(e) {
+    e.preventDefault();
+    var htmlInner = 
+    `
+  
+    <a href="#" class="btn btn--primary order__next">Далее</a>`
+
+    $('.order__next-wrap').html(htmlInner)
+    $('.order__body-wrap').show()
+    $('.order__pay-methods').hide()
+
+    $('.checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
+    $('.checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
+})
+
+// Убираем возможность снять выбор с обязательных чекбоксов
+$(document).ready(function() {
+    // Обработчик события click для чекбоксов с классом "no-uncheck"
+    $('.required_checkbox').on('click', function(e) {
+        e.preventDefault(); // Отменяем действие по умолчанию
+
+        // Проверяем, был ли чекбокс отмечен
+        if (!$(this).is(':checked')) {
+            $(this).prop('checked', true); // Если не был, отмечаем его
+        }
+    });
+});
+
+
+// Изменение способа оплаты
+$(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e) {
+    
+    var order = JSON.parse(localStorage.getItem('order'));
+    order.pay_method = $(this).val();
+    
+
+    // Получаем простую строку из значения элемента
+    var paymentMethod = $(this).val();
+
+    if (paymentMethod.toLowerCase().includes("наличн")) {
+        
+        $('#pay_change').show();
+    } else {
+        $('#pay_change').hide();
+        $('#pay_change').find('input').val('');
+        order.pay_change = '';
+    }
+
+    localStorage.setItem('order', JSON.stringify(order));
+});
+
+
+
+// Проверка номера телефона на первый заказ
+
+$(document).on('keyup', '#check_user_status' ,function(e){
+    var phone = $(this).val()
+    var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+    
+    
+    if (min.length == 13) {
+        
+        
+        fetch(`/api/v1/first_delivery/${phone}/`)
+            .then(response => response.json())
+            .then(data => {
+
+                var get_set = JSON.parse(localStorage.getItem('shopSettings'));
+                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+
+                
+                
+
+                if (data==true) {
+
+                    get_del.first_delivery = get_set.first_delivery;
+                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                    
+
+                } else {
+                    get_del.first_delivery = 0;
+                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                  
+                }
+
+                
+                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+                updateAll()
+                
+                console.log(get_del)
+              
+
+
+            })
+            .catch(error => console.error('Ошибка загрузки:', error));
+            
+    
+    }
+})
+
+
+
+
+
+
+
+
+//   Товары
+
 
 // Функция для получения опций товаров
 async function getProductOptionsId(itemId, optionsIdArray) {
@@ -416,7 +1122,7 @@ async function getProductOptionsId(itemId, optionsIdArray) {
 
         var res = data.options.filter(option => optionsIdArray.includes(option.id));
 
-        console.log(res)
+        // console.log(res)
         return res
 
     } catch (error) {
@@ -456,6 +1162,11 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 }
 
 
+
+
+// Функция для добавления товара в корзину
+
+
 async function addToCart(context, itemId, type) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     
@@ -463,7 +1174,7 @@ async function addToCart(context, itemId, type) {
     let itemElement = document.querySelector(`[data-cart-id="${itemId}"][data-type="${type}"]`);
 
 
-    console.log(itemElement)
+    // console.log(itemElement)
     
 
     let optionsIdString = itemElement.dataset.optionsid;
@@ -644,7 +1355,7 @@ function displayCart() {
     cartItems.appendChild(totalInfo);
 
     
-    setDeliveryPrice()
+    
 }
 
 
@@ -701,6 +1412,15 @@ function updateAll() {
     getTotalPriceAfterDiscount();
     getTotalCount();
 
+    
+    deliveryUpdate()
+
+    getTotalPrice()
+    
+    getMinimalDelivery()
+    getAllDiscount()
+    payMethodUpdate()
+    
 }
 
 
@@ -909,7 +1629,7 @@ function init() {
                                             // Парсинг JSON-ответа
                                             var price = response.price;
                                             
-                                            console.log(price);
+                                            // console.log(price);
                                             
                                             $('#suggest').attr('data-delivery', price)
                                             $('#suggest').attr('data-free', 0)
@@ -931,10 +1651,14 @@ function init() {
                                         
 
                                         var data = JSON.parse(localStorage.getItem('deliveryPrice'));
+                                        var order = JSON.parse(localStorage.getItem('order'));
 
                                         data.price_delivery = sd
                                         data.free_delivery = fd
-                                        data.delivery_address = suggestElement.val()
+                                        
+
+                                        order.address = suggestElement.val()
+                                        order.delivery_price = sd
     
                                         if(min_delivery) {
                                             var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
@@ -944,10 +1668,11 @@ function init() {
                                         } 
 
                                         localStorage.setItem('deliveryPrice', JSON.stringify(data));
+                                        localStorage.setItem('order', JSON.stringify(order));
 
 
-                                        var deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
-                                        deliveryUpdate(deliveryPriceJson)
+                                        
+                                        deliveryUpdate()
 
                                     }
                                     

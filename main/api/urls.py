@@ -20,6 +20,7 @@ router.register(r'orders', views.OrderViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('first_delivery/<str:number>/', views.first_delivery, name='first_delivery'),
     path('get_statistic/', views.get_statistic, name='get_statistic'),
     path('get_shop_settings/', views.get_shop_settings, name='get_shop_settings'),
     

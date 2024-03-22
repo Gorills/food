@@ -1534,11 +1534,6 @@ $(document).on('click','#delivery',function(e){
 
 
 
-$(document).on('focus', '.phone' ,function(e){
-    $(".phone").mask("+7 (999) 999 99-99");
-})
-
-
 $(".phone").on("blur", function() {
     var last = $(this).val().substr( $(this).val().indexOf("-") + 1 );
     if( last.length == 3 ) {
@@ -1574,42 +1569,7 @@ $(document).on('keyup', '.phone-sms' ,function(e){
     }
 })
 
-$(document).on('keyup', '#id_phone' ,function(e){
-    var phone = $(this).val()
-    var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
-    var csrf = $(this).attr('data-token')
-    if (min.length == 13) {
-        
-        // $.ajax({
-        //     method: "POST",
-        //     url: "/cart/set_phone/",
-        //     data: { 
-        //         csrfmiddlewaretoken: csrf,
-        //         phone: phone
-        //     }
-        //     })
-        //   .done(function() {
-        //     console.log(phone);
-            
-    
-        //   });
 
-        $.ajax({
-            method: "POST",
-            url: "/cart/check_first_delivery/",
-            data: { 
-                csrfmiddlewaretoken: csrf,
-                phone: phone
-            }
-            })
-          .done(function() {
-            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            
-    
-          });
-    
-    }
-})
 
 
 

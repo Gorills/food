@@ -51,6 +51,23 @@ class FoodConstructorSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, views
     queryset = FoodConstructor.objects.all()
     serializer_class = FoodConstructorSerializer
 
+
+
+@api_view(['GET'])
+def first_delivery(request, number):
+
+
+    orders = Order.objects.filter(phone=number).count()
+
+    if orders == 0:
+        first_delivery = True
+    else:
+        first_delivery = False
+
+    return Response(first_delivery)
+
+    
+
 @api_view(['GET'])
 def get_shop_settings(request):
     general_settings = BaseSettings.objects.first()
