@@ -14,6 +14,9 @@ from decimal import Decimal
 from delivery.yandex_eda import yandex_create_order
 from django.http import HttpResponse
 import json
+from rest_framework.response import Response
+from django.http import JsonResponse
+from rest_framework import status
 
 try:
     theme_address = ThemeSettings.objects.get().name
@@ -169,7 +172,7 @@ def order_create(request):
 
 
             
-        order_telegram(telegram_bot, telegram_group, order)
+        # order_telegram(telegram_bot, telegram_group, order)
         # print(json_cart)
 
 
@@ -234,16 +237,16 @@ def order_create(request):
         # order.save()
         
         
-
+        cart = []
             
 
-        # if pay_method == 'Оплата картой на сайте':
+        if json_order['pay_method'] == 'Картой на сайте':
 
-        #     # отправлять заказ в телеграм бот, даже если не прошла оплата
-        #     info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
+            # отправлять заказ в телеграм бот, даже если не прошла оплата
+            info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
             
-        #     if info_to_order_anyway:
-        #         order_telegram(telegram_bot, telegram_group, order)
+            if info_to_order_anyway:
+                order_telegram(telegram_bot, telegram_group, order)
 
 
         #     if pay_name == 'yookassa':
@@ -257,19 +260,24 @@ def order_create(request):
         #         # print(data['path'])
         #         return redirect(confirmation_url)
                 
-        #     if pay_name == 'alfabank':
+            if pay_name == 'alfabank':
 
-        #         data = create_payment(order, cart, request)
-        #         payment_id = data['id']
-        #         confirmation_url = data['confirmation_url']
+                data = create_payment(order, cart, request)
+                payment_id = data['id']
+                confirmation_url = data['confirmation_url']
 
-        #         order.payment_id = payment_id
-        #         order.payment_dop_info = confirmation_url
-        #         order.save()
+                order.payment_id = payment_id
+                order.payment_dop_info = confirmation_url
+                order.save()
 
-        #         start_background_task(order.payment_id)
+                # start_background_task(order.payment_id)
+
+
+                return JsonResponse(data, status=status.HTTP_200_OK)
+
+                # return HttpResponse(data)
                 
-        #         return redirect(confirmation_url)
+                
 
         #     if pay_name == 'paykeeper':
 
@@ -287,57 +295,63 @@ def order_create(request):
         #         print(confirmation_url)
         #         return redirect('/orders/paykeeper/session/' + payment_id + '/')
             
-        #     if pay_name == 'tinkoff':
-        #         data = create_payment(order, request)
+            if pay_name == 'tinkoff':
+                data = create_payment(order, request)
 
                 
-        #         order.payment_dop_info = data['url']
-        #         order.payment_id = data['payment_id']
-        #         order.save()
+                order.payment_dop_info = data['url']
+                order.payment_id = data['payment_id']
+                order.save()
 
-        #         return redirect(data['url'])
+                return redirect(data['url'])
 
 
 
-        # else:
-        #     order_telegram(telegram_bot, telegram_group, order)
+        else:
+            order_telegram(telegram_bot, telegram_group, order)
 
-        #     try:
-        #         send_order_email(order)
-        #     except Exception as e:
-        #         pass
+            try:
+                send_order_email(order)
+            except Exception as e:
+                pass
                 
-        #     # yandex_create_order(order)
-        #     send_sms(sms_text(order.id, order.summ), phone)
+            # yandex_create_order(order)
+            send_sms(sms_text(order.id, order.summ), order.phone)
             
-        #     # очистка корзины
+            # очистка корзины
             
             
-        #     if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
-        #         user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+            # if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
+            #     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
 
-        #         try:
+            #     try:
                 
-        #             loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            #         loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                 
-        #         except:
-        #             loyalty_card = LoyaltyCard.objects.create(
-        #                 user=user_profile,
-        #                 summ=Decimal('0.00')
-        #                 )
+            #     except:
+            #         loyalty_card = LoyaltyCard.objects.create(
+            #             user=user_profile,
+            #             summ=Decimal('0.00')
+            #             )
 
-        #         try:
-        #             if order.bonuses_pay > 0:
-        #                 loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+            #     try:
+            #         if order.bonuses_pay > 0:
+            #             loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
 
-        #         except:
-        #             pass
+            #     except:
+            #         pass
                 
-        #         loyalty_card.save()
+            #     loyalty_card.save()
 
-        #     request.session['first_delivery'] = 0
+            # request.session['first_delivery'] = 0
 
-        #     return redirect(f'/?order=True&id={order.id}')
+            data = {
+                'id': order.id,
+                'confirmation_url': f'/'
+            }
+
+            return JsonResponse(data, status=status.HTTP_200_OK)
+        
         
         return HttpResponse("Order created successfully.")
     else:

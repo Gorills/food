@@ -91,6 +91,7 @@
                 <h1 class="product-detail__title" itemprop="name">{{ product.name }}</h1>
                 
                 <div class="product-detail__price-wrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    
                     <p data-price="{{ product.price |unlocalize }}" class="product-detail__price">{{ product.price | floatformat:0 }} ₽</p>
                     {% if product.old_price %}
                     <p class="product-detail__price-old" data-price="{{ product.old_price |unlocalize }}">{{ product.old_price | floatformat:0 }} ₽</p>
@@ -204,6 +205,8 @@
                                 </div>
                                 <button class="product-detail__button btn btn--primary">В корзину</button>
 
+                                
+
                             {% endif %}
                         </div>
                     </form> 
@@ -227,7 +230,10 @@
                             
                             
                         </div>
-                        <button class="options_btn btn btn--primary" data-csrf={{ csrf_token }} data-price="" data-options-id="" data-options="" data-quantity="" data-product="{{ product.id }}">В корзину</button>
+                        <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+                            <button class="btn btn--primary add_to_cart">В корзину</button>
+                        </div>
+                        {% comment %} <button class="options_btn btn btn--primary" data-csrf={{ csrf_token }} data-price="" data-options-id="" data-options="" data-quantity="" data-product="{{ product.id }}">В корзину</button> {% endcomment %}
                     </div>
 
                     {% endif %}
@@ -275,12 +281,7 @@
 
                     {% endfor %}
 
-                    {% if product.product_manufacturer %}
-                    <div class="product-detail__char">
-                        <div class="product-detail__char-name">Производитель:</div>
-                        <a href="{{ product.product_manufacturer.name }}" class="product-detail__char-value">{{ product.product_manufacturer.name }}</a>
-                    </div>
-                    {% endif %}
+                  
                 </div>
 
             </div>

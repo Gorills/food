@@ -252,7 +252,8 @@
             z-index: 100;
             left: 0;
             min-width: 100%;
-            background-color: #fff;
+            background-color: var(--color-body);
+            
             &--active {
                 display: block;
             }

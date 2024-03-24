@@ -128,6 +128,9 @@ setOrder()
 
 
 
+
+
+
 // Проверяем наличие типа доставки в localStorage
 function updateDeliveryType() {
     var deliveryType = localStorage.getItem("deliveryType");
@@ -182,10 +185,10 @@ function updateDeliveryType() {
     $('.order__pay-methods').hide()
     $('.order__body-wrap').show()
 
-    $('.checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
-    $('.checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
+    $('.order .checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
+    $('.order .checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
 
-    var htmlInner = 
+    let htmlInner = 
         `
       
         <a href="#" class="btn btn--primary order__next">Далее</a>
@@ -208,12 +211,12 @@ function updateDeliveryType() {
           $('#total_delivery_info').show()
   
   
-          var deliveryPrice = JSON.parse(localStorage.getItem('deliveryPrice'));
-          var shopSetup = JSON.parse(localStorage.getItem('shopSettings'));
-            var order = JSON.parse(localStorage.getItem('order'));
+          let deliveryPrice = JSON.parse(localStorage.getItem('deliveryPrice'));
+          let shopSetup = JSON.parse(localStorage.getItem('shopSettings'));
+          let order = JSON.parse(localStorage.getItem('order'));
           // console.log(shopSetup)
   
-          var street = document.getElementById("street")
+          let street = document.getElementById("street")
 
           $('#street').addClass('required')
           // .attr('readonly', 'readonly')
@@ -527,27 +530,18 @@ $(document).on('click', '.order__input-dropdown', function() {
 
 // Динамическое добавление полей в order
 
-$(document).ready(function() {
+function addOrderFields() {
+
     // Получаем объект order из локального хранилища
-    var order = JSON.parse(localStorage.getItem('order'));
+    let order = JSON.parse(localStorage.getItem('order'));
 
-    // Обработчик события change для каждого поля ввода
-    $('.order__input').on('change input', function() {
-        var dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
-        var value = $(this).val(); // Получаем значение поля ввода
-
-        // Обновляем соответствующее значение в объекте order
-        order[dataName] = value;
-
-        // Сохраняем обновленный объект order в локальное хранилище
-        localStorage.setItem('order', JSON.stringify(order));
-    });
+    
 
     
 
     // При загрузке страницы устанавливаем сохраненные значения в поля ввода, если они есть
     $('.order__input').each(function() {
-        var dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
+        let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
         
         // Проверяем, есть ли соответствующее значение в объекте order
         if (order && order[dataName] !== undefined) {
@@ -560,8 +554,40 @@ $(document).ready(function() {
     $(document).on('focus', '.phone', function(e) {
         $(this).mask("+7 (999) 999 99-99");
     });
-});
+};
+addOrderFields()
 
+// Обработчик события change для каждого поля ввода
+$('.order__input').on('change input', function() {
+    let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
+    let value = $(this).val(); // Получаем значение поля ввода
+    let order = JSON.parse(localStorage.getItem('order'));
+
+    // Обновляем соответствующее значение в объекте order
+    order[dataName] = value;
+
+    let hasEmptyFields = hasEmptyFieldsCheck();
+
+    if (hasEmptyFields) {
+        if ($('.order__next').hasClass('order__next--error')) {
+
+            $('.order__next').text('Заполните обязательные поля');
+            $('.order__next').addClass('order__next--error');
+        }
+        
+    } else {
+        $('.order__next').text('Далее');
+        $('.order__next').removeClass('order__next--error');
+    }
+
+    $(this).removeClass('order__input--error');
+
+    // Сохраняем обновленный объект order в локальное хранилище
+    localStorage.setItem('order', JSON.stringify(order));
+
+    let order_get = JSON.parse(localStorage.getItem('order'));
+    console.log(order_get)
+});
 
 
 
@@ -570,14 +596,14 @@ $(document).ready(function() {
 
 // Сумма всех скидок
 function getAllDiscount() {
-    var deliveryType = localStorage.getItem("deliveryType"); 
+    let deliveryType = localStorage.getItem("deliveryType"); 
 
-    var shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
-    var discountOnPickup = shopSettings.discount_on_pickup;
+    let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
+    let discountOnPickup = shopSettings.discount_on_pickup;
 
-    var discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
+    let discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
 
-    var first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
+    let first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
 
     // Округляем сумму скидки первой доставки
     first_delivery_summ = Math.floor(first_delivery_summ);
@@ -594,10 +620,10 @@ function getAllDiscount() {
         document.getElementById("first_delivery_discount_info").style.display = 'none';
     }
     
-    var summ = 0;
+    let summ = 0;
 
     if (deliveryType == '0') {
-        var pickup_discount = getTotalPrice() * discountOnPickup / 100;
+        let pickup_discount = getTotalPrice() * discountOnPickup / 100;
         // Округляем сумму скидки при самовывозе
         pickup_discount = Math.floor(pickup_discount);
         summ = summ + pickup_discount;
@@ -653,6 +679,9 @@ function getTotalPriceAfterDiscount() {
     order.summ = res
     localStorage.setItem('order', JSON.stringify(order));
 
+    console.log(order)
+    
+
     return res
 }
 
@@ -661,10 +690,10 @@ function getMinimalDelivery() {
 
     let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
 
-    var minimalDelivery = delivery.min_delivery
-    var totalPrice = getTotalPrice()
+    let minimalDelivery = delivery.min_delivery
+    let totalPrice = getTotalPrice()
 
-    var deliveryType = localStorage.getItem("deliveryType");
+    let deliveryType = localStorage.getItem("deliveryType");
 
 
     if (totalPrice < minimalDelivery && deliveryType == '1') {
@@ -716,12 +745,12 @@ function getDeliverySumm() {
     
 
     let delivery = JSON.parse(localStorage.getItem('deliveryPrice'));
-    
+    let summ = 0
     // console.log(delivery)
     if (delivery.free_delivery > getTotalPrice()) {
-        var summ = delivery.price_delivery
+        summ = delivery.price_delivery
     } else {
-        var summ = 0
+        summ = 0
     }
 
     var deliveryType = localStorage.getItem("deliveryType");
@@ -745,7 +774,7 @@ function getDeliverySumm() {
     document.getElementById("total_delivery").innerText = summ + '₽';
 
 
-    var order = JSON.parse(localStorage.getItem('order'));
+    let order = JSON.parse(localStorage.getItem('order'));
     order.delivery_price = summ
 
     localStorage.setItem('order', JSON.stringify(order));
@@ -761,7 +790,7 @@ function getDeliverySumm() {
 function getTotalCount() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-    var totalCount = 0
+    let totalCount = 0
 
     for (let itemId in cart) {
         let item = cart[itemId];
@@ -822,8 +851,8 @@ $(document).on('click','.setup-address__close, .setup-address__overlay',function
 
 
 document.addEventListener('click', function(event) {
-    var target = event.target;
-    var setupAddress = document.getElementById("set_delivery");
+    let target = event.target;
+    let setupAddress = document.getElementById("set_delivery");
     if (target === setupAddress) {
         document.getElementById("check-delivery").style.display = 'flex';
     }
@@ -870,8 +899,8 @@ $(document).on('click','.order__times-drop-owerlay',function(){
 
 
 $(document).on('click', '.order__times-drop-day', function(e){
-    var day = $(this).text();
-    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    let day = $(this).text();
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
     order.day = day;
     
     localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
@@ -881,7 +910,7 @@ $(document).on('click', '.order__times-drop-day', function(e){
     $(this).addClass('drop_item--active')
 
 
-    var dataId = $(this).attr('data-id');
+    let dataId = $(this).attr('data-id');
     $('.order__times-drop-time-wrap').removeClass('order__times-drop-time-wrap--active');
     $('.order__times-drop-time-wrap[data-id="' + dataId + '"]').addClass('order__times-drop-time-wrap--active');
     
@@ -890,8 +919,8 @@ $(document).on('click', '.order__times-drop-day', function(e){
 });
 
 $(document).on('click', '.order__times-drop-time-item', function(e){
-    var time = $(this).text();
-    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    let time = $(this).text();
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
     order.time = time;
     
     localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
@@ -908,7 +937,7 @@ $(document).on('click', '.order__times-drop-time-item', function(e){
 
 
 $(document).on('click', '#checkout__radio-now', function(e){
-    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
     order.data_time = 0;
     order.day = 'Сегодня';
     order.time = 'Как можно скорее';
@@ -921,7 +950,7 @@ $(document).on('click', '#checkout__radio-now', function(e){
 })
 
 $(document).on('click', '#checkout__radio-bytime', function(e){
-    var order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
     order.data_time = 1;
     
     localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
@@ -933,15 +962,15 @@ $(document).on('click', '#checkout__radio-bytime', function(e){
 
 // Добавление в корзину
 $(document).on('click','.add_to_cart',function(){
-    var id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    var type = $(this).parent('.btn-wrap').attr('data-type')
+    let id = $(this).parent('.btn-wrap').attr('data-cart-id')
+    let type = $(this).parent('.btn-wrap').attr('data-type')
     addToCart($(this), id, type);
     
 })
 
 $(document).on('click','.combo-popup__btn',function(){
-    var id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    var type = $(this).parent('.btn-wrap').attr('data-type')
+    let id = $(this).parent('.btn-wrap').attr('data-cart-id')
+    let type = $(this).parent('.btn-wrap').attr('data-type')
 
     if ($(this).hasClass('combo-popup__btn--active')) {
         addToCart($(this), id, type);
@@ -954,13 +983,8 @@ $(document).on('click','.combo-popup__btn',function(){
 
 
 
-// Обработка обязательных полей
-$(document).on('click', '.order__next', function(e) {
-    e.preventDefault();
-    
-    // Переменная для отслеживания пустых полей
-    var hasEmptyFields = false;
-
+function hasEmptyFieldsCheck() {
+    let hasEmptyFields = false;
     // Проверяем каждое поле ввода с классом "required"
     $('.order__input.required').each(function() {
         // Проверяем, является ли поле с именем "address" обязательным для заполнения
@@ -989,11 +1013,25 @@ $(document).on('click', '.order__next', function(e) {
         }
     });
 
+    
+
+    return hasEmptyFields
+
+}
+
+
+// Обработка обязательных полей
+$(document).on('click', '.order__next', function(e) {
+    e.preventDefault();
+    
+    // Переменная для отслеживания пустых полей
+    let hasEmptyFields = hasEmptyFieldsCheck();
+
     // Если есть пустые поля, выводим сообщение или выполняем действие
     if (hasEmptyFields) {
         // Здесь можно выполнить действие, например, показать сообщение об ошибке или что-то еще
-        $(this).text('Заполните обязательные поля');
-        $(this).addClass('order__next--error');
+        $('.order__next').text('Заполните обязательные поля');
+        $('.order__next').addClass('order__next--error');
 
         $('.order__pay-methods').hide()
         $('.order__body-wrap').show()
@@ -1001,41 +1039,38 @@ $(document).on('click', '.order__next', function(e) {
 
     } else {
 
-        var htmlInner = 
+        let htmlInner = 
         `
         <a href="#" class="btn order__back">Назад</a>
         <a href="#" class="btn btn--primary order__next order_create">Оформить</a>
         `
 
-        $('.checkout__counter-item:nth-child(2)').addClass('checkout__counter-item--active checkout__counter-item--line');
-        $('.checkout__counter-item:nth-child(1)').addClass('checkout__counter-item--line');
+        $('.order .checkout__counter-item:nth-child(2)').addClass('checkout__counter-item--active checkout__counter-item--line');
+        $('.order .checkout__counter-item:nth-child(1)').addClass('checkout__counter-item--line');
 
         $('.order__next-wrap').html(htmlInner)
 
         $('.order__body-wrap').hide()
 
         $('.order__pay-methods').show()
-
-
-        
-
-
-        
         
     }
+
+    
+    getTotalPriceAfterDiscount();
 });
 
 
 $(document).on('click', '.order_create', function(e) {
     e.preventDefault();
-    var order = localStorage.getItem('order') || {}; // Проверка на null
-    var cart = localStorage.getItem('cart') || {}; // Проверка на null
+    let order = localStorage.getItem('order') || {}; // Проверка на null
+    let cart = localStorage.getItem('cart') || {}; // Проверка на null
 
 
 
     // console.log(order)
 
-    var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
     data = {
         csrfmiddlewaretoken: csrfToken,
@@ -1049,20 +1084,381 @@ $(document).on('click', '.order_create', function(e) {
     $.ajax({
         method: "POST",
         url: "/orders/create/fast/",
-        data: data
-    })
-    .done(function( msg ) {
+        data: data,
+        dataType: "json",
+        success: function(responseData) {
+            console.log(responseData); // Выводим ответ в консоль
 
-        console.log(msg)
+            if (responseData && responseData.confirmation_url) {
+                // Получаем значение confirmation_url из responseData
+                let confirmationUrl = responseData.confirmation_url;
+                // Выполняем редирект на указанный URL
 
+                let order = JSON.parse(localStorage.getItem('order'));
+                data = {
+                    'show': true,
+                    'order_id': responseData.id,
+                    'user_name': order.user_name,
+                    'user_phone': order.user_phone,
+                    'address': order.address,
+                    'address_pickup': order.address_pickup,
+                    'address_comment': order.address_comment,
+                    'delivery_type': order.delivery_type,
+                    'entrance': order.entrance,
+                    'floor': order.floor,
+                    'flat': order.flat,
+                    'door_code': order.door_code,
+                    
+                    'day': order.day,
+                    'time': order.time,
+                    'pay_method': order.pay_method,
+                    'pay_change': order.pay_change,
+                    'delivery_method': order.delivery_method,
+                    'delivery_price': order.delivery_price,
+                    'order_conmment': order.order_conmment,
+                    
+                    'summ': order.summ,
+                    
+                    'status': 'Новый',
+                    
+                }
+
+                localStorage.setItem('lastOrder', JSON.stringify(data));
+
+                
+
+
+                window.location.href = confirmationUrl;
+
+            } else {
+                console.error('Ответ не содержит confirmation_url');
+                // Обработка случаев, когда нет confirmation_url в ответе
+            }
+            // Здесь вы можете обрабатывать полученные данные
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText); // Выводим сообщение об ошибке в консоль
+        }
     });
+
+})
+
+
+
+jQuery(document).ready(function () {
+    
+
+
+    let order = $('#orderDone').attr('data-order')
+    let data_title = $('#orderDone').attr('data-title')
+    let data_text = $('#orderDone').attr('data-text')
+
+    
+
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    
+    
+
+    if(last_order) {
+        
+        
+        
+        // Преобразуем объект в строку JSON-формата
+        let jsonString = JSON.stringify(order);
+
+        // Заменяем символы в строке
+        jsonString = jsonString.replace(/'/g, '"'); 
+        let newStr = jsonString.slice(1, -1);
+
+
+        // Преобразуем строку JSON-формата обратно в объект
+        let newObj = JSON.parse(newStr);
+
+       
+        dataLayer.push(newObj)
+
+
+        
+
+        
+
+
+        let order_delivery_items = ''
+        let order_delivery_method = ''
+        let order_delivery_address = ''
+
+        if (last_order.delivery_method == 'Самовывоз') {
+            order_delivery_method = 'самовывоза'
+            order_delivery_items = `
+                <div class="order__delivery-check-item order-done-delivery">Доставка</div>
+                <div class="order__delivery-check-item order-done-pickup order__delivery-check-item--active">Самовывоз</div>
+            `
+            order_delivery_address = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Точка самовывоза</div>
+                    <div class="odred-done__itog-value">${last_order.address_pickup}</div>
+
+                </div>
+            `
+        } else if (last_order.delivery_method == 'Доставка') {
+            order_delivery_method = 'доставки'
+            order_delivery_items = `
+                <div class="order__delivery-check-item order-done-delivery order__delivery-check-item--active">Доставка</div>
+                <div class="order__delivery-check-item order-done-pickup">Самовывоз</div>
+            `
+            order_delivery_address = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Адрес доставки</div>
+                    <div class="odred-done__itog-value">${last_order.address}</div>
+
+                </div>
+            `
+        }
+
+
+        let order_comment = ''
+        if(last_order.order_conmment) {
+            
+            order_comment = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Комментарий к заказу</div>
+                    <div class="odred-done__itog-value">${last_order.order_conmment}</div>
+                </div>
+                `
+        }
+
+        
+        let address_comment = ''
+        if(last_order.address_comment) {
+            
+            address_comment = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Комментарий к адресу</div>
+                    <div class="odred-done__itog-value">${last_order.address_comment}</div>
+                </div>
+                `
+        }
+        
+        let order_flat = ''
+        if(last_order.flat) {
+            
+            order_flat = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Квартира</div>
+                    <div class="odred-done__itog-value">${last_order.flat}</div>
+                </div>
+                `
+        }
+        let oreder_flore = ''
+        if(last_order.floor) {
+            
+            oreder_flore = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Этаж</div>
+                    <div class="odred-done__itog-value">${last_order.floor}</div>
+                </div>
+                `
+        }
+
+        let order_entrance = ''
+        if(last_order.entrance) {
+            
+            order_entrance = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Подъезд</div>
+                    <div class="odred-done__itog-value">${last_order.entrance}</div>
+                </div>
+                `
+        }
+        let order_door_code = ''
+        if(last_order.door_code) {
+            
+            order_door_code = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Код двери</div>
+                    <div class="odred-done__itog-value">${last_order.door_code}</div>
+                </div>
+                `
+        }
+        
+        let dataHtml = `       
+                <div class="odred-done">
+
+                <div class="odred-done__owerlay"></div>
+
+
+                <div class="odred-done__container">
+
+                    <div class="odred-done__inner">
+
+                        <div class="odred-done__top">
+                        
+                            <div class="odred-done__title">
+                                Заказ № <span id="odred-done__id">${last_order.order_id}</span>
+                            </div>
+
+
+                            <div class="odred-done__closer">
+                                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>
+
+                        </div>
+                        
+
+
+                        
+
+                        <div class="odred-done__body">
+                            <div class="order__delivery-check">
+                                ${order_delivery_items}
+                                
+                            </div>
+
+                            <ul class="checkout__counter">
+                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+                                    
+                                    <span class="checkout__counter-title">Адрес и контакты</span>
+                                    <div class="checkout__counter-line-wrap">
+                                        <i></i><div class="checkout__counter-line"></div>
+
+                                    </div>
+                                
+                                </li>
+                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                    <span class="checkout__counter-title">Оплата</span>
+                                    <div class="checkout__counter-line-wrap">
+                                    
+                                        <div class="checkout__counter-line"></div><i></i><div class="checkout__counter-line"></div>
+
+                                    </div>
+                                
+                                </li>
+                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                    <span class="checkout__counter-title">Завершение</span>
+
+
+                                    <div class="checkout__counter-line-wrap">
+                                        
+                                        <div class="checkout__counter-line"></div><i></i>
+                                    </div>
+                                
+                                </li>
+                            </ul>
+
+                            <div class="odred-done__body-wrap">
+                            
+                                <p class="odred-done__body-title">${data_title} ${data_text}</p>
+
+
+                                <div class="odred-done__itog">
+                                    <div class="odred-done__itog-item">
+                                        <p class="odred-done__itog-title">Итоговые данные</p>
+
+
+                                        
+
+                                        <div class="odred-done__itog-wrap">
+                                            <div class="odred-done__itog-data">Время ${order_delivery_method}</div>
+                                            <div class="odred-done__itog-value">${last_order.day} / ${last_order.time}</div>
+
+                                        </div>
+
+                                        ${order_delivery_address}
+                                        ${order_flat}
+                                        ${oreder_flore}
+                                        ${order_entrance}
+                                        ${order_door_code}
+
+
+
+                                        ${address_comment}
+
+
+                                        
+
+                                        ${order_comment}
+
+                                        <div class="odred-done__itog-wrap odred-done__itog-wrap-summ" id="orderDonePrice">
+                                            <div class="odred-done__itog-data">Сумма заказа:</div>
+                                            <div class="odred-done__itog-value">${last_order.summ} ₽</div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                        
+                        
+
+                    </div>
+                    <div class="odred-done__bottom">
+
+
+                    
+                        
+                        
+                    
+
+                    
+                        
+
+                    
+
+                        
+                    
+
+                        <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
+
+                    
+
+                        
+                    </div>
+
+                </div>
+
+
+                </div>
+        `
+
+        
+        $('#orderDone').html(dataHtml)
+
+        if(last_order.show == true) {
+            $('.odred-done').addClass('odred-done--active')
+            $('body').addClass('body');
+        } else {
+            $('.odred-done').removeClass('odred-done--active')
+            $('body').removeClass('body');
+        }
+        
+        
+        $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
+            $('.odred-done').removeClass('odred-done--active')
+            $('body').removeClass('body');
+            last_order.show = false
+            localStorage.setItem('lastOrder', JSON.stringify(last_order))
+            clearCart()
+            
+
+        })
+    }
 
 })
 
 
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
-    var htmlInner = 
+    let htmlInner = 
     `
   
     <a href="#" class="btn btn--primary order__next">Далее</a>`
@@ -1071,8 +1467,8 @@ $(document).on('click', '.order__back', function(e) {
     $('.order__body-wrap').show()
     $('.order__pay-methods').hide()
 
-    $('.checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
-    $('.checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
+    $('.order .checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
+    $('.order .checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
 })
 
 // Убираем возможность снять выбор с обязательных чекбоксов
@@ -1092,12 +1488,12 @@ $(document).ready(function() {
 // Изменение способа оплаты
 $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e) {
     
-    var order = JSON.parse(localStorage.getItem('order'));
+    let order = JSON.parse(localStorage.getItem('order'));
     order.pay_method = $(this).val();
     
 
     // Получаем простую строку из значения элемента
-    var paymentMethod = $(this).val();
+    let paymentMethod = $(this).val();
 
     if (paymentMethod.toLowerCase().includes("наличн")) {
         
@@ -1108,7 +1504,14 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
         order.pay_change = '';
     }
 
+    
+
     localStorage.setItem('order', JSON.stringify(order));
+    getTotalPriceAfterDiscount()
+
+    console.log(order)
+
+    
 });
 
 
@@ -1116,8 +1519,8 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
 // Проверка номера телефона на первый заказ
 
 $(document).on('keyup', '#check_user_status' ,function(e){
-    var phone = $(this).val()
-    var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+    let phone = $(this).val()
+    let min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
     
     
     if (min.length == 13) {
@@ -1182,7 +1585,7 @@ async function getProductOptionsId(itemId, optionsIdArray) {
         const response = await fetch(`/api/v1/products/${itemId}/`);
         const data = await response.json();
 
-        var res = data.options.filter(option => optionsIdArray.includes(option.id));
+        let res = data.options.filter(option => optionsIdArray.includes(option.id));
 
         // console.log(res)
         return res
@@ -1199,7 +1602,7 @@ async function getComboOptionsId(comboId, optionsIdArray) {
     try {
         const response = await fetch(`/api/v1/combos/${comboId}/`);
         const data = await response.json();
-        var res = data.items.filter(option => optionsIdArray.includes(option.id));
+        let res = data.items.filter(option => optionsIdArray.includes(option.id));
         return res
 
     } catch (error) {
@@ -1252,7 +1655,7 @@ async function addToCart(context, itemId, type) {
         id += '22222';
     }
     
-    var optionsNameArray = [];
+    let optionsNameArray = [];
     if (optionsIdArray.length > 0) {
         id += optionsIdArray.join('');
         if (type === 'product') {
@@ -1457,7 +1860,23 @@ function removeFromCart(itemId) {
 function clearCart() {
     localStorage.removeItem('cart');
     
-    updateAll()
+    localStorage.removeItem('order');
+    setOrder()
+    
+    displayCart();
+    getTotalCount();
+
+    let order = JSON.parse(localStorage.getItem('order'));
+
+    $('.order__input').each(function() {
+        let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
+        
+        // Проверяем, есть ли соответствующее значение в объекте order
+        if (order && order[dataName] !== undefined) {
+            // Устанавливаем значение в поле ввода
+            $(this).val(order[dataName]);
+        }
+    });
 }
 // clearCart()
 
@@ -1487,7 +1906,7 @@ function updateAll() {
     
     deliveryUpdate()
 
-    getTotalPrice()
+    
     
     getMinimalDelivery()
     getAllDiscount()
@@ -1530,17 +1949,17 @@ ymaps.ready(init);
 
 function init() {
 
-    var city = $('#suggest').attr('data-city')
-    var zones = $('#suggest').attr('data-zones')
-    var csrf = $('#suggest').attr('data-csrf')
-    var flickerAPI = $('#suggest').attr('data-file-zones');
-    var datathirdPartyDdelivery = $('#suggest').attr('data-third-party-delivery');
+    let city = $('#suggest').attr('data-city')
+    let zones = $('#suggest').attr('data-zones')
+    let csrf = $('#suggest').attr('data-csrf')
+    let flickerAPI = $('#suggest').attr('data-file-zones');
+    let datathirdPartyDdelivery = $('#suggest').attr('data-third-party-delivery');
 
     
     
     if (zones != 'false') {
         
-        var suggestView=new ymaps.SuggestView(
+        let suggestView=new ymaps.SuggestView(
             'suggest', {
                 provider: {
                 suggest: (function(request, options) {
@@ -1584,7 +2003,7 @@ function init() {
                     format: "json"
                 })
                 .done(function( data ) {
-                    var count = 0
+                    let count = 0
                     $.each(data.deliverys, function(index, val) {
                         
                         if(datathirdPartyDdelivery == 'false') {
@@ -1610,7 +2029,11 @@ function init() {
                                 [
                                     val.coords
                                 ], {
-                                    
+                                    hintContent: val.hintContent,
+                                    balloonContent: val.balloonContent,
+                                    balloonContentHeader: val.balloonContentHeader,
+                                   
+                                    balloonContentFooter: val.balloonContentFooter
                                 }, {
                             
                                 fillColor: val.fillColor,
@@ -1640,10 +2063,10 @@ function init() {
             function geocode() {
                 // Забираем запрос из поля ввода.
                 myMap.geoObjects.removeAll()
-                var request = $('#suggest').val();
+                let request = $('#suggest').val();
                 // Геокодируем введённые данные.
                 ymaps.geocode(request).then(function (res) {
-                    var obj = res.geoObjects.get(0),
+                    let obj = res.geoObjects.get(0),
                         error, hint;
                     
                     
@@ -1679,14 +2102,14 @@ function init() {
                     } else {
                         // showResult(obj);
                         
-                        var deliveryText = ''
+                        let deliveryText = ''
                         myMap.geoObjects.each(function (item) {
                             if(item.geometry.getType() == "Polygon"){
                                 if (item.geometry.contains(obj.geometry._coordinates)) {
 
-                                    var suggestElement = $('#suggest');
-                                    var headerCartElement = $('#headerCart');
-                                    var cartInnerElement = $('.cart__inner');
+                                    let suggestElement = $('#suggest');
+                                    let headerCartElement = $('#headerCart');
+                                    let cartInnerElement = $('.cart__inner');
 
                                     
                                     if (datathirdPartyDdelivery == 'true') {
@@ -1698,32 +2121,66 @@ function init() {
                                         }
 
                                         $.post("/delivery/check_price/", data_del, function(response) {
-                                            // Парсинг JSON-ответа
-                                            var price = response.price;
                                             
-                                            // console.log(price);
-                                            
-                                            $('#suggest').attr('data-delivery', price)
-                                            $('#suggest').attr('data-free', 0)
-                                            $('#suggest').attr('data-value', suggestElement.val())
-                                            $('#suggest').attr('data-min', 0)
                                         
-                                        });
+                                        })
+                                        .done(function( response ) {
+                                            // Парсинг JSON-ответа
+                                            let price = response.price;
+                                            
+                                            console.log(response);
+                                            
+                                            
+
+                                            let deliveryText = item.properties._data.hintContent
+                                            
+                                            let deliveryFree = item.properties._data.balloonContentFooter
+                                           
+                                            let fd=parseInt(deliveryFree.match(/\d+/)[0]);
+                                            let min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+        
+                                            
+
+                                            let data = JSON.parse(localStorage.getItem('deliveryPrice'));
+                                            let order = JSON.parse(localStorage.getItem('order'));
+
+                                            data.price_delivery = price
+                                            data.free_delivery = fd
+                                            
+
+                                            order.address = suggestElement.val()
+                                            order.delivery_price = price
+        
+                                            if(min_delivery) {
+                                                let min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
+
+                                                data.min_delivery = min_delivery_post
+                                                $('#suggest').attr('data-min', min_delivery_post)
+                                            } 
+
+                                            localStorage.setItem('deliveryPrice', JSON.stringify(data));
+                                            localStorage.setItem('order', JSON.stringify(order));
+
+
+                                            
+                                            deliveryUpdate()
+                                            $('.show-map').removeClass('order__input--error')
+                                        })
                                         
 
                                     } else {
 
-                                        var deliveryText = item.properties._data.hintContent
-                                        var deliveryPrice = item.properties._data.balloonContentBody
-                                        var deliveryFree = item.properties._data.balloonContentFooter
-                                        var sd=parseInt(deliveryPrice.match(/\d+/)[0]);
-                                        var fd=parseInt(deliveryFree.match(/\d+/)[0]);
-                                        var min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+                                        let deliveryText = item.properties._data.hintContent
+                                        let deliveryPrice = item.properties._data.balloonContentBody
+                                        let deliveryFree = item.properties._data.balloonContentFooter
+                                        let sd=parseInt(deliveryPrice.match(/\d+/)[0]);
+                                        let fd=parseInt(deliveryFree.match(/\d+/)[0]);
+                                        let min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
     
                                         
 
-                                        var data = JSON.parse(localStorage.getItem('deliveryPrice'));
-                                        var order = JSON.parse(localStorage.getItem('order'));
+                                        let data = JSON.parse(localStorage.getItem('deliveryPrice'));
+                                        let order = JSON.parse(localStorage.getItem('order'));
 
                                         data.price_delivery = sd
                                         data.free_delivery = fd
@@ -1733,7 +2190,7 @@ function init() {
                                         order.delivery_price = sd
     
                                         if(min_delivery) {
-                                            var min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
+                                            let min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
 
                                             data.min_delivery = min_delivery_post
                                             $('#suggest').attr('data-min', min_delivery_post)
@@ -1745,6 +2202,7 @@ function init() {
 
                                         
                                         deliveryUpdate()
+                                        $('.show-map').removeClass('order__input--error')
 
                                     }
                                     

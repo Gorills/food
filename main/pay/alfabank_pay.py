@@ -32,19 +32,27 @@ def create_payment(order, cart, request):
 
     items = []
     count = 1
-    for item in cart:
-        product = Product.objects.get(id=item['product'].id)
+    for item in order.items.all():
+
+        if item.product:
+            product = item.product
+        elif item.combo:
+            product = item.combo
+        elif item.constructor:
+            product = item.constructor
+
+        
         i = {
             "positionId":count,
             "name":product.name,
             "quantity":
                 {
-                    "value":int(item['quantity']),
+                    "value":int(item.quantity),
                     "measure":"шт"
                 },
-            "itemAmount":dec_to_cop(Decimal(item['price'])*item['quantity']),
+            "itemAmount":dec_to_cop(Decimal(item.price)*item.quantity),
             "itemCode":product.id,
-            "itemPrice":dec_to_cop(Decimal(item['price'])),
+            "itemPrice":dec_to_cop(Decimal(item.price)),
             }
         count += 1
         items.append(i)
@@ -63,7 +71,7 @@ def create_payment(order, cart, request):
         "cartItems": items
             
     }
-
+    
     r = requests.post("https://payment.alfabank.ru/payment/rest/register.do", post_data) 
     print(r.json())
 

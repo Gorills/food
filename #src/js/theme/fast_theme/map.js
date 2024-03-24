@@ -766,6 +766,10 @@ $(document).on('click','.select-wrap__checked',function(){
 });
 
 
+function priceUpdate() {
+    
+}
+
 $(document).on('click','.select-wrap__item',function(){
     
     var totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
@@ -796,21 +800,24 @@ $(document).on('click','.select-wrap__item',function(){
       optionsIds += $(this).attr('data-id') + ',';
       options += $(this).val().split(',')[0] + ',';
     });
-    $('.select-wrap__input').each(function() {
-        var price = parseFloat($(this).attr('data-price'));
-        totalPrice += price;
-        oldPrice += price;
-        optionsIds += $(this).attr('data-id') + ',';
-        options += $(this).val().split(',')[0] + ',';
-      });
+
+    // $('.select-wrap__input').each(function() {
+    //     var price = parseFloat($(this).attr('data-price'));
+    //     totalPrice += price;
+    //     oldPrice += price;
+    //     optionsIds += $(this).attr('data-id') + ',';
+    //     options += $(this).val().split(',')[0] + ',';
+    //   });
     
-    $('input[type=checkbox]:checked').each(function() {
-      var price = parseFloat($(this).attr('data-price'));
-      totalPrice += price;
-      oldPrice += price;
-      optionsIds += $(this).attr('data-id') + ',';
-      options += $(this).val().split(',')[0] + ',';
-    });
+
+    // $('input[type=checkbox]:checked').each(function() {
+    //   var price = parseFloat($(this).attr('data-price'));
+    //   console.log(price)
+    //   totalPrice += price;
+    //   oldPrice += price;
+    //   optionsIds += $(this).attr('data-id') + ',';
+    //   options += $(this).val().split(',')[0] + ',';
+    // });
 
     
     
@@ -829,6 +836,8 @@ $(document).ready(function() {
     var optionsIds = '';
     var options = '';
     var quantity = parseInt($('#id_quantity').val());
+
+    
     
     $('select option:selected').each(function() {
         var price = parseFloat($(this).attr('data-price'));
@@ -837,21 +846,22 @@ $(document).ready(function() {
         optionsIds += $(this).attr('data-id') + ',';
         options += $(this).val().split(',')[0] + ',';
     });
-    $('.select-wrap__input').each(function() {
-        var price = parseFloat($(this).attr('data-price'));
-        totalPrice += price;
-        oldPrice += price;
-        optionsIds += $(this).attr('data-id') + ',';
-        options += $(this).val().split(',')[0] + ',';
-    });
+
+    // $('.select-wrap__input').each(function() {
+    //     var price = parseFloat($(this).attr('data-price'));
+    //     totalPrice += price;
+    //     oldPrice += price;
+    //     optionsIds += $(this).attr('data-id') + ',';
+    //     options += $(this).val().split(',')[0] + ',';
+    // });
     
-    $('input[type=checkbox]:checked').each(function() {
-        var price = parseFloat($(this).attr('data-price'));
-        totalPrice += price;
-        oldPrice += price;
-        optionsIds += $(this).attr('data-id') + ',';
-        options += $(this).val().split(',')[0] + ',';
-    });
+    // $('input[type=checkbox]:checked').each(function() {
+    //     var price = parseFloat($(this).attr('data-price'));
+    //     totalPrice += price;
+    //     oldPrice += price;
+    //     optionsIds += $(this).attr('data-id') + ',';
+    //     options += $(this).val().split(',')[0] + ',';
+    // });
 
     
     
@@ -905,141 +915,6 @@ $(document).ready(function() {
   });
   
   
-
-  $(document).on('click','.options_btn, .product-options__btn, .product-options-popup_btn',function(e){
-
-    e.preventDefault();
-    var options_id = $(this).attr('data-options-id');
-    var options = $(this).attr('data-options');
-    var products = $(this).attr('data-product');
-    var products_name = $(this).attr('data-product-name');
-    var category = $(this).attr('data-category');
-    var quantity = parseInt($(this).attr('data-quantity'));
-    var price = parseFloat($(this).attr('data-price'));
-
-    var csrfToken = $(this).attr('data-csrf');
-
-    console.log(options_id, options, products, quantity, price);
-    addCart(products, products_name, price, category, quantity)
-
-    var parent_get = $(this).closest('.product-options-popup');
-    var btn_get = parent_get.find('.product-options-popup_btn')
-
-    if (options && options_id && products && quantity && price) { 
-        data = {
-            options_id: options_id, 
-            options: options,
-            products: products,
-            quantity:quantity, 
-            price:price,
-            csrfmiddlewaretoken: csrfToken
-        }
-    
-        $.post( "/cart/add_options/", data)
-        .done(function( ) {
-        
-
-            $('.options_btn').removeClass('btn--primary')
-            $('.options_btn').html('Добавлен')
-            $('.options_btn').addClass('btn--success')
-            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-            updateMinDelivery()
-            btn_get.html('Добавлен')
-            
-            $('.product-options-popup').removeClass('product-options-popup--active')
-
-            
-            function explode(){
-
-
-                $('.options_btn').addClass('btn--primary')
-                $('.options_btn').html('В корзину')
-                $('.options_btn').removeClass('btn--success')
-
-
-                btn_get.html('В корзину')
-               
-            }
-            setTimeout(explode, 1000);
-    
-            
-        });
-    } else {
-
-        data = {
-            csrfmiddlewaretoken: csrfToken,
-            
-            quantity:quantity
-        }
-
-        $.post( "/cart/add/"+products+'/', data)
-        .done(function( ) {
-        
-         
-            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-        
-            $('.product-options-popup').removeClass('product-options-popup--active')
-            updateMinDelivery()
-            btn_get.html('Добавлен')
-            function explode() {
-
-
-                btn_get.html('В корзину')
-
-               
-            }
-            setTimeout(explode, 1000);
-            
-        });
-
-    }
-    
-
-  });
-  
-
-  $(document).on('click','.options_remove',function(e){
-    e.preventDefault();
-    var csrfToken = $(this).attr('data-token')
-   
-    var id = $(this).attr('data-id')
-    
-    
-    data = {
-        id: id, 
-        csrfmiddlewaretoken: csrfToken
-    }
-    $.post( "/cart/remove_options/", data)
-        .done(function( ) {      
-            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
-            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
-            updateMinDelivery()
-        });
-})
-
-
-$(document).on('click','.plus_options',function(e){
-    e.preventDefault();
-    var csrfToken = $(this).attr('data-token')
-    var id = $(this).attr('data-id')
-    var url = $(this).attr('data-url')
-    
-    data = {
-        id: id, 
-        csrfmiddlewaretoken: csrfToken
-    }
-    $.post( url, data)
-        .done(function( ) {      
-            
-            $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-            $('.cart__inner').load('/cart/ .cart__refresh', function() {});
-            $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
-            $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
-            updateMinDelivery()
-        });
-})
 
 
 
@@ -1840,41 +1715,6 @@ jQuery(document).ready(function ($) {
 })
 
 
-jQuery(document).ready(function () {
-    var pathname = window.location.href; 
-    var origin   = window.location.origin;
-    var order = $('.odred-done').attr('data-order')
-
-    
-    res = pathname.replace(origin, '')
-    
-
-    if(res.indexOf('/?order=True') > -1) {
-        $('.odred-done').show()
-        
-        // Преобразуем объект в строку JSON-формата
-        var jsonString = JSON.stringify(order);
-
-        // Заменяем символы в строке
-        jsonString = jsonString.replace(/'/g, '"'); 
-        var newStr = jsonString.slice(1, -1);
-
-
-        // Преобразуем строку JSON-формата обратно в объект
-        var newObj = JSON.parse(newStr);
-
-       
-        dataLayer.push(newObj)
-        
-        
-        $(document).on('click','.odred-done__layout, .odred-done__ok',function(e){
-            
-            window.location.href = '/'
-
-        })
-    }
-
-})
 
 
 // Платежи
