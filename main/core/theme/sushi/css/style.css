@@ -2175,7 +2175,8 @@ a {
 #inputResult mark {
   display: inline;
   padding: 0.05em;
-  background-color: #fcf8e3;
+  background-color: var(--color-font);
+  color: var(--color-body);
   word-wrap: break-word;
 }
 

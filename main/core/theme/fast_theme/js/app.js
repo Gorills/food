@@ -575,18 +575,19 @@ $('.order__input').on('change input', function() {
             $('.order__next').addClass('order__next--error');
         }
         
-    } else {
+    } else if (dataName != 'pay_change' && dataName != 'order_conmment') {
         $('.order__next').text('Далее');
         $('.order__next').removeClass('order__next--error');
     }
 
+    
     $(this).removeClass('order__input--error');
 
     // Сохраняем обновленный объект order в локальное хранилище
     localStorage.setItem('order', JSON.stringify(order));
 
-    let order_get = JSON.parse(localStorage.getItem('order'));
-    console.log(order_get)
+    
+    
 });
 
 
@@ -679,7 +680,7 @@ function getTotalPriceAfterDiscount() {
     order.summ = res
     localStorage.setItem('order', JSON.stringify(order));
 
-    console.log(order)
+    // console.log(order)
     
 
     return res
@@ -1049,6 +1050,7 @@ $(document).on('click', '.order__next', function(e) {
         $('.order .checkout__counter-item:nth-child(1)').addClass('checkout__counter-item--line');
 
         $('.order__next-wrap').html(htmlInner)
+        $('.order__next-wrap').addClass('order__next-wrap--flex')
 
         $('.order__body-wrap').hide()
 
@@ -1087,7 +1089,7 @@ $(document).on('click', '.order_create', function(e) {
         data: data,
         dataType: "json",
         success: function(responseData) {
-            console.log(responseData); // Выводим ответ в консоль
+            // console.log(responseData); // Выводим ответ в консоль
 
             if (responseData && responseData.confirmation_url) {
                 // Получаем значение confirmation_url из responseData
@@ -1159,7 +1161,7 @@ jQuery(document).ready(function () {
     
     
 
-    if(last_order) {
+    if(last_order && window.location.pathname == '/') {
         
         
         
@@ -1509,7 +1511,7 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
     localStorage.setItem('order', JSON.stringify(order));
     getTotalPriceAfterDiscount()
 
-    console.log(order)
+    // console.log(order)
 
     
 });
@@ -1923,11 +1925,57 @@ function updateAll() {
 
 
 
+// обработка согласия о принятии Cookies
+// обработка согласия о принятии Cookies
+function setCookiesAccept() {
+    let cookies = localStorage.getItem('cookiesAccept');
 
+    
 
+    if (!cookies) {
+        let data = {
+            'accept_cookies': false
+        }
+        localStorage.setItem('cookiesAccept', JSON.stringify(data));
+    }
+}
 
+setCookiesAccept();
 
+function checkCooliesAccept() {
+    let cookies = localStorage.getItem('cookiesAccept');
 
+    if (!cookies) {
+        return; // Ничего не делаем, если запись о согласии на куки отсутствует
+    }
+
+    let cookiesData = JSON.parse(cookies);
+
+    if (cookiesData.accept_cookies !== true) {
+        let innerHTML = `
+        <div class="cookies">
+            <div class="cookies__text">
+                Наш сайт использует куки. Продолжая им пользоваться, вы соглашаетесь на обработку 
+                персональных данных в соответствии с <a href="/privacy/">политикой конфиденциальности</a>.
+            </div>
+            <a href="#" class="cookies__button">Согласен</a>
+        </div>`;
+        $('#for-cookies').html(innerHTML);
+    }
+}
+
+checkCooliesAccept();
+
+$(document).on('click', '.cookies__button', function(e) {
+    e.preventDefault();
+
+    let data = {
+        'accept_cookies': true
+    };
+
+    localStorage.setItem('cookiesAccept', JSON.stringify(data));
+    $('.cookies').remove();
+});
 
 
 
@@ -2128,7 +2176,7 @@ function init() {
                                             // Парсинг JSON-ответа
                                             let price = response.price;
                                             
-                                            console.log(response);
+                                            // console.log(response);
                                             
                                             
 

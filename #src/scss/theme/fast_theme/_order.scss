@@ -238,7 +238,7 @@
     // .order__bottom
 
     &__bottom {
-        padding: 40px 40px 60px 40px;
+        padding: 40px 40px 80px 40px;
         position: relative;
         background: #E8E9EB;
         margin-top: 49px;
@@ -259,6 +259,7 @@
 
     &__next {
         width: 100%;
+        white-space: nowrap;
     }
 
      // .order__checkup-item
@@ -661,13 +662,17 @@
 
     // .order__next-wrap
     &__next-wrap {
-        display: flex;
-        justify-content: flex-end;
+        
+
+        &--flex {
+            display: flex;
+             justify-content: flex-end;
+        }
     }
 
     // .order__next
     &__next {
-        width: 50%;
+        width: 100%;
         text-align: center;
 
         &--error {

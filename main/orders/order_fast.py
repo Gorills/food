@@ -171,41 +171,16 @@ def order_create(request):
             order_item.save()
 
 
-            
-        # order_telegram(telegram_bot, telegram_group, order)
-        # print(json_cart)
-
-
         
         
-        # pay_method = request.POST['pay_method']
-        # phone = request.POST['phone']
-        # name = request.POST['name']
+
+        try:
+            user_pr = UserProfile.objects.get(phone=json_order['user_phone'])
+        except:
+            user_pr = UserProfile.objects.create(phone=json_order['user_phone'])
 
 
-        # try:
-        #     pay_change = request.POST['pay_change']
-        #     order.pay_change = pay_change
-        # except:
-        #     pay_change = None
-        
-
-        # try:
-        #     domofon = request.POST['door_code']
-        #     if domofon == '':
-        #         domofon = request.POST['flat']
-        # except:
-        #     domofon = request.POST['flat']
-
-        
-
-        # try:
-        #     user_pr = UserProfile.objects.get(phone=phone)
-        # except:
-        #     user_pr = UserProfile.objects.create(phone=phone)
-
-
-        # order = form.save(commit=False)
+      
         
         
         # if cart.active_balls:

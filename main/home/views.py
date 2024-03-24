@@ -335,3 +335,15 @@ class SearchResultsView(ListView):
         return Product.objects.filter(
             Q(name__icontains=query)
         )
+    
+
+
+def privacy(request):
+    site = f'{get_protocol(request)}://{request.META["HTTP_HOST"]}'
+    privacy_email = f'privacy@{request.META["HTTP_HOST"]}'
+    context = {
+        'site': site,
+        'privacy_email': privacy_email,
+    }
+
+    return render(request, 'home/privacy.html', context)

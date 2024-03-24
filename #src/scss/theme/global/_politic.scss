@@ -13,6 +13,8 @@
         font-size: 20px;
     }
 
+    
+
     .purpose-table, .purpose-table th, .purpose-table td {
         border: 1px solid #d8d8d8;
         font-size: inherit;
@@ -44,10 +46,12 @@
     .link {
         cursor: pointer;
     }
+
     .mark, mark {
         display: inline;
         padding: 0.05em;
-        background-color: #fcf8e3;
+        background-color: var(--color-font);
+        color: var(--color-body);
         word-wrap: break-word;
     }
     

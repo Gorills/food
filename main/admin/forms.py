@@ -1972,6 +1972,10 @@ class SetupForm(forms.ModelForm):
                 'placeholder': 'Название сайта',
                 
             }),
+            'ur_name': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Юридическое название',
+            }),
             'vk': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Ссылка на VK',
@@ -2104,6 +2108,7 @@ class SetupForm(forms.ModelForm):
         }
         labels = {
             'name': 'Название сайта',
+            'ur_name': 'Юридическое название',
             'phone': 'Телефон',
             'email': 'Email для клиентов',
             'email_for_order': 'Email для заявок',

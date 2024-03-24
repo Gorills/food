@@ -8,6 +8,7 @@ from sorl.thumbnail import get_thumbnail
 
 class BaseSettings(SingletonModel):
     name = models.CharField(max_length=350, blank=True, null=True)
+    ur_name = models.CharField(max_length=350, blank=True, null=True)
     phone = models.CharField(max_length=250, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     email_for_order = models.EmailField(blank=True, null=True)
