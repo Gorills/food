@@ -625,7 +625,7 @@ function getAllDiscount() {
     
     let summ = 0;
 
-    if (deliveryType == '0') {
+    if (deliveryType == '0' && discountOnPickup != 0) {
         let pickup_discount = getTotalPrice() * discountOnPickup / 100;
         // Округляем сумму скидки при самовывозе
         pickup_discount = Math.floor(pickup_discount);
