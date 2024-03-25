@@ -837,7 +837,7 @@ $(document).on('click','.select-wrap__item',function(){
 });
 
 $(document).ready(function() {
-    productDetailCalculate()
+    
     
     $(document).on('change','input, select',function(){
     
