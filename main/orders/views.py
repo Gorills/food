@@ -416,7 +416,7 @@ def order_confirm(request, pk):
         telegram_group = BaseSettings.objects.get().telegram_group
 
     try:
-        order = Order.objects.get(id=pk, paid=False)
+        order = Order.objects.get(id=pk)
         payment = Payment.find_one(order.payment_id)
         status = payment.status
         
@@ -443,16 +443,20 @@ def order_confirm(request, pk):
                 
                 loyalty_card.save()
 
+
             cart.combo_clear()
             cart.clear()
             cart.constructor_clear()
             request.session['delivery'] = 1
-            order.paid = True
-            order.save()
 
-            order_telegram(telegram_bot, telegram_group, order)
-            
-            send_sms(sms_text(order.id, order.summ), order.phone)
+            if order.paid == False:
+
+                order.paid = True
+                order.save()
+
+                order_telegram(telegram_bot, telegram_group, order)
+                
+                send_sms(sms_text(order.id, order.summ), order.phone)
 
             return redirect(f'/?order=True')
         
