@@ -416,7 +416,7 @@ def order_confirm(request, pk):
         telegram_group = BaseSettings.objects.get().telegram_group
 
     try:
-        order = Order.objects.get(id=pk, paid=False)
+        order = Order.objects.get(id=pk)
         payment = Payment.find_one(order.payment_id)
         status = payment.status
         
@@ -468,8 +468,8 @@ def order_confirm(request, pk):
         return render(request, 'orders/order/confirm.html', context)
     except Exception as e:
 
-        order_telegram(telegram_bot, telegram_group, e)
-        
+        # order_telegram(telegram_bot, telegram_group, e)
+
         return redirect('home')
 
 # Проверка событий Юкассы не работает
