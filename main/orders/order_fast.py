@@ -239,7 +239,7 @@ def order_create(request):
                 order.payment_dop_info = confirmation_url
                 order.save()
 
-                # start_background_task(order.payment_id)
+                start_background_task(order.payment_id)
 
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
