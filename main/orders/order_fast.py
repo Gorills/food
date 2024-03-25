@@ -227,7 +227,7 @@ def order_create(request):
                 order.payment_dop_info = confirmation_url
                 order.save()
                 # print(data['path'])
-                return redirect(confirmation_url)
+                return JsonResponse(data, status=status.HTTP_200_OK)
                 
             if pay_name == 'alfabank':
 
