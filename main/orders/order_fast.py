@@ -127,6 +127,7 @@ def order_create(request):
             delivery_price = Decimal(json_order['delivery_price']),
             order_conmment = json_order['order_conmment'],
             summ = Decimal(json_order['summ']),
+            paid = False
 
 
         )
