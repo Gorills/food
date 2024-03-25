@@ -504,7 +504,7 @@ def order_webhook(request):
         logger.info(payment.id)
         pay_id = payment.id
         try:
-            order = Order.objects.get(payment_id=pay_id, paid=False, pay_method='Оплата картой на сайте')
+            order = Order.objects.get(payment_id=pay_id, paid=False)
             payment = Payment.find_one(pay_id)
             status = payment.status
             if status == 'succeeded':

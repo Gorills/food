@@ -587,6 +587,7 @@ $('.order__input').on('change input', function() {
     // Сохраняем обновленный объект order в локальное хранилище
     localStorage.setItem('order', JSON.stringify(order));
 
+    console.log(order)
     
     
 });
@@ -1475,6 +1476,7 @@ jQuery(document).ready(function () {
             last_order.show = false
             localStorage.setItem('lastOrder', JSON.stringify(last_order))
             clearCart()
+            window.location.href = `/`
             
 
         })
