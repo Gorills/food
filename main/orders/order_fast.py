@@ -322,7 +322,7 @@ def order_create(request):
 
             data = {
                 'id': order.id,
-                'confirmation_url': f'/'
+                'confirmation_url': f'/?order=True'
             }
 
             return JsonResponse(data, status=status.HTTP_200_OK)

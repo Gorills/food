@@ -371,6 +371,7 @@ function setPickupPoints() {
         areaWrap.innerHTML = '';
         areaWrap.style.display = 'none';
         svgItem.style.display = 'none';
+        areaWrap.remove()
     }
 
     
@@ -1148,7 +1149,8 @@ $(document).on('click', '.order_create', function(e) {
 
 
 jQuery(document).ready(function () {
-    
+    var pathname = window.location.href; 
+    var origin   = window.location.origin;
 
 
     let order = $('#orderDone').attr('data-order')
@@ -1158,10 +1160,10 @@ jQuery(document).ready(function () {
     
 
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-    
+    res = pathname.replace(origin, '')
     
 
-    if(last_order && window.location.pathname == '/') {
+    if(last_order && res.indexOf('/?order=True') > -1) {
         
         
         

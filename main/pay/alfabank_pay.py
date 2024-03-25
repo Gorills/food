@@ -86,6 +86,7 @@ def create_payment(order, cart, request):
    
 
     data = {
+        'order_id': order.id,
         'id': pay_id,
         'confirmation_url': confirmation_url
     }
