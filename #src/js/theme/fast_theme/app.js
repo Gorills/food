@@ -1100,7 +1100,7 @@ $(document).on('click', '.order_create', function(e) {
                 let order = JSON.parse(localStorage.getItem('order'));
                 data = {
                     'show': true,
-                    'order_id': responseData.id,
+                    'order_id': responseData.order_id,
                     'user_name': order.user_name,
                     'user_phone': order.user_phone,
                     'address': order.address,

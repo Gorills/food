@@ -224,16 +224,16 @@ def order_create(request):
                 order_telegram(telegram_bot, telegram_group, order)
 
 
-        #     if pay_name == 'yookassa':
-        #         data = create_payment(order, cart, request)
-        #         payment_id = data['id']
-        #         confirmation_url = data['confirmation_url']
+            if pay_name == 'yookassa':
+                data = create_payment(order, cart, request)
+                payment_id = data['id']
+                confirmation_url = data['confirmation_url']
 
-        #         order.payment_id = payment_id
-        #         order.payment_dop_info = confirmation_url
-        #         order.save()
-        #         # print(data['path'])
-        #         return redirect(confirmation_url)
+                order.payment_id = payment_id
+                order.payment_dop_info = confirmation_url
+                order.save()
+                # print(data['path'])
+                return redirect(confirmation_url)
                 
             if pay_name == 'alfabank':
 

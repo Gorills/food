@@ -29,14 +29,21 @@ def create_payment(order, cart, request):
     
     sale_percent = order.sale_percent
     print(sale_percent)
-    for item in cart:
-        product = Product.objects.get(id=item['product'].id)
+    for item in order.items.all():
         
-        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
+
+        if item.product:
+            product = item.product
+        elif item.combo:
+            product = item.combo
+        elif item.constructor:
+            product = item.constructor
+        
+        price = str(Decimal(item.price) - (Decimal(item.price/100) * sale_percent))
 
         i = {
             "description": product.name,
-            "quantity": int(item['quantity']),
+            "quantity": int(item.quantity),
             "amount": {
                 "value": price,
                 "currency": "RUB"
@@ -48,35 +55,7 @@ def create_payment(order, cart, request):
         
         items.append(i)
 
-    for item in cart.get_combos():
-        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
-        i = {
-            "description": item['combo'].name,
-            "quantity": int(item['quantity']),
-            "amount": {
-                "value": price,
-                "currency": "RUB"
-            },
-            "vat_code": Yookassa.objects.get().vat_code,
-            "payment_mode": "full_payment",
-            "payment_subject": "commodity"
-        }
-        items.append(i)
     
-    for item in cart.get_options():
-        price = str(Decimal(item['price']) - (Decimal(item['price']/100) * sale_percent))
-        i = {
-            "description": item['products'].name,
-            "quantity": int(item['quantity']),
-            "amount": {
-                "value": price,
-                "currency": "RUB"
-            },
-            "vat_code": Yookassa.objects.get().vat_code,
-            "payment_mode": "full_payment",
-            "payment_subject": "commodity"
-        }
-        items.append(i)
 
     if order.delivery_method == 'Доставка':
         delivery = {
@@ -117,6 +96,7 @@ def create_payment(order, cart, request):
 
     data = {
         'id': payment.id,
+        'order_id': order.id,
         'confirmation_url': payment.confirmation.confirmation_url,
         'path': path
         
