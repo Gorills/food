@@ -740,7 +740,7 @@ function productDetailCalculate() {
     
 
 
-    $('.select-wrap__input').each(function() {
+    $('.product-detail .select-wrap__input').each(function() {
         var price = parseFloat($(this).attr('data-price'));
         totalPrice += price;
         oldPrice += price;
@@ -748,7 +748,7 @@ function productDetailCalculate() {
         options += $(this).val().split(',')[0] + ',';
     });
 
-    $('.select-wrap__checkbox').each(function() {
+    $('.product-detail .select-wrap__checkbox').each(function() {
 
         if ($(this).is(':checked')) {
             var price = parseFloat($(this).attr('data-price'));
@@ -769,7 +769,7 @@ function productDetailCalculate() {
     console.log(optionsIds)
     $('.product-detail__price-old').html(oldPrice + '₽');
     $('.product-detail__price').html(totalPrice + '₽');
-    $('.btn-wrap').attr('data-price', totalPrice).attr('data-optionsid', optionsIds);
+    $('.btn-wrap-detail').attr('data-price', totalPrice).attr('data-optionsid', optionsIds);
 }
 
 
