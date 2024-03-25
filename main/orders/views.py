@@ -468,7 +468,7 @@ def order_confirm(request, pk):
         return render(request, 'orders/order/confirm.html', context)
     except Exception as e:
 
-        # order_telegram(telegram_bot, telegram_group, e)
+        order_telegram(telegram_bot, telegram_group, e)
 
         return redirect('home')
 
@@ -542,7 +542,7 @@ def order_webhook(request):
 
                 return HttpResponse(status=200)
         except Exception as e:
-            
+            order_telegram(telegram_bot, telegram_group, e)
             logger.info(e)
             return HttpResponse(status=200)
 
