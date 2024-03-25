@@ -454,7 +454,7 @@ def order_confirm(request, pk):
             
             send_sms(sms_text(order.id, order.summ), order.phone)
 
-            return redirect(f'/?order=True&id={order.id}')
+            return redirect(f'/?order=True')
 
         context = {
             'order': order,
