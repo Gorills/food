@@ -416,7 +416,7 @@ def order_confirm(request, pk):
         telegram_group = BaseSettings.objects.get().telegram_group
 
     try:
-        order = Order.objects.get(id=pk, paid=False, pay_method='Оплата картой на сайте')
+        order = Order.objects.get(id=pk, paid=False)
         payment = Payment.find_one(order.payment_id)
         status = payment.status
         

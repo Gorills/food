@@ -4,7 +4,7 @@ from django.shortcuts import render
 from .models import PaymentSet, Yookassa
 from shop.models import Product, Combo, ProductOption
 from subdomains.utilites import get_protocol
-
+from setup.models import ThemeSettings, BaseSettings
 # Create your views here.
 from yookassa import Configuration, Payment
 
@@ -14,6 +14,16 @@ try:
 except:
     Configuration.account_id = ''
     Configuration.secret_key = ''
+
+try:
+    telegram_bot = BaseSettings.objects.get().telegram_bot
+    telegram_group = BaseSettings.objects.get().telegram_group
+except Exception as e:
+    
+    telegram_bot = ''
+    telegram_group = ''
+
+from orders.telegram import order_telegram
 
 def create_payment(order, cart, request):
 
@@ -28,7 +38,7 @@ def create_payment(order, cart, request):
     digits_only = ''.join(char for char in phone if char.isdigit())
     
     sale_percent = order.sale_percent
-    print(sale_percent)
+    
     for item in order.items.all():
         
 
@@ -103,7 +113,7 @@ def create_payment(order, cart, request):
     }
 
     print(data)
-
+    # order_telegram(telegram_bot, telegram_group, data)
     return data
 
 

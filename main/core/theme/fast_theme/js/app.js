@@ -1284,6 +1284,28 @@ jQuery(document).ready(function () {
                 </div>
                 `
         }
+
+        let order_pay_method = ''
+        if(last_order.pay_method) {
+            
+            order_pay_method = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Способ оплаты</div>
+                    <div class="odred-done__itog-value">${last_order.pay_method}</div>
+                </div>
+                `
+        }
+
+        let order_pay_change = ''
+        if(last_order.pay_change) {
+            
+            order_pay_change = `
+                <div class="odred-done__itog-wrap">
+                    <div class="odred-done__itog-data">Сдача c</div>
+                    <div class="odred-done__itog-value">${last_order.pay_change}</div>
+                </div>
+                `
+        }
         
         let dataHtml = `       
                 <div class="odred-done">
@@ -1382,7 +1404,8 @@ jQuery(document).ready(function () {
                                         ${address_comment}
 
 
-                                        
+                                        ${order_pay_method}
+                                        ${order_pay_change}
 
                                         ${order_comment}
 

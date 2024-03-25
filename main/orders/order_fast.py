@@ -203,14 +203,7 @@ def order_create(request):
         #     order.percent_pay = cart.percent_pay
 
         
-        # if order.flat:
-        #     order.flat = str(order.flat)
-        
-        
-
-        # order.door_code = domofon
-        # order.name = name
-        # order.save()
+     
         
         
         cart = []
@@ -322,7 +315,7 @@ def order_create(request):
             # request.session['first_delivery'] = 0
 
             data = {
-                'id': order.id,
+                'order_id': order.id,
                 'confirmation_url': f'/?order=True'
             }
 
