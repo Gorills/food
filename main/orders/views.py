@@ -455,6 +455,9 @@ def order_confirm(request, pk):
             send_sms(sms_text(order.id, order.summ), order.phone)
 
             return redirect(f'/?order=True')
+        
+
+        
 
         context = {
             'order': order,
@@ -463,8 +466,10 @@ def order_confirm(request, pk):
         }
 
         return render(request, 'orders/order/confirm.html', context)
-    except:
+    except Exception as e:
 
+        order_telegram(telegram_bot, telegram_group, e)
+        
         return redirect('home')
 
 # Проверка событий Юкассы не работает
