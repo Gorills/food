@@ -90,7 +90,7 @@
 
 
 
-                        {% if order.pay_method == 'Оплата картой на сайте' %}
+                        {% if order.pay_method == 'Оплата картой на сайте' or order.pay_method == 'Картой на сайте' %}
                         <div style="font-size: 12px;" class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
                                 {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
                         </div>
