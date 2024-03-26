@@ -1855,8 +1855,11 @@ function displayCart() {
                 cartItem.innerHTML = `
                     <div class="cart__left">
                         <div class="cart__left-wrap">
-                            <img src="${item.image}" alt="${item.name}" style="width: 100px;">
 
+                            <div class="cart__left-img">
+
+                                <img src="${item.image}" alt="${item.name}" style="width: 100px;">
+                            </div>
                             <div class="cart__item-info">
 
                                 <span class="cart__item-name">${item.name}</span>

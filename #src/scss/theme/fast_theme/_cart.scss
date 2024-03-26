@@ -161,8 +161,9 @@
         display: flex;
         align-items: center;
         img {
+            align-items:center;
             height: fit-content;
-            max-height: auto;
+            max-height: fit-content;
         }
 
         @media screen and (max-width:576px) {

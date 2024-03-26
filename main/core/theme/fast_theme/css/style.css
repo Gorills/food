@@ -1606,8 +1606,9 @@ a {
 }
 
 .cart__left-wrap img {
+  align-items: center;
   height: fit-content;
-  max-height: auto;
+  max-height: fit-content;
 }
 
 .cart__left {
