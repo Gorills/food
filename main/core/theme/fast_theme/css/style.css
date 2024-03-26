@@ -5643,6 +5643,90 @@ td.product-thumbnail img {
   display: block;
 }
 
+.order__register {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 5px;
+  padding: 0 15px;
+  overflow: hidden;
+  height: 0;
+  border: 1px solid #D5DBE7;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.order__register--active {
+  height: fit-content;
+  padding: 15px;
+  opacity: 1;
+}
+
+.order__register-title {
+  margin-bottom: 10px;
+}
+
+.order__register-text {
+  font-weight: 400;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.order__register-bottom {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.order__register-btn {
+  background: none;
+  border: 1px solid #E90C4E;
+  color: #E90C4E;
+  border-radius: 5px;
+  padding: 5px 20px;
+}
+
+.order__register-btn:hover {
+  background: #E90C4E;
+  color: #fff;
+}
+
+.order__register-input {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #D5DBE7;
+  border-radius: 5px;
+  height: 45px;
+  padding-left: 15px;
+  outline: none;
+  font-weight: 500;
+  font-size: 14px;
+  color: #0F2034;
+}
+
+.order__register-input::placeholder {
+  color: #767E91;
+}
+
+.order__register-input--error {
+  border: 1px solid #E90C4E;
+}
+
+.order__input-phone-signup-refresh {
+  position: relative;
+}
+
+.order__input-phone-signup-refresh svg {
+  cursor: pointer;
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  right: 15px;
+  top: 44px;
+}
+
+.order__input-phone-signup-refresh svg path {
+  fill: #767E91;
+}
+
 .order .required_checkbox--error span {
   color: #E90C4E;
   text-decoration: underline;

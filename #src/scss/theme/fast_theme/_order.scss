@@ -581,6 +581,136 @@
     }
 
 
+
+   
+
+    // .order__input-phone-signup
+
+    &__input-phone-signup {
+
+    }
+
+    // .order__label-title
+
+    &__label-title {
+    }
+
+    // .order__input
+
+    &__input {
+    }
+
+    // .order__register
+
+    &__register {
+        width: 100%;
+        background: #FFFFFF;
+        
+        border-radius: 5px;
+        padding: 0 15px;
+        overflow: hidden;
+        height: 0;
+        border: 1px solid #D5DBE7;
+        opacity: 0;
+        transition: all 0.3s ease;
+
+        &--active {
+            
+            height: fit-content;
+            padding: 15px;
+            opacity: 1;
+            
+        }
+    }
+
+    // .order__register-title
+
+    &__register-title {
+        margin-bottom: 10px;
+    }
+
+    // .order__register-wrapper
+
+    &__register-wrapper {
+    }
+
+    // .order__register-text
+
+    &__register-text {
+        font-weight: 400;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    // .order__register-bottom
+    &__register-bottom {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    // .order__register-btn
+
+    &__register-btn {
+        background: none;
+        border: 1px solid #E90C4E;
+        color: #E90C4E;
+        border-radius: 5px;
+        padding: 5px 20px;
+
+        &:hover {
+            background: #E90C4E;
+            color: #fff;
+        }
+    }
+
+    // .order__register-input
+
+    &__register-input {
+        width: 100%;
+        background: #FFFFFF;
+        border: 1px solid #D5DBE7;
+        border-radius: 5px;
+        height: 45px;
+        padding-left: 15px;
+        outline: none;
+        font-weight: 500;
+        font-size: 14px;
+        color: #0F2034;
+        &::placeholder {
+            color: #767E91;
+        }
+
+        &--error {
+            border: 1px solid #E90C4E;
+        }
+
+
+        
+    }
+
+
+    // .order__input-phone-signup-refresh
+    &__input-phone-signup-refresh {
+        position: relative;
+
+        svg {
+            cursor: pointer;
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            right: 15px;
+            top: 44px;
+
+            path {
+                fill: #767E91;
+            }
+        }
+    }
+
+
+
+
+
     .required_checkbox--error {
         span {
             color: #E90C4E;

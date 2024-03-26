@@ -23,7 +23,7 @@ function fetchAndSaveSettings() {
             var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
 
-            console.log(storedSettingsJson)
+            // console.log(storedSettingsJson)
 
 
             // Вот тут пишем нужный код после обработки загрузки настроек.
@@ -146,6 +146,9 @@ function setOrder() {
 }
 
 setOrder()
+
+
+
 
 
 
@@ -567,6 +570,9 @@ function addOrderFields() {
     $('.order__input').each(function() {
         let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
         
+        // if (!$(this.hasClass('.order__input-login'))) {
+
+        // }
         // Проверяем, есть ли соответствующее значение в объекте order
         if (order && order[dataName] !== undefined) {
             // Устанавливаем значение в поле ввода
@@ -672,7 +678,7 @@ function getAllDiscount() {
     order.sale_percent = sale_persent
     localStorage.setItem('order', JSON.stringify(order));
 
-    console.log(sale_persent)
+    // console.log(sale_persent)
 
     return summ;
 }
@@ -1025,7 +1031,9 @@ function hasEmptyFieldsCheck() {
     let hasEmptyFields = false;
     // Проверяем каждое поле ввода с классом "required"
     $('.order__input.required').each(function() {
+
         // Проверяем, является ли поле с именем "address" обязательным для заполнения
+
         if ($(this).attr('name') !== 'address' || !$(this).closest('.order__next').hasClass('order__next--pickup')) {
             // Если поле не является обязательным для заполнения или это не кнопка "pickup",
             // то проверяем его на пустоту и добавляем класс "error" при необходимости
@@ -1036,6 +1044,11 @@ function hasEmptyFieldsCheck() {
                 // Если поле не пустое и имеет класс "error", удаляем класс "error"
                 $(this).removeClass('order__input--error');
             }
+        }
+        // Проверяем, есть ли у поля атрибут data-login="false" и добавляем класс "error" при необходимости
+        if ($(this).data('login') === false) {
+            $(this).addClass('order__input--error');
+            hasEmptyFields = true;
         }
     });
 
@@ -2075,91 +2088,130 @@ fetchRelatedItems()
 
 
 // login register
-// $(document).on('click', '.user-login__btn' ,function(e){
+$(document).on('click', '.order__register-btn' ,function(e){
 
-//     var csrf = $(this).parent().attr('data-token')
-//     var phone = $('.user-login__input-phone').val()
+    let csrf = $('input[name="csrfmiddlewaretoken"]').val()
+    let phone = $('.order__input-login').val()
    
-//     $.ajax({
-//         method: "POST",
-//         url: "/accounts/code/",
-//         data: { 
-//             csrfmiddlewaretoken: csrf,
-//             phone: phone
-//         }
-//         })
-//       .done(function( msg ) {
-//         $('.user-login__sms').show()
-//         $(".user-login__btn").css('padding', '0 15px')
+    $.ajax({
+        method: "POST",
+        url: "/accounts/code/",
+        data: { 
+            csrfmiddlewaretoken: csrf,
+            phone: phone
+        }
+        })
+      .done(function( msg ) {
+
+        let innerHTML = `
+        <div class="order__register-bottom">
+            <input type="text" name="code" class="order__register-input" placeholder="Код подтверждения">
+            <button type="button" class="order__register-btn order__register-btn--active">Подтвердить</button>
+        </div>
+        <br>
+        <div class="order__register-bottom">
+            <button type="button" class="order__register-btn">Отправить еще раз</button>
+        </div>
+        `
+        $('.order__register-wrapper').html(innerHTML)
+
+        
+        // $(".user-login__btn").countdown(redirect, 120, "Повторная отправка через <br>");
+
+      });
     
-//         $(".user-login__btn").countdown(redirect, 120, "Повторная отправка через <br>");
+})
 
-//       });
+$(document).on('keyup', '.order__input-login' ,function(e){
+    let phone = $(this).val()
+    let min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+    if (min.length == 13) {
+        // $('.user-login__btn').css({'display':'flex'})
+        // $(".get-sec").load(location.href + " .get-sec__inner");
+
+        let innerHTML = `
+        <div class="order__register-text">
+            На номер <span id="login_phone_number">${phone}</span> будет отправлен
+            код подтверждения.
+        </div>
+
+        <div class="order__register-bottom">
+            <button type="button" class="order__register-btn">Отправить</button>
+        </div>
+        
+        `
+
+        $('.order__register-wrapper').html(innerHTML)
+        $('.order__register').addClass('order__register--active')
+
+        let secGet = $('.get-sec__inner').attr('data-timer')
+        // $('.id_phone-wrap--remove').remove()
+        
+        if (secGet != '') {
+            let sec = 120 - secGet
+            let nowData = $('.user-login__btn').text()
+            // console.log(sec)
+            // console.log(nowData)
+            if (sec > 0) {
+                if (nowData == 'Подтвердить') {
+                    $(".user-login__btn").countdown(redirect, sec, "Повторная отправка через <br>");
+                }
+            }
+        }
+
+    } else {
+        $('.order__register').removeClass('order__register--active')
+    }
+})
+
+
+$(document).on('click', '.order__register-btn--active' ,function(e){
     
-// })
-// $(document).on('keyup', '.user-login__input' ,function(e){
-//     var phone = $(this).val()
-//     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
-//     if (min.length == 13) {
-//         $('.user-login__btn').css({'display':'flex'})
-//         $(".get-sec").load(location.href + " .get-sec__inner");
-//         var secGet = $('.get-sec__inner').attr('data-timer')
-//         // $('.id_phone-wrap--remove').remove()
-//         if (secGet != '') {
-//             var sec = 120 - secGet
-//             var nowData = $('.user-login__btn').text()
-//             console.log(sec)
-//             console.log(nowData)
-//             if (sec > 0) {
-//                 if (nowData == 'Подтвердить') {
-//                     $(".user-login__btn").countdown(redirect, sec, "Повторная отправка через <br>");
-//                 }
-//             }
-//         }
-//     } else {
-//         $('.user-login__btn').css({'display':'none'})
-//     }
-// })
+    let csrf = $('input[name="csrfmiddlewaretoken"]').val()
+    let phone = $('.order__input-login').val()
+    let code = $('.order__register-input').val()
+   
 
-
-// $(document).on('click', '.user-login__input-sms-btn' ,function(e){
     
-//     var csrf = $(this).attr('data-token')
-//     var phone = $('.user-login__input-phone').val()
-//     var code = $('.user-login__code').val()
-//     var sms = $('.cart__form-success-sms').val()
-//     if (sms == 'on') {
-//         sms_res = 'True'
-//     } else {
-//         sms_res = 'False'
-//     }
-//     console.log(sms)
 
-//     var loc = $(this).attr('data-url')
+    $.ajax({
+        method: "POST",
+        url: "/accounts/register/",
+        data: { 
+            csrfmiddlewaretoken: csrf,
+            phone: phone,
+            code: code,
+            sms: 'True'
+        }
+    }).done(function(  ) {
 
-//     $.ajax({
-//         method: "POST",
-//         url: "/accounts/register/",
-//         data: { 
-//             csrfmiddlewaretoken: csrf,
-//             phone: phone,
-//             code: code,
-//             sms: sms_res,
-//         }
-//     }).done(function(  ) {
+        let order = JSON.parse(localStorage.getItem('order'));
+        order.user_phone = phone
+        localStorage.setItem('order', JSON.stringify(order));
        
-
-//         if (loc == 'login') {
-//             window.location.href = "/accounts/profile/";
-//         }
+        $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
+      
      
         
-//     }).fail(function() {
-//         console.log('fail')
-//     });
+    }).fail(function() {
+        console.log('fail')
+    });
 
     
-// })
+})
+
+
+$(document).on('click', '.order__register-logout' ,function(e){
+
+    $.get("/logout/")
+    .done(function(  ) {
+
+        $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
+    })
+    
+})
+
+
 
 // login register
 
