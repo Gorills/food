@@ -160,6 +160,10 @@
     &__left-wrap {
         display: flex;
         align-items: center;
+        img {
+            height: fit-content;
+        }
+
         @media screen and (max-width:576px) {
             width: 100%;
             justify-content: space-between;

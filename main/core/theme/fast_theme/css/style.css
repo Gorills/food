@@ -1605,6 +1605,10 @@ a {
   align-items: center;
 }
 
+.cart__left-wrap img {
+  height: fit-content;
+}
+
 .cart__left {
   display: flex;
   align-items: center;
