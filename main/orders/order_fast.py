@@ -139,37 +139,39 @@ def order_create(request):
         for key, value in json_cart.items():
             
             itemId = value['itemId']
-            name = value['name']
+            
             type = value['type']
             price = value['price']
             quantity = value['quantity']
-            options = value['options']
+          
             options_name = value['options_name']
 
-            order_item = OrderItem(
-                order = order,
-                price = price,
-                quantity = quantity,
+            if quantity != 0:
 
-            )
+                order_item = OrderItem(
+                    order = order,
+                    price = price,
+                    quantity = quantity,
 
-            options_name_str = ''
-            for opt in options_name:
-                options_name_str = options_name_str + opt['option_value'] + ', '
-            options_name_str = options_name_str[:-2]
-            
+                )
 
-            if type == 'product':
-                order_item.product = Product.objects.get(id=itemId)
-                order_item.options = options_name_str
-            elif type == 'combo':
-                order_item.combo = Combo.objects.get(id=itemId)
-                order_item.combo_items = options_name_str
-            elif type == 'constructor':
-                order_item.constructor = FoodConstructor.objects.get(id=itemId)
-                order_item.constructor_items = options_name_str
+                options_name_str = ''
+                for opt in options_name:
+                    options_name_str = options_name_str + opt['option_value'] + ', '
+                options_name_str = options_name_str[:-2]
+                
 
-            order_item.save()
+                if type == 'product' or type == 'related':
+                    order_item.product = Product.objects.get(id=itemId)
+                    order_item.options = options_name_str
+                elif type == 'combo':
+                    order_item.combo = Combo.objects.get(id=itemId)
+                    order_item.combo_items = options_name_str
+                elif type == 'constructor':
+                    order_item.constructor = FoodConstructor.objects.get(id=itemId)
+                    order_item.constructor_items = options_name_str
+
+                order_item.save()
 
 
         

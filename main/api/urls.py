@@ -23,6 +23,8 @@ urlpatterns = [
     path('first_delivery/<str:number>/', views.first_delivery, name='first_delivery'),
     path('get_statistic/', views.get_statistic, name='get_statistic'),
     path('get_shop_settings/', views.get_shop_settings, name='get_shop_settings'),
+    path('related_products/', views.related_products, name='related_products'),
+    path('get_user/', views.get_user, name='get_user'),
     
    
    

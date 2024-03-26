@@ -23,7 +23,7 @@ function fetchAndSaveSettings() {
             var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
 
-            // console.log(storedSettingsJson)
+            console.log(storedSettingsJson)
 
 
             // Вот тут пишем нужный код после обработки загрузки настроек.
@@ -59,6 +59,10 @@ fetchAndSaveSettings();
 
 // Инициализируем пустой заказ
 function setOrder() {
+
+    
+
+
     data = {
         'order_id': '',
         'user_id': '',
@@ -121,6 +125,23 @@ function setOrder() {
     }
 
     // console.log(order)
+
+    let phone = ''
+    fetch('/api/v1/get_user/')
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.phone != 'error') {
+                phone = data.phone
+
+                order.user_phone = phone;
+                localStorage.setItem('order', JSON.stringify(order));
+                
+                
+            }
+            
+        })
+        .catch(error => console.error('Ошибка загрузки пользователя:', error));
 
 }
 
@@ -458,7 +479,9 @@ $(document).on('click', '.order__input-dropdown', function() {
   
 
   function deliveryUpdate() {
-    var deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
+    let deliveryPriceJson = JSON.parse(localStorage.getItem('deliveryPrice'));
+
+    
     
     
     document.getElementById("free_delivery").innerText = deliveryPriceJson.free_delivery + '₽';
@@ -587,7 +610,7 @@ $('.order__input').on('change input', function() {
     // Сохраняем обновленный объект order в локальное хранилище
     localStorage.setItem('order', JSON.stringify(order));
 
-    console.log(order)
+    // console.log(order)
     
     
 });
@@ -765,7 +788,8 @@ function getDeliverySumm() {
         summ = 0
     }
     
-    if (summ == 0) {
+    
+    if (summ == 0 | delivery.free_delivery == 999999) {
 
         document.getElementById("free_delivery_info").style.display = 'none';
     } else {
@@ -1676,13 +1700,14 @@ async function addToCart(context, itemId, type) {
 
 
     let id = itemId;
+    let related = false
     if (type === 'product') {
         id += '00000';
     } else if (type === 'combo') {
         id += '11111';
     } else if (type === 'constructor') {
         id += '22222';
-    }
+    } 
     
     let optionsNameArray = [];
     if (optionsIdArray.length > 0) {
@@ -1726,14 +1751,15 @@ async function addToCart(context, itemId, type) {
         image: itemElement.dataset.image,
         quantity: cart[id] ? cart[id].quantity + 1 : 1,
         options: optionsIdArray,
-        options_name: optionsNameArray
+        options_name: optionsNameArray,
+        related: related
     };
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
     // console.log(cart)
-    
+    fetchRelatedItems()
     updateAll();
 }
 
@@ -1746,11 +1772,13 @@ async function addToCart(context, itemId, type) {
 function displayCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     let cartItems = document.getElementById('cart-items');
+    let cartRelateds = document.getElementById('cart-related');
     
     
     let totalCount = getTotalCount()
 
     cartItems.innerHTML = '';
+    cartRelateds.innerHTML = '';
 
     if (totalCount === 0) {
         cartItems.innerHTML = `
@@ -1778,63 +1806,114 @@ function displayCart() {
         
         for (let itemId in cart) {
             let item = cart[itemId];
-            let cartItem = document.createElement('li');
+            
+                
+            
+            if (item.related == false) {
 
+                let cartItem = document.createElement('li');
+            
 
-            let options_name = item.options_name
+            
+                let options_name = item.options_name
 
-            let options_str = ''
+                let options_str = ''
 
-            if (options_name) {
+                if (options_name) {
 
-                for (const item of options_name) {
+                    for (const item of options_name) {
 
-                    options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                        options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                    }
                 }
-            }
-                
-            
 
-            cartItem.innerHTML = `
-                <div class="cart__left">
-                    <div class="cart__left-wrap">
-                        <img src="${item.image}" alt="${item.name}" style="width: 100px;">
 
-                        <div class="cart__item-info">
+                cartItem.innerHTML = `
+                    <div class="cart__left">
+                        <div class="cart__left-wrap">
+                            <img src="${item.image}" alt="${item.name}" style="width: 100px;">
 
-                            <span class="cart__item-name">${item.name}</span>
+                            <div class="cart__item-info">
 
-                            <div class="cart__item-options">${options_str}</div>
+                                <span class="cart__item-name">${item.name}</span>
 
+                                <div class="cart__item-options">${options_str}</div>
+
+                            </div>
                         </div>
-                    </div>
-                
                     
-                </div>
-
-                <div class="cart__items-wrap">
-                    <div class="cart__btn-wrapper">
-                        <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
-                        <div class class="cart__quantity">${item.quantity}</div>
-                        <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
-                    </div>
-                    <div class="cart__summ">${item.price * item.quantity} ₽</div>
-                    <button class="cart__remove" onclick="removeFromCart(${itemId})">
                         
-                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20.5001 6H3.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M9.5 11L10 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M14.5 11L14 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="#1C274C" stroke-width="1.5"/>
-                        <path d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                    </button>
-                </div>
-            `;
+                    </div>
+
+                    <div class="cart__items-wrap">
+                        <div class="cart__btn-wrapper">
+                            <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
+                            <div class class="cart__quantity">${item.quantity}</div>
+                            <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
+                        </div>
+                        <div class="cart__summ">${item.price * item.quantity} ₽</div>
+                        <button class="cart__remove" onclick="removeFromCart(${itemId})">
+                            
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.5001 6H3.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M9.5 11L10 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M14.5 11L14 16" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6" stroke="#1C274C" stroke-width="1.5"/>
+                            <path d="M18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5M18.8334 8.5L18.6334 11.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+                document.getElementById('cart-bottom').style.display = 'block';
+
+            } else {
+                let cartRelated = document.createElement('li');
             
-            cartItems.appendChild(cartItem);
-            document.getElementById('cart-bottom').style.display = 'block';
+
+            
+
+
+                cartRelated.innerHTML = `
+                    <div class="cart__related-left">
+
+                        <div class="cart__related-left-wrap">
+                            <img src="${item.image}" alt="${item.name}" style="width: 50px;">
+
+                            
+                        </div>
+                    
+                        
+                    </div>
+
+                    <div class="cart__related-wrap">
+                        <div class="cart__related-wrapper">
+                            <button class="cart__related-plusminus" onclick="minusFromCart(${itemId})">-</button>
+                            <div class class="cart__related-quantity">${item.quantity}</div>
+                            <button class="cart__related-plusminus" onclick="plusFromCart(${itemId})">+</button>
+                        </div>
+                        <div class="cart__related-info">
+
+                                <span class="cart__related-name">${item.name}</span>
+
+                                <div class="cart__related-summ">${item.price * item.quantity} ₽</div>
+
+                            </div>
+                        
+                        
+                    </div>
+                `;
+                
+                cartRelateds.appendChild(cartRelated);
+                document.getElementById('cart__related-row').style.display = 'block';
+                
+            }
+            
+
+            
+            
             
             
         }
@@ -1858,13 +1937,33 @@ function displayCart() {
 
 function minusFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
-    if (cart[itemId].quantity > 1) {
-        cart[itemId].quantity--;
+    if (!cart[itemId].related == true) {
+        if (cart[itemId].quantity > 1) {
+
+            cart[itemId].quantity--;
+
+        } else {
+        
+                delete cart[itemId];
+            
+        }
     } else {
-        delete cart[itemId];
+
+        if (cart[itemId].quantity >= 1) {
+
+            cart[itemId].quantity--;
+
+        } else {
+        
+                
+            
+        }
+
     }
+
+
     localStorage.setItem('cart', JSON.stringify(cart));
-   
+    fetchRelatedItems()
     updateAll()
 }
 
@@ -1881,7 +1980,7 @@ function removeFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
-   
+    fetchRelatedItems()
     updateAll()
 }
 
@@ -1908,6 +2007,157 @@ function clearCart() {
     });
 }
 // clearCart()
+
+
+// Сопутствующие товары
+
+function fetchRelatedItems() {
+    fetch('/api/v1/related_products/')
+        .then(response => response.json())
+        .then(data => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || {};
+            let relatedItems = data.items
+
+            relatedItems.forEach(item => {
+                
+                let id = item.id
+                let itemId = id + '33333'
+
+                if (cart[itemId]) {
+                    return
+                } else {
+                    let itemInfo = {
+                        id: itemId,
+                        itemId: id,
+                        type: 'related',
+                        name: item.name,
+                        price: parseFloat(item.price),
+                        image: item.image,
+                        quantity: 0,
+                        options: [],
+                        options_name: [],
+                        related: true
+                    };
+    
+                    cart[itemId] = itemInfo;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+                
+
+            })
+
+            
+            displayCart()
+
+        })
+        .catch(error => console.error('Ошибка загрузки сопутствующих товаров:', error));
+
+}
+fetchRelatedItems()
+
+
+
+
+
+
+
+
+
+// login register
+// $(document).on('click', '.user-login__btn' ,function(e){
+
+//     var csrf = $(this).parent().attr('data-token')
+//     var phone = $('.user-login__input-phone').val()
+   
+//     $.ajax({
+//         method: "POST",
+//         url: "/accounts/code/",
+//         data: { 
+//             csrfmiddlewaretoken: csrf,
+//             phone: phone
+//         }
+//         })
+//       .done(function( msg ) {
+//         $('.user-login__sms').show()
+//         $(".user-login__btn").css('padding', '0 15px')
+    
+//         $(".user-login__btn").countdown(redirect, 120, "Повторная отправка через <br>");
+
+//       });
+    
+// })
+// $(document).on('keyup', '.user-login__input' ,function(e){
+//     var phone = $(this).val()
+//     var min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
+//     if (min.length == 13) {
+//         $('.user-login__btn').css({'display':'flex'})
+//         $(".get-sec").load(location.href + " .get-sec__inner");
+//         var secGet = $('.get-sec__inner').attr('data-timer')
+//         // $('.id_phone-wrap--remove').remove()
+//         if (secGet != '') {
+//             var sec = 120 - secGet
+//             var nowData = $('.user-login__btn').text()
+//             console.log(sec)
+//             console.log(nowData)
+//             if (sec > 0) {
+//                 if (nowData == 'Подтвердить') {
+//                     $(".user-login__btn").countdown(redirect, sec, "Повторная отправка через <br>");
+//                 }
+//             }
+//         }
+//     } else {
+//         $('.user-login__btn').css({'display':'none'})
+//     }
+// })
+
+
+// $(document).on('click', '.user-login__input-sms-btn' ,function(e){
+    
+//     var csrf = $(this).attr('data-token')
+//     var phone = $('.user-login__input-phone').val()
+//     var code = $('.user-login__code').val()
+//     var sms = $('.cart__form-success-sms').val()
+//     if (sms == 'on') {
+//         sms_res = 'True'
+//     } else {
+//         sms_res = 'False'
+//     }
+//     console.log(sms)
+
+//     var loc = $(this).attr('data-url')
+
+//     $.ajax({
+//         method: "POST",
+//         url: "/accounts/register/",
+//         data: { 
+//             csrfmiddlewaretoken: csrf,
+//             phone: phone,
+//             code: code,
+//             sms: sms_res,
+//         }
+//     }).done(function(  ) {
+       
+
+//         if (loc == 'login') {
+//             window.location.href = "/accounts/profile/";
+//         }
+     
+        
+//     }).fail(function() {
+//         console.log('fail')
+//     });
+
+    
+// })
+
+// login register
+
+
+
+
+
+
+
 
 
 
@@ -1951,8 +2201,6 @@ function updateAll() {
 
 
 
-
-// обработка согласия о принятии Cookies
 // обработка согласия о принятии Cookies
 function setCookiesAccept() {
     let cookies = localStorage.getItem('cookiesAccept');

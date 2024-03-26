@@ -1491,18 +1491,22 @@ $(document).on('keyup', '.user-login__input' ,function(e){
 
 $(document).on('click', '.user-login__input-sms-btn' ,function(e){
     
-    var csrf = $(this).attr('data-token')
-    var phone = $('.user-login__input-phone').val()
-    var code = $('.user-login__code').val()
-    var sms = $('.cart__form-success-sms').val()
+    let csrf = $(this).attr('data-token')
+    let phone = $('.user-login__input-phone').val()
+    let code = $('.user-login__code').val()
+    let sms = $('.cart__form-success-sms').val()
     if (sms == 'on') {
         sms_res = 'True'
     } else {
         sms_res = 'False'
     }
-    console.log(sms)
+    
+    let order = JSON.parse(localStorage.getItem('order'));
+    order.phone = phone
 
-    var loc = $(this).attr('data-url')
+    localStorage.setItem('order', JSON.stringify(order));
+
+    let loc = $(this).attr('data-url')
 
     $.ajax({
         method: "POST",
@@ -1514,7 +1518,7 @@ $(document).on('click', '.user-login__input-sms-btn' ,function(e){
             sms: sms_res,
         }
     }).done(function(  ) {
-       
+        
 
         if (loc == 'login') {
             window.location.href = "/accounts/profile/";

@@ -514,9 +514,9 @@ class RelatedProductsForm(forms.ModelForm):
             'name',
             'price',
             'free',
-            'all_cats',
-            'minimum',
-            'parent',
+            
+            
+            
             'thumb'
         ]
 

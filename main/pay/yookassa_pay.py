@@ -41,29 +41,30 @@ def create_payment(order, cart, request):
     
     for item in order.items.all():
         
+        if item.price != 0:
 
-        if item.product:
-            product = item.product
-        elif item.combo:
-            product = item.combo
-        elif item.constructor:
-            product = item.constructor
-        
-        price = str(Decimal(item.price) - (Decimal(item.price/100) * sale_percent))
+            if item.product:
+                product = item.product
+            elif item.combo:
+                product = item.combo
+            elif item.constructor:
+                product = item.constructor
+            
+            price = str(Decimal(item.price) - (Decimal(item.price/100) * sale_percent))
 
-        i = {
-            "description": product.name,
-            "quantity": int(item.quantity),
-            "amount": {
-                "value": price,
-                "currency": "RUB"
-            },
-            "vat_code": Yookassa.objects.get().vat_code,
-            "payment_mode": "full_payment",
-            "payment_subject": "commodity"
-        }
-        
-        items.append(i)
+            i = {
+                "description": product.name,
+                "quantity": int(item.quantity),
+                "amount": {
+                    "value": price,
+                    "currency": "RUB"
+                },
+                "vat_code": Yookassa.objects.get().vat_code,
+                "payment_mode": "full_payment",
+                "payment_subject": "commodity"
+            }
+            
+            items.append(i)
 
     
 

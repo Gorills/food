@@ -146,7 +146,7 @@
                                     {% else %}
 
                                     <p class="order__label-title">Телефон *</p>
-                                    <input type="text" data-name="user_phone" id="check_user_status" value="{{ userprofile.phone }}" class="order__input phone required" placeholder="+7 (___) ___-__-__">
+                                    <input type="text" data-name="user_phone" id="check_user_status" readonly value="{{ userprofile.phone }}" class="order__input phone required" placeholder="+7 (___) ___-__-__">
 
                                     {% endif %}
 
@@ -406,10 +406,19 @@
         </div>
 
 
+        <div class="cart__body">
 
-        <ul id="cart-items" class="cart__items">
-            
-        </ul>
+            <ul id="cart-items" class="cart__items">
+                
+            </ul>
+
+            <div class="cart__related-row" id="cart__related-row">
+                <p class="cart__related-title">Дополнительно</p>
+                <ul id="cart-related" class="cart__related">
+                    
+                </ul>
+            </div>
+        </div>
 
 
         <div class="cart__bottom" id="cart-bottom">
@@ -427,4 +436,9 @@
     </div>
 
 
+</div>
+
+
+<div class="get-sec">
+    <div class="get-sec__inner" data-timer="{{ get_sec }}"></div>
 </div>

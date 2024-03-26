@@ -25,6 +25,9 @@ User = get_user_model()
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
+from cart.cart import delivery_time_price
+
+
 
 
 
@@ -67,6 +70,8 @@ def first_delivery(request, number):
     return Response(first_delivery)
 
     
+
+
 
 @api_view(['GET'])
 def get_shop_settings(request):
@@ -140,9 +145,9 @@ def get_shop_settings(request):
 
     item = {
         
-        'price_delivery': settings.price_delivery,
-        'free_delivery': settings.free_delivery,
-        'min_delivery': settings.min_delivery,
+        'price_delivery': delivery_time_price()['price_delivery'],
+        'free_delivery': delivery_time_price()['free_delivery'],
+        'min_delivery': delivery_time_price()['min_delivery'],
         'zones_delivery': settings.zones_delivery,
         'hide_delivery_choosing': settings.hide_delivery_choosing,
         'first_delivery': settings.first_delivery,
@@ -156,6 +161,55 @@ def get_shop_settings(request):
     }
 
     return Response(item, status=status.HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+def related_products(request):
+
+    related_products = Product.objects.filter(related=True, status=True)
+
+
+    items = []
+
+
+
+    for related in related_products:
+
+        
+        items.append({
+            'id': related.id,
+            'name': related.name,
+            
+            'price': related.price,
+            'image': related.get_thumb_mini(),
+            'free': related.free,
+            
+
+        })
+
+    
+    data = {
+        'items': items
+    }
+
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_user(request):
+    try:
+        user_id = request.session['user_profile_id']
+        user = UserProfile.objects.get(id=user_id)
+        data = {
+            'phone': user.phone
+        }
+        return Response(data, status=status.HTTP_200_OK)
+    except KeyError:
+        return Response({'phone': 'error'}, status=status.HTTP_200_OK)
+    except UserProfile.DoesNotExist:
+        return Response({'phone': 'error'}, status=status.HTTP_200_OK)
+
+
 
 
 
