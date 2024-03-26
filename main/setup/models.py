@@ -207,7 +207,7 @@ class ThemeSettings(SingletonModel):
        ('fast_theme', 'Фаст Тема'),
        
     )
-    name = models.CharField(max_length=250, choices=THEME_CLASS, default='sushi')
+    name = models.CharField(max_length=250, choices=THEME_CLASS, default='fast_theme')
     
 
 
