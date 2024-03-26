@@ -161,7 +161,16 @@
         display: flex;
         align-items: center;
         img {
+            display: flex;
+            -ms-flex-item-align:center;
+            -ms-grid-row-align:center;
+            align-self:center; 
+
+
+            -webkit-box-align:center; 
+            -ms-flex-align:center; 
             align-items:center;
+          
             height: fit-content;
             max-height: fit-content;
         }
