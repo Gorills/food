@@ -1607,6 +1607,7 @@ a {
 
 .cart__left-wrap img {
   height: fit-content;
+  max-height: auto;
 }
 
 .cart__left {

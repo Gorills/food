@@ -162,6 +162,7 @@
         align-items: center;
         img {
             height: fit-content;
+            max-height: auto;
         }
 
         @media screen and (max-width:576px) {
