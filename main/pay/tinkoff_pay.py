@@ -1,6 +1,7 @@
 
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
+
 import json
 from django.shortcuts import redirect
 
@@ -25,9 +26,16 @@ except:
     email = ''
 from subdomains.utilites import get_protocol
 
-import decimal
-from decimal import Decimal
+
+
 D = Decimal
+
+def integer_to_decimal_with_precision(integer_value, precision=2):
+    decimal_value = Decimal(integer_value)
+    decimal_value = decimal_value.quantize(Decimal('0.1') ** precision, rounding=ROUND_HALF_UP)
+    return decimal_value
+
+
 def create_payment(order, request):
     
     items_arr = []
@@ -37,8 +45,12 @@ def create_payment(order, request):
 
     items = OrderItem.objects.filter(order=order)
     
-    total = str(order.summ)
-    total = total.replace('.', '')
+    total = integer_to_decimal_with_precision(order.summ)
+
+    
+    total = str(Decimal(total)).replace('.', '')
+
+    
 
     # print('Скидка: ' + str(order.sale_percent))
     # print('total: ' + str(total))
@@ -146,7 +158,7 @@ def create_payment(order, request):
     payList = json.dumps(dictionary, indent=4)
 
 
-    # print(payList)
+    
     
 
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
@@ -157,7 +169,8 @@ def create_payment(order, request):
     payment_id = res['PaymentId']
     
     data = {
-        'url': url,
+        'order_id': order.id,
+        'confirmation_url': url,
         'payment_id': payment_id
     }
 

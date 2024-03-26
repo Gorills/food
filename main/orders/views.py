@@ -296,11 +296,11 @@ def order_create(request):
                         data = create_payment(order, request)
 
                         
-                        order.payment_dop_info = data['url']
+                        order.payment_dop_info = data['confirmation_url']
                         order.payment_id = data['payment_id']
                         order.save()
 
-                        return redirect(data['url'])
+                        return redirect(data['confirmation_url'])
 
 
 

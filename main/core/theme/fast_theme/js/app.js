@@ -631,6 +631,8 @@ function getAllDiscount() {
 
     let first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
 
+    let sale_persent = 0;
+
     // Округляем сумму скидки первой доставки
     first_delivery_summ = Math.floor(first_delivery_summ);
 
@@ -641,6 +643,7 @@ function getAllDiscount() {
     if (first_delivery_summ != 0) {
         document.getElementById("discountOnFirstDelivery").innerText = `${first_delivery_summ}₽ (${discountOnFirstDelivery}%)`;
         document.getElementById("first_delivery_discount_info").style.display = 'flex';
+        sale_persent = sale_persent + discountOnFirstDelivery;
     } else {
         document.getElementById("discountOnFirstDelivery").innerText = '';
         document.getElementById("first_delivery_discount_info").style.display = 'none';
@@ -656,12 +659,20 @@ function getAllDiscount() {
 
         document.getElementById("discountOnPickup").innerText = `${pickup_discount}₽ (${discountOnPickup}%)`;
         document.getElementById("pickup_discount_info").style.display = 'flex';
+        sale_persent = sale_persent + discountOnPickup;
     } else {
         document.getElementById("discountOnPickup").innerText = '';
         document.getElementById("pickup_discount_info").style.display = 'none';
     }
 
     summ = summ + first_delivery_summ;
+
+
+    order = JSON.parse(localStorage.getItem('order'));
+    order.sale_percent = sale_persent
+    localStorage.setItem('order', JSON.stringify(order));
+
+    console.log(sale_persent)
 
     return summ;
 }

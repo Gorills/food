@@ -127,7 +127,8 @@ def order_create(request):
             delivery_price = Decimal(json_order['delivery_price']),
             order_conmment = json_order['order_conmment'],
             summ = Decimal(json_order['summ']),
-            paid = False
+            paid = False,
+            sale_percent = json_order['sale_percent'],
 
 
         )
@@ -270,11 +271,11 @@ def order_create(request):
                 data = create_payment(order, request)
 
                 
-                order.payment_dop_info = data['url']
+                order.payment_dop_info = data['confirmation_url']
                 order.payment_id = data['payment_id']
                 order.save()
 
-                return redirect(data['url'])
+                return JsonResponse(data, status=status.HTTP_200_OK)
 
 
 
