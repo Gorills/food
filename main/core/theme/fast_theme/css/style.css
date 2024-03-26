@@ -1603,6 +1603,7 @@ a {
 .cart__left-wrap {
   display: flex;
   align-items: center;
+  max-height: 80px;
 }
 
 .cart__left-wrap img {
@@ -1611,6 +1612,9 @@ a {
   -ms-grid-row-align: center;
   align-self: center;
   object-fit: contain;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
