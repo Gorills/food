@@ -338,9 +338,22 @@ class SearchResultsView(ListView):
     
 
 
+from urllib.parse import unquote
+import idna
+
+
+
+
 def privacy(request):
-    site = f'{get_protocol(request)}://{request.META["HTTP_HOST"]}'
-    privacy_email = f'privacy@{request.META["HTTP_HOST"]}'
+
+    domain = f'{request.META["HTTP_HOST"]}'
+
+    decoded_domain = idna.decode(domain)
+
+    site = f'{get_protocol(request)}://{decoded_domain}'
+    privacy_email = f'privacy@{decoded_domain}'
+
+    
     context = {
         'site': site,
         'privacy_email': privacy_email,
