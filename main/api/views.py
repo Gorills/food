@@ -55,12 +55,19 @@ class FoodConstructorSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, views
     serializer_class = FoodConstructorSerializer
 
 
+def normalize_phone_number(phone_number):
+    # Заменяем специальные символы на соответствующие значения
+    normalized_number = phone_number.replace('%20', ' ').replace('%28', '(').replace('%29', ')')
+    return normalized_number
+
 
 @api_view(['GET'])
 def first_delivery(request, number):
 
-
-    orders = Order.objects.filter(phone=number).count()
+    normal_number = normalize_phone_number(number)
+    print(normal_number)
+    orders = Order.objects.filter(phone=normal_number).count()
+    
 
     if orders == 0:
         first_delivery = True
