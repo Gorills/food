@@ -1972,9 +1972,9 @@ function minusFromCart(itemId) {
 
     }
 
-
+    document.getElementById('cart__related-row').style.display = 'none';
     localStorage.setItem('cart', JSON.stringify(cart));
-    fetchRelatedItems()
+    document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
 }
 
@@ -1982,7 +1982,7 @@ function plusFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     cart[itemId].quantity++;
     localStorage.setItem('cart', JSON.stringify(cart));
-    
+    document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
 }
 
@@ -1991,7 +1991,7 @@ function removeFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
-    fetchRelatedItems()
+    document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
 }
 
