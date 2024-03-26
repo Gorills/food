@@ -227,7 +227,46 @@ def yandex_create_order(order):
             items_list.append(add_item)
             
         
+        order_address = {
+                        
+                        
+            "city": city,
+            
+            "coordinates": get_geo(order.address),
+            "country": 'Россия',
         
+            
+        
+        
+            
+            
+            "fullname": order.address,
+            
+        }
+        
+        try:
+            order_address['comment'] = order.comment
+        except:
+            pass
+
+        try:
+            order_address['door_code'] = order.door_code
+        except:
+            pass
+
+        try:
+            order_address['flat'] = int(order.flat)
+        except Exception as e:
+            print(e)
+            pass
+
+        try:
+            order_address['floor'] = int(order.floor)
+        except Exception as e:
+            print(e)
+            pass
+
+        print(order_address)
 
         
         data = {
@@ -294,22 +333,7 @@ def yandex_create_order(order):
                     "visit_order": 1
                 },
                 {
-                    "address": {
-                        
-                        
-                        "city": city,
-                        "comment": order.address_comment,
-                        "coordinates": get_geo(order.address),
-                        "country": 'Россия',
-                    
-                        "door_code": order.door_code,
-                    
-                    
-                        "flat": int(order.flat),
-                        "floor": int(order.floor),
-                        "fullname": order.address,
-                        
-                    },
+                    "address": order_address,
                     
                     "contact": {
                     
@@ -400,7 +424,7 @@ def yandex_create_order(order):
 
         response = requests.post(url, json=data, headers=headers)
 
-        # print(response.json())
+        print(response.json())
     except Exception as e:
         print(e)
 
