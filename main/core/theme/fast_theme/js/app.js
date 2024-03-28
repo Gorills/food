@@ -2890,6 +2890,10 @@ $(document).ready(function() {
     checkCurrentTime();
     let workTime = JSON.parse(localStorage.getItem('workTime'));
     let d = new Date();
+    let time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    console.log(time)
+
+    
     if (!workTime || workTime.day != d.getDay()-1) {
         
         localStorage.setItem('workTime', JSON.stringify({
