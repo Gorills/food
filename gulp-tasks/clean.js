@@ -8,7 +8,8 @@ gulp.task("clean", () => {
         "./main/core/theme/default/*",
         "./main/core/theme/china/*",
         "./main/core/theme/sushi/*",
-        "./main/core/theme/fast_theme/*"
+        "./main/core/theme/fast_theme/*",
+        "./main/core/theme/flowers_light/*"
     
     ]);
 });

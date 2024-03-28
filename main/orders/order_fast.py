@@ -183,14 +183,27 @@ def order_create(request):
         except:
             user_pr = UserProfile.objects.create(phone=json_order['user_phone'])
 
-
+        order.user_pr = user_pr
+        order.save()
       
         
+        loyal_cart_settings = LoyaltyCardSettings.objects.get()
+
+        if loyal_cart_settings.active == True:
+            user = order.user_pr
+
+            try:
+                loyalty_card = LoyaltyCard.objects.get(user=user)
+                
+            except:
+                loyalty_card = LoyaltyCard.objects.create(
+                    user=user,
+                    summ = 0
+                )
         
         # if cart.active_balls:
         #     order.balls = cart.active_balls
 
-        # order.user_pr = user_pr
         # order.summ = cart.get_total_price_after_discount()
         
         # order.delivery_price = Decimal(cart.get_delivery())

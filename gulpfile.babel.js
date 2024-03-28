@@ -258,6 +258,95 @@ const requireDir = require("require-dir"),
             dist: "./main/core/img/fav/",
         },
 
+        // Цветы светлая
+
+        
+        flowers_light_views: {
+            src: [
+                "./#src/templates/theme/flowers_light/**/*.html",
+                "./#src/templates/theme/flowers_light/pages/*.html"
+            ],
+            dist: "./main/core/theme/flowers_light/views/",
+            watch: [
+                "./#src/templates/theme/flowers_light/**/*.html",
+                "./#src/templates/theme/flowers_light/pages/*.html"
+            ]
+        },
+        global_flowers_light_views: {
+            src: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ],
+            dist: "./main/core/theme/flowers_light/views/global/",
+            watch: [
+                "./#src/templates/theme/global/**/*.html",
+                "./#src/templates/theme/global/pages/*.html"
+            ]
+        },
+        flowers_light_js: {
+            src: [
+                "./#src/js/theme/global/**/*.js",
+                
+            ],
+            dist: "./main/core/theme/flowers_light/js/",
+            watch: [
+                "./#src/js/theme/global/**/*.js",
+            ]
+        },
+        flowers_light_styles: {
+            src: "./#src/scss/theme/flowers_light/style.{scss,sass}",
+            dist: "./main/core/theme/flowers_light/css/",
+            watch: [
+                "./#src/scss/theme/flowers_light/**/*.{scss,sass}",
+                "./#src/scss/theme/flowers_light/**/*.{scss,sass}",
+                "./#src/scss/theme/global/**/*.{scss,sass}"
+
+                
+            ]
+        },
+        flowers_light_change_fonts: {
+            src: "./#src/scss/theme/flowers_light/fonts/**/*.{scss,sass}",
+            dist: "./main/core/theme/flowers_light/css/fonts/",
+            watch: [
+                "./#src/scss/theme/flowers_light/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/flowers_light/fonts/**/*.{scss,sass}",
+                "./#src/scss/theme/fastflowers_light_theme/fonts/**/*.{scss,sass}"
+
+                
+            ]
+        },
+        flowers_light_scripts: {
+            src: "./#src/js/theme/flowers_light/*.js",
+            dist: "./main/core/theme/flowers_light/js/",
+            watch: [
+                "./#src/js/theme/flowers_light/**/*.js",
+                "./#src/js/theme/flowers_light/**/*.js",
+              
+            ]
+        },
+        flowers_light_images: {
+            src: [
+                "./#src/images/theme/flowers_light/**/*.{jpg,jpeg,png,gif,tiff,svg,webp}",
+                "!./#src/images/theme/flowers_light/fav/*.{jpg,jpeg,png,gif,tiff,webp}"
+            ],
+            dist: "./main/core/theme/flowers_light/images/",
+            watch: "./#src/images/theme/flowers_light/**/*.{jpg,jpeg,png,gif,svg,tiff,webp}"
+        },
+        flowers_light_sprites: {
+            src: "./#src/images/theme/flowers_light/sprites/*.svg",
+            dist: "./main/core/theme/flowers_light/images/sprites/",
+            watch: "./#src/images/theme/flowers_light/sprites/*.svg"
+        },
+        flowers_light_fonts: {
+            src: "./#src/fonts/theme/flowers_light/**/*.{woff,woff2,ttf,TTF,otf}",
+            dist: "./main/core/theme/flowers_light/fonts/",
+            watch: "./#src/fonts/theme/flowers_light/**/*.{woff,woff2,ttf,TTF,otf}"
+        },
+        flowers_light_favicons: {
+            src: "./#src/img/theme/flowers_light/fav/*.{jpg,jpeg,png,gif}",
+            dist: "./main/core/img/fav/",
+        },
+
         // theme china
         chinaviews: {
             src: [
@@ -424,6 +513,19 @@ export const development = gulp.series("clean", "adminclean",
         "fast_sprites",
         "fast_fonts",
         "fast_favicons",
+
+        "flowers_light_views",
+        'global_flowers_light_views',
+        "flowers_light_js",
+        "flowers_light_styles",
+        "flowers_light_change_fonts",
+        "flowers_light_scripts",
+        "flowers_light_webp", 
+        "flowers_light_images",
+        "flowers_light_sprites",
+        "flowers_light_fonts",
+        "flowers_light_favicons",
+
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',
@@ -480,6 +582,19 @@ export const prod = gulp.series("clean", "adminclean",
         "fast_sprites",
         "fast_fonts",
         "fast_favicons",
+
+        "flowers_light_views",
+        'global_flowers_light_views',
+        "flowers_light_js",
+        "flowers_light_styles",
+        "flowers_light_change_fonts",
+        "flowers_light_scripts",
+        "flowers_light_webp", 
+        "flowers_light_images",
+        "flowers_light_sprites",
+        "flowers_light_fonts",
+        "flowers_light_favicons",
+        
         "chinaviews", 
         'global_chinaviews',
         'global_chinajs',

@@ -82,6 +82,25 @@ gulp.task("fast_sprites", () => {
         .on("end", browsersync.reload);
 });
 
+gulp.task("flowers_light_sprites", () => {
+    return gulp.src(paths.flowers_light_sprites.src)
+        .pipe(svg({
+            shape: {
+                dest: "intermediate-svg"
+            },
+            mode: {
+                stack: {
+                    sprite: "../sprite.svg"
+                }
+            }
+        }))
+        .pipe(gulp.dest(paths.flowers_light_sprites.dist))
+        .pipe(debug({
+            "title": "Sprites"
+        }))
+        .on("end", browsersync.reload);
+});
+
 gulp.task("adminsprites", () => {
     return gulp.src(paths.adminsprites.src)
         .pipe(svg({

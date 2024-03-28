@@ -1,0 +1,55 @@
+.blog-detail {
+    width: 100%;
+    padding: 40px 0;
+    // .blog-detail__inner
+
+    &__inner {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    // .blog-detail__title
+
+    &__title {
+        margin-bottom: 40px;
+    }
+
+    // .blog-detail__content
+
+    &__content {
+        
+    }
+
+    // .blog-detail__img
+
+    &__img {
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    // .blog-detail__text
+
+    &__text {
+        margin-bottom: 30px;
+    }
+    // .blog-detail__subtitle
+
+    &__subtitle {
+        margin-bottom: 30px;
+
+    }
+    
+    // .blog-detail__video
+    &__video {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+
+}
+
+
+
+    
+

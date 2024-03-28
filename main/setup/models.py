@@ -205,6 +205,7 @@ class ThemeSettings(SingletonModel):
        ('china', 'Китайский ресторан'),
        ('sushi', 'Суши'),
        ('fast_theme', 'Фаст Тема'),
+       ('flowers_light', 'Для цветов светлая'),
        
     )
     name = models.CharField(max_length=250, choices=THEME_CLASS, default='fast_theme')

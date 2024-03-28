@@ -1,0 +1,128 @@
+.rating-result {
+	// width: 265px;
+	// margin: 0 auto;
+    
+}
+.rating-result span {
+	padding: 0;
+	font-size: 16px;
+	margin: 0 auto;
+	line-height: 1;
+	color: rgb(164, 164, 164);
+	
+}
+.rating-result > span:before {
+	content: '★';
+}
+.rating-result > span.actives {
+	color: gold;
+	
+    background: none!important;
+}
+
+.reviews {
+    background-color: var(--color-body);
+    color: var(--color-font);
+    padding: 80px 0;
+    
+    // .reviews__inner
+
+    &__inner {
+    }
+
+    // .reviews__row
+
+    &__row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+
+        @media screen and (max-width: 992px) {
+            grid-template-columns: repeat(2, 1fr);
+            
+        }
+        @media screen and (max-width: 576px) {
+            grid-template-columns: repeat(1, 1fr);
+            
+        }
+    }
+
+    // .reviews__item
+
+    &__item {
+        padding: 20px;
+        background-color: var(--color-product-card);
+        color: var(--color-product-card-font);
+        border-radius: 8px;
+        position: relative;
+        
+
+        &:hover {
+            box-shadow: 2px 6px 20px rgba(47, 59, 88, 0.15);
+        }
+    }
+
+    // .reviews__platform
+    &__platform {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+    }
+
+    // .reviews__top
+
+    &__top {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    // .reviews__img
+
+    &__img {
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    // .reviews__avatar
+
+    &__avatar {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        border-radius: 50%;
+    }
+
+    // .reviews__name
+
+    &__name {
+        margin-left: 20px;
+    }
+
+    // .reviews__middle
+
+    &__middle {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    // .reviews__date
+
+    &__date {
+        margin-left: 10px;
+        color: #6a6a6a;
+        font-size: 12px;
+    }
+
+    // .reviews__bottom
+
+    &__bottom {
+    }
+}
+

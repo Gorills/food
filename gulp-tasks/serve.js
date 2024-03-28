@@ -39,6 +39,16 @@ gulp.task("serve", () => {
     gulp.watch(paths.fast_images.watch, gulp.parallel("fast_images"));
     gulp.watch(paths.fast_fonts.watch, gulp.parallel("fast_fonts"));
 
+    gulp.watch(paths.flowers_light_views.watch, gulp.parallel("flowers_light_views"));
+    gulp.watch(paths.global_flowers_light_views.watch, gulp.parallel("global_flowers_light_views"));
+    gulp.watch(paths.flowers_light_js.watch, gulp.parallel("flowers_light_js"));
+    gulp.watch(paths.flowers_light_styles.watch, gulp.parallel("flowers_light_styles"));
+    gulp.watch(paths.flowers_light_change_fonts.watch, gulp.parallel("flowers_light_change_fonts"));
+    gulp.watch(paths.flowers_light_scripts.watch, gulp.parallel("flowers_light_scripts"));
+    gulp.watch(paths.flowers_light_sprites.watch, gulp.parallel("flowers_light_sprites"));
+    gulp.watch(paths.flowers_light_images.watch, gulp.parallel("flowers_light_images"));
+    gulp.watch(paths.flowers_light_fonts.watch, gulp.parallel("flowers_light_fonts"));
+
 
     gulp.watch(paths.sushi_views.watch, gulp.parallel("sushi_views"));
     gulp.watch(paths.global_sushi_views.watch, gulp.parallel("global_sushi_views"));

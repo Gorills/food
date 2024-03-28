@@ -90,6 +90,25 @@ gulp.task("fast_js", () => {
 		.pipe(browsersync.stream());
 });
 
+gulp.task("flowers_light_scripts", () => {
+    return gulp.src(paths.flowers_light_scripts.src)
+		.pipe(gulp.dest(paths.flowers_light_scripts.dist))
+
+		.pipe(gulp.dest(paths.flowers_light_scripts.dist))
+		.pipe(browsersync.stream());
+});
+
+
+
+gulp.task("flowers_light_js", () => {
+    return gulp.src(paths.flowers_light_js.src)
+    
+		.pipe(gulp.dest(paths.flowers_light_js.dist))
+
+		.pipe(gulp.dest(paths.flowers_light_js.dist))
+		.pipe(browsersync.stream());
+});
+
 
 
 gulp.task("adminscripts", () => {

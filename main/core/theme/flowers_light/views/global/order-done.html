@@ -1,0 +1,35 @@
+
+{% if order_get %}
+<div class="odred-done" data-order="{{ order }}">
+
+    <div class="odred-done__row">
+
+        <div class="odred-done__layout"></div>
+
+
+        <div class="odred-done__inner">
+            <div class="odred-done__icon">
+            
+            
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+             
+                <g><path d="M500,10C229.4,10,10,229.4,10,500s219.4,490,490,490s490-219.4,490-490S770.6,10,500,10z M500,946.4C253.4,946.4,53.6,746.6,53.6,500S253.4,53.6,500,53.6c246.6,0,446.4,199.9,446.4,446.4S746.6,946.4,500,946.4z"/><path d="M392.3,637.3L252.6,496.7L206,543.6l186.3,187.6l399.3-402L745,282.2L392.3,637.3z"/></g>
+                </svg>
+                
+            </div>
+
+            <div class="odred-done__title">{{ setup.order_done_title }}</div>
+            <div class="odred-done__text">{{ setup.order_done_text }}</div>
+            <div class="odred-done__wrap">
+                <a href="#" class="odred-done__ok">ОК</a>
+            </div>
+            
+            
+        </div>
+        
+    </div>
+</div>
+
+
+
+{% endif %}

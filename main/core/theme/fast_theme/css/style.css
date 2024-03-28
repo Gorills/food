@@ -5699,6 +5699,7 @@ td.product-thumbnail img {
   color: #E90C4E;
   border-radius: 5px;
   padding: 5px 20px;
+  white-space: nowrap;
 }
 
 .order__register-btn:hover {

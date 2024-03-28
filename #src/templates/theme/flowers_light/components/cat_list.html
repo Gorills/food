@@ -1,0 +1,190 @@
+
+{% load thumbnail %}
+
+{% if home_cats.count > 0 %}
+
+    {% if home_cats.count > 0 and home_cats.count == 7 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+
+    {% elif home_cats.count == 2 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-two">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+
+    {% elif home_cats.count == 3 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-three">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+
+    {% elif home_cats.count == 4 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-four">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+
+    {% elif home_cats.count == 5 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-five">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+
+    {% elif home_cats.count == 6 %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-six">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="cat-home">
+        <div class="container">
+            <div class="cat-home__inner-flex">
+
+                {% for cat in home_cats %}
+                    
+                    <a {% if cat.bg_color %}style="background-color: {{ cat.bg_color }};"{% endif %} href="{% if shop_setup.all_menus and not cat.parent %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}" class="cat-home__item-flex {% if cat.resize %}cat-home__item--resized{% endif %}">
+                        <h3 class="cat-home__title" {% if cat.font_color %}style="color: {{ cat.font_color }};"{% endif %}>{{ cat.name }}</h3>
+
+                        {% if cat.image %}
+                            {% thumbnail cat.image "500x500" format="WEBP" crop="center" as im %}
+                                <img {% if cat.opacity < 100 %}style="opacity: {{ cat.opacity }}%;"{% endif %} src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="cat-home__img {% if cat.resize %}cat-home__img--resized{% endif %}">
+                            {% endthumbnail %}
+                        
+
+                        {% endif %}
+                    </a>
+                
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% endif %}
+
+

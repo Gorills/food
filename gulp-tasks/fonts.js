@@ -36,6 +36,14 @@ gulp.task("fast_fonts", () => {
         }));
 });
 
+gulp.task("flowers_light_fonts", () => {
+    return gulp.src(paths.flowers_light_fonts.src)
+        .pipe(gulp.dest(paths.flowers_light_fonts.dist))
+        .pipe(debug({
+            "title": "Fonts"
+        }));
+});
+
 gulp.task("adminfonts", () => {
     return gulp.src(paths.adminfonts.src)
         .pipe(gulp.dest(paths.adminfonts.dist))

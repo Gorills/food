@@ -133,7 +133,7 @@
 
                                 {% if setup.sms == True %}
 
-                                <div class="order__input-phone-signup">
+                                <div class="order__input-phone-signup" data-csrf="{{ csrf_token }}">
                                     <div class="order__input-phone-signup-refresh">
                                 
                                         {% if not request.session.user_profile_id %}
@@ -358,11 +358,17 @@
                     <p>Скидка за первый заказ:</p>
                     <div id="discountOnFirstDelivery"></div>
                 </div>
+
                 <div class="order__info-item" id="pickup_discount_info">
                     <p>Скидка за самовывоз:</p>
                     <div id="discountOnPickup"></div>
                 </div>
 
+
+                <div id="balls">
+
+                </div>
+                
 
 
                 <div class="order__info-item">

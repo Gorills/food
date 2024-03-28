@@ -108,6 +108,30 @@ gulp.task("global_fast_views", () => {
         .pipe(browsersync.stream());
 });
 
+gulp.task("flowers_light_views", () => {
+    return gulp.src(paths.flowers_light_views.src)
+        .pipe(include({
+            prefix: "@@",
+            basepath: "@file"
+        }))
+        .pipe(gulpif(production, replace(".css", ".min.css")))
+        .pipe(gulpif(production, replace(".js", ".min.js")))
+        .pipe(gulp.dest(paths.flowers_light_views.dist))
+        .pipe(browsersync.stream());
+});
+
+gulp.task("global_flowers_light_views", () => {
+    return gulp.src(paths.global_flowers_light_views.src)
+        .pipe(include({
+            prefix: "@@",
+            basepath: "@file"
+        }))
+        .pipe(gulpif(production, replace(".css", ".min.css")))
+        .pipe(gulpif(production, replace(".js", ".min.js")))
+        .pipe(gulp.dest(paths.global_flowers_light_views.dist))
+        .pipe(browsersync.stream());
+});
+
 
 gulp.task("adminviews", () => {
     return gulp.src(paths.adminviews.src)

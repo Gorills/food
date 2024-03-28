@@ -1,0 +1,31 @@
+
+
+
+
+{% if setup.meta_h1 or setup.text or subdomain or subdomain.meta_h1 %}
+<div class="about">
+    <div class="container">
+        <div class="about__inner">
+            {% if subdomain and subdomain.meta_h1 %}
+                <h1 class="title">{{ subdomain.meta_h1 }}</h1>
+            {% else %}
+                
+                {% if setup.meta_h1 %}
+                <h1 class="title">{{ setup.meta_h1 }}</h1>
+                {% endif %}
+            {% endif %}
+            
+            {% if subdomain and subdomain.text %}
+                {{ subdomain.text | safe }}
+            {% else %}
+                {% if setup.text %}
+                    {{ setup.text | safe }}
+                {% endif %}
+            {% endif %}
+            
+            
+
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -207,14 +207,138 @@ def get_user(request):
     try:
         user_id = request.session['user_profile_id']
         user = UserProfile.objects.get(id=user_id)
-        data = {
-            'phone': user.phone
-        }
+
+        
+        try:
+
+            loyal_cart_settings = LoyaltyCardSettings.objects.get()
+
+            balls_min_summ = loyal_cart_settings.balls_min_summ
+            exclude_combos = loyal_cart_settings.exclude_combos
+            exclude_sales = loyal_cart_settings.exclude_sales
+
+            loyal_cart = LoyaltyCard.objects.get(user=user)
+            cart_summ = loyal_cart.summ
+            cart_balls = loyal_cart.balls
+            cart_status = loyal_cart.status()
+
+            percent_down = cart_status.percent_down
+            percent_down_pickup = cart_status.percent_down_pickup
+
+            percent_pay = cart_status.percent_pay
+            percent_pay_pickup = cart_status.percent_pay_pickup
+
+            
+
+            data = {
+                'phone': user.phone,
+                'cart_status': cart_status.name,
+                'cart_summ': cart_summ,
+                'cart_balls': cart_balls,
+                'percent_down': percent_down,
+                'percent_down_pickup': percent_down_pickup,
+                'percent_pay': percent_pay,
+                'percent_pay_pickup': percent_pay_pickup,
+                'balls_min_summ': balls_min_summ,
+                'exclude_combos': exclude_combos,
+                'exclude_sales': exclude_sales,
+
+                
+
+            }
+
+        except Exception as e:
+            print(e)
+            data = {
+                'phone': user.phone,
+                'cart_status': False,
+            }
+            return Response(data, status=status.HTTP_200_OK)
+
+            
         return Response(data, status=status.HTTP_200_OK)
     except KeyError:
         return Response({'phone': 'error'}, status=status.HTTP_200_OK)
     except UserProfile.DoesNotExist:
         return Response({'phone': 'error'}, status=status.HTTP_200_OK)
+
+
+
+
+
+from django.utils import timezone
+from datetime import datetime, time
+import pytz
+from main.local_settings import TIME_ZONE
+
+current_time = timezone.now()
+# Определяем временную зону для сравнения
+time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
+# Конвертируем текущее время в нужную временную зону
+current_time = current_time.astimezone(time_zone)
+
+
+@api_view(['GET'])
+def get_work_active(request, day):
+
+    try:
+        delivery_full = ShopSetup.objects.get().delivery_full
+    except:
+        delivery_full = False
+
+
+    try:
+        start_delivery = WorkDay.objects.get(day=day, active=True).start_delivery
+        end_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
+
+        if end_delivery < start_delivery:
+
+            end_delivery = '23:59:59'
+            start_second_delivery = '00:00:00'
+            end_second_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
+
+
+        else:
+            start_delivery = WorkDay.objects.get(day=day, active=True).start_delivery
+            end_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
+
+            start_second_delivery = None
+            end_second_delivery = None
+
+    except:
+
+        start_delivery = ShopSetup.objects.get().start_delivery
+        end_delivery = ShopSetup.objects.get().end_delivery
+        print(start_delivery, end_delivery)
+
+
+        if end_delivery < start_delivery:
+
+            end_delivery = '23:59:59'
+            start_second_delivery = '00:00:00'
+            end_second_delivery = ShopSetup.objects.get().end_delivery
+        else:
+
+            start_second_delivery = None
+            end_second_delivery = None
+
+
+        
+
+
+
+
+    data = {
+        'delivery_full': delivery_full,
+        'start_delivery': start_delivery,
+        'end_delivery': end_delivery,
+
+        'start_second_delivery': start_second_delivery,
+        'end_second_delivery': end_second_delivery,
+    }
+
+
+    return Response(data, status=status.HTTP_200_OK)
 
 
 

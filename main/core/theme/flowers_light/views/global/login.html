@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Вход {% endblock %}
+{% block description %} {% endblock %}
+{% block keywords %} {% endblock %}
+{% block canonical %} {% endblock %}
+{% block og:title %}{% endblock %}
+{% block og:description %} {% endblock %}
+{% block og:url %} {% endblock %}
+{% block twitter:title %}{% endblock %}
+{% block twitter:description %}{% endblock %}
+
+
+
+{% block body %}
+{% load static %}
+{% load thumbnail %}
+
+
+<div class="user-login">
+    <div class="container">
+        <div class="user-login__inner">
+            <h1 class="user-login__title title">Вход/регистрация</h1>
+
+
+            <div class="user-login__wrap">
+                <input required name="phone" type="text" class="user-login__input user-login__input-phone phone" placeholder="+7 999 999 99 99">
+                
+                <div class="" data-token="{{ csrf_token }}">
+                    
+                    <div class="user-login__btn" data-sub="false">Подтвердить</div>
+                </div>
+
+               
+                
+            </div>
+            <p class="cart__form-politic">Указывая номер телефона, Вы принимаете условия <a href="{% url "privacy" %}">пользовательского соглашения</a></p>
+            <div class="cart__form-success">
+                <label for="">
+                    Согласие на смс-рассылки информационного и рекламного характера
+                    <input type="checkbox" class="cart__form-success-sms" name="sms" checked>
+                </label>
+            </div>
+
+            <div class="user-login__sms">
+                <div class="user-login__sms-inner">
+                    <input type="text" class="user-login__input user-login__code" name="code" value="" placeholder="Код из смс">
+                    <div class="user-login__input-sms-btn" data-token="{{ csrf_token }}" data-url="login">Ок</div>
+                </div>
+            </div> 
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

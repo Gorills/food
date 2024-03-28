@@ -57,11 +57,92 @@ function fetchAndSaveSettings() {
 fetchAndSaveSettings();
 
 
-// Инициализируем пустой заказ
-function setOrder() {
+
+function setLoyalCart() {
+    
+    let data = {
+        'cart_balls': 0,
+        'percent_down': 0,
+        'percent_down_pickup': 0,
+        'percent_pay': 0,
+        'percent_pay_pickup': 0,
+        'balls_min_summ': 0,
+        'exclude_combos': false,
+        'exclude_sales': false,
+    }
+
+    fetch('/api/v1/get_user/')
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.phone != 'error') {
+            
+                if (data.cart_status) {
+
+                    data = {
+                        'cart_balls': data.cart_balls,
+                        'percent_down': data.percent_down,
+                        'percent_down_pickup': data.percent_down_pickup,
+                        'percent_pay': data.percent_pay,
+                        'percent_pay_pickup': data.percent_pay_pickup,
+                        'balls_min_summ': data.balls_min_summ,
+                        'exclude_combos': data.exclude_combos,
+                        'exclude_sales': data.exclude_sales,
+                    }
+
+                    localStorage.setItem('loyalCart', JSON.stringify(data));
+                    
+                } else {
+                    data = {
+                        'cart_balls': 0,
+                        'percent_down': 0,
+                        'percent_down_pickup': 0,
+                        'percent_pay': 0,
+                        'percent_pay_pickup': 0,
+                        'balls_min_summ': 0,
+                        'exclude_combos': false,
+                        'exclude_sales': false,
+
+                    }
+
+                    localStorage.setItem('loyalCart', JSON.stringify(data));
+
+                }
+            } else {
+
+                data = {
+                    'cart_balls': 0,
+                    'percent_down': 0,
+                    'percent_down_pickup': 0,
+                    'percent_pay': 0,
+                    'percent_pay_pickup': 0,
+                    'balls_min_summ': 0,
+                    'exclude_combos': false,
+                    'exclude_sales': false,
+                }
+
+                localStorage.setItem('loyalCart', JSON.stringify(data));
+            }
+                
+                
+            
+        })
+        .catch(error => console.error('Ошибка загрузки пользователя:', error));
+
 
     
 
+
+    let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
+    console.log(loyalCart)
+    
+}
+
+setLoyalCart()
+
+
+// Инициализируем пустой заказ
+function setOrder() {
 
     data = {
         'order_id': '',
@@ -85,13 +166,13 @@ function setOrder() {
         'delivery_price': '',
         'order_conmment': '',
         'summ': '',
-        'sale_percent': '',
-        'bonuses_pay': '',
+        'sale_percent': 0,
+        'bonuses_pay': 0,
         'status': 'Новый',
         'coupon': '',
         'discount': '',
-        'balls': '',
-        'percent_pay': '',
+        'balls': 0,
+        'percent_pay': 0,
         'delivery_status': '',
     }
 
@@ -124,21 +205,32 @@ function setOrder() {
 
     }
 
-    // console.log(order)
+    console.log(order)
 
     let phone = ''
     fetch('/api/v1/get_user/')
         .then(response => response.json())
         .then(data => {
-
             if (data.phone != 'error') {
-                phone = data.phone
+               
 
-                order.user_phone = phone;
+                order.user_phone = data.phone;
                 localStorage.setItem('order', JSON.stringify(order));
+
+
+                if (data.cart_status) {
+
+                    
+                    
+
+
+                }
                 
                 
             }
+
+            
+
             
         })
         .catch(error => console.error('Ошибка загрузки пользователя:', error));
@@ -146,7 +238,6 @@ function setOrder() {
 }
 
 setOrder()
-
 
 
 
@@ -626,6 +717,108 @@ $('.order__input').on('change input', function() {
 // Функции математики в корзине
 
 
+function getTotalPriceToBallMath(exclude_combos) {
+    
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    
+    let totalPrice = 0;
+
+    
+
+    for (let itemId in cart) {
+        let item = cart[itemId];
+
+
+        if (item.type == 'combo' && exclude_combos==true) {
+            totalPrice += 0
+        } else {
+            totalPrice += item.price * item.quantity;
+        }
+
+        
+        
+    }
+
+    totalPrice = totalPrice - getAllDiscount()
+    
+    
+    return totalPrice
+}
+
+
+
+
+
+function maxBallsPay() {
+    let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
+    let order = JSON.parse(localStorage.getItem('order'));
+    let daliveryType = localStorage.getItem("deliveryType");
+    
+    console.log(daliveryType);
+
+    let order_balls = order.bonuses_pay;
+
+    let balls = loyalCart.cart_balls - order_balls;
+
+    let balls_min_summ = loyalCart.balls_min_summ;
+    let exclude_combos = loyalCart.exclude_combos;
+    let exclude_sales = loyalCart.exclude_sales;
+
+    let percent_pay = loyalCart.percent_pay;
+    let percent_pay_pickup = loyalCart.percent_pay_pickup;
+
+
+
+    let total_price = getTotalPriceToBallMath(exclude_combos);
+
+
+
+    let summ = 0;
+    let max_active_balls = 0;
+
+    if (daliveryType == '1') {
+
+        max_active_balls = total_price / 100 * percent_pay;
+
+    } else {
+        max_active_balls = total_price / 100 * percent_pay_pickup;
+    }
+
+    if (total_price - max_active_balls <= balls_min_summ) {
+        max_active_balls = total_price - balls_min_summ;
+    }
+
+    if (max_active_balls >= balls) {
+        max_active_balls = balls;
+    }
+
+    if (max_active_balls < 0) {
+        max_active_balls = 0;
+    }
+    max_active_balls = Math.floor(max_active_balls);
+    console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
+    
+
+    let innerHtms = '';
+    if (max_active_balls > 0) {
+        innerHtms = `
+        <div class="order__info-item" id="balls_info">
+            <p>Доступно баллов:</p>
+            <div>${balls} (можно списать ${max_active_balls})</div>
+        </div>
+        `
+    } else {
+        innerHtms = ''
+    }
+
+    $('#balls').html(innerHtms);
+    
+
+    return summ
+
+}
+
+
 // Сумма всех скидок
 function getAllDiscount() {
     let deliveryType = localStorage.getItem("deliveryType"); 
@@ -638,6 +831,8 @@ function getAllDiscount() {
     let first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
 
     let sale_persent = 0;
+
+    
 
     // Округляем сумму скидки первой доставки
     first_delivery_summ = Math.floor(first_delivery_summ);
@@ -674,11 +869,21 @@ function getAllDiscount() {
     summ = summ + first_delivery_summ;
 
 
-    order = JSON.parse(localStorage.getItem('order'));
+    let order = JSON.parse(localStorage.getItem('order'));
     order.sale_percent = sale_persent
     localStorage.setItem('order', JSON.stringify(order));
 
-    // console.log(sale_persent)
+
+    
+
+
+    // Вычитаем из суммы заказа активные баллы
+    
+    let active_balls = order.bonuses_pay
+
+    summ = summ + active_balls
+
+    // console.log(summ)
 
     return summ;
 }
@@ -1713,6 +1918,8 @@ async function addToCart(context, itemId, type) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     
 
+    setLoyalCart()
+
     let itemElement = document.querySelector(`[data-cart-id="${itemId}"][data-type="${type}"]`);
 
 
@@ -2113,13 +2320,14 @@ $(document).on('click', '.order__register-btn' ,function(e){
         </div>
         <br>
         <div class="order__register-bottom">
-            <button type="button" class="order__register-btn">Отправить еще раз</button>
+            <button type="button" class="order__register-btn order__register-btn--resend">Отправить еще раз</button>
         </div>
         `
         $('.order__register-wrapper').html(innerHTML)
 
         
-        // $(".user-login__btn").countdown(redirect, 120, "Повторная отправка через <br>");
+        $(".order__register-btn--resend").countdown(redirect, 120, "Повторная отправка через ");
+        
 
       });
     
@@ -2139,7 +2347,7 @@ $(document).on('keyup', '.order__input-login' ,function(e){
         </div>
 
         <div class="order__register-bottom">
-            <button type="button" class="order__register-btn">Отправить</button>
+            <button type="button" class="order__register-btn order__register-btn--resend">Отправить</button>
         </div>
         
         `
@@ -2152,12 +2360,12 @@ $(document).on('keyup', '.order__input-login' ,function(e){
         
         if (secGet != '') {
             let sec = 120 - secGet
-            let nowData = $('.user-login__btn').text()
+            let nowData = $('.order__register-btn').text()
             // console.log(sec)
             // console.log(nowData)
             if (sec > 0) {
                 if (nowData == 'Подтвердить') {
-                    $(".user-login__btn").countdown(redirect, sec, "Повторная отправка через <br>");
+                    $(".order__register-btn--resendbtn").countdown(redirect, sec, "Повторная отправка через ");
                 }
             }
         }
@@ -2186,18 +2394,23 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
             code: code,
             sms: 'True'
         }
-    }).done(function(  ) {
+    }).done(function() {
+
+      
 
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = phone
         localStorage.setItem('order', JSON.stringify(order));
        
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
-      
-     
+        
+
+        
+        updateAll()
         
     }).fail(function() {
-        console.log('fail')
+        
+        $('.order__register-input').addClass('order__register-input--error')
     });
 
     
@@ -2210,6 +2423,11 @@ $(document).on('click', '.order__register-logout' ,function(e){
     .done(function(  ) {
 
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
+        let order = JSON.parse(localStorage.getItem('order'));
+        order.user_phone = ''
+        localStorage.setItem('order', JSON.stringify(order));
+        
+        updateAll()
     })
     
 })
@@ -2252,10 +2470,11 @@ function updateAll() {
     deliveryUpdate()
 
     
-    
+    setLoyalCart()
     getMinimalDelivery()
     getAllDiscount()
     payMethodUpdate()
+    maxBallsPay()
     
 }
 
@@ -2662,3 +2881,60 @@ function init() {
 
     }
 }
+
+
+
+// Рабочее время
+
+
+function checkCurrentTime() {
+    var d = new Date();
+    var currentTime = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+
+    fetch(`/api/v1/get_work_active/${d.getDay()-1}/`)
+        .then(response => response.json())
+        .then(data => {
+            var startDelivery = data.start_delivery;
+            var endDelivery = data.end_delivery;
+            var startSecondDelivery = data.start_second_delivery;
+            var endSecondDelivery = data.end_second_delivery;
+
+            if ((currentTime >= startDelivery && currentTime <= endDelivery) || (currentTime >= startSecondDelivery && currentTime <= endSecondDelivery)) {
+                
+                // Здесь можно выполнить какие-то действия, если текущее время попадает в один из диапазонов
+            } else {
+
+                let workTime = JSON.parse(localStorage.getItem('workTime')) || {};
+
+                
+
+                if (!workTime.is_open) {
+                    $('.delivery-popup').removeClass('delivery-popup--active')
+                } else {
+                    $('.delivery-popup').addClass('delivery-popup--active')
+                }
+
+                
+                
+
+                
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
+}
+
+$(document).ready(function() {
+    checkCurrentTime();
+    let workTime = JSON.parse(localStorage.getItem('workTime'));
+    if (!workTime) {
+        localStorage.setItem('workTime', JSON.stringify({is_open: true}));
+    } 
+    
+
+
+});
+
+$('.delivery-popup__btn').click(function() {
+    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
+    $('.delivery-popup').removeClass('delivery-popup--active')
+})

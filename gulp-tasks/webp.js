@@ -73,6 +73,21 @@ gulp.task("fast_webp", () => {
 });
 
 
+gulp.task("flowers_light_webp", () => {
+    return gulp.src(paths.sushi_images.src)
+        .pipe(newer(paths.sushi_images.dist))
+        .pipe(webp(gulpif(production, imageminWebp({
+            lossless: true,
+            quality: 100,
+            alphaQuality: 100
+        }))))
+        .pipe(gulp.dest(paths.sushi_images.dist))
+        .pipe(debug({
+            "title": "Images"
+        }))
+        .on("end", browsersync.reload);
+});
+
 
 
 gulp.task("adminwebp", () => {

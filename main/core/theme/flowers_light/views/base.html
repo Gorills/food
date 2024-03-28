@@ -1,0 +1,255 @@
+{% load recaptcha3 %}{% load theme_static %}{% load thumbnail %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- base -->
+    <title> {% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <meta name="keywords" content="{% block keywords %}{% endblock %}" />
+    <link rel="canonical" href="{{ site }}{% block canonical %}{% endblock %}" />
+    <meta name="theme-color" content="{{ setup.theme_color }}">
+    <link rel="manifest" href="{% url 'manifest_json' %}">
+    {% if setup.active == True %}<meta name="robots" content="index,follow" />{% else %}<meta name="robots" content="noindex,nofollow" />{% endif %}
+    <!-- base -->
+    <!-- og -->
+    <meta property="og:site_name" content="{{ setup.name }}" /> 
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{% block og:title %}{% endblock %}" />
+    <meta property="og:description" content="{% block og:description %}{% endblock %}" />
+    <meta property="og:url" content="{{ site }}{% block og:url %}{% endblock %}" />
+    <meta property="og:image" content="{% block og:image %}{% endblock %}" />
+    <meta property="og:image:secure_url" content="{% block og:image:secure_url %}{% endblock %}" />
+    <meta property="og:image:width" content="537" />
+    <meta property="og:image:height" content="240" />
+    <!-- og -->
+    <!-- twitter -->
+    <meta name="twitter:image" content="{% block twitter:image %}{% endblock %}" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{% block twitter:title %}{% endblock %}"  />
+    <meta name="twitter:description" content="{% block twitter:description %}{% endblock %}" />
+    <!-- twitter -->
+    <!-- icons -->
+    <link rel="shortcut icon" href="{% if setup.icon_ico %}{{ setup.icon_ico.url }}{% endif %}" type="image/x-icon" />
+    <link rel="icon" href="{% if setup.icon_svg %}{{ setup.icon_svg.url }}{% endif %}">
+    <link rel="apple-touch-icon" href="{% if setup.icon_png %}{{ setup.icon_png.url }}{% endif %}" />
+    {% thumbnail setup.icon_png "57x57" format="PNG" as im %}<link rel="apple-touch-icon" sizes="57x57" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "72x72" format="PNG" as im %}<link rel="apple-touch-icon" sizes="72x72" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "76x76" format="PNG" as im %}<link rel="apple-touch-icon" sizes="76x76" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "114x114" format="PNG" as im %}<link rel="apple-touch-icon" sizes="114x114" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "120x120" format="PNG" as im %}<link rel="apple-touch-icon" sizes="120x120" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "144x144" format="PNG" as im %}<link rel="apple-touch-icon" sizes="144x144" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "152x152" format="PNG" as im %}<link rel="apple-touch-icon" sizes="152x152" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "180x180" format="PNG" as im %}<link rel="apple-touch-icon" sizes="180x180" href="{{ im.url }}" />{% endthumbnail %}
+    <!-- icons -->
+    <style>
+        :root {
+
+            --theme-font: "{{ font.name }}", sans-serif;
+            --color-primary: {{ colors.primary }};
+            --color-primary-light: {{ colors.primary }};
+            --color-primary-dark: {{ colors.primary }};
+
+
+            --color-secondary: {{ colors.secondary}};
+            --color-success: {{ colors.success }};
+            --color-danger: {{ colors.danger }};
+            --color-warning: {{ colors.warning }};
+            --color-info: {{ colors.info }};
+
+            --color-header: {{ colors.header_bg }};
+            --color-header-font: {{ colors.header_font }};
+
+            --color-phone: {{ colors.phone_color }};
+            {% if colors.phone_decorations %}
+            --color-phone-decorations: underline;
+            {% else %}
+            --color-phone-decorations: none;
+            {% endif %}
+            
+
+            --color-footer: {{ colors.footer_color }};
+            --color-footer-font: {{ colors.footer_font }};
+
+            --color-cart-border: {{ colors.cart_border }};
+            --color-cart-font: {{ colors.cart_fonts_color }};
+            --color-cart-bg: {{ colors.cart_bg }};
+
+            --color-search: {{ colors.search_bg }};
+            --color-search-font: {{ colors.search_font }};
+
+            --color-mobile-menu: {{ colors.mobile_menu_bg }};
+            --color-mobile-menu-font: {{ colors.mobile_menu_font }};
+
+            --color-btn-bg: {{ colors.bg_btn }};
+            --color-btn-border: {{ colors.border_btn }};
+            --color-btn-font: {{ colors.color_btn }};
+            --color-btn-font-light: {{ colors.color_btn_light }};
+
+            --color-body: {{ colors.body_bg }};
+            --color-body-light: {{ colors.body_bg_light }};
+            --color-font-light: {{ colors.body_font_light }};
+            --color-gray: {{ colors.gray }};
+
+            --color-font: {{ colors.body_font }};
+            --color-font-light: #999999;
+            --color-font-gray: #666666;
+            --color-font-dark: {{ colors.info }};
+
+
+            --color-bg-lightest: #f6f6f6;
+            --color-bg-light: #e9e4d6;
+            --color-bg: {{ colors.info }};
+            --color-bg-dark: #000;
+
+            --color-product-card: {{ colors.product_card_bg }};
+            --color-product-card-font: {{ colors.product_card_font }};
+            --color-catalog: {{ colors.catalog_bg }};
+
+            --logo-height: {{ setup.logo_height }}px;
+            {% if setup.logo_width %}
+            --logo-width: {{ setup.logo_width }}px;
+            {% endif %}
+        }
+    </style>
+    {% comment %} Fonts {% endcomment %}
+    {% if font.name == "Roboto" %}
+        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+    {% elif font.name == "Certa" %}
+        <link href="{% get_static 'css/fonts/certa.css' %}" rel="stylesheet">
+    {% elif font.name == 'Zombie' %}
+        <link href="{% get_static 'css/fonts/zombie.css' %}" rel="stylesheet">
+    {% endif %}
+
+    <link href="{% get_libs 'owl/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">
+
+    {% for code in codes %}
+    {% if code.h_f == True %}
+    {% if subdomain and code.subdomain == subdomain %}
+    {{ code.code | safe }}
+    {% elif not code.subdomain %}
+    {{ code.code | safe }}
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+
+    
+</head>
+
+
+    
+    
+    
+<body {% if colors.bg_image %}style="background-image: url({{ colors.bg_image.url }});" class="body-bg"{% endif %}>
+
+   
+   
+    {% if not subdomains or subdomain or request.path == '/accounts/login/' %}
+    {% include 'components/header.html' %}
+
+    
+
+
+    <div class="content">
+        <div class="content__inner">
+            {% block body %}
+                {% block content %}
+                {% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+
+    {% block extra_body %}{% endblock %}
+    {% include 'components/footer.html' %}
+    {% include 'orders/order/order-done.html' %}
+    {% include 'cart/cart.html' %}
+    {% include 'global/search.html' %}
+
+    
+
+    
+   
+    
+
+    {% if request.path != '/accounts/login/' %}
+    {% include 'components/popup.html' %}
+    {% comment %} {% include 'components/minimum_bar.html' %} {% endcomment %}
+    {% include 'components/map.html' %}
+    {% include 'components/blocked.html' %}
+    {% include 'components/delivery_blocked.html' %}
+    {% endif %}
+    {% else %}
+    
+    <div class="global-subdomain">
+
+        <div class="global-subdomain__inner">
+
+            {% thumbnail setup.logo_dark  "300" format="WEBP" as im %}
+                <img class="global-subdomain__logo" src="{{ im.url }}" height="{{ im.height }}" alt="{{ setup.name }}" class="global-subdomain__inner__logo">
+            {% endthumbnail %}
+
+            <p class="global-subdomain__text">Выберите город</p>
+            <div class="global-subdomain__row">
+                {% for sub in subdomains %}
+                <a href="{{ protocol }}://{{ sub.subdomain }}.{{ request.get_host }}" class="global-subdomain__item">{{ sub.name }}</a>
+                
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    
+
+    {% endif %}
+    
+    <div class="container">
+        <div id="for-cookies">
+            
+
+        </div>
+    </div>
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=9cb6c9d2-6eb1-4e15-952e-3f90ae7a078e&suggest_apikey=1266fcfc-1785-4adf-86a5-26cb6f25897e&{% now "H:i:s" %}" type="text/javascript"></script>  
+    {% comment %} <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=b0ace043-1020-4411-ac5e-80354ec8241c&suggest_apikey=9f06592c-1ddd-4c22-a358-a91b37a0f2a3&{% now "H:i:s" %}" type="text/javascript"></script> {% endcomment %}
+    
+    {% comment %} <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c6b35bfc-e3ce-4d19-80e0-8bc4e103750c&suggest_apikey=c49d80f0-26f7-42fb-b987-8af6aad1074d&{% now "H:i:s" %}" type="text/javascript"></script> {% endcomment %}
+
+    <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
+    <script src="{% get_libs 'js/jquery.maskedinput.min.js' %}?v1.0.0"></script>
+    <script src="{% get_libs 'owl/owl.carousel.min.js' %}?v1.0.0"></script>
+    <script src="{% get_static 'js/map.js' %}?v{% now "H:i:s" %}"></script>
+    <script src="{% get_static 'js/app.js' %}?v{% now "H:i:s" %}"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker.register("{% get_libs 'service-worker.js' %}").then((registration) => {
+              console.log("Service worker registered:", registration);
+            }).catch((error) => {
+              console.error("Service worker registration failed:", error);
+            });
+          });
+        }
+    </script>
+      
+
+        
+    {% for code in codes %}
+    {% if code.h_f == False %}
+    {% if subdomain and code.subdomain == subdomain %}
+    {{ code.code | safe }}
+    {% elif not code.subdomain %}
+    {{ code.code | safe }}
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% recaptcha_init %}
+    {% recaptcha_ready action_name='homepage' %}
+</body>
+</html>
+

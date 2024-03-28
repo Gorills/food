@@ -1,0 +1,415 @@
+{% load thumbnail %}
+<header class="header {% if colors.header_image %}header--image-bg{% endif %}" {% if colors.header_image %}style="background-image: url({{ colors.header_image.url }});"{% endif %}>
+    <div class="header__wrapper">
+        <div class="container">
+            <div class="header__inner">
+                <div  class="header__top" >
+                    <div class="header__left">
+                        {% if request.path == '/' %}
+                            {% if setup.logo_dark %}
+                                
+                               
+                                    <img src="{{ setup.get_logo.url }}" 
+                                        alt="{{ setup.name }}" 
+                                        title="{{ setup.name }}" 
+                                        style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                        class="header__logo">
+
+                               
+                            {% else %}
+                            <div class="header__logo">{{ setup.name }}</div>
+                            {% endif %}
+                        {% else %}
+                            {% if setup.logo_dark %}
+                            <a href="{{ site }}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap">
+                               
+                                    <img 
+                                        src="{{ setup.get_logo.url }}" 
+                                        alt="{{ setup.name }}" 
+                                        title="{{ setup.name }}" 
+                                        style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                        class="header__logo">
+                            </a>
+                            {% else %}
+                            <a href="{% url 'home' %}" class="header__logo">{{ setup.name }}</a>
+                            {% endif %}
+                        {% endif %}
+
+                       
+
+                        <nav class="header__nav" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
+
+                            <ul class="header__list" itemprop="about" itemscope itemtype="http://schema.org/ItemList">
+                                {% for page in pages %}
+                                    {% if page.top_link == True %}
+                                    <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                        <meta itemprop="name" content="{{ page.name }}" />
+                                        <a class="header__link" itemprop="url" href="{{ page.get_absolute_url }}">{{ page.name }}</a>
+
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            
+                                {% if posts %}
+                                <li class="header__item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                    <meta itemprop="name" content="Новости" />
+                                    <a class="header__link" itemprop="url" href="{% url 'blog' %}">Новости</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+
+                    
+                    <div class="header__contacts {% if shop_setup.work_time %}header__contacts--col{% endif %}">
+                        {% if subdomain %}
+                            <div class="header__subdomain-wrap">
+                            {% for sub in subdomains %}
+                                {% if sub == subdomain %}
+                                    <div class="header__subdomain-check">
+                                        Ваш город: <div class="header__subdomain">{{ sub.name }}</div>  
+                                        <svg class="_19PskF" fill="none" height="6" viewBox="0 0 7 6" width="7" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 6L0.468911 0.75L6.53109 0.75L3.5 6Z" fill="#226EE8"></path></svg>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                                <div class="header__subdomain-drop">
+                                    {% for sub in subdomains %}
+                                    <a href="{{protocol}}://{{ sub.subdomain }}.{{domain}}{{ request.path }}" class="header__subdomain-item">{{ sub.name }}</a>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+                        
+                        {% endif %}
+                        <div class="header__contacts-wrapper-inner">
+
+                            {% if subdomain.phone %}
+                
+                                <a href="tel:{{ subdomain.get_phone }}" class="header__contacts-link header__contacts-phone">
+                                    
+                                    
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.2932 8.94914C10.0597 8.81224 9.77266 8.81512 9.54029 8.95316L8.36344 9.65432C8.1 9.81135 7.77099 9.79294 7.52941 9.60428C7.11182 9.27815 6.43942 8.72941 5.85444 8.14444C5.26947 7.55947 4.72074 6.88706 4.3946 6.46947C4.20594 6.22789 4.18753 5.89888 4.34456 5.63544L5.04572 4.4586C5.18434 4.22622 5.18549 3.93689 5.0486 3.70336L3.32187 0.753769C3.15448 0.468473 2.82202 0.328125 2.50049 0.406927C2.18816 0.482853 1.78265 0.668065 1.35758 1.09371C0.026582 2.42471 -0.680332 4.66969 4.325 9.67503C9.33034 14.6804 11.5747 13.974 12.9063 12.6425C13.3325 12.2162 13.5172 11.8102 13.5937 11.4972C13.6713 11.1763 13.5333 10.8461 13.2486 10.6793C12.5376 10.2635 11.0042 9.36558 10.2932 8.94914Z" fill="#D8D8D8"/>
+                                    </svg>
+                                    
+                                    {{ subdomain.phone }}
+                                </a>
+                                
+                            {% else %}
+
+                            
+                              {{ setup.get_phone | safe }}
+                                    
+            
+
+                            {% endif %}
+
+                            
+
+                            {% if setup.vk %}
+                            <a href="{{ setup.vk }}" class="header__contacts-soc" target="_blank">
+
+                                <?xml version="1.0" encoding="iso-8859-1"?>
+
+                                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        width="548.358px" height="548.358px" viewBox="0 0 548.358 548.358" style="enable-background:new 0 0 548.358 548.358;"
+                                        xml:space="preserve">
+                                    <g>
+                                        <path d="M545.451,400.298c-0.664-1.431-1.283-2.618-1.858-3.569c-9.514-17.135-27.695-38.167-54.532-63.102l-0.567-0.571
+                                            l-0.284-0.28l-0.287-0.287h-0.288c-12.18-11.611-19.893-19.418-23.123-23.415c-5.91-7.614-7.234-15.321-4.004-23.13
+                                            c2.282-5.9,10.854-18.36,25.696-37.397c7.807-10.089,13.99-18.175,18.556-24.267c32.931-43.78,47.208-71.756,42.828-83.939
+                                            l-1.701-2.847c-1.143-1.714-4.093-3.282-8.846-4.712c-4.764-1.427-10.853-1.663-18.278-0.712l-82.224,0.568
+                                            c-1.332-0.472-3.234-0.428-5.712,0.144c-2.475,0.572-3.713,0.859-3.713,0.859l-1.431,0.715l-1.136,0.859
+                                            c-0.952,0.568-1.999,1.567-3.142,2.995c-1.137,1.423-2.088,3.093-2.848,4.996c-8.952,23.031-19.13,44.444-30.553,64.238
+                                            c-7.043,11.803-13.511,22.032-19.418,30.693c-5.899,8.658-10.848,15.037-14.842,19.126c-4,4.093-7.61,7.372-10.852,9.849
+                                            c-3.237,2.478-5.708,3.525-7.419,3.142c-1.715-0.383-3.33-0.763-4.859-1.143c-2.663-1.714-4.805-4.045-6.42-6.995
+                                            c-1.622-2.95-2.714-6.663-3.285-11.136c-0.568-4.476-0.904-8.326-1-11.563c-0.089-3.233-0.048-7.806,0.145-13.706
+                                            c0.198-5.903,0.287-9.897,0.287-11.991c0-7.234,0.141-15.085,0.424-23.555c0.288-8.47,0.521-15.181,0.716-20.125
+                                            c0.194-4.949,0.284-10.185,0.284-15.705s-0.336-9.849-1-12.991c-0.656-3.138-1.663-6.184-2.99-9.137
+                                            c-1.335-2.95-3.289-5.232-5.853-6.852c-2.569-1.618-5.763-2.902-9.564-3.856c-10.089-2.283-22.936-3.518-38.547-3.71
+                                            c-35.401-0.38-58.148,1.906-68.236,6.855c-3.997,2.091-7.614,4.948-10.848,8.562c-3.427,4.189-3.905,6.475-1.431,6.851
+                                            c11.422,1.711,19.508,5.804,24.267,12.275l1.715,3.429c1.334,2.474,2.666,6.854,3.999,13.134c1.331,6.28,2.19,13.227,2.568,20.837
+                                            c0.95,13.897,0.95,25.793,0,35.689c-0.953,9.9-1.853,17.607-2.712,23.127c-0.859,5.52-2.143,9.993-3.855,13.418
+                                            c-1.715,3.426-2.856,5.52-3.428,6.28c-0.571,0.76-1.047,1.239-1.425,1.427c-2.474,0.948-5.047,1.431-7.71,1.431
+                                            c-2.667,0-5.901-1.334-9.707-4c-3.805-2.666-7.754-6.328-11.847-10.992c-4.093-4.665-8.709-11.184-13.85-19.558
+                                            c-5.137-8.374-10.467-18.271-15.987-29.691l-4.567-8.282c-2.855-5.328-6.755-13.086-11.704-23.267
+                                            c-4.952-10.185-9.329-20.037-13.134-29.554c-1.521-3.997-3.806-7.04-6.851-9.134l-1.429-0.859c-0.95-0.76-2.475-1.567-4.567-2.427
+                                            c-2.095-0.859-4.281-1.475-6.567-1.854l-78.229,0.568c-7.994,0-13.418,1.811-16.274,5.428l-1.143,1.711
+                                            C0.288,140.146,0,141.668,0,143.763c0,2.094,0.571,4.664,1.714,7.707c11.42,26.84,23.839,52.725,37.257,77.659
+                                            c13.418,24.934,25.078,45.019,34.973,60.237c9.897,15.229,19.985,29.602,30.264,43.112c10.279,13.515,17.083,22.176,20.412,25.981
+                                            c3.333,3.812,5.951,6.662,7.854,8.565l7.139,6.851c4.568,4.569,11.276,10.041,20.127,16.416
+                                            c8.853,6.379,18.654,12.659,29.408,18.85c10.756,6.181,23.269,11.225,37.546,15.126c14.275,3.905,28.169,5.472,41.684,4.716h32.834
+                                            c6.659-0.575,11.704-2.669,15.133-6.283l1.136-1.431c0.764-1.136,1.479-2.901,2.139-5.276c0.668-2.379,1-5,1-7.851
+                                            c-0.195-8.183,0.428-15.558,1.852-22.124c1.423-6.564,3.045-11.513,4.859-14.846c1.813-3.33,3.859-6.14,6.136-8.418
+                                            c2.282-2.283,3.908-3.666,4.862-4.142c0.948-0.479,1.705-0.804,2.276-0.999c4.568-1.522,9.944-0.048,16.136,4.429
+                                            c6.187,4.473,11.99,9.996,17.418,16.56c5.425,6.57,11.943,13.941,19.555,22.124c7.617,8.186,14.277,14.271,19.985,18.274
+                                            l5.708,3.426c3.812,2.286,8.761,4.38,14.853,6.283c6.081,1.902,11.409,2.378,15.984,1.427l73.087-1.14
+                                            c7.229,0,12.854-1.197,16.844-3.572c3.998-2.379,6.373-5,7.139-7.851c0.764-2.854,0.805-6.092,0.145-9.712
+                                            C546.782,404.25,546.115,401.725,545.451,400.298z"/>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    <g>
+                                    </g>
+                                    </svg>
+                            </a>
+                            {% endif %}
+                            {% if setup.ok %}
+                            <a href="{{ setup.ok }}" class="header__contacts-soc" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                                    <path d="M120.001,753.38c10.372,0,18.807-8.435,18.807-18.807c0-10.362-8.435-18.799-18.807-18.799 c-10.362,0-18.807,8.437-18.807,18.799C101.194,744.945,109.639,753.38,120.001,753.38z M120.001,689.164 c25.055,0,45.422,20.367,45.422,45.409c0,25.052-20.367,45.427-45.422,45.427c-25.049,0-45.422-20.375-45.422-45.427 C74.579,709.532,94.952,689.164,120.001,689.164z M138.378,652.109c9.247,2.107,18.165,5.765,26.377,10.925 c6.215,3.917,8.089,12.134,4.172,18.35c-3.912,6.23-12.124,8.103-18.35,4.186c-18.605-11.703-42.561-11.698-61.156,0 c-6.227,3.917-14.438,2.043-18.346-4.186c-3.917-6.221-2.049-14.433,4.168-18.35c8.211-5.154,17.129-8.818,26.376-10.925 l-25.395-25.394c-5.192-5.197-5.192-13.621,0.005-18.817c2.601-2.596,6.004-3.897,9.406-3.897c3.408,0,6.816,1.3,9.417,3.897 l24.943,24.954l24.965-24.954c5.192-5.197,13.616-5.197,18.812,0c5.202,5.196,5.202,13.626,0,18.817 C163.773,626.715,138.378,652.109,138.378,652.109z" transform="matrix(.125 0 0 -.125 0 102.5)"/>
+                                </svg>
+
+                            </a>
+                            {% endif %}
+                            {% if setup.whatsapp %}
+                            <a href="{{ setup.whatsapp }}" class="header__contacts-soc" target="_blank">
+
+                                <?xml version="1.0" encoding="iso-8859-1"?>
+                                <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    width="90px" height="90px" viewBox="0 0 90 90" style="enable-background:new 0 0 90 90;" xml:space="preserve">
+                                <g>
+                                    <path id="WhatsApp" d="M90,43.841c0,24.213-19.779,43.841-44.182,43.841c-7.747,0-15.025-1.98-21.357-5.455L0,90l7.975-23.522
+                                        c-4.023-6.606-6.34-14.354-6.34-22.637C1.635,19.628,21.416,0,45.818,0C70.223,0,90,19.628,90,43.841z M45.818,6.982
+                                        c-20.484,0-37.146,16.535-37.146,36.859c0,8.065,2.629,15.534,7.076,21.61L11.107,79.14l14.275-4.537
+                                        c5.865,3.851,12.891,6.097,20.437,6.097c20.481,0,37.146-16.533,37.146-36.857S66.301,6.982,45.818,6.982z M68.129,53.938
+                                        c-0.273-0.447-0.994-0.717-2.076-1.254c-1.084-0.537-6.41-3.138-7.4-3.495c-0.993-0.358-1.717-0.538-2.438,0.537
+                                        c-0.721,1.076-2.797,3.495-3.43,4.212c-0.632,0.719-1.263,0.809-2.347,0.271c-1.082-0.537-4.571-1.673-8.708-5.333
+                                        c-3.219-2.848-5.393-6.364-6.025-7.441c-0.631-1.075-0.066-1.656,0.475-2.191c0.488-0.482,1.084-1.255,1.625-1.882
+                                        c0.543-0.628,0.723-1.075,1.082-1.793c0.363-0.717,0.182-1.344-0.09-1.883c-0.27-0.537-2.438-5.825-3.34-7.977
+                                        c-0.902-2.15-1.803-1.792-2.436-1.792c-0.631,0-1.354-0.09-2.076-0.09c-0.722,0-1.896,0.269-2.889,1.344
+                                        c-0.992,1.076-3.789,3.676-3.789,8.963c0,5.288,3.879,10.397,4.422,11.113c0.541,0.716,7.49,11.92,18.5,16.223
+                                        C58.2,65.771,58.2,64.336,60.186,64.156c1.984-0.179,6.406-2.599,7.312-5.107C68.398,56.537,68.398,54.386,68.129,53.938z"/>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                <g>
+                                </g>
+                                </svg>
+                            </a>
+                            {% endif %}
+                            {% if setup.telegram %}
+                            <a href="{{ setup.telegram }}" class="header__contacts-soc" target="_blank">
+
+
+                                <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="mdi-telegram" width="24" height="24" viewBox="0 0 24 24"><path d="M9.78,18.65L10.06,14.42L17.74,7.5C18.08,7.19 17.67,7.04 17.22,7.31L7.74,13.3L3.64,12C2.76,11.75 2.75,11.14 3.84,10.7L19.81,4.54C20.54,4.21 21.24,4.72 20.96,5.84L18.24,18.65C18.05,19.56 17.5,19.78 16.74,19.36L12.6,16.3L10.61,18.23C10.38,18.46 10.19,18.65 9.78,18.65Z" /></svg>                        </a>
+                            {% endif %}
+                            {% if setup.viber %}
+                            <a href="{{ setup.viber }}" class="header__contacts-soc" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                    <path d="M15.198 0.005c-2.568 0.031-8.089 0.453-11.177 3.286-2.297 2.276-3.099 5.641-3.193 9.802-0.078 4.146-0.172 11.932 7.333 14.052v3.229c0 0-0.047 1.292 0.807 1.557 1.052 0.333 1.651-0.661 2.651-1.729l1.865-2.109c5.135 0.427 9.068-0.557 9.521-0.703 1.042-0.333 6.911-1.083 7.87-8.87 0.984-8.042-0.479-13.109-3.12-15.401h-0.016c-0.797-0.734-4-3.068-11.156-3.094 0 0-0.531-0.036-1.385-0.021zM15.286 2.266c0.729-0.005 1.172 0.026 1.172 0.026 6.057 0.016 8.948 1.839 9.63 2.453 2.224 1.906 3.37 6.474 2.531 13.188-0.797 6.51-5.557 6.922-6.438 7.203-0.375 0.12-3.839 0.974-8.203 0.693 0 0-3.25 3.922-4.266 4.932-0.161 0.177-0.349 0.229-0.469 0.203-0.172-0.042-0.224-0.255-0.214-0.547l0.031-5.359c-6.365-1.76-5.99-8.401-5.922-11.87 0.078-3.469 0.729-6.307 2.667-8.229 2.609-2.359 7.297-2.677 9.479-2.693zM15.766 5.734c-0.219-0.005-0.401 0.177-0.401 0.396 0 0.224 0.182 0.401 0.401 0.401 2.005-0.036 3.938 0.724 5.375 2.12 1.453 1.411 2.161 3.307 2.188 5.786 0 0.219 0.177 0.401 0.401 0.401v-0.016c0.219 0 0.401-0.177 0.401-0.396 0.099-2.359-0.776-4.651-2.417-6.349-1.583-1.547-3.589-2.344-5.948-2.344zM10.495 6.651c-0.281-0.042-0.573 0.016-0.818 0.161h-0.021c-0.542 0.318-1.047 0.719-1.526 1.255-0.365 0.422-0.563 0.849-0.615 1.26-0.031 0.245-0.010 0.49 0.063 0.724l0.026 0.016c0.411 1.208 0.948 2.37 1.604 3.464 0.844 1.536 1.885 2.958 3.094 4.229l0.036 0.052 0.057 0.042 0.036 0.042 0.042 0.036c1.276 1.214 2.698 2.255 4.24 3.109 1.76 0.958 2.828 1.411 3.469 1.599v0.010c0.188 0.057 0.359 0.083 0.531 0.083 0.547-0.042 1.063-0.26 1.469-0.63 0.521-0.469 0.932-0.984 1.24-1.531v-0.010c0.307-0.578 0.203-1.125-0.24-1.495-0.885-0.776-1.849-1.464-2.865-2.057-0.682-0.37-1.375-0.146-1.656 0.229l-0.599 0.755c-0.307 0.375-0.865 0.323-0.865 0.323l-0.016 0.010c-4.161-1.063-5.271-5.276-5.271-5.276s-0.052-0.573 0.333-0.865l0.75-0.604c0.359-0.292 0.609-0.984 0.224-1.667-0.589-1.021-1.276-1.979-2.052-2.865-0.167-0.208-0.406-0.349-0.672-0.401zM16.458 7.839c-0.531 0-0.531 0.802 0.005 0.802 1.333 0.021 2.604 0.573 3.531 1.531 0.844 0.932 1.281 2.172 1.198 3.427 0.005 0.219 0.182 0.396 0.401 0.396l0.016 0.021c0.219 0 0.401-0.182 0.401-0.401 0.036-1.589-0.458-2.922-1.427-3.99-0.974-1.068-2.333-1.667-4.068-1.786-0.021 0-0.036 0-0.057 0zM17.115 9.995c-0.547-0.016-0.568 0.802-0.026 0.818 1.318 0.068 1.958 0.734 2.042 2.104 0.005 0.219 0.182 0.391 0.396 0.391h0.016c0.224-0.010 0.401-0.203 0.385-0.427-0.094-1.786-1.068-2.792-2.797-2.885-0.005 0-0.010 0-0.016 0z"/>
+                                </svg>
+
+                            </a>
+                            {% endif %}
+
+                            {% if shop_setup.work_time %}
+                            <div class="header__work-time">
+                                <p class="header__work-title">Время работы:</p>
+                                <p class="header__work-data"> {{ shop_setup.work_time }}</p>
+                            
+                            </div>
+                            {% endif %}
+
+                        </div>
+                        {% comment %} <a href="#" class="header__contacts-btn">Обратный звонок</a> {% endcomment %}
+                        <div class="header__right">
+                            {% if setup.sms == True %}
+        
+                                    <a href="{% url 'home_login' %}" class="header__sign">
+                                                                        
+                                                                            
+                                        
+                                        <?xml version="1.0" ?><svg id="Layer_1" style="enable-background:new 0 0 128 128;" version="1.1" viewBox="0 0 128 128" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path d="M30,49c0,18.7,15.3,34,34,34s34-15.3,34-34S82.7,15,64,15S30,30.3,30,49z M90,49c0,14.3-11.7,26-26,26S38,63.3,38,49   s11.7-26,26-26S90,34.7,90,49z"/><path d="M24.4,119.4C35,108.8,49,103,64,103s29,5.8,39.6,16.4l5.7-5.7C97.2,101.7,81.1,95,64,95s-33.2,6.7-45.3,18.7L24.4,119.4z"/></g></svg>
+            
+                                    </a>
+                            {% endif %}
+        
+                            <a href="#" class="header__search">
+                               
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.75 21.75C17.2728 21.75 21.75 17.2728 21.75 11.75C21.75 6.22715 17.2728 1.75 11.75 1.75C6.22715 1.75 1.75 6.22715 1.75 11.75C1.75 17.2728 6.22715 21.75 11.75 21.75Z" stroke="#545454" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M24.25 24.25L18.8125 18.8125" stroke="#545454" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </a>
+
+                            
+                           
+
+                            <button class="cart__btn" id="cart">
+                                
+                                <div class="cart__btn-cart">
+                                    <div class="cart__btn-num" id="cart_num">0</div>
+
+                                    <svg class="cart__btn-image" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.8333 10.0002V7.54183C20.8333 6.77578 20.6824 6.01724 20.3892 5.30951C20.0961 4.60178 19.6664 3.95871 19.1247 3.41704C18.583 2.87536 17.94 2.44568 17.2322 2.15253C16.5245 1.85938 15.766 1.7085 14.9999 1.7085C14.2339 1.7085 13.4753 1.85938 12.7676 2.15253C12.0599 2.44568 11.4168 2.87536 10.8751 3.41704C10.3335 3.95871 9.90377 4.60178 9.61062 5.30951C9.31747 6.01724 9.16658 6.77578 9.16658 7.54183V13.3752C9.16658 13.5962 9.25438 13.8081 9.41066 13.9644C9.56694 14.1207 9.7789 14.2085 9.99992 14.2085C10.2209 14.2085 10.4329 14.1207 10.5892 13.9644C10.7455 13.8081 10.8333 13.5962 10.8333 13.3752V11.6668H17.4999V10.0002H10.8333V7.54183C10.8333 6.43676 11.2722 5.37695 12.0536 4.59555C12.835 3.81415 13.8948 3.37516 14.9999 3.37516C16.105 3.37516 17.1648 3.81415 17.9462 4.59555C18.7276 5.37695 19.1666 6.43676 19.1666 7.54183V13.3335C19.1666 13.5545 19.2544 13.7665 19.4107 13.9228C19.5669 14.079 19.7789 14.1668 19.9999 14.1668C20.2209 14.1668 20.4329 14.079 20.5892 13.9228C20.7455 13.7665 20.8333 13.5545 20.8333 13.3335V11.6668H24.9999V26.6668H4.99992V11.6668H7.49992V10.0002H3.33325V26.7418C3.33325 27.164 3.50094 27.5688 3.79944 27.8673C4.09794 28.1658 4.50278 28.3335 4.92492 28.3335H25.0749C25.4971 28.3335 25.9019 28.1658 26.2004 27.8673C26.4989 27.5688 26.6666 27.164 26.6666 26.7418V10.0002H20.8333Z" fill="#545454"></path>
+                                    </svg>
+                                </div>
+                                <div class="cart__btn-row">
+                                    <p class="cart__btn-text">На сумму</p>
+                                    <div class="cart__btn-summ"> <span id="cart_summ">0</span></div>
+
+                                </div>
+                            </button>
+                            
+                            
+                            <div class="toggle-menu" id="menu">
+                                <div class="toggle-section">
+                                    <a href="#" class="menu-btn">
+                                        <span></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+
+                    
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+  
+    <div class="header-bottom">
+
+        
+        <div class="container">
+            <nav class="header-bottom__inner" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
+                <ul class="header-bottom__list" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
+
+                    {% if request.path == '/' %}
+                        {% if setup.logo_dark %}
+                            
+                            
+                                <img src="{{ setup.get_logo.url }}" 
+                                    alt="{{ setup.name }}" 
+                                    title="{{ setup.name }}" 
+                                    style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                    class="header__logo mobile-show">
+
+                            
+                        {% else %}
+                        <div class="header__logo mobile-show">{{ setup.name }}</div>
+                        {% endif %}
+                    {% else %}
+                        {% if setup.logo_dark %}
+                        <a href="{{ site }}" style="{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" class="header__logo-wrap mobile-show">
+                            
+                                <img 
+                                    src="{{ setup.get_logo.url }}" 
+                                    alt="{{ setup.name }}" 
+                                    title="{{ setup.name }}" 
+                                    style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                                    class="header__logo ">
+                        </a>
+                        {% else %}
+                        <a href="{% url 'home' %}" class="header__logo mobile-show">{{ setup.name }}</a>
+                        {% endif %}
+                    {% endif %}
+                        
+
+                    
+                    <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                        <a class="header-bottom__link" itemprop="url" href="{% url "home" %}">Главная</a>
+                        <meta itemprop="name" content="Главная" />
+                    </li>
+                    <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                        <a class="header-bottom__link" itemprop="url" href="{% url "catalog" %}">Меню</a>
+                        <meta itemprop="name" content="Меню" />
+                    </li>
+                    {% for page in pages %}
+                        {% if page.top_link == True %}
+                            <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                <a class="header-bottom__link" itemprop="url" href="{{ page.get_absolute_url }}">{{ page.name }}</a>
+                                <meta itemprop="name" content="{{ page.name }}" />
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if combos %}
+                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                            <a class="header-bottom__link" itemprop="url" href="{% url 'home' %}#combo">Комбо</a>
+                            <meta itemprop="name" content="Комбо" />
+                        </li>
+                    
+                    
+                    {% endif %}
+                    {% for cat in categorys %}
+                        {% if cat.top == True %}
+                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                            <a class="header-bottom__link" itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
+                            <meta itemprop="name" content="{{ cat.name }}" />
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+        
+                </ul>
+
+                
+
+
+            </nav>
+        </div>
+    </div> 
+</header>
+

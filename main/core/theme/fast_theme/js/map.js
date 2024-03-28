@@ -1773,57 +1773,6 @@ $(document).on('click','.content',function(){
 
 
 
-  
-
-  $(document).ready(function() {
-    var isHidden = getCookie('isHidden');
-  
-    if (isHidden === 'true') {
-      $('.delivery-popup').hide();
-      $('.delivery-popup__btn').prop('disabled', true);
-    } else {
-        $('.delivery-popup').addClass('delivery-popup--active');
-        
-    }
-  
-    $('.delivery-popup__btn').click(function(e) {
-        e.preventDefault();
-        $('.delivery-popup').hide();
-        $(this).prop('disabled', true);
-    
-        setCookie('isHidden', 'true', 1/24); // Устанавливаем куку на 1 день (время указано в днях)
-    });
-  });
-  
-  // Функция для установки куки
-  function setCookie(name, value, days) {
-    var expires = '';
-    if (days) {
-      var date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      expires = '; expires=' + date.toUTCString();
-    }
-    document.cookie = name + '=' + (value || '') + expires + '; path=/';
-  }
-  
-  // Функция для получения значения куки по имени
-  function getCookie(name) {
-    var nameEQ = name + '=';
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1, c.length);
-      }
-      if (c.indexOf(nameEQ) === 0) {
-        return c.substring(nameEQ.length, c.length);
-      }
-    }
-    return null;
-  }
-  
-
-
 
 
 // $('#finaladress').attr('required', 'required').attr('name', 'address');

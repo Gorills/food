@@ -25,6 +25,7 @@ urlpatterns = [
     path('get_shop_settings/', views.get_shop_settings, name='get_shop_settings'),
     path('related_products/', views.related_products, name='related_products'),
     path('get_user/', views.get_user, name='get_user'),
+    path('get_work_active/<int:day>/', views.get_work_active, name='get_work_active'),
     
    
    
