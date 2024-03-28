@@ -2886,29 +2886,6 @@ function init() {
 
 // Рабочее время
 
-$(document).ready(function() {
-    checkCurrentTime();
-    let workTime = JSON.parse(localStorage.getItem('workTime'));
-    let d = new Date();
-    let time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-    console.log(time)
-
-    
-    if (!workTime || workTime.day != d.getDay()-1) {
-        
-        localStorage.setItem('workTime', JSON.stringify({
-            is_open: true,
-            day: d.getDay()-1
-        }));
-    } 
-
-});
-
-$('.delivery-popup__btn').click(function() {
-    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
-    $('.delivery-popup').removeClass('delivery-popup--active')
-})
-
 
 function checkCurrentTime() {
     var d = new Date();
@@ -2945,3 +2922,19 @@ function checkCurrentTime() {
         })
         .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
 }
+
+$(document).ready(function() {
+    checkCurrentTime();
+    let workTime = JSON.parse(localStorage.getItem('workTime'));
+    if (!workTime) {
+        localStorage.setItem('workTime', JSON.stringify({is_open: true}));
+    } 
+    
+
+
+});
+
+$('.delivery-popup__btn').click(function() {
+    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
+    $('.delivery-popup').removeClass('delivery-popup--active')
+})
