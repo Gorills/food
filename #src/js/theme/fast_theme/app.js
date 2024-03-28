@@ -134,7 +134,7 @@ function setLoyalCart() {
 
 
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
-    console.log(loyalCart)
+    // console.log(loyalCart)
     
 }
 
@@ -205,7 +205,7 @@ function setOrder() {
 
     }
 
-    console.log(order)
+    // console.log(order)
 
     let phone = ''
     fetch('/api/v1/get_user/')
@@ -754,7 +754,7 @@ function maxBallsPay() {
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
     
-    console.log(daliveryType);
+    // console.log(daliveryType);
 
     let order_balls = order.bonuses_pay;
 
@@ -796,7 +796,7 @@ function maxBallsPay() {
         max_active_balls = 0;
     }
     max_active_balls = Math.floor(max_active_balls);
-    console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
+    // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
 
     let innerHtms = '';
@@ -2886,6 +2886,25 @@ function init() {
 
 // Рабочее время
 
+$(document).ready(function() {
+    checkCurrentTime();
+    let workTime = JSON.parse(localStorage.getItem('workTime'));
+    let d = new Date();
+    if (!workTime || workTime.day != d.getDay()-1) {
+        
+        localStorage.setItem('workTime', JSON.stringify({
+            is_open: true,
+            day: d.getDay()-1
+        }));
+    } 
+
+});
+
+$('.delivery-popup__btn').click(function() {
+    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
+    $('.delivery-popup').removeClass('delivery-popup--active')
+})
+
 
 function checkCurrentTime() {
     var d = new Date();
@@ -2922,19 +2941,3 @@ function checkCurrentTime() {
         })
         .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
 }
-
-$(document).ready(function() {
-    checkCurrentTime();
-    let workTime = JSON.parse(localStorage.getItem('workTime'));
-    if (!workTime) {
-        localStorage.setItem('workTime', JSON.stringify({is_open: true}));
-    } 
-    
-
-
-});
-
-$('.delivery-popup__btn').click(function() {
-    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
-    $('.delivery-popup').removeClass('delivery-popup--active')
-})
