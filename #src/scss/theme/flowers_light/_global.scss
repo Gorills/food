@@ -89,18 +89,18 @@ a   {
 }
 
 .content {
-    margin-top: 153px;
+    margin-top: 90px;
     position: relative;
    
 
     @media screen and (max-width:480px) {
-        margin-top: 165px;
+        margin-top: 114px;
     }
 }
 
 .container {
     width: 100%;
-    max-width: 1426px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
     position: relative;
@@ -140,9 +140,9 @@ a   {
     align-items: center;
     justify-content: center;
     width: fit-content;
-    border-radius: 8px;
+    
     font-family: var(--theme-font);
-    background: none;
+    background: none!important;
     
 
     @media screen and (max-width:480px) {

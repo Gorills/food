@@ -4,11 +4,12 @@
     justify-content: center;
     width: 100%;
     height: 100vh;
-    background-color: #fafafa;
+    background: rgba(15, 32, 52, 0.7);
+    backdrop-filter: blur(3px);
     // .global-subdomain__inner
 
     &__inner {
-        background-color: var(--color-header);
+        
         color: var(--color-header-font);
         border: 1px solid var(--divider-base-color);
         -webkit-border-radius: 15px;
@@ -20,6 +21,7 @@
         height: -moz-fit-content;
         height: fit-content;
         overflow: hidden;
+        background-color: #fff;
     }
 
     // .global-subdomain__logo

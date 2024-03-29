@@ -377,13 +377,6 @@
                 {% endif %}
             </div>
 
-            <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
-                <button class="btn btn--primary add_to_cart">В корзину</button>
-            </div>
-
-            
-           
-            
             <div class="product-options">
             {% if product.get_first_select %}
                 {% for option in product.get_first_select %}
@@ -395,6 +388,15 @@
                 {% endfor %}
             {% endif %}
             </div>
+
+            <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+                <button class="btn btn--primary add_to_cart">В корзину</button>
+            </div>
+
+            
+           
+            
+            
             
             
 

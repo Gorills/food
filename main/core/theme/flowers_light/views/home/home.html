@@ -46,7 +46,7 @@
             {% endif %}
             </div>
             </div>
-            {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+            {% thumbnail slider.image "2880x1464" format="WEBP" crop="center" as im %}
             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}
@@ -70,7 +70,7 @@
             {% endif %}
             </div>
             </div>
-            {% thumbnail slider.image "1920x600" format="WEBP" crop="center" as im %}
+            {% thumbnail slider.image "2880x1464" format="WEBP" crop="center" as im %}
             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
             {% endthumbnail %}
             {% thumbnail slider.image_mob "1200x600" format="WEBP" crop="center" as im %}

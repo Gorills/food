@@ -15,6 +15,7 @@ from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
 from shop.models import FoodConstructor, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
 from shop.models import WorkDay
 from subdomains.models import Subdomain
+from subdomains.utilites import get_subdomain
 
 from .get_work_day import get_hours
 
@@ -133,13 +134,33 @@ def get_shop_settings(request):
         })
 
 
+    
+
+    subdomain_name = get_subdomain(request)
+    try:
+        subdomain = Subdomain.objects.filter(name=subdomain_name).first()
+    except:
+        subdomain = None
+
+    
+    
     pickup_areas_arr = []
+    if subdomain:
+        
+        for pickup_area in pickup_areas:
 
-    for pickup_area in pickup_areas:
-        pickup_areas_arr.append({
-            'name': pickup_area.name
-        })
+            if pickup_area.city == subdomain:
+                pickup_areas_arr.append({
+                    'name': pickup_area.name
+                })
 
+    else:
+
+        for pickup_area in pickup_areas:
+            
+            pickup_areas_arr.append({
+                'name': general_settings.address
+            })
     
     if not pickup_areas_arr:
         pickup_areas_arr.append({

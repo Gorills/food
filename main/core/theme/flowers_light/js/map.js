@@ -26,7 +26,7 @@ jQuery(document).ready(function () {
 
 // Функция для обновления отступа сверху у .content
 function updateContentMargin() {
-    var headerHeight = $('header').outerHeight(); // Получаем высоту header
+    var headerHeight = $('.header__wrapper').outerHeight(); // Получаем высоту header
     $('.content').css('margin-top', headerHeight); // Задаем отступ сверху для .content
   }
 
@@ -46,7 +46,7 @@ function updateContentMargin() {
 $(document).ready(function() {
     // Вызываем функцию при загрузке страницы и при изменении размеров окна
     $(window).on('load resize', function() {
-      updateContentMargin();
+    //   updateContentMargin();
       updateVideoHeigth();
       updateVideoHeigthMobile();
     });
@@ -2291,4 +2291,12 @@ $(document).on('submit', '.like-form', function (e) {
     }).fail(function () {
         console.log('fail');
     });
+})
+
+
+$(document).on('click','.header__link--catalog',function(e){
+    e.preventDefault();
+    
+
+    $('.header-bottom').toggleClass('header-bottom--active')
 })

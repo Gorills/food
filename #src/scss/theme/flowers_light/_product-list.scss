@@ -33,14 +33,14 @@
     // .product-list__item
 
     &__item {
-        padding: 24px;
-        background-color: var(--color-product-card);
+        
+        
         color: var(--color-product-card-font);
         width: 100%;
         position: relative;
         margin-bottom: 30px;
         // overflow: hidden;
-        border-radius: 8px;
+        
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -51,7 +51,7 @@
         }
 
         &:hover {
-            box-shadow: 2px 6px 20px rgba(47,59,88,.15);
+            
 
             .product-list__thumb {
                 transform: scale(1.1);
@@ -339,10 +339,12 @@
     // .product-list__title
 
     &__title {
-        font-size: 18px;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        text-transform: uppercase;
+        line-height: 130%;
         
-        margin-bottom: 10px;
-        font-weight: 700;
         color: var(--color-product-card-font);
 
         a {
@@ -395,12 +397,11 @@
         display: flex;
         justify-content: space-between;
         color: var(--color-product-card-font);
-        font-size: 18px;
-        // margin-bottom: 15px;
-        margin-bottom: 20px;
-        font-weight: 500;
-        font-size: 28px;
-        line-height: 34px;
+        
+
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
 
         svg {
             path {
@@ -435,41 +436,44 @@
     }
 
     .product-options {
-        position: absolute;
-        bottom: -24px;
-        height: 24px;
-        left: 50%;
-        transform: translateX(-50%);
+        
         display: flex;
+        margin-bottom: 20px;
+        margin-top: 10px;
+        justify-content: center;
 		// .product-options__item
 
 		&__item {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 3px;
+            
             
             width: fit-content;
             text-align: center;
             line-height: 1;
             padding: 5px;
             
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
-            background-color: var(--color-product-card);
+            
             color: var(--color-primary);
             font-weight: 600;
             font-size: 11px;
+
+            border: 1px solid transparent;
+            border-left-color: #E5E5E5;
+            border-right-color: #E5E5E5;
             cursor: pointer;
             
             &--active {
                 background-color: var(--color-primary);
                 color: #fff;
-                box-shadow: 0 2px 5px 0 rgba(0,0,0,0.25);
+                // box-shadow: 0 2px 5px 0 rgba(0,0,0,0.25);
                 height: 28px;
                 
             }
 		}
+
+        
     }
 
 
