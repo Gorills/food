@@ -134,7 +134,7 @@ function setLoyalCart() {
 
 
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
-    console.log(loyalCart)
+    // console.log(loyalCart)
     
 }
 
@@ -205,7 +205,7 @@ function setOrder() {
 
     }
 
-    console.log(order)
+    // console.log(order)
 
     let phone = ''
     fetch('/api/v1/get_user/')
@@ -708,7 +708,7 @@ $('.order__input').on('change input', function() {
     // Сохраняем обновленный объект order в локальное хранилище
     localStorage.setItem('order', JSON.stringify(order));
 
-    console.log(order)
+    // console.log(order)
     
     
 });
@@ -755,7 +755,7 @@ function maxBallsPay() {
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
     
-    console.log(daliveryType);
+    // console.log(daliveryType);
 
     let order_balls = order.bonuses_pay;
 
@@ -797,7 +797,7 @@ function maxBallsPay() {
         max_active_balls = 0;
     }
     max_active_balls = Math.floor(max_active_balls);
-    console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
+    // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
 
     let innerHtms = '';
