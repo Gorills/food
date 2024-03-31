@@ -1,7 +1,7 @@
 <div class="catalog__sidebar">
     <div class="catalog__sidefresh">
         <div class="catalog__row">
-            <div class="catalog__title">Меню</div>
+            <div class="catalog__title">Каталог</div>
             {% for cat in categorys %}
             <div class="catalog__item">
                 <a href="{{ cat.get_absolute_url }}" class="catalog__link">{{ cat.name }}</a>

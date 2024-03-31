@@ -1595,6 +1595,7 @@ class CategoryForm(forms.ModelForm):
         fields = [
             'parent',
             'name',
+            'short_description',
             'meta_h1',
             'meta_title',
             'meta_description',
@@ -1615,6 +1616,7 @@ class CategoryForm(forms.ModelForm):
 
             'parent': 'Родительская категория',
             'name': 'Название категории',
+            'short_description': 'Короткое описание категории',
             'meta_h1': 'Заголовок h1',
             'meta_title': 'Мета заголовок',
             'meta_description': 'Мета описание',

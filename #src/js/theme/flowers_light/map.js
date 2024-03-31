@@ -2300,3 +2300,8 @@ $(document).on('click','.header__link--catalog',function(e){
 
     $('.header-bottom').toggleClass('header-bottom--active')
 })
+
+$(document).on('click','.content',function(e){
+    $('.header-bottom').removeClass('header-bottom--active')
+    
+})

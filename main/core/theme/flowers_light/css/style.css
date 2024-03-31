@@ -15,7 +15,7 @@ body {
   background-color: var(--color-body);
   color: var(--color-font);
   line-height: 1.6;
-  font-family: var(--theme-font);
+  font-family: "Pragmatica", sans-serif;
   font-size: 16px;
 }
 
@@ -46,22 +46,22 @@ input::-webkit-inner-spin-button {
 }
 
 textarea {
-  font-family: "Roboto", sans-serif;
+  font-family: "Pragmatica", sans-serif;
   color: var(--color-font);
 }
 
 textarea::placeholder {
-  font-family: "Roboto", sans-serif;
+  font-family: "Pragmatica", sans-serif;
   color: var(--color-font);
 }
 
 input {
-  font-family: "Roboto", sans-serif;
+  font-family: "Pragmatica", sans-serif;
   color: var(--color-font);
 }
 
 input::placeholder {
-  font-family: "Roboto", sans-serif;
+  font-family: "Pragmatica", sans-serif;
   color: var(--color-font);
 }
 
@@ -111,9 +111,13 @@ a {
 }
 
 .title {
-  font-size: 28px;
+  font-size: 36px;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
+}
+
+.title span {
+  font-weight: 400;
 }
 
 .basket__minus {
@@ -207,9 +211,9 @@ a {
 
 .like-form {
   position: absolute;
-  top: 40px;
-  right: 40px;
-  left: 40px;
+  top: 20px;
+  right: 20px;
+  left: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -227,7 +231,7 @@ a {
 }
 
 .like-form__btn svg path {
-  fill: #929292;
+  fill: #ffffff;
 }
 
 .like-form__btn--active svg {
@@ -2621,7 +2625,7 @@ a {
 }
 
 .block {
-  padding: 40px 0;
+  padding: 20px 0;
 }
 
 .block__grid {
@@ -3088,10 +3092,6 @@ a {
   grid-gap: 20px;
 }
 
-.product-list--slider .product-list__item--big {
-  padding: 20px;
-}
-
 .product-list .btn {
   text-align: center;
 }
@@ -3163,8 +3163,8 @@ a {
   position: absolute;
   z-index: 3;
   display: flex;
-  top: 10px;
-  left: 10px;
+  bottom: 10px;
+  left: 0;
   align-items: center;
   font-size: 12px;
 }
@@ -3184,11 +3184,9 @@ a {
   padding: 5px 10px;
   line-height: 1;
   display: inline-block;
-  border-radius: 2px;
   margin-right: 5px;
-  border: 1px solid var(--color-success);
-  background-color: var(--color-success);
-  color: #fff;
+  color: #000;
+  background-color: #FFF496;
 }
 
 .product-list__hit {
@@ -3324,6 +3322,7 @@ a {
   font-weight: 400;
   text-transform: uppercase;
   line-height: 130%;
+  height: 40px;
   color: var(--color-product-card-font);
 }
 
@@ -4262,7 +4261,7 @@ a {
 }
 
 .similar {
-  padding: 80px 0;
+  padding: 20px 0 0;
 }
 
 .blog-detail {
@@ -4511,6 +4510,7 @@ td.product-thumbnail img {
 }
 
 .header-bottom__inner {
+  box-shadow: 2px 6px 20px rgba(47, 59, 88, 0.15);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -5278,6 +5278,16 @@ td.product-thumbnail img {
   color: #0F2034;
 }
 
+.order input,
+.order textarea {
+  font-family: "Roboto", sans-serif;
+}
+
+.order input::placeholder,
+.order textarea::placeholder {
+  font-family: "Roboto", sans-serif;
+}
+
 .order--active {
   display: flex;
 }
@@ -5477,6 +5487,43 @@ td.product-thumbnail img {
 
 .order__checkup-item {
   margin-bottom: 20px;
+}
+
+.order__checkup-item--anonim {
+  display: none !important;
+}
+
+.order__checkup-item-checkbox-wrap {
+  position: relative;
+}
+
+.order .anonim {
+  margin-top: 20px;
+  display: none;
+}
+
+.order .anonim--active {
+  display: block;
+}
+
+.order .postcard {
+  margin-top: 20px;
+  display: none;
+}
+
+.order .postcard--active {
+  display: block;
+}
+
+.order__checkup-item-checkbox {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #767E91;
 }
 
 .order__checkup-title {
@@ -6173,6 +6220,46 @@ td.product-thumbnail img {
   cursor: pointer;
 }
 
+.collections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.collections__item {
+  position: relative;
+  color: #fff;
+  width: 100%;
+}
+
+.collections__img {
+  width: 100%;
+  object-fit: cover;
+}
+
+.collections__row {
+  position: absolute;
+  left: 50px;
+  bottom: 150px;
+  max-width: 250px;
+}
+
+.collections__title {
+  margin: 0 0 16px;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.collections__text {
+  display: block;
+  font-weight: 100;
+  font-size: 16px;
+  line-height: 110%;
+}
+
 @media screen and (max-width: 1426px) {
   .sl .owl-prev {
     left: 30px;
@@ -6227,6 +6314,10 @@ td.product-thumbnail img {
 
   .reviews__row {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .collections {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 

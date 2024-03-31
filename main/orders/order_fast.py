@@ -3,7 +3,7 @@ from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
 from subdomains.utilites import get_subdomain
 from shop.models import Combo, ComboItem, FoodConstructor, Product, ProductOption, ShopSetup
-from .models import Order, OrderItem
+from .models import Order, OrderItem, CustomField
 from .forms import CallbackForm, OrderCreateForm
 from cart.cart import Cart
 from setup.models import ThemeSettings, BaseSettings
@@ -109,6 +109,9 @@ def order_create(request):
         except:
             pay_change = None
 
+
+        
+
         
 
         order = Order.objects.create(
@@ -130,8 +133,52 @@ def order_create(request):
             paid = False,
             sale_percent = json_order['sale_percent'],
 
-
         )
+        
+        try:
+            if json_order['anonim']:
+                
+                anonim_true = CustomField(
+                    order = order,
+                    name = '*!!!Анонимный заказ!!!*',
+                    value = True,
+                )
+                anonim_true.save()
+
+                anonim_user_phone = CustomField(
+                    order = order,
+                    name = 'Телефон получателя',
+                    value = json_order['anonim_user_phone'],
+                )
+
+                anonim_user_phone.save()
+
+                anonim_user_name = CustomField(
+                    order = order,
+                    name = 'Имя получателя',
+                    value = json_order['anonim_user_name'],
+                )
+                anonim_user_name.save()
+
+            if json_order['postcard']:
+
+                postcard_true = CustomField(
+                    order = order,
+                    name = 'Открытка',
+                    value = True,
+                )
+                postcard_true.save()
+
+                postcard_text = CustomField(
+                    order = order,
+                    name = 'Текст открытки',
+                    value = json_order['postcard_text'],
+                )
+
+                postcard_text.save()
+        except:
+            pass
+        
 
         
 

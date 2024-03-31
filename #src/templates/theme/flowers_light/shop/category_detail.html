@@ -35,8 +35,8 @@
                     </li>
                     
                     <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
-                            <span itemprop="name">Меню</span>
+                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Каталог" itemprop="item">
+                            <span itemprop="name">Каталог</span>
                             <meta itemprop="position" content="1">
                         </a>
                     </li>
@@ -68,12 +68,11 @@
         <div class="container">
             <div class="catalog__inner">
 
-                {% comment %} {% include 'components/catalog__sidebar.html'  %} {% endcomment %}
-
+               {% include 'components/catalog__sidebar.html'  %} 
                 
                 <div class="catalog__list">
                     <div class="catalog__refresh">
-                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
+                        {% include 'components/sort.html'  %}
                         {% include 'components/product_list.html' with category=category products=products big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>

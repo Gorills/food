@@ -35,8 +35,8 @@
                     </li>
                     
                     <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Меню" itemprop="item">
-                            <span itemprop="name">Меню</span>
+                        <a class="breadcrumbs__link" href="{% url 'catalog' %}" title="Каталог" itemprop="item">
+                            <span itemprop="name">Каталог</span>
                             <meta itemprop="position" content="1">
                         </a>
                     </li>
@@ -49,16 +49,14 @@
         <div class="container">
             <div class="banner__inner">
 
-                <h1 class="banner__title">{% if shop_setup.meta_h1 %}{{ shop_setup.meta_h1 }}{% else %}Меню{% endif %}</h1>
+                <h1 class="banner__title">{% if shop_setup.meta_h1 %}{{ shop_setup.meta_h1 }}{% else %}Каталог{% endif %}</h1>
 
             </div>
         </div>
     </div>
 
 
-    {% if not shop_setup.hide_cat_names %}
-    {% include 'components/cat_list.html' with home_cats=categorys  %}
-    {% endif %}
+    
 
 
 
@@ -67,7 +65,7 @@
         <div class="container">
             <div class="catalog__inner">
 
-                {% comment %} {% include 'components/catalog__sidebar.html'  %} {% endcomment %}
+                {% include 'components/catalog__sidebar.html'  %} 
 
                 
                 <div class="catalog__list">

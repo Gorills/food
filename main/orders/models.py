@@ -106,3 +106,9 @@ class OrderItem(models.Model):
         return (self.price * self.quantity) - (self.price * self.free)
     
 
+
+
+class CustomField(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='custom_fields')
+    name = models.CharField(max_length=250)
+    value = models.TextField(max_length=250)

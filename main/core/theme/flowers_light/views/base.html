@@ -116,14 +116,11 @@
             {% endif %}
         }
     </style>
-    {% comment %} Fonts {% endcomment %}
-    {% if font.name == "Roboto" %}
-        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
-    {% elif font.name == "Certa" %}
-        <link href="{% get_static 'css/fonts/certa.css' %}" rel="stylesheet">
-    {% elif font.name == 'Zombie' %}
-        <link href="{% get_static 'css/fonts/zombie.css' %}" rel="stylesheet">
-    {% endif %}
+  
+    <link href="{% get_static 'css/fonts/pragmatica.css' %}" rel="stylesheet">
+    <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+
+    
 
     <link href="{% get_libs 'owl/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">

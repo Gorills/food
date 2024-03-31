@@ -702,12 +702,13 @@ $('.order__input').on('change input', function() {
     }
 
     
+
     $(this).removeClass('order__input--error');
 
     // Сохраняем обновленный объект order в локальное хранилище
     localStorage.setItem('order', JSON.stringify(order));
 
-    // console.log(order)
+    console.log(order)
     
     
 });
@@ -2881,3 +2882,83 @@ function init() {
 
     }
 }
+
+
+// Проверка на заполненность полей открытки и анонимного заказа
+
+function checkAnonimAndPostcard() {
+
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+
+    if (order.anonim == true) {
+        $('input[name="anonim_user"]').prop('checked', true)
+        $('.anonim').addClass('anonim--active')
+        $('input[name="anonim_user_phone"]').addClass('required')
+        $('input[name="anonim_user_name"]').addClass('required')
+
+        $('input[name="anonim_user_phone"]').val(order.anonim_user_phone)
+        $('input[name="anonim_user_name"]').val(order.anonim_user_name)
+
+    }
+    
+    if (order.postcard == true) {
+        $('input[name="postcard"]').prop('checked', true)
+        $('.postcard').addClass('postcard--active')
+        $('textarea[name="postcard_text"]').val(order.postcard_text)
+    }
+}
+
+checkAnonimAndPostcard()
+
+
+
+// Анонимный заказ и добавление открытки
+
+$(document).on('click', '#anonim', function (e) {
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+    
+
+    if ($('input[name="anonim_user"]').is(':checked')) {
+        $('.anonim').addClass('anonim--active')
+        $('input[name="anonim_user_phone"]').addClass('required')
+        $('input[name="anonim_user_name"]').addClass('required')
+
+    } else {
+        $('.anonim').removeClass('anonim--active')
+        $('input[name="anonim_user_phone"]').val('')
+        $('input[name="anonim_user_name"]').val('')
+
+        $('input[name="anonim_user_phone"]').removeClass('required')
+        $('input[name="anonim_user_name"]').removeClass('required')
+
+        order.anonim_user_phone = ''
+        order.anonim_user_name = ''
+
+    }
+
+    order.anonim = $('input[name="anonim_user"]').is(':checked'); // Установка значения в зависимости от состояния чекбокса
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+    setOrder()
+    
+})
+
+$(document).on('click', '#postcard', function (e) {
+    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+
+    if ($('input[name="postcard"]').is(':checked')) {
+        
+        $('.postcard').addClass('postcard--active')
+
+    } else {
+        $('.postcard').removeClass('postcard--active')
+        $('textarea[name="postcard_text"]').val('')
+        
+        order.postcard_text = ''
+      
+    }
+
+
+    order.postcard = $('input[name="postcard"]').is(':checked'); // Установка значения в зависимости от состояния чекбокса
+    localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
+    setOrder()
+})

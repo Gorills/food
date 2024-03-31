@@ -109,16 +109,7 @@
 
 
 
-{% comment %} <div class="append-cats">
-    <div class="container">
-        <div class="append-cats__inner" id="appendCats">    
-            
-        </div>
-    </div>
 
-</div> {% endcomment %}
-
-{% include 'components/cat_list.html' with home_cats=home_cats  %}
 
 
 {% if combos %}
@@ -308,42 +299,76 @@
 {% endif %}
 
 
-{% if shop_setup.all_menus %}
-    {% for cat in categorys %}
-   
-        {% if not cat.parent %}
 
-           
+{% for cat in home_cats %}
 
-            {% if cat.all_active_products.count > 0 %}
+    {% if cat.sort_order == 1 %}
 
-            
-                <div class="block gray" id="{{ cat.id }}">
-                    <div class="container">
-                        <div class="block__inner">
-                            <div class="block__justify">
-                                {% if shop_setup.hide_cat_names %}
+    <div class="similar gray">
+        <div class="container">
+            <div class="similar__inner">
 
-                                {% else %}
-                                <h2 class="title">{{ cat.name }}</h2>
-                                {% endif %}
+                <h3 class="title">Витрина <span>{% now "d.m.y" %}</span></h3>
 
-                            </div>
-                            {% include 'components/product_list.html' with category=cat slider='false' products=cat.all_active_products big='product-list__item--big' size=image_size %}
+                {% include 'components/product_list.html' with slider='true' products=cat.products.all big='product-list__item--big' size='290x193' %}
 
-                            
-                        </div>
-                    </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+{% endfor %}
+
+
+
+    {% if shop_setup.sales_hits == True %}
+        {% if hit_products.count > 0 %}
+        <div class="block gray">
+            <div class="container">
+                <div class="block__inner">
+                    <h2 class="title">Популярное</h2>
+                    {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size=image_size %}
+
                 </div>
-
-            {% endif %}
-
-        
-        
+            </div>
+        </div>
         {% endif %}
+    {% endif %}
 
-    {% endfor %}
-{% else %}
+
+
+    <div class="block gray">
+        <div class="container">
+            <div class="block__inner">
+                <h2 class="title">Коллекции</h2>
+                
+                <div class="collections">
+                {% for cat in home_cats %}
+                    {% if cat.sort_order > 1 %}
+                        <a href="{{ cat.get_absolute_url }}" class="collections__item">
+
+                            {% thumbnail cat.image "594x721" crop="center" as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="collections__img">
+                            {% endthumbnail %}
+
+                            <div class="collections__row">
+                                <div class="collections__title">{{ cat.name }}</div>
+                                {% if cat.short_description %}
+                                <div class="collections__text">{{ cat.short_description }}</div>
+                                {% endif %}
+                            </div>
+
+                        </a>
+                    
+                    
+                    {% endif %}                
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+        
+
 
 
     {% if shop_setup.new_products == True %}
@@ -353,7 +378,12 @@
                 <div class="block__inner">
                     <div class="block__justify">
                         <h2 class="title">Новинки</h2>
-                        <a href="/catalog/?sort=-new" class="block__seeall">Смотреть все ></a>
+                        <a href="/catalog/?sort=-new" class="block__seeall">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="76" height="31" viewBox="0 0 76 31" fill="none">
+                                <path d="M63.7764 30L75.372 14.963L63.7764 1" stroke="black" stroke-linejoin="round"></path>
+                                <line x1="75.3711" y1="14.3896" x2="-0.000312849" y2="14.3896" stroke="black"></line>
+                            </svg>
+                        </a>
 
                     </div>
                     {% include 'components/product_list.html' with slider='false' products=new_products big='product-list__item--big' size=image_size %}
@@ -365,38 +395,8 @@
         {% endif %}
 
     {% endif %}
-    {% if shop_setup.action == True %}
-        {% if sale_products.count > 0 %}
-        <div class="block gray">
-            <div class="container">
-                <div class="block__inner">
-                    <h2 class="title">Скидки</h2>
-                    {% include 'components/product_list.html' with slider='false' products=sale_products big='product-list__item--big' size=image_size %}
-                
-                    <div class="block__center">
-                        {% comment %} <a href="#" class="btn btn--empty">Смотреть все</a> {% endcomment %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
-    {% endif %}
-    {% if shop_setup.sales_hits == True %}
-        {% if hit_products.count > 0 %}
-        <div class="block gray">
-            <div class="container">
-                <div class="block__inner">
-                    <h2 class="title">Хиты продаж</h2>
-                    {% include 'components/product_list.html' with slider='false' products=hit_products big='product-list__item--big' size=image_size %}
 
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    {% endif %}
-
-{% endif %}
 
 
 {% include 'components/reviews.html' with reviews=reviews %}

@@ -150,6 +150,7 @@ class Category(models.Model):
     external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     name = models.CharField(max_length=350)
     description = models.TextField(null=True, blank=True)
+    short_description = models.TextField(null=True, blank=True)
     meta_h1 = models.CharField(max_length=350, null=True, blank=True)
     meta_title = models.CharField(max_length=350, null=True, blank=True)
     meta_description = models.TextField(null=True, blank=True)
@@ -169,10 +170,12 @@ class Category(models.Model):
     font_color = models.CharField(max_length=250, null=True, blank=True, verbose_name='Цвет шрифта')
     bg_color = models.CharField(max_length=250, default='#ffffff', null=True, blank=True, verbose_name='Цвет фона')
     opacity = models.PositiveIntegerField(default=100, verbose_name='Прозрачность изображения')
-
+    
     column = models.PositiveIntegerField(default=1)
     sort_order = models.PositiveIntegerField(default=0)
     status = models.BooleanField(default=True)
+
+
 
     slug = models.SlugField(unique=True, max_length=250)
     create_at = models.DateField(auto_now_add=True)

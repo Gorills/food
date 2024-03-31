@@ -97,6 +97,16 @@ def order_telegram(telegram_bot, telegram_group, order):
                 'Итого': str(pr_summ),
             })
 
+
+
+    order_custom_fields = order.custom_fields.all()
+    if order_custom_fields:
+        custom_str = "\n".join([f"{field.name}: {field.value}" for field in order_custom_fields])
+    else:
+        custom_str = ''
+
+
+
     # res = re.sub(r"[#%!@*{}]", "\n", str(pr))
     # res = re.sub(r"[',]", "", res)
             
@@ -165,10 +175,10 @@ def order_telegram(telegram_bot, telegram_group, order):
     
     if order.delivery_method == 'Доставка':
         
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + custom_str + "\n" "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
 
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
+        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + custom_str + "\n" "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
     
 
     

@@ -3,6 +3,16 @@
     
     color: #0F2034;
     
+    // font-family: "Roboto", sans-serif;
+
+
+    input, textarea {
+        font-family: "Roboto", sans-serif;
+
+        &::placeholder {
+            font-family: "Roboto", sans-serif;
+        }
+    }
 
   
 
@@ -268,10 +278,48 @@
         
         margin-bottom: 20px;
 
+
+        &--anonim {
+            display: none!important;
+        }
+
         
     }
+    // .order__checkup-item-checkbox-wrap
 
-    
+    &__checkup-item-checkbox-wrap {
+        position: relative;
+    }
+
+    .anonim {
+        margin-top: 20px;
+        // position: absolute;
+        // background-color: #fff;
+        display: none;
+        &--active {
+            display: block;
+        }
+    }
+    .postcard {
+        margin-top: 20px;
+        display: none;
+        &--active {
+            display: block;
+        }
+    }
+
+    // .order__checkup-item-checkbox
+
+    &__checkup-item-checkbox {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 1.2;
+        color: #767E91;
+    }
 
     // .order__checkup-title
 
@@ -829,6 +877,8 @@
 
     
 
+    
+
     #pay_change {
         display: none;
     }
@@ -949,6 +999,10 @@
         margin-bottom: 10px;
 
     }
+
+
+
+
 
     
 
