@@ -3089,7 +3089,7 @@ a {
   grid-template-columns: repeat(4, 1fr);
   justify-content: space-between;
   flex-wrap: wrap;
-  grid-gap: 20px;
+  grid-gap: 10px;
 }
 
 .product-list .btn {
