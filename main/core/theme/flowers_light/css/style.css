@@ -191,6 +191,10 @@ a {
   color: var(--color-font);
 }
 
+.add_to_cart {
+  white-space: nowrap;
+}
+
 .grecaptcha-badge {
   display: none !important;
 }
