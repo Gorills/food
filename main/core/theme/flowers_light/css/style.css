@@ -6949,11 +6949,13 @@ td.product-thumbnail img {
   }
 
   .sl__title {
-    font-size: 38px;
+    font-size: 30px;
+    line-height: 1;
   }
 
   .sl__text {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 1;
   }
 
   .sl .owl-prev {
