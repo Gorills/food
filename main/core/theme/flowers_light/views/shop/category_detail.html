@@ -62,7 +62,7 @@
         </div>
     </div>
     
-    {% if category.products.count != 0 or category.constructors.count != 0 %}
+    
     <div class="catalog">
         
         <div class="container">
@@ -73,7 +73,7 @@
                 <div class="catalog__list">
                     <div class="catalog__refresh">
                         {% include 'components/sort.html'  %}
-                        {% include 'components/product_list.html' with category=category products=products big='' size=image_size %}
+                        {% include 'components/product_list.html' with category=category products=all_active_products big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
 
@@ -86,44 +86,8 @@
         </div>
         
     </div>
-    {% endif %}
     
-            
-{% if category_children %}
-
-
-    {% for children in category_children  %}
-        <div class="banner">
-            <div class="container">
-                <div class="banner__inner">
-
-                   
-                    <h2 class="banner__title banner__title--child">{% if children.meta_h1 %}{{ children.meta_h1 }}{% else %}{{ children.name }}{% endif %}</h2>
-                    
-                    
-                    
-
-                </div>
-            </div>
-        </div>
-        <div class="catalog">
-
-            <div class="container">
-                
-                <div class="catalog__list">
-                    <div class="catalog__refresh">
-                        {% include 'components/sort.html'  %} 
-                        {% include 'components/product_list.html' with category=children products=children.products.all big='' size=image_size %}
-                        {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-    {% endfor %}
-
-{% endif %}
+    
 
     
 
