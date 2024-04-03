@@ -4529,7 +4529,7 @@ td.product-thumbnail img {
   margin: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
   justify-content: space-between;
   width: 100%;
@@ -4547,14 +4547,27 @@ td.product-thumbnail img {
   display: none;
 }
 
+.header-bottom__dropdown-children-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
 .header-bottom__dropdown-item {
   display: inline-block;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.header-bottom__dropdown-item--children {
+  font-weight: 400;
+  font-size: 12px;
 }
 
 .header-bottom__link {
   color: var(--color-font);
-  padding: 20px 10px;
-  font-size: 12px;
+  padding: 8px 10px;
   display: inline-block;
   text-transform: uppercase;
 }

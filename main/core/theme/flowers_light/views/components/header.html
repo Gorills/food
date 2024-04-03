@@ -214,10 +214,19 @@
                     
                     {% endif %}
                     {% for cat in categorys %}
-                        {% if cat.top == True %}
+                        {% if cat.top == True and not cat.parent %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
                             <a class="header-bottom__link" itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
                             <meta itemprop="name" content="{{ cat.name }}" />
+
+                            <ul class="header-bottom__dropdown-children-list">
+                            {% for child in cat.children.all %}
+                                <li class="header-bottom__dropdown-item header-bottom__dropdown-item--children" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                    <a class="header-bottom__link" itemprop="url" href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+                                    <meta itemprop="name" content="{{ child.name }}" />
+                                </li>
+                            {% endfor %}
+                            </ul>
                         </li>
                         {% endif %}
                     {% endfor %}

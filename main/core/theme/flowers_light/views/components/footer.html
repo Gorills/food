@@ -30,7 +30,7 @@
          <ul class="footer__col">
            
            {% for cat in categorys %}
-                {% if cat.top == True and cat.status == True %}
+                {% if cat.top == True and cat.status == True and not cat.parent %}
                 <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
                 {% endif %}
             {% endfor %}
@@ -168,7 +168,7 @@
        </div>
      </div>
      <div class="author__inner">
-        Работает на платформе <a target="_blank" href="https://profit-platform.ru/">profit-platform</a>
+        Разработано в <a target="_blank" href="https://agency-profit.ru/">PROFIT</a>
     </div>
     </div>
     
