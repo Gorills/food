@@ -2305,3 +2305,11 @@ $(document).on('click','.content',function(e){
     $('.header-bottom').removeClass('header-bottom--active')
     
 })
+
+
+
+
+$(document).on('click','.catalog__link--drop',function(e){
+    e.preventDefault();
+    $(this).next('.catalog__drop').toggleClass('catalog__drop--active')
+})

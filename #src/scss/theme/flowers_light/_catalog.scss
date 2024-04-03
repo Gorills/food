@@ -41,6 +41,18 @@
         margin-bottom: 15px;
     }
 
+    // .catalog__drop
+    &__drop {
+        display: none;
+        padding: 15px 0 0 15px;
+        
+
+        &--active {
+            display: block;
+
+        }
+    }
+
     // .catalog__link
 
     &__link {

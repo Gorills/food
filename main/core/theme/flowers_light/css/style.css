@@ -3791,6 +3791,15 @@ a {
   margin-bottom: 15px;
 }
 
+.catalog__drop {
+  display: none;
+  padding: 15px 0 0 15px;
+}
+
+.catalog__drop--active {
+  display: block;
+}
+
 .catalog__link {
   color: var(--color-font-gray);
 }

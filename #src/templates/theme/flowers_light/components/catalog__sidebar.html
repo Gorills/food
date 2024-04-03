@@ -2,10 +2,20 @@
     <div class="catalog__sidefresh">
         <div class="catalog__row">
             <div class="catalog__title">Каталог</div>
+
             {% for cat in categorys %}
-            <div class="catalog__item">
-                <a href="{{ cat.get_absolute_url }}" class="catalog__link">{{ cat.name }}</a>
-            </div>
+                {% if not cat.parent %}
+                <div class="catalog__item">
+                    <a href="{{ cat.get_absolute_url }}" class="catalog__link {% if cat.children.count > 0 %}catalog__link--drop{% endif %}">{{ cat.name }}</a>
+
+
+                    <div class="catalog__drop">
+                    {% for child in cat.children.all %}
+                        <div class="catalog__drop-item"><a href="{{ child.get_absolute_url }}" class="catalog__link">{{ child.name }}</a></div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             {% endfor %}
 
 

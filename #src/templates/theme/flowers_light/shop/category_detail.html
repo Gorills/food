@@ -112,7 +112,7 @@
                 
                 <div class="catalog__list">
                     <div class="catalog__refresh">
-                        {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
+                        {% include 'components/sort.html'  %} 
                         {% include 'components/product_list.html' with category=children products=children.products.all big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
