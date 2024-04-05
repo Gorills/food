@@ -266,7 +266,7 @@ def yandex_create_order(order):
             print(e)
             pass
 
-        print(order_address)
+        # print(order_address)
 
         
         data = {
