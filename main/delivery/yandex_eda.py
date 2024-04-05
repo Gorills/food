@@ -87,7 +87,7 @@ def delivery_methods():
 
     response = requests.post(url, json=data, headers=headers)
 
-    print(response.json())
+    # print(response.json())
 
 
 
