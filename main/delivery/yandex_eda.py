@@ -130,7 +130,7 @@ def get_due():
 
     due = f'{formatted_time}+{formatted_delay[0]:02d}:{formatted_delay[1]:02d}'
 
-    print(due)
+    # print(due)
     return due
 
 # get_due()
@@ -183,7 +183,7 @@ def check_price(request):
         
         response = requests.post(url, json=data, headers=headers)
         
-        print(response.json())
+        # print(response.json())
         
         return HttpResponse(response, content_type='application/json') 
 
@@ -257,13 +257,13 @@ def yandex_create_order(order):
         try:
             order_address['flat'] = int(order.flat)
         except Exception as e:
-            print(e)
+            # print(e)
             pass
 
         try:
             order_address['floor'] = int(order.floor)
         except Exception as e:
-            print(e)
+            # print(e)
             pass
 
         # print(order_address)
