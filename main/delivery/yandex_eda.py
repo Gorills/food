@@ -429,4 +429,4 @@ def yandex_create_order(order):
         print(e)
 
 
-# yandex_create_order(Order.objects.get(id=83))
+yandex_create_order(Order.objects.get(id=49))
