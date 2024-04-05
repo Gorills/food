@@ -424,9 +424,9 @@ def yandex_create_order(order):
 
         response = requests.post(url, json=data, headers=headers)
 
-        print('!!!')
+        # print('!!!')
     except Exception as e:
         print(e)
 
 
-yandex_create_order(Order.objects.get(id=49))
+# yandex_create_order(Order.objects.get(id=49))
