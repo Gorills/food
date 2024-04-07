@@ -1385,9 +1385,10 @@ $(document).on('click', '.order_create', function(e) {
                 localStorage.setItem('lastOrder', JSON.stringify(data));
 
                 
-                $('.order__load').removeClass('order__load--active')
 
                 window.location.href = confirmationUrl;
+                $('.order__load').removeClass('order__load--active')
+
 
             } else {
                 console.error('Ответ не содержит confirmation_url');
