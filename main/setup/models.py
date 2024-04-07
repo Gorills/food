@@ -4,11 +4,19 @@ from admin.singleton_model import SingletonModel
 from subdomains.models import Subdomain
 from main.transliterate_filename import transliterate_file
 from sorl.thumbnail import get_thumbnail
+import re
 # Create your models here.
 
 class BaseSettings(SingletonModel):
     name = models.CharField(max_length=350, blank=True, null=True)
+
     ur_name = models.CharField(max_length=350, blank=True, null=True)
+    ur_address = models.CharField(max_length=500, blank=True, null=True)
+    inn = models.CharField(max_length=350, blank=True, null=True)
+    kpp = models.CharField(max_length=350, blank=True, null=True)
+    ogrn = models.CharField(max_length=350, blank=True, null=True)
+    okpo = models.CharField(max_length=350, blank=True, null=True)
+
     phone = models.CharField(max_length=250, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     email_for_order = models.EmailField(blank=True, null=True)
@@ -140,8 +148,18 @@ class BaseSettings(SingletonModel):
             return ''
     
 
-   
+    def get_whatsapp_number(self):
+        try:
+            whatsapp = self.whatsapp
+            whatsapp_number = re.findall("\d+", whatsapp)[0]
 
+        except:
+            whatsapp_number = None
+
+
+        res = f"+{whatsapp_number[0]} ({whatsapp_number[1:4]}) {whatsapp_number[4:7]} {whatsapp_number[7:9] }-{whatsapp_number[9:]}"
+
+        return res
 
 
     

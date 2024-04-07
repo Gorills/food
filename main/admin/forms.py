@@ -1978,6 +1978,26 @@ class SetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Юридическое название',
             }),
+            'ur_address': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Юридическое адрес',
+            }),
+            'inn': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'ИНН',
+            }),
+            'kpp': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'КПП',
+            }),
+            'ogrn': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'ОГРН',
+            }),
+            'okpo': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'ОКПО',
+            }),
             'vk': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Ссылка на VK',
@@ -2111,6 +2131,11 @@ class SetupForm(forms.ModelForm):
         labels = {
             'name': 'Название сайта',
             'ur_name': 'Юридическое название',
+            'ur_address': 'Юридический адрес',
+            'inn': 'ИНН',
+            'kpp': 'КПП',
+            'ogrn': 'ОГРН',
+            'okpo': 'ОКПО',
             'phone': 'Телефон',
             'email': 'Email для клиентов',
             'email_for_order': 'Email для заявок',

@@ -1,0 +1,118 @@
+.contacts-design {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    // font-size: 20px;
+    font-size: 18px;
+    // .contacts-design__title
+
+    &__title {
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 400;
+        margin-bottom: 20px;
+    }
+
+    // .contacts-design__row
+
+    &__row {
+    }
+
+    // .contacts-design__item
+
+    &__item {
+        display: flex;
+        margin-bottom: 40px;
+    }
+
+    // .contacts-design__icon
+
+    &__icon {
+        width: 100%;
+        max-width: 150px;
+        margin-right: 60px;
+        display: flex;
+        
+
+        svg {
+            margin-right: 20px;
+            width: 30px;
+            min-width: 30px;
+            height: 30px;
+        }
+    }
+
+    // .contacts-design__icon-text
+
+    &__icon-text {
+    }
+
+    // .contacts-design__list
+
+    &__list {
+        list-style: none;
+        padding: 0 0 0 20px;
+        margin: 0;
+    }
+
+    // .contacts-design__list-item
+
+    &__list-item {
+        position: relative;
+        margin-bottom: 10px;
+        
+
+        a {
+            color: var(--color-font);
+            text-decoration: underline;
+
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: -18px;
+            width: 12px;
+            height: 6px;
+            border-left: 2px solid #000;
+            border-bottom: 2px solid #000;
+            border-radius: 0 0 0 2px;
+            transform: rotate(-45deg);
+        }
+    }
+
+    // .contacts-design__wrap
+
+    &__wrap {
+        // padding-top: 20px;
+    }
+
+    // .contacts-design__text
+
+    &__text {
+        // padding-left: 20px;
+    }
+
+    // .contacts-design__list-text
+    &__list-text {
+        padding-left: 20px;
+        p {
+            margin-bottom: 15px;
+        }
+    }
+
+    .header__contacts-phone {
+        font-size: 18px;
+        font-weight: 400;
+        margin-bottom: 20px;
+        color: var(--color-font);
+        text-decoration: underline;
+
+    }
+
+    .header__contacts-soc {
+        color: var(--color-font);
+        text-decoration: underline;
+    }
+}
