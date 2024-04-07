@@ -1325,6 +1325,8 @@ $(document).on('click', '.order_create', function(e) {
 
 
 
+    $('.order__load').addClass('order__load--active')
+
     // console.log(order)
 
     let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
@@ -1383,7 +1385,7 @@ $(document).on('click', '.order_create', function(e) {
                 localStorage.setItem('lastOrder', JSON.stringify(data));
 
                 
-
+                $('.order__load').removeClass('order__load--active')
 
                 window.location.href = confirmationUrl;
 
