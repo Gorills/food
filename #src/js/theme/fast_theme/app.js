@@ -1387,7 +1387,7 @@ $(document).on('click', '.order_create', function(e) {
                 
 
                 window.location.href = confirmationUrl;
-                $('.order__load').removeClass('order__load--active')
+                // $('.order__load').removeClass('order__load--active')
 
 
             } else {
