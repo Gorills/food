@@ -159,7 +159,7 @@ def get_shop_settings(request):
         for pickup_area in pickup_areas:
             
             pickup_areas_arr.append({
-                'name': general_settings.address
+                'name': pickup_area.name
             })
     
     if not pickup_areas_arr:
