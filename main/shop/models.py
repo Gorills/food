@@ -62,6 +62,8 @@ class ShopSetup(SingletonModel):
     all_menus = models.BooleanField(default=False, verbose_name='Показывать весь ассортимент на главной странице')
     hide_cat_names = models.BooleanField(default=False, verbose_name='Скрыть названия категорий')
 
+    check_order_status = models.BooleanField(default=False, verbose_name='Проверять статус заказа')
+
     start_bonus = models.PositiveIntegerField(default=0, verbose_name='Количество бонусов при регистрации')
 
     min_width = models.PositiveIntegerField(null=True, blank=True, default=290, verbose_name='Ширина миниатюры')

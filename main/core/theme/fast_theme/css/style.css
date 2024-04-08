@@ -2349,6 +2349,19 @@ a {
   align-items: center;
 }
 
+.header__contacts-link-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.header__contacts-link-wrap svg {
+  margin-right: 5px;
+}
+
+.header__contacts-link-wrap svg path {
+  fill: var(--color-header-font);
+}
+
 .header__contacts-link {
   font-size: 14px;
   display: inline-block;
@@ -6354,7 +6367,6 @@ td.product-thumbnail img {
 
 @media screen and (max-width: 992px) {
   .header__contacts-link-wrap {
-    display: flex;
     flex-direction: column;
   }
 

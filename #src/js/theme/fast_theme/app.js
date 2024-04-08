@@ -1404,6 +1404,15 @@ $(document).on('click', '.order_create', function(e) {
 })
 
 
+jQuery(document).ready(function () {
+
+
+
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    console.log(last_order)
+
+})
+
 
 jQuery(document).ready(function () {
     var pathname = window.location.href; 
@@ -2894,7 +2903,14 @@ function checkCurrentTime() {
     var d = new Date();
     var currentTime = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-    fetch(`/api/v1/get_work_active/${d.getDay()-1}/`)
+    
+    let day = d.getDay()
+
+    if (d.getDay() == 0) {
+        day = 6
+    }
+
+    fetch(`/api/v1/get_work_active/${day}/`)
         .then(response => response.json())
         .then(data => {
             var startDelivery = data.start_delivery;

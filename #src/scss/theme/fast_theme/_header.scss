@@ -554,8 +554,17 @@
 
     // .header__contacts-link-wrap
     &__contacts-link-wrap {
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin-right: 5px;
+            path {
+                fill: var(--color-header-font);
+            }
+        }
         @media screen and (max-width:992px) {
-            display: flex;
+            
             flex-direction: column;
             
         }

@@ -165,8 +165,14 @@
     </div>
 
     {% block extra_body %}{% endblock %}
+    
     {% include 'components/footer.html' %}
+
     {% include 'orders/order/order-done.html' %}
+    
+    {% if shop_setup.check_order_status %}
+        {% include 'components/check_order_status.html' %}
+    {% endif %}
     {% include 'cart/cart.html' %}
     {% include 'global/search.html' %}
 

@@ -302,6 +302,8 @@ current_time = current_time.astimezone(time_zone)
 @api_view(['GET'])
 def get_work_active(request, day):
 
+    
+
     try:
         delivery_full = ShopSetup.objects.get().delivery_full
     except:
@@ -330,7 +332,7 @@ def get_work_active(request, day):
 
         start_delivery = ShopSetup.objects.get().start_delivery
         end_delivery = ShopSetup.objects.get().end_delivery
-        print(start_delivery, end_delivery)
+        
 
 
         if end_delivery < start_delivery:
