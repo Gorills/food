@@ -1967,7 +1967,54 @@ class SetupForm(forms.ModelForm):
     text = forms.CharField(label='Текст на главной странице', required=False, widget=CKEditorUploadingWidget())
     class Meta:
         model = BaseSettings
-        fields = '__all__'
+        fields = [
+            'name',
+            'ur_name',
+            'ur_address',
+            'inn',
+            'kpp',
+            'ogrn',
+            'okpo',
+            'phone',
+            'email',
+            'email_for_order',
+            'telegram_bot',
+            'telegram_group',
+            'sms_pilot_apikey',
+            'sms_text',
+            'order_done_title',
+            'order_done_text',
+            
+            'city',
+            'address',
+            'vk',
+            'whatsapp',
+            'telegram',
+            'viber',
+            'ok',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'meta_h1',
+            'text',
+            'social_image',
+            
+            'logo_dark',
+            'logo_height',
+            'logo_width',
+            'image_compression',
+            'icon_ico',
+            'icon_png',
+            'icon_svg',
+            'pay_image',
+            'theme_color',
+            'active',
+            'hide_razrab_link',
+            'sms',
+            'debugging_mode',
+
+
+        ]
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'input',

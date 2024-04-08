@@ -1,13 +1,13 @@
 {% load admin_static %}
 
 <div class="sidebar {% if request.session.sidebar == 'False' %}sidebar--min{% endif %}">
-
+    {% if setup.hide_razrab_link != True %}
     <div class="sidebar__top">
       
         <img src="{% get_static 'images/logo.png' %}" alt="" class="sidebar__logo">
         <img src="{% get_static 'images/mini_logo.png' %}" alt="" class="sidebar__mini-logo">
     </div>
-
+    {% endif %}
     
     <a href="{% url 'admin' %}" class="sidebar__title  {% if request.session.sidebar == 'False' %}sidebar__title--max {% else %}sidebar__title--min{% endif %}">
 
