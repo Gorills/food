@@ -5,7 +5,7 @@ from orders.models import Order
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
-from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews
+from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
@@ -760,6 +760,24 @@ class PageForm(forms.ModelForm):
             }),
         }
 
+
+class PageItemForm(forms.ModelForm):
+    text = forms.CharField(label='Текст блока', required=False, widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = PageItem
+        fields = "__all__"
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'item_type': forms.Select(attrs={
+                'class': 'input',
+            }),
+            'page': forms.Select(attrs={
+                'class': 'input',
+            }),
+        }
 
 
 # Cлайдер

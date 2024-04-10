@@ -99,14 +99,14 @@ class Page(models.Model):
     PAGE_CLASS = (
        ('o-nas', 'О нас'),
        ('bron-stolika', 'Бронь столика'),
-       ('oplata', 'Оплата'),
+       ('oplata', 'Оплата и доставка'),
        ('otzivi', 'Отзывы'),
        ('politic', 'Политика конфиденциальности'),
-       ('dostavka', 'Доставка'),
+      
        ('kontakty', 'Контакты'),
-       ('kak-zakazat', 'Как заказать'),
+       
        ('skidki-i-bonusy', 'Скидки и бонусы'),
-       ('vozvrat-tovarov', 'Возврат товаров'),
+       
     )
     type = models.CharField(max_length=200, choices=PAGE_CLASS, verbose_name='Тип страницы', unique=True)
     name = models.CharField(max_length=350, null=True, blank=True, verbose_name='Название страницы')
@@ -139,6 +139,24 @@ class Page(models.Model):
     class Meta:
         verbose_name = 'Страница'
         verbose_name_plural = 'Страницы'
+
+
+
+class PageItem(models.Model):
+
+    ITEM_CLASS = (
+        ('time', 'Время доставки'),
+        ('srok', 'Сроки доставки'),
+        ('time_to_drive', 'Время в пути'),
+        ('info', 'Дополнительная информация'),
+    )
+
+    item_type = models.CharField(max_length=250, verbose_name='Тип блока', choices=ITEM_CLASS, null=True, blank=True)
+
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='page_item', verbose_name='Страница')
+    image = models.FileField(upload_to='page', verbose_name='Изображение', null=True, blank=True)
+
+    text = models.TextField(verbose_name='Текст')
 
 
 class PlaceImages(models.Model):

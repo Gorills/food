@@ -6,9 +6,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
-from home.models import Page, PlaceImages, Slider, SliderSetup, Reviews
+from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
 from integrations.models import Integrations
 from subdomains.models import Subdomain
@@ -2211,6 +2211,58 @@ def page_edit(request, pk):
     }
     return render(request, 'static/page_edit.html', context)
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def page_delete(request, pk):
+    page = Page.objects.get(id=pk)
+    page.delete()
+    return redirect('admin_pages')
+
+@user_passes_test(lambda u: u.is_superuser)
+def page_item_add(request, pk):
+    page = Page.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PageItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+        else:
+            return render(request, 'static/page_item_add.html', {'form': form})
+
+    form = PageItemForm({
+        'page': page
+    })
+    context = {
+        'form': form,
+        'page': page
+    }
+
+    return render(request, 'static/page_item_add.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def page_item_edit(request, pk):
+    page_item = PageItem.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PageItemForm(request.POST, request.FILES, instance=page_item)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+        else:
+            return render(request, 'static/page_item_add.html', {'form': form})
+            
+    form = PageItemForm(instance=page_item)
+    context = {
+        'form': form,
+    }
+    return render(request, 'static/page_item_add.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def page_item_delete(request, pk):
+    page_item = PageItem.objects.get(id=pk)
+    page_item.delete()
+    return redirect('admin_pages')
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_images(request):

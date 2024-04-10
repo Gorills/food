@@ -223,6 +223,11 @@ urlpatterns = [
     path('static/pages/', views.admin_pages, name='admin_pages'),
     path('static/pages/add/', views.page_add, name='page_add'),
     path('static/pages/edit/<int:pk>/', views.page_edit, name='page_edit'),
+    path('static/pages/delete/<int:pk>/', views.page_delete, name='page_delete'),
+
+    path('static/pages/page_item_add/<int:pk>/', views.page_item_add, name='page_item_add'),
+    path('static/pages/page_item_edit/<int:pk>/', views.page_item_edit, name='page_item_edit'),
+    path('static/pages/page_item_delete/<int:pk>/', views.page_item_delete, name='page_item_delete'),
 
     # IMAGES
     path('static/images/', views.admin_images, name='admin_images'),

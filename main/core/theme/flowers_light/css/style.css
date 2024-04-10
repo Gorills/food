@@ -6318,6 +6318,14 @@ td.product-thumbnail img {
   height: 30px;
 }
 
+.contacts-design__icon img {
+  margin-right: 20px;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  object-fit: cover;
+}
+
 .contacts-design__list {
   list-style: none;
   padding: 0 0 0 20px;
@@ -6347,12 +6355,25 @@ td.product-thumbnail img {
   transform: rotate(-45deg);
 }
 
-.contacts-design__list-text {
-  padding-left: 20px;
+.contacts-design__wrap .header__contacts-link-wrap {
+  display: flex;
+  align-items: center;
 }
 
-.contacts-design__list-text p {
-  margin-bottom: 15px;
+.contacts-design__wrap .header__contacts-link-wrap a {
+  margin-bottom: 0;
+}
+
+.contacts-design__wrap .header__contacts-link-wrap svg {
+  margin-right: 10px;
+}
+
+.contacts-design__wrap .header__contacts-link-wrap svg path {
+  fill: var(--color-font);
+}
+
+.contacts-design__list-text {
+  padding-left: 20px;
 }
 
 .contacts-design .header__contacts-phone {
