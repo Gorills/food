@@ -779,7 +779,7 @@ def order_status_change(request, pk):
 
                 if status == 'Готов к доставке':
 
-                    # print(status)
+                    print(status)
                     yandex_create_order(order)
 
 
