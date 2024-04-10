@@ -779,7 +779,7 @@ def order_status_change(request, pk):
 
                 if status == 'Готов к доставке':
 
-                    print(status)
+                    
                     yandex_create_order(order)
 
 
@@ -861,7 +861,7 @@ def order_status_change(request, pk):
             telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
             telegram_group = '-1002079435900'
 
-            send_message(telegram_bot, telegram_group, f'ОШИБКА: {e}')
+            send_message(telegram_bot, telegram_group, f'ОШИБКА при изменении статуса: {e}')
             
 
             print(e)
