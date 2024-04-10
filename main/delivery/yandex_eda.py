@@ -192,7 +192,7 @@ def check_price(request):
     
 
 
-
+from orders.telegram import send_message
 def yandex_create_order(order):
 
     try:
@@ -426,6 +426,13 @@ def yandex_create_order(order):
 
         print('!!!')
     except Exception as e:
+
+        telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+        telegram_group = '-1002079435900'
+
+        send_message(telegram_bot, telegram_group, f'ОШИБКА: {e}')
+        
+
         print(e)
 
 
