@@ -760,6 +760,7 @@ def order_detail(request, pk):
 
 
 from delivery.yandex_eda import yandex_create_order
+from orders.telegram import send_message
 
 @user_passes_test(lambda u: u.is_superuser)
 def order_status_change(request, pk):
@@ -769,88 +770,101 @@ def order_status_change(request, pk):
 
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
-        if form.is_valid():
-            status = form.cleaned_data['status']
+        
+        try:
+            
+            if form.is_valid():
+                status = form.cleaned_data['status']
 
 
-            if status == 'Готов к доставке':
+                if status == 'Готов к доставке':
 
-                print(status)
-                yandex_create_order(order)
-
-
-
-            if loyalty_settings.active == True:
-                
-
-                user = order.user_pr
-                card = LoyaltyCard.objects.get(user=user)
-                user_orders = Order.objects.filter(user_pr=user)
-
-                card = LoyaltyCard.objects.get(user=user)
-
-                
-                order_count = user_orders.count()
-
-                enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
-                balls_after_first_order = loyalty_settings.balls_after_first_order
-                first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
-                send_sms_status = loyalty_settings.send_sms
-                sms_text = loyalty_settings.sms_text
-                balls_summ = 0
+                    print(status)
+                    yandex_create_order(order)
 
 
 
-                if status == 'Выполнен':
+                if loyalty_settings.active == True:
                     
-                    if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                        card.balls = card.balls + balls_after_first_order
-                        card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
-                        balls_summ = balls_after_first_order
 
+                    user = order.user_pr
+                    card = LoyaltyCard.objects.get(user=user)
+                    user_orders = Order.objects.filter(user_pr=user)
 
-                   
-                    else:
-                        if loyalty_settings.status_up == True:
-                            card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
-                            card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
-                            balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                    card = LoyaltyCard.objects.get(user=user)
 
-
-
-                    if send_sms_status == True:
-                        try:
-                            site_name = BaseSettings.objects.get().name
-                        except:
-                            site_name = ''    
-                        
-                        if site_name:
-                            sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('{sitename}', site_name)
-                        else:
-                            sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('- {sitename}', '')
-                        phone = order.phone
-                        if balls_summ != 0:
-                            send_sms(sms_text, phone)
-                        
-
-                if status == 'Отказ':
                     
-                    if order_prev_status == 'Выполнен':
-                      
+                    order_count = user_orders.count()
+
+                    enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
+                    balls_after_first_order = loyalty_settings.balls_after_first_order
+                    first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
+                    send_sms_status = loyalty_settings.send_sms
+                    sms_text = loyalty_settings.sms_text
+                    balls_summ = 0
+
+
+
+                    if status == 'Выполнен':
+                        
                         if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                            card.balls = card.balls - balls_after_first_order
-                            card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                            card.balls = card.balls + balls_after_first_order
+                            card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                            balls_summ = balls_after_first_order
+
+
+                    
                         else:
                             if loyalty_settings.status_up == True:
+                                card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
+                                card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                                balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+
+
+
+                        if send_sms_status == True:
+                            try:
+                                site_name = BaseSettings.objects.get().name
+                            except:
+                                site_name = ''    
+                            
+                            if site_name:
+                                sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('{sitename}', site_name)
+                            else:
+                                sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('- {sitename}', '')
+                            phone = order.phone
+                            if balls_summ != 0:
+                                send_sms(sms_text, phone)
+                            
+
+                    if status == 'Отказ':
+                        
+                        if order_prev_status == 'Выполнен':
+                        
+                            if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
+                                card.balls = card.balls - balls_after_first_order
                                 card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                                card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                            else:
+                                if loyalty_settings.status_up == True:
+                                    card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
+                                    card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
 
 
-                card.save()
+                    card.save()
 
-            form.save()
+                form.save()
 
-            return redirect('order_detail', order.id)
+                return redirect('order_detail', order.id)
+            
+        
+        except Exception as e:
+            telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+            telegram_group = '-1002079435900'
+
+            send_message(telegram_bot, telegram_group, f'ОШИБКА: {e}')
+            
+
+            print(e)
 
 
 @user_passes_test(lambda u: u.is_superuser)

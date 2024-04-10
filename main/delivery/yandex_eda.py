@@ -424,7 +424,7 @@ def yandex_create_order(order):
 
         response = requests.post(url, json=data, headers=headers)
 
-        print('!!!')
+        
     except Exception as e:
 
         telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
