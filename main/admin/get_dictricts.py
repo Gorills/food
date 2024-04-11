@@ -78,7 +78,7 @@ def get_file(data_rions):
     for region in sorted_rions:
         str_list = region.split(',')
         try:
-            result = areaCoordsParser(f'{str_list[0]} район, {city}, Россия')
+            result = areaCoordsParser(f'{str_list[0]}, Россия')
             color_index = min(int(str_list[1]), len(colors) - 1)
             fill_color = list(colors.values())[color_index]
             stroke_color = list(colors.values())[color_index]
