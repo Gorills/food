@@ -73,9 +73,11 @@ def get_file(data_rions):
 
     features = []
     counter = 0
-    sorted_rions = sorted(rions, key=lambda x: int(x.split(',')[1]))
+    # sorted_rions = sorted(rions, key=lambda x: int(x.split(',')[1]))
 
-    for region in sorted_rions:
+    # Бердск,500,999999;Советский район Новосибирск,300,999999;Первомайский район Новосибирск,500,999999;Октябрьский район Новосибирск,900,999999;
+
+    for region in rions:
         str_list = region.split(',')
         try:
             result = areaCoordsParser(f'{str_list[0]}, Россия')
@@ -116,8 +118,14 @@ def get_file(data_rions):
         "features": features
     }
 
-    with open('../core/result.geojson', 'w') as f:
-        json.dump(geojson, f)
+    try:
+        with open('../core/result.geojson', 'w', encoding='utf-8') as f:
+            json.dump(geojson, f)
+    except:
+        with open('core/result.geojson', 'w', encoding='utf-8') as f:
+            json.dump(geojson, f)
+
+
 
     
 

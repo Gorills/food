@@ -110,7 +110,35 @@ def order_create(request):
             pay_change = None
 
 
-        
+        try:
+            bonuses_pay = Decimal(json_order['bonuses_pay'])
+        except:
+            bonuses_pay = 0
+
+
+        if bonuses_pay > 0:
+            if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
+                user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+
+                try:
+                
+                    loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                
+                except:
+                    loyalty_card = LoyaltyCard.objects.create(
+                        user=user_profile,
+                        summ=Decimal('0.00')
+                        )
+
+                try:
+                    if bonuses_pay > 0:
+                        loyalty_card.balls = loyalty_card.balls - bonuses_pay
+
+                except:
+                    pass
+                
+                loyalty_card.save()
+
 
         
 
@@ -132,6 +160,7 @@ def order_create(request):
             summ = Decimal(json_order['summ']),
             paid = False,
             sale_percent = json_order['sale_percent'],
+            bonuses_pay = bonuses_pay,
 
         )
         

@@ -720,6 +720,7 @@ $('.order__input').on('change input', function() {
 function getTotalPriceToBallMath(exclude_combos) {
     
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    let order = JSON.parse(localStorage.getItem('order'));
     
     let totalPrice = 0;
 
@@ -740,6 +741,8 @@ function getTotalPriceToBallMath(exclude_combos) {
     }
 
     totalPrice = totalPrice - getAllDiscount()
+
+    
     
     
     return totalPrice
@@ -748,11 +751,13 @@ function getTotalPriceToBallMath(exclude_combos) {
 
 
 
-
+// считаем доступные баллы
 function maxBallsPay() {
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
+
+    console.log(order)
     
     // console.log(daliveryType);
 
@@ -773,7 +778,7 @@ function maxBallsPay() {
 
 
 
-    let summ = 0;
+    
     let max_active_balls = 0;
 
     if (daliveryType == '1') {
@@ -798,26 +803,64 @@ function maxBallsPay() {
     max_active_balls = Math.floor(max_active_balls);
     // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
-
-    let innerHtms = '';
-    if (max_active_balls > 0) {
-        innerHtms = `
-        <div class="order__info-item" id="balls_info">
-            <p>Доступно баллов:</p>
-            <div>${balls} (можно списать ${max_active_balls})</div>
+    console.log(max_active_balls,order_balls)
+    let innerHtml = '';
+    if (max_active_balls > 0 && order_balls == 0) {
+        innerHtml = `
+        <div class="order__info-item" >
+            <p>Баллов на счету:</p>
+            <div>${balls}₽</div>
+        </div>
+        <div class="order__info-item">
+            <p><small>Списать ${max_active_balls} суммы покупки баллами?</small></p>
+            <div><a href="#" id="balls-pay" class="order__info-link">Списать баллы</a></div>
         </div>
         `
-    } else {
-        innerHtms = ''
+    } else if(order_balls > 0) {
+        innerHtml = `
+        <div class="order__info-item" >
+            <p>Баллов на счету:</p>
+            <div>${balls}₽ (-${order_balls}) <div><a href="#" id="balls-refresh" class="order__info-link">Отменить</a></div></div>
+        </div>
+       
+        `
     }
-
-    $('#balls').html(innerHtms);
     
 
-    return summ
+    $('#balls').html(innerHtml);
+    
+
+    return max_active_balls
 
 }
 
+// активировать баллы
+
+
+$(document).on('click','#balls-pay', function(e) {
+    e.preventDefault();
+    let max_active_balls = maxBallsPay();
+    let order = JSON.parse(localStorage.getItem('order'));
+    order.bonuses_pay = max_active_balls;
+    localStorage.setItem('order', JSON.stringify(order));
+    updateAll()
+})
+
+$(document).on('click','#balls-refresh', function(e) {
+    e.preventDefault();
+    refreshBalls();
+    updateAll()
+})
+
+// сбросить баллы
+function refreshBalls() {
+    let order = JSON.parse(localStorage.getItem('order'));
+    order.bonuses_pay = 0;
+    localStorage.setItem('order', JSON.stringify(order));
+    maxBallsPay()
+}
+
+// refreshBalls()
 
 // Сумма всех скидок
 function getAllDiscount() {
@@ -877,7 +920,7 @@ function getAllDiscount() {
     
 
 
-    // Вычитаем из суммы заказа активные баллы
+    // добавляем к сумме скидок заказа активные баллы
     
     let active_balls = order.bonuses_pay
 
@@ -1409,7 +1452,7 @@ jQuery(document).ready(function () {
 
 
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-    console.log(last_order)
+    // console.log(last_order)
 
 })
 
@@ -2002,8 +2045,9 @@ async function addToCart(context, itemId, type) {
     localStorage.setItem('cart', JSON.stringify(cart));
 
     // console.log(cart)
-    fetchRelatedItems()
+    fetchRelatedItems();
     updateAll();
+    refreshBalls();
 }
 
 
@@ -2211,6 +2255,7 @@ function minusFromCart(itemId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
+    refreshBalls();
 }
 
 function plusFromCart(itemId) {
@@ -2219,6 +2264,7 @@ function plusFromCart(itemId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
+    refreshBalls();
 }
 
 // Функция для удаления товара из корзины
@@ -2228,6 +2274,7 @@ function removeFromCart(itemId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
+    refreshBalls();
 }
 
 // Функция для очистки корзины

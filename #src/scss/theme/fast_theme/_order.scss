@@ -628,12 +628,33 @@
         p {
             color: #767E91;
             margin-right: 10px;
+
+            @media screen and (max-width: 480px) {
+                margin: 0;
+                
+            }
         }
         div {
             color: #0F2034;
             min-width: 50px;
         }
+
+        @media screen and (max-width: 480px) {
+            font-size: 14px;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            
+        }
         
+    }
+
+    // .order__info-link
+
+    &__info-link {
+        color: rgb(233, 12, 78);
+        text-decoration: underline;
+        font-size: 12px;
     }
 
 
