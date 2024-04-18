@@ -5,7 +5,7 @@ from sorl.thumbnail import get_thumbnail
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
 from orders.models import Order
-from shop.models import Category, Manufacturer, ProductSale, ShopSetup, Product
+from shop.models import Category, Manufacturer, PickupAreas, ProductSale, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page, PlaceImages, Reviews
 from blog.models import BlogSetup, Post
@@ -318,8 +318,10 @@ def home(request):
 
 def page_detail(request, slug):
     page = get_object_or_404(Page, type=slug, status=True)
+    pickup_areas = PickupAreas.objects.all()
     context = {
         'page': page,
+        'pickup_areas': pickup_areas,
         'images': PlaceImages.objects.all(),
     }
     return render(request, 'home/page_detail.html', context)

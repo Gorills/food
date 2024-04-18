@@ -289,7 +289,7 @@
                             </div>
 
                             <div class="contacts-design__wrap">
-                                
+                                {% if setup.address %}
                                 <div class="contacts-design__list-text">
                                     <p>{{ setup.address }} </p>
                                 
@@ -297,7 +297,21 @@
                                 
                                 </div>
                                    
+                                {% endif %}
+
+                                {% for area in pickup_areas %}
                                 
+                                <div class="contacts-design__list-text">
+                                    <p>{{ area.address }} </p>
+                                    <p>{{ area.phone }} </p>
+                                    <p>Время работы {{ area.time_to_open }}/{{ area.time_to_close }} </p>
+                                
+                                  
+                                
+                                </div>
+                                
+                                
+                                {% endfor %}
                                 
                                 
                             </div>
