@@ -210,7 +210,7 @@ def home(request):
 
 
     order_get = request.GET.getlist('order')
-    home_cats = Category.objects.filter(home=True, active=True).order_by('sort_order')
+    home_cats = Category.objects.filter(home=True, status=True).order_by('sort_order')
 
 
 
