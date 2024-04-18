@@ -453,7 +453,13 @@ class LoyaltyCardForm(forms.ModelForm):
 class LoyaltyCardStatusForm(forms.ModelForm):
     class Meta:
         model = LoyaltyCardStatus
-        fields = '__all__'
+        fields = [
+            'name',
+            'summ',
+            'percent_up',
+            'percent_pay',
+            'percent_pay_pickup',
+        ]
         widgets = {
            
             'name': forms.TextInput(attrs={
@@ -466,12 +472,7 @@ class LoyaltyCardStatusForm(forms.ModelForm):
             'percent_up': forms.TextInput(attrs={
                 'class': 'input',
             }),
-            'percent_down': forms.TextInput(attrs={
-                'class': 'input',
-            }),
-            'percent_down_pickup': forms.TextInput(attrs={
-                'class': 'input',
-            }),
+          
             'percent_pay': forms.TextInput(attrs={
                 'class': 'input',
             }),
@@ -485,10 +486,22 @@ class LoyaltyCardStatusForm(forms.ModelForm):
 # Настройка карт лояльности
 
 class LoyaltyCardSettingsForm(forms.ModelForm):
-    text = forms.CharField(label='Описание программы лояльности', required=False, widget=CKEditorUploadingWidget())
+    # text = forms.CharField(label='Описание программы лояльности', required=False, widget=CKEditorUploadingWidget())
     class Meta:
         model = LoyaltyCardSettings
-        fields = '__all__'
+        fields = [
+            'active',
+            # 'status_up',
+            'show_status',
+            'show_summ',
+            'balls_min_summ',
+            'exclude_combos',
+            'exclude_sales',
+            'remove_sale_price',
+            'enable_add_balls_after_first_order',
+            'balls_after_first_order',
+            'first_order_summ_for_add_balls',
+        ]
         
 
         widgets = {
@@ -501,6 +514,9 @@ class LoyaltyCardSettingsForm(forms.ModelForm):
             'balls_after_first_order': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'first_order_summ_for_add_balls': forms.TextInput(attrs={
+                'class': 'input',
+            })
             
         }
 

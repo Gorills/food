@@ -753,11 +753,13 @@ function getTotalPriceToBallMath(exclude_combos) {
 
 // считаем доступные баллы
 function maxBallsPay() {
+    
+
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
 
-    console.log(order)
+    // console.log(order)
     
     // console.log(daliveryType);
 
@@ -803,7 +805,7 @@ function maxBallsPay() {
     max_active_balls = Math.floor(max_active_balls);
     // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
-    console.log(max_active_balls,order_balls)
+    // console.log(max_active_balls,order_balls)
     let innerHtml = '';
     if (max_active_balls > 0 && order_balls == 0) {
         innerHtml = `
@@ -829,13 +831,21 @@ function maxBallsPay() {
 
     $('#balls').html(innerHtml);
     
+    
 
     return max_active_balls
 
 }
-
+// maxBallsPay()
 // активировать баллы
 
+$(document).on('click','.active_balls', function(e) {
+    e.preventDefault();
+    setLoyalCart();
+    maxBallsPay()
+    getTotalPriceAfterDiscount();
+    $(this).remove();
+})
 
 $(document).on('click','#balls-pay', function(e) {
     e.preventDefault();
@@ -843,13 +853,16 @@ $(document).on('click','#balls-pay', function(e) {
     let order = JSON.parse(localStorage.getItem('order'));
     order.bonuses_pay = max_active_balls;
     localStorage.setItem('order', JSON.stringify(order));
-    updateAll()
+    maxBallsPay()
+    getTotalPriceAfterDiscount();
+    // $('#balls').remove();
 })
 
 $(document).on('click','#balls-refresh', function(e) {
     e.preventDefault();
     refreshBalls();
-    updateAll()
+    getTotalPriceAfterDiscount();
+    
 })
 
 // сбросить баллы
@@ -858,6 +871,7 @@ function refreshBalls() {
     order.bonuses_pay = 0;
     localStorage.setItem('order', JSON.stringify(order));
     maxBallsPay()
+    getTotalPriceAfterDiscount();
 }
 
 // refreshBalls()
@@ -2455,17 +2469,27 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
         }
     }).done(function() {
 
-      
+        setLoyalCart();
+        maxBallsPay();
+
+        console.log(maxBallsPay())
+
+        getTotalPriceAfterDiscount();
 
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = phone
         localStorage.setItem('order', JSON.stringify(order));
+
+        
+        
        
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         
-
         
-        updateAll()
+        var newElement = $('<a href="#" class="active_balls">Активировать бонусную систему</a>');
+        var existingElement = $('#balls');
+        existingElement.before(newElement);
+
         
     }).fail(function() {
         
@@ -2481,12 +2505,23 @@ $(document).on('click', '.order__register-logout' ,function(e){
     $.get("/logout/")
     .done(function(  ) {
 
+        setLoyalCart();
+        maxBallsPay();
+        console.log(maxBallsPay())
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = ''
+        order.bonuses_pay = 0;
         localStorage.setItem('order', JSON.stringify(order));
         
-        updateAll()
+
+        $('.active_balls').remove();
+        $('#balls').html('')
+
+        
+        getTotalPriceAfterDiscount();
+        
+
     })
     
 })

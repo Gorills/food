@@ -5793,6 +5793,11 @@ td.product-thumbnail img {
   color: #fff;
 }
 
+.order .cart__input-phone-btn {
+  text-align: center;
+  justify-content: center;
+}
+
 .order__register-input {
   width: 100%;
   background: #FFFFFF;
@@ -5829,6 +5834,14 @@ td.product-thumbnail img {
 
 .order__input-phone-signup-refresh svg path {
   fill: #767E91;
+}
+
+.order .active_balls {
+  color: #E90C4E;
+  font-size: 12px;
+  margin-bottom: 10px;
+  display: inline-block;
+  text-decoration: underline;
 }
 
 .order .required_checkbox--error span {
@@ -6685,6 +6698,10 @@ td.product-thumbnail img {
   .cat-home__item:nth-child(7) {
     grid-column: 7/10;
   }
+
+  .order__body-wrap {
+    padding: 0 20px 40px 20px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -7144,6 +7161,14 @@ td.product-thumbnail img {
     grid-template-columns: repeat(1, 1fr);
   }
 
+  .order__top {
+    padding: 20px;
+  }
+
+  .order__bottom {
+    padding: 20px 20px 40px 20px;
+  }
+
   .order__checkup-item-wrap--grid-two {
     grid-template-columns: repeat(1, 1fr);
   }
@@ -7188,6 +7213,10 @@ td.product-thumbnail img {
     text-align: center;
   }
 
+  .order__pay-methods {
+    padding: 0 20px;
+  }
+
   .order input[type=radio]:after,
   .order input[type=checkbox]:after {
     width: 26px;
@@ -7198,6 +7227,14 @@ td.product-thumbnail img {
   .order input[type=checkbox]:checked:after {
     width: 26px;
     height: 26px;
+  }
+
+  .checkout__counter {
+    padding: 0 20px;
+  }
+
+  .checkout__counter-title {
+    font-size: 9px;
   }
 }
 
@@ -7216,6 +7253,14 @@ td.product-thumbnail img {
 
   .check-delivery__img {
     width: 50px;
+  }
+
+  .order__register-bottom {
+    flex-direction: column;
+  }
+
+  .order__register-btn {
+    margin-top: 10px;
   }
 }
 

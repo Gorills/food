@@ -139,6 +139,11 @@
         position: relative;
         padding: 40px;
 
+        @media screen and (max-width: 480px) {
+            padding: 20px;
+            
+        }
+
         
     }
 
@@ -226,6 +231,11 @@
     // .order__body-wrap
     &__body-wrap {
         padding: 0 40px 40px 40px;
+
+        @media screen and (max-width: 768px) {
+            padding: 0 20px 40px 20px;
+            
+        }
     }
     // .order__delivery
 
@@ -319,6 +329,11 @@
             height: 49px;
             pointer-events: none;
             z-index: 0;
+        }
+
+        @media screen and (max-width: 480px) {
+            padding: 20px 20px 40px 20px;
+            
         }
     }
 
@@ -663,6 +678,11 @@
         padding: 0 40px;
         display: none;
 
+        @media screen and (max-width: 480px) {
+            padding: 0 20px;
+            
+        }
+
         &--active {
             display: block;
         }
@@ -734,6 +754,13 @@
     &__register-bottom {
         display: flex;
         justify-content: flex-end;
+
+        @media screen and (max-width: 420px) {
+            
+            flex-direction: column;
+            // align-items: center;
+            
+        }
     }
 
     // .order__register-btn
@@ -750,6 +777,17 @@
             background: #E90C4E;
             color: #fff;
         }
+        @media screen and (max-width: 420px) {
+            margin-top: 10px;
+            
+        }
+    }
+
+    // .cart__input-phone-btn
+
+    .cart__input-phone-btn {
+        text-align: center;
+        justify-content: center;
     }
 
     // .order__register-input
@@ -797,7 +835,13 @@
     }
 
 
-
+    .active_balls {
+        color: #E90C4E;
+        font-size: 12px;
+        margin-bottom: 10px;
+        display: inline-block;
+        text-decoration: underline;
+    }
 
 
     .required_checkbox--error {
@@ -937,6 +981,10 @@
         margin: 0;
         margin-bottom: 20px;
         padding: 0 40px;
+        @media screen and (max-width: 480px) {
+            padding: 0 20px;
+            
+        }
     }
 
     // .checkout__counter-item
@@ -1036,6 +1084,11 @@
         font-weight: 500;
         color: #767E91;
         margin-bottom: 10px;
+
+        @media screen and (max-width: 480px) {
+            font-size: 9px;
+            
+        }
 
     }
 
