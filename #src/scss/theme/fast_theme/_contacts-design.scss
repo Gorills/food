@@ -124,6 +124,15 @@
         // p {
         //     margin-bottom: 15px;
         // }
+
+        a {
+            color: var(--color-font);
+            text-decoration: underline;
+        }
+    }
+
+    &__list-text  + &__list-text {
+        margin-top: 20px;
     }
 
     .header__contacts-phone {
