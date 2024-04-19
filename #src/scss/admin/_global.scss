@@ -418,6 +418,31 @@ label {
     }
 }
 
+.save-as {
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    line-height: .6;
+    height: 35px;
+    width: 35px;
+    justify-content: center;
+    color: #333;
+    border-radius: 0.25rem;
+    background-color: $success;
+    border-color: $success;
+    padding: 10px;
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+        &:hover {
+            color: #333;
+            background-color: #b5ffdf;
+            border-color: #b5ffdf;
+        }
+}
+
 .edit {
     font-weight: 900;
     display: flex;

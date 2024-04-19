@@ -161,6 +161,7 @@
         display: flex;
         align-items: center;
         max-height: 80px;
+        overflow: hidden;
         img {
             display: flex;
             -ms-flex-item-align:center;
@@ -177,6 +178,7 @@
             align-items:center;
           
             height: fit-content;
+            
             max-height: fit-content;
         }
 

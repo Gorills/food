@@ -2,7 +2,7 @@ from decimal import Decimal
 from distutils.log import debug
 from itertools import product
 from multiprocessing import context
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
@@ -1534,6 +1534,9 @@ def product_add(request):
     if request.method == 'POST':
         form_new = ProductForm(request.POST, request.FILES)
         if form_new.is_valid():
+
+            
+
             form_new.save()
             product = Product.objects.get(slug=request.POST['slug'])
 
@@ -1780,6 +1783,81 @@ def product_edit(request, pk):
 
     return render(request, 'shop/product/product_edit.html', context)
     
+
+from django.db import transaction
+from django.apps import apps
+
+@user_passes_test(lambda u: u.is_superuser)
+def product_save_as(request, pk):
+    
+    
+    original_product = Product.objects.get(id=pk)
+    options = ProductOption.objects.filter(parent_id=pk)
+    chars = ProductChar.objects.filter(parent_id=pk)
+    images = ProductImage.objects.filter(parent_id=pk)
+
+
+    # Создаем новый объект Product с атрибутами из существующего объекта
+    new_product = Product()
+
+    # Копируем значения всех полей из существующего объекта в новый объект
+    for field in original_product._meta.fields:
+        setattr(new_product, field.name, getattr(original_product, field.name))
+
+    # Очищаем ID, чтобы создать новую запись в базе данных
+    new_product.id = None
+    new_product.external_id = None
+    # Обновляем slug или другие уникальные поля, если это необходимо
+    new_product.slug = get_unique_slug(original_product.slug)
+    # Сохраняем новый объект Product
+    new_product.save()
+
+    
+    for option in options:
+        new_option = ProductOption()
+        for field in option._meta.fields:
+            setattr(new_option, field.name, getattr(option, field.name))
+        new_option.parent = new_product
+        new_option.save()
+
+    for char in chars:
+        new_char = ProductChar()
+        for field in char._meta.fields:
+            setattr(new_char, field.name, getattr(char, field.name))
+        new_char.parent = new_product
+        new_char.save()
+
+    for image in images:
+        new_image = ProductImage()
+        for field in image._meta.fields:
+            setattr(new_image, field.name, getattr(image, field.name))
+        new_image.parent = new_product
+        new_image.save()
+
+
+
+    return redirect('product_edit', pk=new_product.pk)
+
+
+
+    
+
+def get_unique_slug(slug):
+    # Функция, чтобы обеспечить уникальность slug
+    # Возможно, вам потребуется настроить его для вашей модели
+    # Например, добавить случайные символы к slug, если он уже существует
+    unique_slug = slug
+    counter = 1
+    while Product.objects.filter(slug=unique_slug).exists():
+        unique_slug = f"{slug}-{counter}"
+        counter += 1
+    return unique_slug
+
+
+
+
+
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def product_delete(request, pk):

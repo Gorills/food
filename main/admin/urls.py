@@ -103,6 +103,7 @@ urlpatterns = [
     path('product/', views.admin_product, name='admin_product'),
     path('product/add/', views.product_add, name='product_add'),
     path('product/edit/<int:pk>/', views.product_edit, name='product_edit'),
+    path('product/save_us/<int:pk>/', views.product_save_as, name='product_save_as'),
     path('product/delete/<int:pk>/', views.product_delete, name='product_delete'),
 
     path('admin_sale/', views.admin_sale, name='admin_sale'),

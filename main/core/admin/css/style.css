@@ -363,6 +363,32 @@ label span {
   border-color: #b5ffdf;
 }
 
+.save-as {
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  line-height: 0.6;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  color: #333;
+  border-radius: 0.25rem;
+  background-color: #9AFDD2;
+  border-color: #9AFDD2;
+  padding: 10px;
+}
+
+.save-as svg {
+  width: 100%;
+  height: 100%;
+}
+
+.save-as:hover {
+  color: #333;
+  background-color: #b5ffdf;
+  border-color: #b5ffdf;
+}
+
 .edit {
   font-weight: 900;
   display: flex;

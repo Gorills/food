@@ -55,25 +55,18 @@ function makeSlug(str)
 $(document).on('keyup','#id_name',function(){
     var url = document.location.href;
 
-    if(url.includes('edit')) {
-
-    } else {
-      var getVal = $(this).val()
-
-      var res = makeSlug(getVal)
-
-      var color = $('#data-color').val()
-      if (color != '') {
-          resAll = res + '-' + color
-      } else {
-          resAll = res
-      }
-      
-      $('#id_slug').val(resAll)
-      $('#data-slug').val(res)
-    }
     
+    var getVal = $(this).val()
 
+    var res = makeSlug(getVal)
+
+    
+      
+    
+    
+    console.log(res)
+    $('#id_slug').val(res)
+    $('#data-slug').val(res)
 })
 
 

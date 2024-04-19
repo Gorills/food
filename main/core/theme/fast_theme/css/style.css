@@ -1604,6 +1604,7 @@ a {
   display: flex;
   align-items: center;
   max-height: 80px;
+  overflow: hidden;
 }
 
 .cart__left-wrap img {
@@ -5960,6 +5961,14 @@ td.product-thumbnail img {
   flex-direction: column;
   position: relative;
   width: 100%;
+}
+
+.checkout__counter-item:nth-child(1) {
+  align-items: flex-start;
+}
+
+.checkout__counter-item:nth-child(1) .checkout__counter-title {
+  text-align: start;
 }
 
 .checkout__counter-item:nth-child(2) {

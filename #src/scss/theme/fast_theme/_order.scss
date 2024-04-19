@@ -994,6 +994,14 @@
         flex-direction: column;
         position: relative;
         width: 100%;
+
+        &:nth-child(1) {
+            align-items: flex-start;
+            
+            .checkout__counter-title {
+                text-align: start;
+            }
+        }
         &:nth-child(2) {
             align-items: center;
         }
