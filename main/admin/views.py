@@ -1818,6 +1818,7 @@ def product_save_as(request, pk):
         for field in option._meta.fields:
             setattr(new_option, field.name, getattr(option, field.name))
         new_option.parent = new_product
+        new_option.pk = None  # Указываем Django создать новый объект
         new_option.save()
 
     for char in chars:
@@ -1825,6 +1826,7 @@ def product_save_as(request, pk):
         for field in char._meta.fields:
             setattr(new_char, field.name, getattr(char, field.name))
         new_char.parent = new_product
+        new_char.pk = None  # Указываем Django создать новый объект
         new_char.save()
 
     for image in images:
@@ -1832,6 +1834,8 @@ def product_save_as(request, pk):
         for field in image._meta.fields:
             setattr(new_image, field.name, getattr(image, field.name))
         new_image.parent = new_product
+        new_image.pk = None  # Указываем Django создать новый объект
+
         new_image.save()
 
 
