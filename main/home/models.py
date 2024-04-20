@@ -4,6 +4,7 @@ from admin.singleton_model import SingletonModel
 # Create your models here.
 from main.transliterate_filename import transliterate_file
 from django.utils import timezone
+from sorl.thumbnail import get_thumbnail
 
 class SliderSetup(SingletonModel):
 
@@ -11,12 +12,15 @@ class SliderSetup(SingletonModel):
     dots = models.BooleanField(default=True, verbose_name='Включить точки')
     autoplay = models.BooleanField(default=True, verbose_name='Автолистание')
     speed = models.CharField(max_length=250, default=5000, verbose_name='Скорость автопролистывания (ms)')
-
+    full_screen = models.BooleanField(default=True, verbose_name='Включить полноэкранный режим')
+    height = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера')
+    image_compression = models.PositiveIntegerField(blank=True, null=True, default=1, verbose_name='Качество изображения')
 
 
 class Slider(models.Model):
     name = models.CharField(max_length=250, verbose_name='Название')
     title = models.CharField(max_length=250, null=True, blank=True, verbose_name='Заголовок (не обязательно)')
+    text_color = models.CharField(max_length=250, null=True, blank=True, verbose_name='Цвет текста (не обязательно)')
     
     def get_image_upload_path(instance, filename):
         """
@@ -82,7 +86,21 @@ class Slider(models.Model):
         elif format in photo:
             return 'photo'
 
-        
+    def get_image_max(self):
+        setup = SliderSetup.objects.first()
+        height = setup.height
+        width = 1920
+        image_compression = setup.image_compression
+        res = get_thumbnail(self.image, f'{width * image_compression}x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
+        return res
+    
+    def get_image_mob(self):
+        setup = SliderSetup.objects.first()
+        height = setup.height
+        width = 1200
+        image_compression = setup.image_compression
+        res = get_thumbnail(self.image_mob, f'{width * image_compression}x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
+        return res
 
     class Meta:
        

@@ -1,5 +1,54 @@
 .sl {
     position: relative;
+
+    &--min {
+        padding-top: 30px;
+        @media screen and (max-width: 480px) {
+            padding-top: 0;
+            
+        }
+        .sl__img {
+            border-radius: 8px;
+        }
+
+        .sl__wrap {
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+
+            &--bg {
+                background: none;
+            }
+        }
+
+        .sl__title {
+            font-size: 56px;
+            line-height: 1;
+            @media screen and (max-width: 786px) {
+                font-size: 36px;
+                
+            }
+            @media screen and (max-width: 480px) {
+                font-size: 24px;
+                line-height: 1;
+                
+            }
+        }
+
+        .sl__text {
+            font-size: 24px;
+            margin-bottom: 0;
+            @media screen and (max-width: 786px) {
+                font-size: 16px;
+                
+            }
+        }
+
+
+    }
     // padding: 40px 0;
     // .sl__inner
     &__inner {
@@ -12,6 +61,7 @@
         width: 100%;
         // height: calc(100vh - 250px);
         // min-height: 374px;
+        overflow: hidden;
         position: relative;
         color: var(--color-font);
 

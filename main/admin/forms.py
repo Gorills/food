@@ -807,6 +807,14 @@ class SliderSetupForm(forms.ModelForm):
             'speed': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
+            }),
+            'height': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'image_compression': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
             })
         }
 
@@ -825,6 +833,11 @@ class SliderForm(forms.ModelForm):
             'title': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Заголовок (не обязательно)',
+            }),
+            'text_color': forms.TextInput(attrs={
+               
+                'placeholder': 'Цвет текста (не обязательно)',
+                'type': 'color'
             }),
             'text': forms.Textarea(attrs={
                 'class': 'input',
