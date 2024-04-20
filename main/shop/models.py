@@ -192,9 +192,14 @@ class Category(models.Model):
     def all_active_products(self):
 
         products = self.products.filter(status=True, stock__gt=0)
-        childrens = Category.objects.filter(parent=self)
-        children_products = Product.objects.filter(parent__in=childrens)
-        products = products | children_products
+        # childrens = Category.objects.filter(parent=self)
+        # children_products = Product.objects.filter(parent__in=childrens)
+
+
+        products_add = self.products_add.filter(status=True, stock__gt=0)
+        
+
+        products = products | products_add
 
 
         return products
@@ -452,6 +457,7 @@ class Product(models.Model):
     # Связи
     product_manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='manufacturer_products', null=True, blank=True)
     parent = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', blank=True, null=True, verbose_name='Категория')
+    parent_add = models.ManyToManyField(Category, related_name='products_add', blank=True, verbose_name='Дополнительные категории')
 
     # Связанные товары
     product_connect = models.ManyToManyField('self', related_name='connects', blank=True)

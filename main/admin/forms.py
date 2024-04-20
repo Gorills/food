@@ -1463,6 +1463,7 @@ class ProductForm(forms.ModelForm):
             'product_manufacturer',
             'parent',
             'product_connect',
+            'parent_add',
             'thumb',
             'status',
             'sort_order',
@@ -1497,6 +1498,7 @@ class ProductForm(forms.ModelForm):
             'weight_class': 'Единица измерения веса',
             'product_manufacturer': 'Производитель',
             'parent': 'Категория',
+            'parent_add': 'Добавить категорию',
             'product_connect': 'Связанные товары',
             'thumb': 'Изображение товара (превью)',
             'status': 'Статус',
@@ -1609,7 +1611,10 @@ class ProductForm(forms.ModelForm):
                 'placeholder': 'Связанные товары',
             }),
             
-          
+            'parent_add': forms.SelectMultiple(attrs={
+                'class': 'input',
+                'placeholder': 'Свзянные категории',
+            }),
             # 'status': forms.Select(attrs={
             #     'class': 'input',
             #     'placeholder': 'Статус',

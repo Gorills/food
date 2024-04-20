@@ -144,11 +144,11 @@
                 {{ form.minimum }}
                 {{ form.minimum.errors }}
             </p>
-            <p>
+            {% comment %} <p>
                 {{ form.subtract.label_tag }}
                 {{ form.subtract }}
                 {{ form.subtract.errors }}
-            </p>
+            </p> {% endcomment %}
             {% comment %} <p>
                 {{ form.shipping.label_tag }}
                 {{ form.shipping }}
@@ -214,6 +214,11 @@
                 <span class="required">*</span> {{ form.parent.label_tag }}
                 {{ form.parent }}
                 {{ form.parent.errors }}
+            </p>
+            <p>
+                {{ form.parent_add.label_tag }}
+                {{ form.parent_add }}
+                {{ form.parent_add.errors }}
             </p>
             {% comment %} <p>
                 <span class="required">*</span> {{ form.product_connect.label_tag }}
