@@ -1806,7 +1806,7 @@ def product_save_as(request, pk):
 
     # Очищаем ID, чтобы создать новую запись в базе данных
     new_product.id = None
-    new_product.image = None
+    new_product.thumb = None
     new_product.external_id = None
     # Обновляем slug или другие уникальные поля, если это необходимо
     new_product.slug = get_unique_slug(original_product.slug)

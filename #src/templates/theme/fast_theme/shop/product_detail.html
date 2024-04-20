@@ -64,9 +64,9 @@
             <div class="product-detail__right">
                 {% if product.images.count != 0 %}
                 <div class="product-detail__nav">
-                    {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
-                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
-                    {% endthumbnail %}
+                    
+                    <img src="{{ product.get_thumb_maxi.url }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
+                   
                    
                     <div data-image="{{ product.get_thumb_maxi }}"></div>
                     
