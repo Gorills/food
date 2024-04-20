@@ -71,8 +71,12 @@
         
             {% for slider in sliders %}
             <div class="sl__item" height="{{ slider_setup.height }}">
+                {% if slider.link %}
+                    <a href="{{ slider.link }}" class="sl__item-link">
+                {% endif %}
                 <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
                     <div class="container">
+                        
                         <div class="sl__wrap-inner">
                             {% if slider.title %}
                                 <h2 class="sl__title" style="color: {{ slider.text_color }};">{{ slider.title }}</h2>
@@ -86,15 +90,15 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if slider.link %}
+                    </a>
+                {% endif %}
+
                 {% if slider.file_format == 'photo' %}
-                    {% if slider.link %}
-                        <a href="{{ slider.link }}" class="sl__item-link">
-                    {% endif %}
+                    
                     <img src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
                     <img src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
-                    {% if slider.link %}
-                        </a>
-                    {% endif %}
+                   
                 {% elif slider.file_format == 'video' %}
                     <video class="sl__video" muted autoplay loop>
                         <source src="{{ slider.image.url }}"  type="video/mp4">
