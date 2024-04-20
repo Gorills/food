@@ -2184,7 +2184,7 @@ function displayCart() {
                     <div class="cart__related-left">
 
                         <div class="cart__related-left-wrap">
-                            <img src="${item.image}" alt="${item.name}" style="width: 50px;">
+                            <img src="${item.image}" alt="${item.name}" style="width: 50px;height: 50px">
 
                             
                         </div>
