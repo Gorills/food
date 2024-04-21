@@ -2528,10 +2528,6 @@ a {
   border-radius: 8px;
 }
 
-.sl--min .sl__img-mobile {
-  opacity: 80%;
-}
-
 .sl--min .sl__wrap {
   top: 0;
   height: 100%;
@@ -7106,7 +7102,11 @@ td.product-thumbnail img {
   .sl--min .sl__title {
     font-size: 24px;
     line-height: 1;
-    max-width: 350px;
+    max-width: 290px;
+  }
+
+  .sl--min .sl__text {
+    max-width: 290px;
   }
 
   .sl__item {
