@@ -1466,20 +1466,23 @@ jQuery(document).ready(function () {
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
     let intervalId; // переменная для хранения идентификатора интервала
 
-    if (last_order) {
-
+    if (last_order && last_order.status != 'Выполнен') {
+        // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
         function updateOrderStatus() {
             $.ajax({
                 url: '/api/v1/get_order_status/' + order_id + '/',
                 method: 'GET',
                 success: function(data) {
+                    
+                    last_order.status = data.status;
+                    localStorage.setItem('lastOrder', JSON.stringify(last_order));
                     // Обновление popup с полученными данными
                     updatePopup(data.status_list, data.status);
     
                     // Проверка на выполненный статус
                     if (data.status === 'Выполнен') {
-                        $('.popup-order-status').css('display', 'none')
+                        
                         clearInterval(intervalId); // Остановка повторения запросов
                     }
                     // Проверка на выполненный статус
@@ -2602,7 +2605,7 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
         setLoyalCart();
         maxBallsPay();
 
-        console.log(maxBallsPay())
+        // console.log(maxBallsPay())
 
         getTotalPriceAfterDiscount();
 
@@ -2637,7 +2640,7 @@ $(document).on('click', '.order__register-logout' ,function(e){
 
         setLoyalCart();
         maxBallsPay();
-        console.log(maxBallsPay())
+        // console.log(maxBallsPay())
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = ''
