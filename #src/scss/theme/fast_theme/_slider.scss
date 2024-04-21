@@ -22,12 +22,17 @@
             &--bg {
                 background: none;
             }
+
+            @media screen and (max-width: 480px) {
+                padding: 30px;
+                
+            }
         }
 
         .sl__title {
             font-size: 56px;
             line-height: 1;
-            @media screen and (max-width: 786px) {
+            @media screen and (max-width: 576px) {
                 font-size: 36px;
                 
             }
@@ -67,7 +72,8 @@
 
         @media screen and (max-width: 480px) {
             
-            padding: 15px;
+            // padding: 15px;
+            margin-top: 15px;
             overflow: hidden;
             
         }

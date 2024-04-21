@@ -14,6 +14,7 @@ class SliderSetup(SingletonModel):
     speed = models.CharField(max_length=250, default=5000, verbose_name='Скорость автопролистывания (ms)')
     full_screen = models.BooleanField(default=True, verbose_name='Включить полноэкранный режим')
     height = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера')
+    height_mob = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера для мобильного')
     image_compression = models.PositiveIntegerField(blank=True, null=True, default=1, verbose_name='Качество изображения')
 
 
@@ -96,7 +97,7 @@ class Slider(models.Model):
     
     def get_image_mob(self):
         setup = SliderSetup.objects.first()
-        height = setup.height
+        height = setup.height_mob
         width = 1200
         image_compression = setup.image_compression
         res = get_thumbnail(self.image_mob, f'{width * image_compression}x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)

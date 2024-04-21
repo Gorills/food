@@ -6471,10 +6471,6 @@ td.product-thumbnail img {
 }
 
 @media screen and (max-width: 786px) {
-  .sl--min .sl__title {
-    font-size: 36px;
-  }
-
   .sl--min .sl__text {
     font-size: 16px;
   }
@@ -6925,6 +6921,10 @@ td.product-thumbnail img {
     width: 100px;
   }
 
+  .sl--min .sl__title {
+    font-size: 36px;
+  }
+
   .combo-popup {
     align-items: flex-start;
   }
@@ -7094,13 +7094,17 @@ td.product-thumbnail img {
     padding-top: 0;
   }
 
+  .sl--min .sl__wrap {
+    padding: 30px;
+  }
+
   .sl--min .sl__title {
     font-size: 24px;
     line-height: 1;
   }
 
   .sl__item {
-    padding: 15px;
+    margin-top: 15px;
     overflow: hidden;
   }
 
