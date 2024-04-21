@@ -364,7 +364,18 @@ def get_work_active(request, day):
     return Response(data, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def get_order_status(request, pk):
+    order = Order.objects.get(id=pk)
 
+    status_list = [status_value for status_key, status_value in order.STATUS_CLASS if status_value != 'Отказ']
+
+    data = {
+        'status_list': status_list,
+        'status': order.status
+    }
+
+    return Response(data, status=status.HTTP_200_OK)
 
 
 # !!! Is admin !!! 

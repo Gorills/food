@@ -26,6 +26,7 @@ urlpatterns = [
     path('related_products/', views.related_products, name='related_products'),
     path('get_user/', views.get_user, name='get_user'),
     path('get_work_active/<int:day>/', views.get_work_active, name='get_work_active'),
+    path('get_order_status/<int:pk>/', views.get_order_status, name='get_order_status'),
     
    
    

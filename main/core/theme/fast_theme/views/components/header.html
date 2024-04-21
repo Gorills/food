@@ -418,3 +418,13 @@
     </div> 
 </header>
 
+{% if shop_setup.check_order_status %}
+<div class="popup-order-status">
+    <div class="container">
+        <div class="popup-order-status__inner">
+            <p class="popup-order-status__title">Статус заказа:</p>
+            <div id="popup-order-status" class="popup-order-status__list"></div>
+        </div>
+    </div>
+</div>
+{% endif %}
