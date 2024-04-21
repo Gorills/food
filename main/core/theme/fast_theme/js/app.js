@@ -1479,6 +1479,7 @@ jQuery(document).ready(function () {
     
                     // Проверка на выполненный статус
                     if (data.status === 'Выполнен') {
+                        $('.popup-order-status').css('display', 'none')
                         clearInterval(intervalId); // Остановка повторения запросов
                     }
                     // Проверка на выполненный статус
