@@ -2528,6 +2528,10 @@ a {
   border-radius: 8px;
 }
 
+.sl--min .sl__img-mobile {
+  opacity: 80%;
+}
+
 .sl--min .sl__wrap {
   top: 0;
   height: 100%;
@@ -2544,6 +2548,7 @@ a {
 .sl--min .sl__title {
   font-size: 56px;
   line-height: 1;
+  max-width: 550px;
 }
 
 .sl--min .sl__text {
@@ -7095,12 +7100,13 @@ td.product-thumbnail img {
   }
 
   .sl--min .sl__wrap {
-    padding: 30px;
+    padding: 10px;
   }
 
   .sl--min .sl__title {
     font-size: 24px;
     line-height: 1;
+    max-width: 350px;
   }
 
   .sl__item {
