@@ -1466,7 +1466,9 @@ jQuery(document).ready(function () {
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
     let intervalId; // переменная для хранения идентификатора интервала
 
-    if (last_order && last_order.status != 'Выполнен') {
+    console.log(last_order)
+
+    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ') {
         // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
         function updateOrderStatus() {
@@ -1560,6 +1562,14 @@ jQuery(document).ready(function () {
                     `;
 
                 case 'Готов к доставке':
+                    return `
+                    
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    `;
+                case 'Готов к выдаче':
                     return `
                     
                         <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
