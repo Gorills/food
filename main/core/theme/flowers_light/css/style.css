@@ -6376,6 +6376,15 @@ td.product-thumbnail img {
   padding-left: 20px;
 }
 
+.contacts-design__list-text a {
+  color: var(--color-font);
+  text-decoration: underline;
+}
+
+.contacts-design__list-text + .contacts-design__list-text {
+  margin-top: 20px;
+}
+
 .contacts-design .header__contacts-phone {
   font-size: 18px;
   font-weight: 400;

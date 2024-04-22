@@ -368,7 +368,7 @@ def get_work_active(request, day):
 def get_order_status(request, pk):
     order = Order.objects.get(id=pk)
 
-    print(order.STATUS_CLASS)
+    # print(order.STATUS_CLASS)
 
     if order.delivery_method == 'Самовывоз':
         status_list = [status_value for status_key, status_value in order.STATUS_CLASS if status_value != 'Готов к доставке' and status_value != 'Доставка' and status_value != 'Доставлен' and status_value != 'Отказ']
