@@ -289,15 +289,33 @@
                             </div>
 
                             <div class="contacts-design__wrap">
+                                {% if pickup_areas.count == 0 %}
+                                    {% if setup.address %}
+                                    <div class="contacts-design__list-text">
+                                        <p>{{ setup.address }} </p>
+                                    
+                                    
+                                    
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% for area in pickup_areas %}
                                 
                                 <div class="contacts-design__list-text">
-                                    <p>{{ setup.address }} </p>
-                                
+                                    <p>{{ area.address }} </p>
+                                    {% if area.phone %}
+                                    <a href="tel:{{ area.phone }}">{{ area.phone }} </a>
+                                    {% endif %}
+                                    {% if area.time_to_open and area.time_to_close %}
+                                    <p>Время работы {{ area.time_to_open }}/{{ area.time_to_close }} </p>
+                                    {% endif %}
                                   
                                 
                                 </div>
-                                   
                                 
+                                
+                                {% endfor %}
                                 
                                 
                             </div>
