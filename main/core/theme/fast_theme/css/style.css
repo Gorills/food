@@ -6897,6 +6897,7 @@ td.product-thumbnail img {
 
   .cart__body {
     padding: 0 20px;
+    height: calc(100vh - 350px);
   }
 
   .cart__items img {
