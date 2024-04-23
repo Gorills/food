@@ -192,14 +192,14 @@ class Category(models.Model):
     def all_active_products(self):
 
         products = self.products.filter(status=True, stock__gt=0)
-        # childrens = Category.objects.filter(parent=self)
-        # children_products = Product.objects.filter(parent__in=childrens)
+        childrens = Category.objects.filter(parent=self)
+        children_products = Product.objects.filter(parent__in=childrens)
 
 
         products_add = self.products_add.filter(status=True, stock__gt=0)
         
 
-        products = products | products_add
+        products = products | products_add | children_products
 
 
         return products
