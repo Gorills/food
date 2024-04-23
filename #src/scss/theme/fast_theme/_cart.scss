@@ -609,13 +609,15 @@
         align-items: center;
         justify-content: center;
         width: 15px;
+        max-width: 15px;
+        max-height: 15px;
         height: 15px;
         border-radius: 50%;
         border: none;
         background: #CCD1DA;
         box-shadow: inset 3px 3px 5px rgba(13, 39, 80, 0.16);
         color: #767E91;
-        font-size: 14px;
+        font-size: 11px;
         font-weight: 400;
 
         &:hover {

@@ -79,7 +79,12 @@
         position: relative;
         color: var(--color-font);
 
+        max-height: var(--slider-height);
+
+
+
         @media screen and (max-width: 480px) {
+            max-height: var(--slider-height-mobile);
             
             // padding: 15px;
             margin-top: 15px;

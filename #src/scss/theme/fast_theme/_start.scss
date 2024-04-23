@@ -1,5 +1,12 @@
 .start {
     
+    max-height: var(--slider-height);
+
+    @media screen and (max-width: 480px) {
+        max-height: var(--slider-height-mobile);
+        
+    }
+
     position: relative;
     // .start__inner
 
