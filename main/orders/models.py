@@ -48,11 +48,30 @@ class Order(models.Model):
        ('Готовится', 'Готовится'),
        ('Готов к доставке', 'Готов к доставке'),
        ('Готов к выдаче', 'Готов к выдаче'),
+       
+       ('Доставлен', 'Доставлен'),
+       ('Выполнен', 'Выполнен'),
+       ('Отказ', 'Отказ')
+    )
+
+    STATUS_CLASS_SELF_PICKUP = (
+       ('Новый', 'Новый'),
+       ('Готовится', 'Готовится'),
+       ('Готов к выдаче', 'Готов к выдаче'),
+       ('Выполнен', 'Выполнен'),
+       ('Отказ', 'Отказ')
+    )
+
+    STATUS_CLASS_DELIVERY = (
+       ('Новый', 'Новый'),
+       ('Готовится', 'Готовится'),
+       ('Готов к доставке', 'Готов к доставке'),
        ('Доставка', 'Доставка'),
        ('Доставлен', 'Доставлен'),
        ('Выполнен', 'Выполнен'),
        ('Отказ', 'Отказ')
     )
+
     status = models.CharField(max_length=250, verbose_name='Статус заказа', choices=STATUS_CLASS, default='Новый',)
     coupon = models.ForeignKey(Coupon,
                                     related_name='orders',
@@ -75,6 +94,15 @@ class Order(models.Model):
 
     def __str__(self):
         return 'Order {}'.format(self.id)
+    
+    def get_status_class_choices(self):
+        if self.delivery_method == 'Самовывоз':
+            return self.STATUS_CLASS_SELF_PICKUP
+        elif self.delivery_method == 'Доставка':
+            return self.STATUS_CLASS_DELIVERY
+        else:
+            # Возвращаем общий список статусов, если метод доставки неизвестен или не выбран
+            return self.STATUS_CLASS
 
     def get_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())

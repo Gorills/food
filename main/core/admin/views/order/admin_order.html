@@ -47,6 +47,10 @@
                         Способ оплаты 
                     
                     </div>
+                    <div class="col col-4">
+                        Способ доставки 
+                    
+                    </div>
                     <div class="col col-2">
                         Оплата 
                     
@@ -54,9 +58,7 @@
                     <div class="col col-2">
                         Сумма 
                     </div>
-                    <div class="col col-2">
-                        Скидка 
-                    </div>
+                    
                     <a href="" class="col col-4 sort" data-sort="{% if sort == 'name' %}-name{% else %}name{% endif %}">
                     Дата 
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M288.662 352H31.338c-17.818 0-26.741-21.543-14.142-34.142l128.662-128.662c7.81-7.81 20.474-7.81 28.284 0l128.662 128.662c12.6 12.599 3.676 34.142-14.142 34.142z"/></svg>
@@ -77,7 +79,7 @@
 
                                 
                                 <select name="status" class="input change_input" id="id_status">
-                                    {% for status in order.STATUS_CLASS %}
+                                    {% for status in order.get_status_class_choices %}
                                         <option value="{{ status.0 }}" {% if order.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
                                    
                                     {% endfor %}
@@ -87,6 +89,7 @@
                         </div>
 
                         <div class="col col-4" data-label="">{{ order.pay_method }}</div>
+                        <div class="col col-4" data-label="">{{ order.delivery_method }}</div>
 
 
 
@@ -99,11 +102,7 @@
                         {% endif %}
 
                         <div class="col col-2" data-label="">{{ order.summ | floatformat:2}}</div>
-                        <div class="col col-2" data-label="">
-                            {% if order.discount %}
-                                {{ order.discount }}% (купон: {{ order.coupon.code }})
-                            {% endif %}
-                        </div>
+                        
                         <div class="col col-4" style="font-size: 12px;" data-label="">{{ order.created }}</div>
 
                         <div class="col col-5" data-label="">

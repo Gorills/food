@@ -719,16 +719,21 @@ class PaymentForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = [
-            'status'
-        ]
-        widgets = {
-           
-            'status': forms.Select(attrs={
-                'class': 'input',
-            }),
-        }
+        fields = ['status']
 
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+        # Получаем экземпляр заказа из формы (если уже существует)
+        instance = kwargs.get('instance')
+        if instance:
+            delivery_method = instance.delivery_method
+            # Получаем список статусов в зависимости от метода доставки
+            status_choices = instance.get_status_class_choices()
+            # Обновляем виджет поля status, чтобы отобразить соответствующие статусы
+            self.fields['status'].widget.choices = status_choices
+        else:
+            # Если экземпляр еще не создан, обычно используются стандартные статусы
+            self.fields['status'].widget.choices = Order.STATUS_CLASS
 
 
 
