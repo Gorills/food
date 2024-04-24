@@ -362,9 +362,29 @@
         line-height: 1;
     }
 
+    // .product-list__data
+
+    &__data {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        line-height: 14px;
+        color: #b5b5b5;
+        margin-bottom: 10px;
+    }
+    // .product-list__data-wrap
+    &__data-wrap {
+        display: flex;
+
+    }
+    // .product-list__data-item
+    &__data-item + &__data-item {
+        margin-left: 5px;
+    }
     // .product-list__weight
     &__weight {
-        margin-bottom: 10px;
+        
         font-size: 12px;
         line-height: 14px;
         color: #b5b5b5;

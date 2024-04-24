@@ -3,7 +3,7 @@ from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import BaseSettingsSerializer, ComboSerializer, FoodConstructorSerializer, OrderSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
+from .serializers import BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
@@ -12,7 +12,7 @@ from home.models import SliderSetup, Slider, Page
 from orders.models import Order, OrderItem
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper, Tinkoff
 from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
-from shop.models import FoodConstructor, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
+from shop.models import DopItems, FoodConstructor, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
 from shop.models import WorkDay
 from subdomains.models import Subdomain
 from subdomains.utilites import get_subdomain
@@ -383,6 +383,12 @@ def get_order_status(request, pk):
 
     return Response(data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+def dop_items(request):
+    dop_items = DopItems.objects.filter(required=True)
+    serializer = DopItemsSerializer(dop_items, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # !!! Is admin !!! 
 from sms.views import send_sms

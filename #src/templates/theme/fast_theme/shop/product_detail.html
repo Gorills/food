@@ -103,11 +103,28 @@
                    
                     <link itemprop="availability" href="http://schema.org/InStock">
                 </div>
-                {% if product.weight %}
-                    
-                        <div class="product-detail__weight">{{ product.weight }}</div>
-                    
+               
+                <div class="product-list__data">
+                    {% if product.weight %}
+                    <div class="product-list__weight product-list__weight-{{ product.id }}">{{ product.weight }}</div>
                     {% endif %}
+                    
+                    <div class="product-list__data-wrap">
+                        {% if product.nutritional_value %}
+                            <div class="product-list__data-item">Эн.цен.: {{ product.nutritional_value }}</div>
+                        {% endif %}
+                        {% if product.protein %}
+                            <div class="product-list__data-item">Б: {{ product.protein }}</div>
+                        {% endif %}
+                        {% if product.fat %}
+                            <div class="product-list__data-item">Ж: {{ product.fat }}</div>
+                        {% endif %}
+                        {% if product.carb %}
+                            <div class="product-list__data-item">У: {{ product.carb }}</div>
+                        {% endif %}
+                    </div>
+
+                </div>
                 {% if product.short_description %}
                 <p class="product-detail__desc" itemprop="description">{{ product.short_description }}</p>
                 {% endif %}

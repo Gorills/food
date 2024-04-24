@@ -94,6 +94,10 @@ urlpatterns = [
 
     # shop
     path('shop_settings/', views.shop_settings, name='shop_settings'),
+    path('dop_items/add/', views.dop_items_add, name='dop_items_add'),
+    path('dop_items/edit/<int:pk>/', views.dop_items_edit, name='dop_items_edit'),
+    path('dop_items/delete/<int:pk>/', views.dop_items_delete, name='dop_items_delete'),
+
     path('category/', views.admin_category, name='admin_category'),
     path('category/add/', views.category_add, name='category_add'),
     path('category/delete/<int:pk>/', views.category_delete, name='category_delete'),

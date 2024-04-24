@@ -192,6 +192,29 @@
                 {{ form.weight }}
                 {{ form.weight.errors }}
             </p>
+
+            <div class="form__row">
+                <p>
+                    {{ form.protein.label_tag }}
+                    {{ form.protein }}
+                    {{ form.protein.errors }}
+                </p>
+                <p>
+                    {{ form.fat.label_tag }}
+                    {{ form.fat }}
+                    {{ form.fat.errors }}
+                </p>
+                <p>
+                    {{ form.carb.label_tag }}
+                    {{ form.carb }}
+                    {{ form.carb.errors }}
+                </p>
+                <p>
+                    {{ form.nutritional_value.label_tag }}
+                    {{ form.nutritional_value }}
+                    {{ form.nutritional_value.errors }}
+                </p>
+            </div>
             {% comment %} <p>
                 {{ form.weight_class.label_tag }}
                 {{ form.weight_class }}

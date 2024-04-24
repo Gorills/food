@@ -17,7 +17,12 @@ from subdomains.models import Subdomain
 # Home page
 
 
+from shop.models import DopItems
 
+class DopItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DopItems
+        fields = '__all__'
 
 
 

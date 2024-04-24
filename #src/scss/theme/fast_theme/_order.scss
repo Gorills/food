@@ -617,7 +617,45 @@
     &__times-drop-time-item {
     }
 
-    
+    .dop-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: end;
+        margin-bottom: 10px;
+
+        @media screen and (max-width: 480px) {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        h3 {
+            font-size: 16px;
+            line-height: 1;
+            color: #767E91;
+            
+        }
+        p {
+
+        }
+    }
+
+    .dop-item__wrap {
+        margin-right: 10px;
+        @media screen and (max-width: 480px) {
+            margin-right: 0;
+        }
+    }
+
+    .dop-item__description {
+        font-size: 12px;
+        color: #767E91;
+        max-width: 250px;
+    }
+
+    .dop-item__price {
+        font-weight: 500;
+    }
 
     // .order__info
 

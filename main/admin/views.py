@@ -6,7 +6,7 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
@@ -15,7 +15,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -1067,6 +1067,7 @@ def shop_settings(request):
             return render(request, 'shop/settings.html', {'form': form})
 
 
+    items = DopItems.objects.all()
 
 
     context = {
@@ -1074,11 +1075,65 @@ def shop_settings(request):
         'zones': PickupAreas.objects.all(),
         'methods': PayMethod.objects.all(),
         'worksdays': WorkDay.objects.all().order_by('day'),
+        'items': items
 
     }
 
     return render(request, 'shop/settings.html', context)
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def dop_items_add(request):
+
+    if request.method == 'POST':
+        form = DopItemsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/dop_items/dop_items_add.html', {'form':form})
+
+    form = DopItemsForm()
+    
+
+    context = {
+        'form': form,
+        
+    }
+
+
+    return render(request, 'shop/dop_items/dop_items_add.html', context)
+
+
+def dop_items_edit(request, pk):
+
+    if request.method == 'POST':
+        item = DopItems.objects.get(id=pk)
+        form = DopItemsForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_settings')
+        else:
+            return render(request, 'shop/dop_items/dop_items_edit.html', {'form':form})
+
+    item = DopItems.objects.get(id=pk)
+    form = DopItemsForm(instance=item)
+    context = {
+        'form': form,
+        
+    }
+
+    return render(request, 'shop/dop_items/dop_items_edit.html', context)
+
+
+def dop_items_delete(request, pk):
+
+    item = DopItems.objects.get(id=pk)
+    item.delete()
+
+
+    return redirect('shop_settings')
+    
 
 # Настройка скидок на товары
 @user_passes_test(lambda u: u.is_superuser)

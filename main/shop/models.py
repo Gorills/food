@@ -76,6 +76,14 @@ class ShopSetup(SingletonModel):
     delivery_blocked_text = models.TextField(null=True, blank=True, verbose_name='Текст блокировки доставки')
 
 
+class DopItems(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
+    required = models.BooleanField(default=False, verbose_name='Всегда добавлять в корзину')
+    class Meta:
+        verbose_name = 'Дополнительный платеж в корзине'
+        verbose_name_plural = 'Дополнительные элементы'
 
 
 class DeliveryTimePrice(models.Model):
@@ -201,8 +209,8 @@ class Category(models.Model):
 
         products = products | products_add | children_products
 
-
-        return products
+        unique_products = products.distinct()
+        return unique_products
     
     
 
@@ -453,6 +461,10 @@ class Product(models.Model):
        ('гр', 'Граммы'),
     )
     weight_class = models.CharField(max_length=200, choices=WEIGHT_CLASS, default='гр', null=True, blank=True)
+    protein = models.CharField(max_length=200, null=True, blank=True)
+    fat = models.CharField(max_length=200, null=True, blank=True)
+    carb = models.CharField(max_length=200, null=True, blank=True)
+    nutritional_value = models.TextField(null=True, blank=True)
 
     # Связи
     product_manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, related_name='manufacturer_products', null=True, blank=True)

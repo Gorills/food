@@ -3,7 +3,7 @@ from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
-from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
@@ -1184,6 +1184,26 @@ class ShopSetupForm(forms.ModelForm):
         }
 
 
+class DopItemsForm(forms.ModelForm):
+    class Meta:
+        model = DopItems
+        fields = "__all__"
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Название',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'input',
+            })
+        }
+
+
+
 # Маркетинг
 class CouponForm(forms.ModelForm):
     class Meta:
@@ -1443,6 +1463,17 @@ class ManufacturerForm(forms.ModelForm):
         }
 
 
+def get_unique_slug(slug):
+    # Функция, чтобы обеспечить уникальность slug
+    # Возможно, вам потребуется настроить его для вашей модели
+    # Например, добавить случайные символы к slug, если он уже существует
+    unique_slug = slug
+    counter = 1
+    while Product.objects.filter(slug=unique_slug).exists():
+        unique_slug = f"{slug}-{counter}"
+        counter += 1
+    return unique_slug
+
 class ProductForm(forms.ModelForm):
     
     description = forms.CharField(label='Полное описание товара', required=False, widget=CKEditorUploadingWidget())
@@ -1478,6 +1509,10 @@ class ProductForm(forms.ModelForm):
             'length_class',
             'weight',
             'weight_class',
+            'protein',
+            'fat',
+            'carb',
+            'nutritional_value',
             'product_manufacturer',
             'parent',
             'product_connect',
@@ -1514,6 +1549,11 @@ class ProductForm(forms.ModelForm):
             'length_class': 'Единица измерения длины',
             'weight': 'Вес',
             'weight_class': 'Единица измерения веса',
+            'protein': 'Белки',
+            'fat': 'Жиры',
+            'carb': 'Углеводы',
+            'nutritional_value': 'Энергетическая ценность',
+
             'product_manufacturer': 'Производитель',
             'parent': 'Категория',
             'parent_add': 'Добавить категорию',
@@ -1593,6 +1633,22 @@ class ProductForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Высота',
             }),
+            'protein': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Белки',
+            }),
+            'fat': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Жиры',
+            }),
+            'carb': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Углеводы',
+            }),
+            'nutritional_value': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Энергетическая ценность',
+            }),
             # 'color': forms.TextInput(attrs={
                 
             #     'placeholder': 'Цвет',
@@ -1643,7 +1699,19 @@ class ProductForm(forms.ModelForm):
             }),
         }
 
-
+    def clean_slug(self):
+        slug = self.cleaned_data['slug']
+        if self.instance.pk is None:  # Проверяем, является ли объект новым (не сохраненным в базу данных)
+            try:
+                Product.objects.get(slug=slug)
+                new_slug = get_unique_slug(slug)
+                return new_slug
+            except Product.DoesNotExist:
+                return slug
+        else:
+            return slug
+        
+        
 class CategoryForm(forms.ModelForm):
     description = forms.CharField(label='Описание категории', required=False, widget=CKEditorUploadingWidget())
     

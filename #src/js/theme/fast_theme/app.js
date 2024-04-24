@@ -961,33 +961,68 @@ function getTotalPrice() {
         totalPrice += item.price * item.quantity;
         
     }
+
+    
     document.getElementById("total_price").innerText = totalPrice;
     
     return totalPrice
 }
 getTotalPrice()
 
+// Дополнительные наценки в корзине
+function getDopItems() {
+    return fetch('/api/v1/dop_items/')
+        .then(response => response.json())
+        .then(data => {
+            let summ = 0;
+            let itemsHTML = ''; // Строка для хранения HTML-кода элементов
+            data.forEach(function(item) {
+                let price = item['price'];
+                let name = item['name'];
+                let description = item['description'];
+                summ = summ + parseFloat(price);
+                
+                // Создаем HTML-код для текущего элемента
+                let itemHTML = `
+                    <div class="dop-item">
+                        <div class="dop-item__wrap">
+                            <h3>${name}</h3>
+                            <p class="dop-item__description">${description}</p>
+                        </div>
+                            <p class="dop-item__price">${price}</p>
+                    </div>
+                `;
+                itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+            });
+            
+            // Добавляем собранный HTML-код всех элементов в контейнер с id="dop_items_container"
+            document.getElementById('dop_items_container').innerHTML = itemsHTML;
+            
+            return summ;
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки:', error);
+            return 0; // Возвращаем 0 в случае ошибки
+        });
+}
+
 
 // Общая сумма с доставкой и скидками
 function getTotalPriceAfterDiscount() {
-
-    
-
-
-    res = getTotalPrice() + getDeliverySumm() - getAllDiscount()
-
-    document.getElementById("total_price_after_discount").innerText = res + '₽';
-
-
-    let order = JSON.parse(localStorage.getItem('order'));
-
-    order.summ = res
-    localStorage.setItem('order', JSON.stringify(order));
-
-    // console.log(order)
-    
-
-    return res
+    Promise.all([getTotalPrice(), getDopItems(), getDeliverySumm(), getAllDiscount()])
+        .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount]) => {
+            let res = totalPrice + dopItemsSum + deliverySumm - allDiscount;
+            document.getElementById("total_price_after_discount").innerText = res + '₽';
+            let order = JSON.parse(localStorage.getItem('order'));
+            order.summ = res;
+            localStorage.setItem('order', JSON.stringify(order));
+            console.log(res);
+            return res;
+        })
+        .catch(error => {
+            // Обработка ошибок
+            console.error('Ошибка:', error);
+        });
 }
 
 
