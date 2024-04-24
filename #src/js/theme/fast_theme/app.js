@@ -981,7 +981,8 @@ function getDopItems() {
             let summ = 0;
             let itemsHTML = ''; // Строка для хранения HTML-кода элементов
             data.forEach(function(item) {
-                let price = item['price'];
+                let price = parseFloat(item['price']).toFixed(2); // Форматируем цену до двух знаков после запятой
+                price = price.replace(/(\.0+|0+)$/, '');
                 let name = item['name'];
                 let description = item['description'];
 
@@ -998,7 +999,7 @@ function getDopItems() {
                                 <h3>${name}</h3>
                                 <p class="dop-item__description">${description}</p>
                             </div>
-                                <p class="dop-item__price">${price}</p>
+                                <p class="dop-item__price">${parseFloat(price)}₽</p>
                         </div>
                     `;
                     itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
@@ -1014,7 +1015,7 @@ function getDopItems() {
                                 <h3>${name}</h3>
                                 <p class="dop-item__description">${description}</p>
                             </div>
-                                <p class="dop-item__price">${price}</p>
+                                <p class="dop-item__price">${parseFloat(price)}₽</p>
                         </div>
                     `;
                     itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке

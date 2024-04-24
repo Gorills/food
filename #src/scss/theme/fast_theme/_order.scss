@@ -650,7 +650,12 @@
     .dop-item__description {
         font-size: 12px;
         color: #767E91;
-        max-width: 250px;
+        max-width: 350px;
+
+        @media screen and (max-width: 480px) {
+            max-width: 100%;
+            
+        }
     }
 
     .dop-item__price {

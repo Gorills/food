@@ -5792,7 +5792,7 @@ td.product-thumbnail img {
 .order .dop-item__description {
   font-size: 12px;
   color: #767E91;
-  max-width: 250px;
+  max-width: 350px;
 }
 
 .order .dop-item__price {
@@ -7427,6 +7427,10 @@ td.product-thumbnail img {
 
   .order .dop-item__wrap {
     margin-right: 0;
+  }
+
+  .order .dop-item__description {
+    max-width: 100%;
   }
 
   .order__info-item p {
