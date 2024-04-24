@@ -971,6 +971,10 @@ getTotalPrice()
 
 // Дополнительные наценки в корзине
 function getDopItems() {
+
+    let deliveryType = localStorage.getItem("deliveryType");
+    
+
     return fetch('/api/v1/dop_items/')
         .then(response => response.json())
         .then(data => {
@@ -980,19 +984,45 @@ function getDopItems() {
                 let price = item['price'];
                 let name = item['name'];
                 let description = item['description'];
-                summ = summ + parseFloat(price);
+
+                let delivery = item['delivery'];
+                let pickup = item['pickup'];
+
+                if (deliveryType == '1' && delivery) {
+                    summ = summ + parseFloat(price);
                 
-                // Создаем HTML-код для текущего элемента
-                let itemHTML = `
-                    <div class="dop-item">
-                        <div class="dop-item__wrap">
-                            <h3>${name}</h3>
-                            <p class="dop-item__description">${description}</p>
+                    // Создаем HTML-код для текущего элемента
+                    let itemHTML = `
+                        <div class="dop-item">
+                            <div class="dop-item__wrap">
+                                <h3>${name}</h3>
+                                <p class="dop-item__description">${description}</p>
+                            </div>
+                                <p class="dop-item__price">${price}</p>
                         </div>
-                            <p class="dop-item__price">${price}</p>
-                    </div>
-                `;
-                itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+                    `;
+                    itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+
+                }
+                if (deliveryType == '0' && pickup) {
+                    summ = summ + parseFloat(price);
+                
+                    // Создаем HTML-код для текущего элемента
+                    let itemHTML = `
+                        <div class="dop-item">
+                            <div class="dop-item__wrap">
+                                <h3>${name}</h3>
+                                <p class="dop-item__description">${description}</p>
+                            </div>
+                                <p class="dop-item__price">${price}</p>
+                        </div>
+                    `;
+                    itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+
+                }
+
+                
+                
             });
             
             // Добавляем собранный HTML-код всех элементов в контейнер с id="dop_items_container"

@@ -81,6 +81,8 @@ class DopItems(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     required = models.BooleanField(default=False, verbose_name='Всегда добавлять в корзину')
+    delivery = models.BooleanField(default=False, verbose_name='Доставка')
+    pickup = models.BooleanField(default=False, verbose_name='Самовывоз')
     class Meta:
         verbose_name = 'Дополнительный платеж в корзине'
         verbose_name_plural = 'Дополнительные элементы'
