@@ -457,7 +457,7 @@
                                 
                                     {% if type.option_class == 'checkbox' %}
                                     <div class="product-options-popup__options-checkbox-row">
-                                        {% for option in product.options.all %}
+                                        {% for option in product.get_sort_options %}
                                             {% if option.type == type %}
                                                 
                                                     <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">

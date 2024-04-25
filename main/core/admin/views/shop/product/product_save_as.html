@@ -267,10 +267,10 @@
                                 <label for="id_value">Значение:</label>
                                 <input type="text" name="old_option_value" class="input" placeholder="Значение" maxlength="250" required="required" id="id_value" value="{{ option.option_value }}">
                             </p>
-                            <p>
+                            {% comment %} <p>
                                 <label for="id_stock">Количество:</label>
                                 <input type="number" name="old_option_stock" class="input" placeholder="Количество" min="0" required="required" id="id_stock" value="{{ option.option_stock }}">
-                            </p>
+                            </p> {% endcomment %}
                             <p>
                                 <label for="id_price">Добавить стоимость:</label>
                                 <input type="text" name="old_option_price" class="input input-price" placeholder="Добавить стоимость" required="required" step="0.10" id="id_price" value="{{ option.option_price | floatformat:2  }}"> 
@@ -280,11 +280,15 @@
                                 <input type="text" name="old_option_weight" class="input" placeholder="Значение" maxlength="250" required="required" id="id_option_weightu" value="{% if option.option_weight %}{{ option.option_weight }}{% endif %}">
                             </p>
                             <p>
+                                <label for="id_value">Порядок сортировки:</label>
+                                <input type="number" name="old_option_sort" class="input" placeholder="Значение" maxlength="250" required="required" id="id_sort" value="{{ option.sort }}">
+                            </p>
+                            {% comment %} <p>
                                 <label for="id_subtract">Вычитать со склада:</label>
                                 
                                 <input type="checkbox" class="id_subtract_get" {% if option.option_subtract == True %}checked{% endif %}>
                                 <input type="text" name="old_option_subtract" class="id_subtract_paste" value="{{ option.option_subtract }}">
-                            </p>
+                            </p> {% endcomment %}
                             <p>
 
                                 <label for="id_image_status">Включить изображения:</label>

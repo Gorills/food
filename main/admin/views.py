@@ -1621,9 +1621,9 @@ def product_add(request):
             options = request.POST.getlist('type')
             option_weight = request.POST.getlist('option_weight')
             option_value = request.POST.getlist('option_value')
-            option_stock = request.POST.getlist('option_stock')
+            option_sort = request.POST.getlist('option_sort')
             option_price = request.POST.getlist('option_price')
-            option_subtract = request.POST.getlist('option_subtract')
+            
             image_status = request.POST.getlist('image_status')
             o_count = 0
             for option in options:
@@ -1632,9 +1632,9 @@ def product_add(request):
                     type_id = option,
                     option_weight = option_weight[o_count],
                     option_value = option_value[o_count],
-                    option_stock = option_stock[o_count],
+                    sort = option_sort[o_count],
                     option_price = Decimal(option_price[o_count]),
-                    option_subtract = option_subtract[o_count],
+                    
                     image_status = image_status[o_count],
                 )
                 opt.save()
@@ -1697,7 +1697,7 @@ def product_edit(request, pk):
     option_form = ProductOptionForm()
     product_char_form = ProductCharForm()
 
-    options = ProductOption.objects.filter(parent_id=pk)
+    options = ProductOption.objects.filter(parent_id=pk).order_by('sort')
     chars = ProductChar.objects.filter(parent_id=pk)
     images = ProductImage.objects.filter(parent_id=pk)
     all_options = OptionType.objects.all()
@@ -1758,9 +1758,10 @@ def product_edit(request, pk):
             old_type = request.POST.getlist('old_type')
             old_option_value = request.POST.getlist('old_option_value')
             old_option_weight = request.POST.getlist('old_option_weight')
-            old_option_stock = request.POST.getlist('old_option_stock')
+            old_option_sort = request.POST.getlist('old_option_sort')
+            
             old_option_price = request.POST.getlist('old_option_price')
-            old_option_subtract = request.POST.getlist('old_option_subtract')
+            
             old_image_status = request.POST.getlist('old_image_status')
             old_count = 0
             for old in old_id:
@@ -1769,10 +1770,11 @@ def product_edit(request, pk):
                 old_option = ProductOption.objects.get(id=old)
                 old_option.type_id = old_type[old_count]
                 old_option.option_weight = old_option_weight[old_count]
+                old_option.sort = old_option_sort[old_count]
                 old_option.option_value = old_option_value[old_count]
-                old_option.option_stock = old_option_stock[old_count]
+               
                 old_option.option_price = price
-                old_option.option_subtract = old_option_subtract[old_count]
+               
                 old_option.image_status = old_image_status[old_count]
                 old_option.save()
                 try:
@@ -1791,9 +1793,9 @@ def product_edit(request, pk):
             options = request.POST.getlist('type')
             option_weight = request.POST.getlist('option_weight')
             option_value = request.POST.getlist('option_value')
-            option_stock = request.POST.getlist('option_stock')
+            option_sort = request.POST.getlist('option_sort')
             option_price = request.POST.getlist('option_price')
-            option_subtract = request.POST.getlist('option_subtract')
+            
             image_status = request.POST.getlist('image_status')
             o_count = 0
             for option in options:
@@ -1802,9 +1804,9 @@ def product_edit(request, pk):
                     type_id = option,
                     option_weight = option_weight[o_count],
                     option_value = option_value[o_count],
-                    option_stock = option_stock[o_count],
+                    sort = option_sort[o_count],
                     option_price = Decimal(option_price[o_count]),
-                    option_subtract = option_subtract[o_count],
+                   
                     image_status = image_status[o_count],
                 )
                 opt.save()

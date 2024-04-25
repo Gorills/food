@@ -707,7 +707,13 @@ class Product(models.Model):
         except:
             return None
         
-            
+    
+    def get_sort_options(self):
+
+        options = self.options.all().order_by('sort')
+
+
+        return options
 
 
     class Meta:
@@ -768,6 +774,8 @@ class ProductOption(models.Model):
     option_subtract = models.BooleanField(default=False)
     # Включить изображения
     image_status = models.BooleanField(default=False)
+
+    sort = models.PositiveIntegerField(default=0)
 
     def get_price_after_discount(self):
 
