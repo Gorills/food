@@ -460,7 +460,29 @@
                                         {% for option in product.get_sort_options %}
                                             {% if option.type == type %}
                                                 
-                                                    <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                                    <input id="cb{{ option.id }}" class="product-options-popup__options-checkbox-checkbox" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                                    
+                                                    <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                {% if type.option_class == 'radio' %}
+                                <div class="product-options-popup__options-row">
+                                    <div class="product-options-popup__options-name">{{ type.name }}: </div>
+
+
+
+                                
+                                    {% if type.option_class == 'radio' %}
+                                    <div class="product-options-popup__options-checkbox-row">
+                                        {% for option in product.get_sort_options %}
+                                            {% if option.type == type %}
+                                                
+                                                    <input id="cb{{ option.id }}" name="radio" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="radio" value="{{ option.option_value }}">
                                                     
                                                     <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
                                             {% endif %}

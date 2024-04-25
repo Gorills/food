@@ -281,7 +281,7 @@
                             </p>
                             <p>
                                 <label for="id_value">Порядок сортировки:</label>
-                                <input type="number" name="old_option_sort" class="input" placeholder="Значение" maxlength="250" required="required" id="id_sort" value="{{ option.sort }}">
+                                <input type="number" name="old_option_sort" class="input" placeholder="Значение" maxlength="250" required="required" id="id_sort" value="{% if option.sort %}{{ option.sort }}{% else %}0{% endif %}">
                             </p>
                             {% comment %} <p>
                                 <label for="id_subtract">Вычитать со склада:</label>

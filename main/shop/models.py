@@ -741,6 +741,7 @@ class OptionType(models.Model):
      
     #    ('radio', 'Переключатель'),
        ('checkbox', 'Флажки'),
+       ('radio', 'Переключатель'),
        ('select', 'Выпадающий список'),
       
     )

@@ -918,7 +918,7 @@ $(document).on('click','.product-options__item',function(e){
 
 // Дополнительные опции product-options-popup__options-checkbox-row
 $(document).ready(function() {
-    $('input[type="checkbox"]').change(function() {
+    $('input[type="checkbox"], input[type="radio"]').change(function() {
         
         
         // Найти родительский элемент всех выбранных checkbox
@@ -934,7 +934,10 @@ $(document).ready(function() {
 
         // Обновить сумму всех выбранных чекбоксов
         var sum = 0;
-        $parent.find('input[type="checkbox"]:checked').each(function() {
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            sum += parseFloat($(this).data('price'));
+        });
+        $parent.find('input[type="radio"]:checked, input[type="radio"]:checked').each(function() {
             sum += parseFloat($(this).data('price'));
         });
         var price = $parent.find('.product-options-popup__price').attr('data-price');
@@ -950,7 +953,7 @@ $(document).ready(function() {
         
         // Собрать значения data-id всех выбранных чекбоксов через запятую
         var ids = [];
-        $parent.find('input[type="checkbox"]:checked').each(function() {
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
             ids.push($(this).data('id'));
         });
         
@@ -959,7 +962,7 @@ $(document).ready(function() {
         
         // Собрать названия выбранных значений через запятую
         var options = [];
-        $parent.find('input[type="checkbox"]:checked').each(function() {
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
             options.push($(this).val());
         });
         
@@ -981,7 +984,9 @@ $(document).ready(function() {
 
     });
 });
-  
+
+
+
 
 $(document).on('click','.option_setup',function(e){
     e.preventDefault();

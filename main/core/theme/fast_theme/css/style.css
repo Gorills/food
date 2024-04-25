@@ -1577,7 +1577,7 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(100vh - 270px);
+  height: calc(100vh - 390px);
   overflow-y: auto;
   padding: 0 50px;
 }

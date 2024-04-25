@@ -1623,16 +1623,21 @@ def product_add(request):
             option_value = request.POST.getlist('option_value')
             option_sort = request.POST.getlist('option_sort')
             option_price = request.POST.getlist('option_price')
+
+            
             
             image_status = request.POST.getlist('image_status')
             o_count = 0
             for option in options:
+                sort = option_sort[o_count]
+                if sort == '':
+                    sort = 0
                 opt = ProductOption(
                     parent = product,
                     type_id = option,
                     option_weight = option_weight[o_count],
                     option_value = option_value[o_count],
-                    sort = option_sort[o_count],
+                    sort = sort,
                     option_price = Decimal(option_price[o_count]),
                     
                     image_status = image_status[o_count],
@@ -1765,12 +1770,16 @@ def product_edit(request, pk):
             old_image_status = request.POST.getlist('old_image_status')
             old_count = 0
             for old in old_id:
+                sort = old_option_sort[old_count]
+                print('SORT', sort)
+                if sort == '':
+                    sort = 0
                 price = old_option_price[old_count]
                 price = price.replace(',', '.')
                 old_option = ProductOption.objects.get(id=old)
                 old_option.type_id = old_type[old_count]
                 old_option.option_weight = old_option_weight[old_count]
-                old_option.sort = old_option_sort[old_count]
+                old_option.sort = sort
                 old_option.option_value = old_option_value[old_count]
                
                 old_option.option_price = price
@@ -1799,6 +1808,9 @@ def product_edit(request, pk):
             image_status = request.POST.getlist('image_status')
             o_count = 0
             for option in options:
+                sort = option_sort[o_count]
+                if sort == '':
+                    sort = 0
                 opt = ProductOption(
                     parent = product,
                     type_id = option,
