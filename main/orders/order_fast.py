@@ -360,9 +360,11 @@ def order_create(request):
                 data = create_payment(order, request)
 
                 
-                order.payment_dop_info = data['confirmation_url']
+                order.payment_dop_info = data['hashed_value']
                 order.payment_id = data['payment_id']
                 order.save()
+
+                        
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
 

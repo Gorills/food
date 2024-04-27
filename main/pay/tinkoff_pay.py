@@ -6,16 +6,18 @@ import json
 from django.shortcuts import redirect
 
 import requests
-from orders.models import OrderItem
+from orders.models import OrderItem, Order
 
 from pay.models import Tinkoff
 
 try:
     terminalkey = Tinkoff.objects.get().terminalkey
     taxation = Tinkoff.objects.get().taxation
+    password = Tinkoff.objects.get().password
 except:
     terminalkey = ''
     taxation = ''
+    password = ''
 
 from setup.models import BaseSettings
 
@@ -29,6 +31,7 @@ from subdomains.utilites import get_protocol
 
 
 D = Decimal
+import hashlib
 
 def integer_to_decimal_with_precision(integer_value, precision=2):
     decimal_value = Decimal(integer_value)
@@ -120,7 +123,21 @@ def create_payment(order, request):
     delivery_price = order.delivery_price
 
     del_pr = str(Decimal(delivery_price).quantize(D("1.00"))).replace('.', '').replace(',', '')
+
+
+    token = [{"Amount": f"{total}"},{"Description": "Покупка товаров в магазине"},{"OrderId": f"{order.id}"},{"Password": f"{password}"},{"TerminalKey": f"{terminalkey}"}]
+
     
+    # Конкатенация значений пар в одну строку
+    concatenated_string = ''.join([list(item.values())[0] for item in token])
+
+    print(concatenated_string)
+
+    # Применение хеш-функции SHA-256
+    hashed_value = hashlib.sha256(concatenated_string.encode('utf-8')).hexdigest()
+
+    print(hashed_value)
+        
     if Decimal(delivery_price) > 0:
 
         # print(delivery_price)
@@ -142,7 +159,7 @@ def create_payment(order, request):
         "TerminalKey": terminalkey,
         "Amount": str(total),
         "OrderId": order.id,
-        "Description": f"Покупка товаров в магазине {request.META['HTTP_HOST']}",
+        "Description": f"Покупка товаров в магазине",
         "SuccessURL": success_url,
         "Receipt": {
             
@@ -150,7 +167,8 @@ def create_payment(order, request):
             "EmailCompany": email,
             "Taxation": taxation,
             "Items": items_arr
-        }
+        },
+        "Token": hashed_value
     }
     
     headers = {'content-type': 'application/json'}
@@ -167,10 +185,13 @@ def create_payment(order, request):
     
     url = res['PaymentURL']
     payment_id = res['PaymentId']
+
+    # print(payment_id)
     
     data = {
         'order_id': order.id,
         'confirmation_url': url,
+        'hashed_value': hashed_value,
         'payment_id': payment_id
     }
 
@@ -179,3 +200,28 @@ def create_payment(order, request):
     #     json.dump(payList, f)
 
     return data
+
+
+
+def get_status(pay_id):
+    headers = {'content-type': 'application/json'}
+
+    url = "https://securepay.tinkoff.ru/v2/CheckOrder"
+
+    order = Order.objects.get(payment_id=pay_id)
+    token = order.payment_dop_info
+
+    data = {
+        "TerminalKey": terminalkey,
+        "PaymentId": pay_id,
+        "Token": token
+    }
+
+    get_status = requests.post(url, headers=headers, data=data)
+
+    print(token)
+
+    print(get_status.content)
+    
+
+# get_status('4311736054')

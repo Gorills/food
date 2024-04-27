@@ -1619,7 +1619,9 @@ a {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  height: fit-content;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
   max-height: fit-content;
 }
 
@@ -1861,6 +1863,7 @@ a {
   border-radius: 6px;
   overflow: hidden;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .cart__related li {

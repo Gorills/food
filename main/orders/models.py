@@ -35,7 +35,7 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     payment_id = models.CharField(max_length=250, verbose_name="ID платежа", null=True, blank=True)
-    payment_dop_info = models.CharField(max_length=550, verbose_name="Информация о платеже (ссылка на плптеж)", null=True, blank=True)
+    payment_dop_info = models.CharField(max_length=550, verbose_name="Информация о платеже (ссылка на платеж, токен для Тинькофф)", null=True, blank=True)
 
     paid = models.BooleanField(default=False)
 

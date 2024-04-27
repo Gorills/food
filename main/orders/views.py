@@ -295,8 +295,8 @@ def order_create(request):
                     if pay_name == 'tinkoff':
                         data = create_payment(order, request)
 
-                        
-                        order.payment_dop_info = data['confirmation_url']
+                        print(data['hashed_value'])
+                        order.payment_dop_info = data['hashed_value']
                         order.payment_id = data['payment_id']
                         order.save()
 
