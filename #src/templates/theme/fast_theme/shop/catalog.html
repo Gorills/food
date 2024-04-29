@@ -1,15 +1,15 @@
 
 {% extends 'base.html' %}
 {% load thumbnail %}
-{% block title %}{{ shop_setup.meta_title }}{% endblock %}
-{% block description %}{{ shop_setup.meta_description }}{% endblock %}
+{% block title %}{% if shop_setup.meta_title %}{{ shop_setup.meta_title }}{% else %}Меню - {{ setup.name }}{% endif %}{% endblock %}
+{% block description %}{% if shop_setup.meta_description %}{{ shop_setup.meta_description }}{% else %}Посмотреть меню ресторана доставки {{ setup.name }} в г.{{ setup.city }}{% endif %}{% endblock %}
 {% block keywords %}{{ shop_setup.meta_keywords }}{% endblock %}
 {% block canonical %}{% url 'catalog' %}{% endblock %}
-{% block og:title %}{{ shop_setup.meta_title }}{% endblock %}
-{% block og:description %}{{ shop_setup.meta_description }}{% endblock %}
+{% block og:title %}{% if shop_setup.meta_title %}{{ shop_setup.meta_title }}{% else %}Меню - {{ setup.name }}{% endif %}{% endblock %}
+{% block og:description %}{% if shop_setup.meta_description %}{{ shop_setup.meta_description }}{% else %}Посмотреть меню ресторана доставки {{ setup.name }}  в г.{{ setup.city }}{% endif %}{% endblock %}
 {% block og:url %}{% url 'catalog' %}{% endblock %}
-{% block twitter:title %}{{ shop_setup.meta_title }}{% endblock %}
-{% block twitter:description %}{{ shop_setup.meta_description }}{% endblock %}
+{% block twitter:title %}{% if shop_setup.meta_title %}{{ shop_setup.meta_title }}{% else %}Меню - {{ setup.name }}{% endif %}{% endblock %}
+{% block twitter:description %}{% if shop_setup.meta_description %}{{ shop_setup.meta_description }}{% else %}Посмотреть меню ресторана доставки {{ setup.name }}  в г.{{ setup.city }}{% endif %}{% endblock %}
 
 {% block og:image %}{% if shop_setup.image %}{% thumbnail shop_setup.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
 {% block og:image:secure_url %}{% if shop_setup.image %}{% thumbnail shop_setup.image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% else %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endif %}{% endblock %}
@@ -19,6 +19,8 @@
 {% block body %}
 {% load static %}
 {% load thumbnail %}
+
+
 
 
 <div class="gray">
