@@ -2289,6 +2289,7 @@ $(document).on('click', '.cart__item-option', function() {
         return
     } else {
         let id = $(this).attr('data-id');
+        let price = $(this).attr('data-price');
         let parent = $(this).attr('data-parent');
     
         let cart = JSON.parse(localStorage.getItem('cart')) || {};
@@ -2328,6 +2329,7 @@ $(document).on('click', '.cart__item-option', function() {
     
         item.id = new_id;
         item.position = position;
+        item.price -= price;
     
         // Удалить старый элемент из корзины с использованием старого ключа
         delete cart[parent];
