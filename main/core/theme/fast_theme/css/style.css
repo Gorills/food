@@ -1614,7 +1614,6 @@ a {
 .cart__left-wrap {
   display: flex;
   align-items: center;
-  max-height: 80px;
 }
 
 .cart__left-wrap img {
