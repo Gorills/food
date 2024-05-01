@@ -1513,7 +1513,7 @@ a {
   transition: all 0.3s ease;
   width: 100%;
   max-width: 800px;
-  padding: 0px;
+  padding: 0;
   position: fixed;
   top: 0;
   right: -100%;
@@ -1522,6 +1522,9 @@ a {
   flex-direction: column;
   background-color: #E8E9EB;
   z-index: 10000;
+  overflow-y: scroll;
+  height: 100vh;
+  justify-content: space-between;
 }
 
 .cart__owerlay {
@@ -1540,6 +1543,8 @@ a {
 }
 
 .cart__top {
+  width: 100%;
+  z-index: 9999;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1577,9 +1582,7 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(100vh - 390px);
-  overflow-y: auto;
-  padding: 0 50px;
+  padding: 50px;
 }
 
 .cart__items {
@@ -1599,6 +1602,13 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.cart__left-img {
+  max-height: 80px;
+  overflow: hidden;
+  border-radius: 5px;
+  margin-right: 20px;
 }
 
 .cart__left-wrap {
@@ -1700,13 +1710,12 @@ a {
 
 .cart__bottom {
   background-color: #E8E9EB;
-  position: absolute;
   border-top: 1px solid #767E91;
   padding-top: 35px;
   bottom: 0;
-  right: 50px;
-  left: 50px;
-  padding: 20px 0;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 35px;
 }
 
 .cart__total {
@@ -1785,7 +1794,12 @@ a {
   line-height: 1;
 }
 
+.cart__item-options .deactivated {
+  cursor: default !important;
+}
+
 .cart__item-option {
+  cursor: pointer;
   margin-right: 10px;
   margin-bottom: 10px;
   display: block;
@@ -1794,6 +1808,26 @@ a {
   background: #CCD1DA;
   box-shadow: inset 3px 3px 5px rgba(13, 39, 80, 0.16);
   color: #0F2034;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart__option-remove {
+  cursor: pointer;
+  margin-left: 5px;
+  height: 10px;
+  color: rgb(233, 12, 78);
+}
+
+.cart__option-remove svg {
+  width: 10px;
+  height: 10px;
+}
+
+.cart__option-remove svg path {
+  stroke: rgb(233, 12, 78);
 }
 
 .cart__input {
@@ -5410,11 +5444,11 @@ td.product-thumbnail img {
 .order__load {
   align-items: center;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   width: 100%;
+  max-width: 790px;
   height: 100%;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
   z-index: 999999;
@@ -6959,8 +6993,7 @@ td.product-thumbnail img {
   }
 
   .cart__body {
-    padding: 0 20px;
-    height: calc(100vh - 380px);
+    padding: 20px;
   }
 
   .cart__items img {
@@ -7026,6 +7059,7 @@ td.product-thumbnail img {
   .cart__bottom {
     right: 20px;
     left: 20px;
+    padding-bottom: 85px;
   }
 
   .cart__total {

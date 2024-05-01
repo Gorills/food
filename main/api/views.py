@@ -181,7 +181,7 @@ def get_shop_settings(request):
         'first_delivery': settings.first_delivery,
         'discount_on_pickup': settings.discount_on_pickup,
         'summ_discount': settings.summ_discount,
-
+        'check_order_status': settings.check_order_status,
         
         'pay_methods': pay_methods_arr,
         'pickup_areas': pickup_areas_arr,

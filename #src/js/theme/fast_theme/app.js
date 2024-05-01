@@ -1047,7 +1047,7 @@ function getTotalPriceAfterDiscount() {
             let order = JSON.parse(localStorage.getItem('order'));
             order.summ = res;
             localStorage.setItem('order', JSON.stringify(order));
-            console.log(res);
+            // console.log(res);
             return res;
         })
         .catch(error => {
@@ -1529,12 +1529,13 @@ $(document).on('click', '.order_create', function(e) {
 // проверка последнего заказа
 jQuery(document).ready(function () {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
     let intervalId; // переменная для хранения идентификатора интервала
 
-    console.log(last_order)
-
-    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ') {
+    // console.log(last_order)
+    
+    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status) {
         // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
         function updateOrderStatus() {
@@ -2194,6 +2195,8 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 
 async function addToCart(context, itemId, type) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    
     
 
     setLoyalCart()
@@ -2211,11 +2214,11 @@ async function addToCart(context, itemId, type) {
     let id = itemId;
     let related = false
     if (type === 'product') {
-        id += '00000';
+        id += '000';
     } else if (type === 'combo') {
-        id += '11111';
+        id += '111';
     } else if (type === 'constructor') {
-        id += '22222';
+        id += '222';
     } 
     
     let optionsNameArray = [];
@@ -2249,8 +2252,10 @@ async function addToCart(context, itemId, type) {
             }
         }
     }
-    
-    
+    // Определите порядковый номер элемента в списке корзины
+    let position = Object.keys(cart).length + 1;
+
+    // Добавьте эту позицию в объект itemInfo
     let itemInfo = {
         id: id,
         itemId: itemId,
@@ -2261,8 +2266,10 @@ async function addToCart(context, itemId, type) {
         quantity: cart[id] ? cart[id].quantity + 1 : 1,
         options: optionsIdArray,
         options_name: optionsNameArray,
-        related: related
+        related: related,
+        position: position // Добавляем порядковый номер в объект itemInfo
     };
+   
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -2274,18 +2281,105 @@ async function addToCart(context, itemId, type) {
 }
 
 
+// Пересчитать опции товаров
 
+$(document).on('click', '.cart__item-option', function() {
+
+    if ($(this).hasClass('deactivated')) {
+        return
+    } else {
+        let id = $(this).attr('data-id');
+        let parent = $(this).attr('data-parent');
+    
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
+        let item = cart[parent];
+        let type = item.type;
+        let parent_id = item.itemId;
+    
+        let options = item.options;
+        let options_name = item.options_name;
+    
+        // Найти индекс элемента с заданным id в массивах options и options_name
+        let optionIndex = options.indexOf(parseInt(id));
+        let optionNameIndex = options_name.findIndex(option => option.id === parseInt(id));
+    
+        // Удалить элемент из обоих массивов, если найден
+        if (optionIndex !== -1 && optionNameIndex !== -1) {
+            options.splice(optionIndex, 1);
+            options_name.splice(optionNameIndex, 1);
+        }
+    
+        // Преобразовать список options в строку, если это необходимо
+        let optionsString = options.join(''); // Преобразовать список options в строку, если это необходимо
+    
+        let new_id = parent_id
+    
+        if (type === 'product') {
+            new_id += '000';
+        } else if (type === 'combo') {
+            new_id += '111';
+        } else if (type === 'constructor') {
+            new_id += '222';
+        } 
+    
+        new_id += optionsString
+
+        let position = cart[parent].position;
+    
+        item.id = new_id;
+        item.position = position;
+    
+        // Удалить старый элемент из корзины с использованием старого ключа
+        delete cart[parent];
+    
+        // Установить новый ключ для элемента
+        let newParent = new_id; // замените на нужный вам ключ
+    
+        // Добавить элемент в корзину с использованием нового ключа
+        if (cart[newParent]) {
+            cart[newParent].quantity += 1;
+        } else {
+            cart[newParent] = item;
+        }
+        
+    
+        // Обновить localStorage с обновленными данными корзины
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+    
+        // Обновить отображение корзины и обновить счетчик
+        updateAll();
+        refreshBalls();
+    }
+    
+});
 
 
 
 // Функция для отображения содержимого корзины
 function displayCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    // Преобразуем объект корзины в массив
+    let cartArray = Object.values(cart);
+
+    // Сортируем массив по значению position
+    cartArray.sort((a, b) => a.position - b.position);
+
+    // Преобразуем отсортированный массив обратно в объект
+    let sortedCart = {};
+    cartArray.forEach(item => {
+        sortedCart[item.id] = item;
+    });
+
+
     let cartItems = document.getElementById('cart-items');
     let cartRelateds = document.getElementById('cart-related');
     
     
     let totalCount = getTotalCount()
+
+    console.log(sortedCart)
 
     cartItems.innerHTML = '';
     cartRelateds.innerHTML = '';
@@ -2314,7 +2408,7 @@ function displayCart() {
     } else {
 
         
-        for (let itemId in cart) {
+        for (let itemId in sortedCart) {
             let item = cart[itemId];
             
                 
@@ -2333,13 +2427,38 @@ function displayCart() {
 
                     for (const item of options_name) {
 
-                        options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                        
+                        let set_remove = false
+                        if (item.type.option_class != 'select') {
+                            set_remove = true;
+                        }
+
+                        let deactivate_str = ''
+                        let remove_btn = ''
+                        if (set_remove == false) {
+                            deactivate_str = 'deactivated';
+                            
+                        } else {
+                            remove_btn = `<div class="cart__option-remove" data-id="${item.id}">
+                                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>`
+                        }
+
+
+                        options_str += `
+                        <div class="cart__item-option ${deactivate_str}" data-id="${item.id}" data-parent="${itemId}" data-price="${item.option_price}">
+                            ${item.option_value}
+                            ${remove_btn}
+                        
+                        </div>`
                     }
                 }
 
 
                 cartItem.innerHTML = `
-                    <div class="cart__left">
+                    <div class="cart__left" data-position="${item.position}">
                         <div class="cart__left-wrap">
 
                             <div class="cart__left-img">
@@ -2360,12 +2479,12 @@ function displayCart() {
 
                     <div class="cart__items-wrap">
                         <div class="cart__btn-wrapper">
-                            <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
+                            <button class="cart__plusminus" data-action="minus" data-id="${itemId}">-</button>
                             <div class class="cart__quantity">${item.quantity}</div>
-                            <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
+                            <button class="cart__plusminus" data-action="plus" data-id="${itemId}">+</button>
                         </div>
                         <div class="cart__summ">${item.price * item.quantity} ₽</div>
-                        <button class="cart__remove" onclick="removeFromCart(${itemId})">
+                        <button class="cart__remove" data-id="${itemId}">
                             
                             <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
                             <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2483,6 +2602,8 @@ function minusFromCart(itemId) {
 
 function plusFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    console.log(itemId)
+    console.log(cart)
     cart[itemId].quantity++;
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
@@ -2490,8 +2611,21 @@ function plusFromCart(itemId) {
     refreshBalls();
 }
 
+$(document).on('click','.cart__plusminus', function(e) {
+    let itemId = $(this).attr('data-id')
+    let action = $(this).attr('data-action')
+
+    if (action == 'plus') {
+
+        plusFromCart(itemId)
+    } else {
+        minusFromCart(itemId)
+    }
+
+})
+
 // Функция для удаления товара из корзины
-function removeFromCart(itemId) {
+function removeFromCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -2499,6 +2633,21 @@ function removeFromCart(itemId) {
     updateAll()
     refreshBalls();
 }
+
+
+
+
+
+
+$(document).on('click','.cart__remove', function(e) {
+    let itemId = $(this).attr('data-id')
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    delete cart[itemId];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    document.getElementById('cart__related-row').style.display = 'none';
+    updateAll()
+    refreshBalls();
+})
 
 // Функция для очистки корзины
 function clearCart() {
