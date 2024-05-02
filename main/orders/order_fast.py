@@ -163,6 +163,13 @@ def order_create(request):
             bonuses_pay = bonuses_pay,
 
         )
+
+        cutlery = json_order['cutlery']
+        CustomField.objects.create(
+            order = order,
+            name = '*Приборы*',
+            value = cutlery,
+        )
         
         try:
             if json_order['anonim']:

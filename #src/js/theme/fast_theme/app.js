@@ -152,6 +152,7 @@ function setOrder() {
         'address': '',
         'address_pickup': '',
         'address_comment': '',
+        'cutlery': 0,
         'delivery_type': '',
         'entrance': '',
         'floor': '',
@@ -683,6 +684,7 @@ $('.order__input').on('change input', function() {
     let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
     let value = $(this).val(); // Получаем значение поля ввода
     let order = JSON.parse(localStorage.getItem('order'));
+    
 
     // Обновляем соответствующее значение в объекте order
     order[dataName] = value;
@@ -711,6 +713,29 @@ $('.order__input').on('change input', function() {
     
     
 });
+
+
+// приборы
+$(document).on('click', '.order__checkup-cutlery-btn', function() {
+    
+    let cutlery = parseInt($(this).closest('.order__checkup-cutlery').find('.order__input').val())
+    
+
+    if($(this).hasClass('minus')) {
+        
+
+        if (cutlery > 0) {
+
+            cutlery = cutlery - 1
+        }
+    } else {
+        cutlery = cutlery + 1
+    }
+    $(this).closest('.order__checkup-cutlery').find('.order__input').val(cutlery)
+    $(this).closest('.order__checkup-cutlery').find('.order__input').val(cutlery).change();
+    // console.log(optionsIds)
+    
+})
 
 
 
@@ -1530,12 +1555,13 @@ $(document).on('click', '.order_create', function(e) {
 jQuery(document).ready(function () {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
-    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
-    let intervalId; // переменная для хранения идентификатора интервала
-
+    
     // console.log(last_order)
     
     if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status) {
+        let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+        let intervalId; // переменная для хранения идентификатора интервала
+
         // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
         function updateOrderStatus() {
@@ -2381,7 +2407,7 @@ function displayCart() {
     
     let totalCount = getTotalCount()
 
-    console.log(sortedCart)
+    // console.log(sortedCart)
 
     cartItems.innerHTML = '';
     cartRelateds.innerHTML = '';
@@ -2604,8 +2630,7 @@ function minusFromCart(itemId) {
 
 function plusFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
-    console.log(itemId)
-    console.log(cart)
+    
     cart[itemId].quantity++;
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';

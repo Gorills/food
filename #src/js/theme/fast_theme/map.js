@@ -766,7 +766,7 @@ function productDetailCalculate() {
     optionsIds = optionsIds.slice(0, -1);
     options = options.slice(0, -1);
 
-    console.log(optionsIds)
+    // console.log(optionsIds)
     $('.product-detail__price-old').html(oldPrice + '₽');
     $('.product-detail__price').html(totalPrice + '₽');
     $('.btn-wrap-detail').attr('data-price', totalPrice).attr('data-optionsid', optionsIds);
