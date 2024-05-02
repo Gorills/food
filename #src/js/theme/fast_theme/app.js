@@ -2855,7 +2855,7 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
     let phone = $('.order__input-login').val()
     let code = $('.order__register-input').val()
    
-
+    let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     
 
     $.ajax({
@@ -2869,8 +2869,8 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
         }
     }).done(function() {
 
-        setLoyalCart();
-        maxBallsPay();
+        
+        
 
         // console.log(maxBallsPay())
 
@@ -2881,14 +2881,36 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
         localStorage.setItem('order', JSON.stringify(order));
 
         
+        fetch('/api/v1/get_user/')
+            .then(response => response.json())
+            .then(data => {
+                
+                set_data = {
+                    'cart_balls': data.cart_balls,
+                    'percent_down': data.percent_down,
+                    'percent_down_pickup': data.percent_down_pickup,
+                    'percent_pay': data.percent_pay,
+                    'percent_pay_pickup': data.percent_pay_pickup,
+                    'balls_min_summ': data.balls_min_summ,
+                    'exclude_combos': data.exclude_combos,
+                    'exclude_sales': data.exclude_sales,
+                }
+                
+                localStorage.setItem('loyalCart', JSON.stringify(set_data));
+                maxBallsPay();
+
+                console.log(maxBallsPay())
+            })
+            .catch(error => console.error('Ошибка загрузки пользователя:', error));
+
+        
         
        
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         
         
-        var newElement = $('<a href="#" class="active_balls">Активировать бонусную систему</a>');
         var existingElement = $('#balls');
-        existingElement.before(newElement);
+       
 
         
     }).fail(function() {

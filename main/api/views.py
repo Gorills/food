@@ -169,6 +169,7 @@ def get_shop_settings(request):
 
     hours = get_hours(request)
 
+    active_balls = LoyaltyCardSettings.objects.get().active
 
 
     item = {
@@ -182,6 +183,8 @@ def get_shop_settings(request):
         'discount_on_pickup': settings.discount_on_pickup,
         'summ_discount': settings.summ_discount,
         'check_order_status': settings.check_order_status,
+        'active_balls': active_balls,
+        
         
         'pay_methods': pay_methods_arr,
         'pickup_areas': pickup_areas_arr,
