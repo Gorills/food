@@ -271,6 +271,18 @@
                                     
                                     </div>
                                     {% endif %}
+                                    {% if setup.email %}
+                                    <div class="contacts-design__list-text">
+                                        <p>Наша почта: </p>
+                                        <a href="email:{{ setup.email }}"  target="_blank">
+            
+                                            {{ setup.email }}
+                                        </a>
+                                        
+                                    
+                                    </div>
+                                    
+                                    {% endif %}
                                 
                                 
                                 
