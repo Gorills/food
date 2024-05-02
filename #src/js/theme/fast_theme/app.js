@@ -2457,9 +2457,23 @@ function displayCart() {
 
                         
                         let set_remove = false
-                        if (item.type.option_class != 'select') {
-                            set_remove = true;
+
+                        
+
+                        try {
+                            // Ваш код здесь
+                            if (item.type.option_class !== 'select') {
+                                // Если это условие выполняется, будет вызвана ошибка,
+                                // если item.type не содержит свойства option_class или не существует
+                                set_remove = true;
+                            }
+                        } catch (error) {
+                            // Если произошла ошибка, мы попадаем сюда
+                            console.error('Произошла ошибка:', error);
+                            // Здесь вы можете вызвать вашу функцию
+                            clearCart();
                         }
+                        
 
                         let deactivate_str = ''
                         let remove_btn = ''
@@ -2467,7 +2481,8 @@ function displayCart() {
                             deactivate_str = 'deactivated';
                             
                         } else {
-                            remove_btn = `<div class="cart__option-remove" data-id="${item.id}">
+                            remove_btn = `
+                            <div class="cart__option-remove" data-id="${item.id}">
                                 <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
