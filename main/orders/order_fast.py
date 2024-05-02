@@ -164,12 +164,16 @@ def order_create(request):
 
         )
 
-        cutlery = json_order['cutlery']
-        CustomField.objects.create(
-            order = order,
-            name = '*Приборы*',
-            value = cutlery,
-        )
+        try:
+
+            cutlery = json_order['cutlery']
+            CustomField.objects.create(
+                order = order,
+                name = '*Приборы*',
+                value = cutlery,
+            )
+        except:
+            pass
         
         try:
             if json_order['anonim']:
