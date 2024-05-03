@@ -167,11 +167,12 @@ def order_create(request):
         try:
 
             cutlery = json_order['cutlery']
-            CustomField.objects.create(
-                order = order,
-                name = '*Приборы*',
-                value = cutlery,
-            )
+            if cutlery != 0 and cutlery != '0':
+                CustomField.objects.create(
+                    order = order,
+                    name = '*Приборы*',
+                    value = cutlery,
+                )
         except:
             pass
         

@@ -63,6 +63,7 @@ class ShopSetup(SingletonModel):
     hide_cat_names = models.BooleanField(default=False, verbose_name='Скрыть названия категорий')
 
     check_order_status = models.BooleanField(default=False, verbose_name='Проверять статус заказа')
+    cutlery = models.BooleanField(default=False, verbose_name='Приборы в корзине')
 
     start_bonus = models.PositiveIntegerField(default=0, verbose_name='Количество бонусов при регистрации')
 
