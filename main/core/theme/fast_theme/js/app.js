@@ -1381,7 +1381,15 @@ function checkProducts() {
 
         let productListItem = product.querySelector('.btn-wrap__count');
         let productSvgItem = product.querySelector('.btn-wrap__svg');
+
         let productBtn = product.querySelector('.add_to_cart');
+
+        if (!productBtn) {
+            productBtn = product.querySelector('.combo-popup__btn');
+        }
+
+        
+
 
         if (cart[id]) {
             let inHTML = `
@@ -2462,7 +2470,7 @@ async function addToCart(itemId, name, price, image, optionsIdString, type) {
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    // console.log(cart)
+    console.log(cart)
     fetchRelatedItems();
     updateAll();
     refreshBalls();

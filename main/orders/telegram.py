@@ -5,7 +5,7 @@ import telepot
 
 from setup.models import BaseSettings
 from shop.models import ShopSetup
-
+from datetime import datetime
 
 
 
@@ -116,44 +116,44 @@ def order_telegram(telegram_bot, telegram_group, order):
     
 
     if order.address_comment:
-        address_comment = "\n" + "*Комментарий к адресу*: " + str(order.address_comment) 
+        address_comment = "\n" + "Комментарий к адресу: " + str(order.address_comment) 
     else:
         address_comment = ''
 
     if order.order_conmment:
-        order_conmment = "\n" + "*Комментарий к заказу*: " + str(order.order_conmment)
+        order_conmment = "\n" + "Комментарий к заказу: " + str(order.order_conmment)
     else:
         order_conmment = ''
 
     time = order.time
 
     if order.discount:
-        coupon_comment = "\n" + "*Купон/скидка*: " + str(order.discount) + "% ("+str(order.coupon.code)+")"
+        coupon_comment = "\n" + "Купон/скидка: " + str(order.discount) + "% ("+str(order.coupon.code)+")"
     else:
         coupon_comment = ''
 
     if order.bonuses_pay:
-        bonuses_pay = f"\n*Оплачено баллами*: { order.bonuses_pay }"
+        bonuses_pay = f"\nОплачено баллами: { order.bonuses_pay }"
     else:
         bonuses_pay = ''
 
     if order.entrance:
-        entrance = "\n" + "*Подъезд*: " + str(order.entrance)
+        entrance = "\n" + "Подъезд: " + str(order.entrance)
     else:
         entrance = ''
 
     if order.floor:
-        floor = "\n" + "*Этаж*: " + str(order.floor)
+        floor = "\n" + "Этаж: " + str(order.floor)
     else:
         floor = ''
 
     if order.flat:
-        flat = "\n" + "*Квартира*: " + str(order.flat)
+        flat = "\n" + "Квартира: " + str(order.flat)
     else:
         flat = ''
 
     if order.pay_change:
-        pay_change = "\n" + "*Сдача c*: " + str(order.pay_change)
+        pay_change = "\n" + "Сдача c: " + str(order.pay_change)
     else:
         pay_change = ''
 
@@ -172,16 +172,54 @@ def order_telegram(telegram_bot, telegram_group, order):
     phone = order.phone
     phone = str(phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
      
-    
+    created_date = datetime.strptime(str(order.created), "%Y-%m-%d %H:%M:%S.%f%z")
+    formatted_date = created_date.strftime("%d.%m.%Y %H:%M:%S")
     if order.delivery_method == 'Доставка':
         
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + custom_str + "\n" "*Время доставки*: " + str(time) + "\n" + "\n" + "*Адрес*: " + str(order.address) + entrance + floor + flat + address_comment + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay + coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + "\n" + "*Стоимость доставки*: " +str(order.delivery_price) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
+        message = f'''
+*ЗАКАЗ №: {order.id}*
 
+Дата: {formatted_date}
+Сумма заказа: *{order.summ}* р. 
+Тип: {order.delivery_method}
+Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+Стоимость доставки: {order.delivery_price}
+{custom_str}
+
+*Товары:*
+{str(res)} 
+
+*Контактные данные:*
+Имя: {order.name}
+Телефон: {phone}
+
+*Адрес:*
+Время доставки: {time}
+Улица: {order.address}{entrance}{floor}{flat}{address_comment}
+'''
     else:
-        message = "Заявка с сайта: " + "\n" + "*Номер заказа*: " +str(order.id) + "\n" + "*Имя*: " + str(order.name) + "\n" + "*Телефон*: " + str(phone) + "\n" + custom_str + "\n" "*Время самовывоза*: " + str(time) + "\n" + "*Адрес*: " + str(order.address) + "\n" + "*Оплата*: " +str(order.pay_method) + pay_change + not_pay + bonuses_pay +  coupon_comment + "\n" + "*Доставка*: " +str(order.delivery_method) + order_conmment + "\n" + "\n" + "*Товары*: " + "\n" + str(res) + "\n\n" + "*Сумма заказа*: " + str(str(order.summ) + ' рублей')
-    
+                message = f'''
+*ЗАКАЗ №: {order.id}*
 
-    
+Дата: {formatted_date}
+Сумма заказа: *{order.summ}* р. 
+Тип: {order.delivery_method}
+Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+{custom_str}
+
+*Товары:*
+{str(res)} 
+
+*Контактные данные:*
+Имя: {order.name}
+Телефон: {phone}
+
+*Адрес:*
+Время самовывоза: {time}
+Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
+'''
+
+
     try:
         send_message(telegram_bot, telegram_group, message)
         

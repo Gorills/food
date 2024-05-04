@@ -343,6 +343,16 @@
     &__next {
         width: 100%;
         white-space: nowrap;
+
+    }
+
+
+    // .order__checkup-item-wrapper
+
+    &__checkup-item-wrapper {
+        .order__checkup-title {
+            margin-bottom: 10px;
+        }
     }
 
      // .order__checkup-item
@@ -351,7 +361,20 @@
         
         margin-bottom: 20px;
 
+
+        &--cutlery {
+            display: flex;
+            justify-content: space-between;
+        }
         
+    }
+
+    // .order__checkup-delivery-text
+
+    &__checkup-delivery-text {
+        font-size: 12px;
+        max-width: 250px;
+        color: #767E91;
     }
 
     // .order__checkup-cutlery
