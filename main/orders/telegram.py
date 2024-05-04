@@ -171,9 +171,12 @@ def order_telegram(telegram_bot, telegram_group, order):
 
     phone = order.phone
     phone = str(phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
-     
-    created_date = datetime.strptime(str(order.created), "%Y-%m-%d %H:%M:%S.%f%z")
+
+    created_date = datetime.strptime(str(order.created)[:-6], "%Y-%m-%d %H:%M:%S.%f")
+
+    # Форматирование даты в нужный вам формат
     formatted_date = created_date.strftime("%d.%m.%Y %H:%M:%S")
+     
     if order.delivery_method == 'Доставка':
         
         message = f'''
