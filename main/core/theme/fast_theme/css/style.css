@@ -125,7 +125,7 @@ a {
   border: 2px solid var(--color-btn-border);
   display: inline-block;
   transition: all 0.1s linear 0s;
-  padding: 16px 75px;
+  padding: 16px 20px;
   height: 50px;
   line-height: 1;
   text-transform: uppercase;
@@ -186,6 +186,41 @@ a {
   background-color: var(--color-body);
   border-color: var(--color-font);
   color: var(--color-font);
+}
+
+.btn-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-wrap__svg .cart__svg {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.btn-wrap__svg svg {
+  height: 20px;
+  margin-right: 10px;
+}
+
+.btn-wrap__svg svg path {
+  fill: var(--color-primary);
+}
+
+.btn-wrap .cart__btn-wrapper {
+  margin-right: 20px;
+  width: 100px;
+  height: 50px;
+}
+
+.btn-wrap .cart__items-wrap {
+  margin-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .grecaptcha-badge {

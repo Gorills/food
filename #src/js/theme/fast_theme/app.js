@@ -1356,21 +1356,189 @@ $(document).on('click', '#checkout__radio-bytime', function(e){
 })
 
 
+// Перебор всех товаров на странице и поиск их в корзине
+function checkProducts() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let products = document.querySelectorAll('.btn-wrap');
+    
+    products.forEach(function(product) {
+        let id = product.getAttribute('data-cart-id');
+
+        let type = product.getAttribute('data-type');
+        let optionsIdString = product.getAttribute('data-optionsid');
+        let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
+
+
+        if (type === 'product') {
+            id += '000';
+        } else if (type === 'combo') {
+            id += '111';
+        } else if (type === 'constructor') {
+            id += '222';
+        } 
+
+        id += optionsIdArray.join('');
+
+        let productListItem = product.querySelector('.btn-wrap__count');
+        let productSvgItem = product.querySelector('.btn-wrap__svg');
+        let productBtn = product.querySelector('.add_to_cart');
+
+        if (cart[id]) {
+            let inHTML = `
+            <div class="cart__items-wrap">
+                <div class="cart__btn-wrapper">
+                    <button class="cart__plusminus" data-action="minus" data-id="${id}">-</button>
+                    <div class class="cart__quantity">${cart[id].quantity}</div>
+                    <button class="cart__plusminus" data-action="plus" data-id="${id}">+</button>
+                </div>
+            </div>
+            `;
+
+            let svgHTML = `
+                <div class="cart__svg">
+                    <?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#101820;}</style></defs><title/><g data-name="Layer 28" id="Layer_28"><path class="cls-1" d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"/><path class="cls-1" d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"/></g></svg>
+                    <p>В корзине</p>
+                </div>
+                `
+
+            product.classList.add('in-cart');
+            
+            productBtn.style.display = 'none';
+            productListItem.innerHTML = inHTML;
+            productSvgItem.innerHTML = svgHTML;
+                
+            
+        } else {
+            product.classList.remove('in-cart');
+           
+           
+            
+            productBtn.style.display = 'block';
+                
+            productListItem.innerHTML = '';
+            productSvgItem.innerHTML = '';
+                
+            
+        }
+        
+
+
+
+    })
+
+}
+checkProducts()
+
+$(document).on('change', 'input[type="checkbox"], input[type="radio"]', function(){
+    checkProducts()
+}) 
+
+$(document).on('click','.product-options__item',function(e){
+
+    
+    var id = $(this).attr('data-id')
+    var price = parseFloat($(this).attr('data-price'))
+    var value = $(this).attr('data-value')
+    var product_id = $(this).attr('data-product-id')
+    var image = $(this).attr('data-image')
+    var weight = $(this).attr('data-weight')
+    var $productItem = $(this).closest('.product-list__item');
+
+
+    
+    $productItem.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+    
+
+    if (weight != '') {
+        $productItem.find('.product-list__weight-'+product_id).html(weight)
+
+    }
+
+    if (image != '') {
+      
+        $productItem.find('.product-list__thumb-'+product_id).attr('src', image)
+
+    }
+
+    var pr_price = parseFloat($('.price-'+product_id).attr('data-price'))
+    var old_price = parseFloat($('.old_price-'+product_id).attr('data-price'))
+
+    
+    
+    $(this).parent().find('.product-options__item').removeClass('product-options__item--active')
+
+   
+    $(this).addClass('product-options__item--active')
+
+    
+
+    var res_price = price + pr_price;
+    var res_old_price = old_price + price;
+
+    $productItem.find('.btn-wrap').attr('data-price', res_price).attr('data-optionsid', id)
+
+    $productItem.find('.product-list__price').html(res_price + ' ₽')
+    $productItem.find('.product-list__old').html(res_old_price + ' ₽')
+
+
+    $productItem.find('.product-options-popup__options-select-wrap').find('.product-options-popup__options-select').removeClass('product-options-popup__options-select--active')
+    $productItem.find('.product-options-popup__options-select-wrap').find(`[data-id='${id}']`).addClass('product-options-popup__options-select--active')
+
+    $productItem.find('.product-options-popup__price').attr('data-price', res_price)
+    $productItem.find('.product-options-popup__old-price').attr('data-price', res_old_price)
+
+    $productItem.find('.product-options-popup__price').text(res_price + ' ₽')
+    $productItem.find('.product-options-popup__old-price').text(res_old_price + ' ₽')
+
+    // .product-options-popup_btn
+    $productItem.find('.product-options-popup_btn').attr('data-price', res_price).attr('data-optionsid', id)
+    
+
+    
+    
+    checkProducts()
+    // $productItem.find('.product-options__span-'+product_id).html(value)
+
+});
+
 
 // Добавление в корзину
-$(document).on('click','.add_to_cart',function(){
-    let id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    let type = $(this).parent('.btn-wrap').attr('data-type')
-    addToCart($(this), id, type);
+$(document).on('click', '.add_to_cart', function(){
+    let $button = $(this);
+    let id = $button.parent('.btn-wrap').attr('data-cart-id');
+    let type = $button.parent('.btn-wrap').attr('data-type');
+    let optionsIdString = $button.parent('.btn-wrap').attr('data-optionsid');
+    let price = $button.parent('.btn-wrap').attr('data-price');
+    let name = $button.parent('.btn-wrap').attr('data-name');
+    let image = $button.parent('.btn-wrap').attr('data-image');
     
-})
+
+    addToCart(id, name, price, image, optionsIdString, type);
+    
+    $button.text('Добавлено');
+    
+    setTimeout(function(){
+        $button.text('В корзину');
+    }, 1000); 
+});
+
 
 $(document).on('click','.combo-popup__btn',function(){
+    let $button = $(this);
     let id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    let type = $(this).parent('.btn-wrap').attr('data-type')
+    let type = $button.parent('.btn-wrap').attr('data-type');
+    let optionsIdString = $button.parent('.btn-wrap').attr('data-optionsid');
+    let price = $button.parent('.btn-wrap').attr('data-price');
+    let name = $button.parent('.btn-wrap').attr('data-name');
+    let image = $button.parent('.btn-wrap').attr('data-image');
 
     if ($(this).hasClass('combo-popup__btn--active')) {
-        addToCart($(this), id, type);
+        addToCart(id, name, price, image, optionsIdString, type);
+        $button.text('Добавлено');
+    
+        setTimeout(function(){
+            $button.text('В корзину');
+        }, 1000);
 
     } else {
         
@@ -2219,23 +2387,17 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 // Функция для добавления товара в корзину
 
 
-async function addToCart(context, itemId, type) {
+async function addToCart(itemId, name, price, image, optionsIdString, type) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-    
-    
 
     setLoyalCart()
-
-    let itemElement = document.querySelector(`[data-cart-id="${itemId}"][data-type="${type}"]`);
-
-
-    // console.log(itemElement)
     
-
-    let optionsIdString = itemElement.dataset.optionsid;
+   
     let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
 
+
+    
 
     let id = itemId;
     let related = false
@@ -2285,10 +2447,10 @@ async function addToCart(context, itemId, type) {
     let itemInfo = {
         id: id,
         itemId: itemId,
-        type: itemElement.dataset.type,
-        name: itemElement.dataset.name,
-        price: parseFloat(itemElement.dataset.price),
-        image: itemElement.dataset.image,
+        type: type,
+        name: name,
+        price: parseFloat(price),
+        image: image,
         quantity: cart[id] ? cart[id].quantity + 1 : 1,
         options: optionsIdArray,
         options_name: optionsNameArray,
@@ -2304,6 +2466,8 @@ async function addToCart(context, itemId, type) {
     fetchRelatedItems();
     updateAll();
     refreshBalls();
+    checkProducts()
+    
 }
 
 
@@ -2378,6 +2542,8 @@ $(document).on('click', '.cart__item-option', function() {
         // Обновить отображение корзины и обновить счетчик
         updateAll();
         refreshBalls();
+        checkProducts()
+
     }
     
 });
@@ -2641,6 +2807,7 @@ function minusFromCart(itemId) {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
     refreshBalls();
+    checkProducts()
 }
 
 function plusFromCart(itemId) {
@@ -2651,6 +2818,7 @@ function plusFromCart(itemId) {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
     refreshBalls();
+    checkProducts()
 }
 
 $(document).on('click','.cart__plusminus', function(e) {
@@ -2672,8 +2840,9 @@ function removeFromCart() {
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
-    updateAll()
+    updateAll();
     refreshBalls();
+    
 }
 
 
@@ -2689,6 +2858,7 @@ $(document).on('click','.cart__remove', function(e) {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
     refreshBalls();
+    checkProducts();
 })
 
 // Функция для очистки корзины
