@@ -2919,13 +2919,24 @@ function fetchRelatedItems() {
             let cart = JSON.parse(localStorage.getItem('cart')) || {};
             let relatedItems = data.items
 
+            if (relatedItems.length === 0) {
+                // Если список сопутствующих товаров пуст, удаляем связанные товары из корзины
+                for (let key in cart) {
+                    if (cart[key].related) {
+                        delete cart[key];
+                    }
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+                return; // Завершаем выполнение функции
+            }
+
             relatedItems.forEach(item => {
-                
                 let id = item.id
                 let itemId = id + '33333'
 
                 if (cart[itemId]) {
-                    return
+                    return;
                 } else {
                     let itemInfo = {
                         id: itemId,
@@ -2939,22 +2950,18 @@ function fetchRelatedItems() {
                         options_name: [],
                         related: true
                     };
-    
+
                     cart[itemId] = itemInfo;
                     localStorage.setItem('cart', JSON.stringify(cart));
                 }
-                
-
             })
 
-            
-            displayCart()
-
+            displayCart();
         })
         .catch(error => console.error('Ошибка загрузки сопутствующих товаров:', error));
-
 }
-fetchRelatedItems()
+fetchRelatedItems();
+
 
 
 
