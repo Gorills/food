@@ -1729,6 +1729,10 @@ $(document).on('click', '.order_create', function(e) {
                 $('.order__load').removeClass('order__load--active')
                 $('.odred-done').addClass('odred-done--active')
                 $('.order').removeClass('order--active')
+                
+                getLastOrder()
+
+                updateAll()
 
                 // window.location.href = confirmationUrl;
                
@@ -1903,7 +1907,7 @@ jQuery(document).ready(function () {
 
 
 
-jQuery(document).ready(function () {
+function getLastOrder() {
     var pathname = window.location.href; 
     var origin   = window.location.origin;
 
@@ -1918,7 +1922,7 @@ jQuery(document).ready(function () {
     res = pathname.replace(origin, '')
     
 
-    if(last_order && res.indexOf('/?order=True') > -1) {
+    if(last_order) {
         
         
         
@@ -2236,8 +2240,8 @@ jQuery(document).ready(function () {
         })
     }
 
-})
-
+}
+getLastOrder()
 
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
