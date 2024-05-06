@@ -3299,6 +3299,10 @@ a {
   white-space: nowrap;
 }
 
+.product-list__item--mini .product-list__old {
+  display: none;
+}
+
 .product-list__item--mini .add_to_cart {
   font-size: 10px;
   white-space: nowrap;
