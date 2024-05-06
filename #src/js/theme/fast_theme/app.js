@@ -2232,7 +2232,7 @@ function getLastOrder() {
     }
 
 }
-getLastOrder()
+// getLastOrder()
 
 $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
     $('.odred-done').removeClass('odred-done--active')
@@ -2241,6 +2241,7 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
     last_order.show = false
     localStorage.setItem('lastOrder', JSON.stringify(last_order))
     
+    console.log(localStorage.setItem('lastOrder', JSON.stringify(last_order)))
     
 
 })
