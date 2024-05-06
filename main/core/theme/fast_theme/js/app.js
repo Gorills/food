@@ -2228,19 +2228,22 @@ function getLastOrder() {
         }
         
         
-        $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
-            $('.odred-done').removeClass('odred-done--active')
-            $('body').removeClass('body');
-            last_order.show = false
-            localStorage.setItem('lastOrder', JSON.stringify(last_order))
-            
-            
-
-        })
+        
     }
 
 }
 getLastOrder()
+
+$(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
+    $('.odred-done').removeClass('odred-done--active')
+    $('body').removeClass('body');
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    last_order.show = false
+    localStorage.setItem('lastOrder', JSON.stringify(last_order))
+    
+    
+
+})
 
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
