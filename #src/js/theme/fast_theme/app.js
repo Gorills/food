@@ -1726,10 +1726,12 @@ $(document).on('click', '.order_create', function(e) {
                 order.address = '';
                 localStorage.setItem('order', JSON.stringify(order));
 
-                
+                $('.order__load').removeClass('order__load--active')
+                $('.odred-done').addClass('odred-done--active')
+                $('.order').removeClass('order--active')
 
                 // window.location.href = confirmationUrl;
-                // $('.order__load').removeClass('order__load--active')
+               
 
 
             } else {
