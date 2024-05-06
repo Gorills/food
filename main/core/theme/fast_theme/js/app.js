@@ -2233,8 +2233,7 @@ function getLastOrder() {
             $('body').removeClass('body');
             last_order.show = false
             localStorage.setItem('lastOrder', JSON.stringify(last_order))
-            clearCart()
-            window.location.href = `/`
+            
             
 
         })
