@@ -7,6 +7,9 @@ from setup.models import BaseSettings
 from shop.models import ShopSetup
 from datetime import datetime
 
+from datetime import datetime
+import pytz
+from main.local_settings import TIME_ZONE 
 
 
 
@@ -172,10 +175,17 @@ def order_telegram(telegram_bot, telegram_group, order):
     phone = order.phone
     phone = str(phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
 
-    created_date = datetime.strptime(str(order.created)[:-6], "%Y-%m-%d %H:%M:%S.%f")
+    # Предполагается, что order.created уже является объектом datetime.datetime
+    order_created_utc = order.created
+
+    # Определите нужный вам часовой пояс
+    desired_timezone = pytz.timezone(TIME_ZONE)
+
+    # Преобразуйте время из UTC в выбранный часовой пояс
+    order_created_local = order_created_utc.replace(tzinfo=pytz.utc).astimezone(desired_timezone)
 
     # Форматирование даты в нужный вам формат
-    formatted_date = created_date.strftime("%d.%m.%Y %H:%M:%S")
+    formatted_date = order_created_local.strftime("%d.%m.%Y %H:%M:%S")
      
     if order.delivery_method == 'Доставка':
         

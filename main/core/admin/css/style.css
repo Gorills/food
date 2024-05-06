@@ -195,6 +195,7 @@ a {
 .input,
 input[type=file],
 input[type=email],
+input[type=password],
 textarea {
   display: block;
   width: 100%;
@@ -219,6 +220,7 @@ textarea {
 .input:focus,
 input[type=file]:focus,
 input[type=email]:focus,
+input[type=password]:focus,
 textarea:focus {
   outline: 1px solid #884FFB;
 }

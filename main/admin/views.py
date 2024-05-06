@@ -6,10 +6,10 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
-from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile
+from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
 from integrations.models import Integrations
 from subdomains.models import Subdomain
 from delivery.models import Delivery
@@ -33,6 +33,84 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 import decimal
 from sms.views import send_sms
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def get_workers(request):
+    
+    context = {
+        'users': User.objects.all()
+    }
+    
+    return render(request, 'workers/workers.html', context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_user(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)  # Сохраняем форму, но не в базу данных
+            user.set_password(form.cleaned_data['password'])  # Хешируем пароль
+            user.save()  # Теперь сохраняем пользователя с зашифрованным паролем
+            user_rights = UserRigts.objects.create(user=user)
+            return redirect('get_workers')
+    else:
+        form = UserForm()
+    return render(request, 'workers/add_user.html', {'form': form})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_user(request, user_id):
+    
+    user = User.objects.get(id=user_id)
+    user.delete()
+    return redirect('get_workers')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save(commit=False)  # Сохраняем форму, но не в базу данных
+            user.set_password(form.cleaned_data['password'])  # Хешируем пароль
+            user.save()  # Теперь сохраняем пользователя с зашифрованным паролем
+            return redirect('get_workers')
+    else:
+        form = UserForm(instance=user)
+    return render(request, 'workers/edit_user.html', {'form': form})
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_user_rights(request, user_id):
+    user = User.objects.get(id=user_id)
+    user_rights = UserRigts.objects.get(user=user)
+    
+
+    if request.method == 'POST':
+        form = UserRightsForm(request.POST, instance=user_rights)
+        if form.is_valid():
+            user = form.save(commit=False)  # Сохраняем форму, но не в базу данных
+            user.save()  # Теперь сохраняем пользователя с зашифрованным паролем
+            return redirect('get_workers')
+
+    
+        else:
+
+            return render(request, 'workers/edit_user_rights.html', {'form': form})
+
+    
+
+    form = UserRightsForm(instance=user_rights)
+    
+
+
+
+    return render(request, 'workers/edit_user_rights.html', {'form': form})
 
 
 
@@ -61,6 +139,14 @@ def faq(request):
     return render(request, 'faq.html', context)
 
 
+from django.http import HttpResponseForbidden
+
+def superuser_prohibited(view_func):
+    def wrapped_view(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("Вы не имеете права выполнить это действие.")
+        return view_func(request, *args, **kwargs)
+    return wrapped_view
 
 
 @user_passes_test(lambda u: u.is_superuser)

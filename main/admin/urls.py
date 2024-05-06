@@ -5,6 +5,12 @@ from . import views
 
 urlpatterns = [
     path('', views.admin, name='admin'),
+    path('get_workers/', views.get_workers, name='get_workers'),
+    path('add_user/', views.add_user, name='add_user'),
+    path('edit_user/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('edit_user_rights/<int:user_id>/', views.edit_user_rights, name='edit_user_rights'),
+
     path('general_settings/', views.general_settings, name='general_settings'),
     path('general_settings/block/', views.general_settings_block, name='general_settings_block'),
     path('general_settings/email/', views.email_settings, name='email_settings'),

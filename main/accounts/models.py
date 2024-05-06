@@ -28,6 +28,38 @@ class UserProfile(models.Model):
         return False
 
 
+class UserRigts(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='rights')
+    view_all_statictic = models.BooleanField(default=False, verbose_name='Просмотр статистики')
+    add_workers = models.BooleanField(default=False, verbose_name='Добавлять/удалять сотрудников')
+    add_statics = models.BooleanField(default=False, verbose_name='Добавлять/удалять статичные страницы')
+    add_sliders = models.BooleanField(default=False, verbose_name='Добавлять/удалять слайдеры')
+    change_shop_settings = models.BooleanField(default=False, verbose_name='Изменять настройки магазина')
+    change_delivery_periods = models.BooleanField(default=False, verbose_name='Изменять периоды доставки')
+    change_time_sales = models.BooleanField(default=False, verbose_name='Изменять время скидок на товары')
+    add_categorys = models.BooleanField(default=False, verbose_name='Добавлять/удалять категории')
+    add_products = models.BooleanField(default=False, verbose_name='Добавлять/удалять товары')
+    add_relateds = models.BooleanField(default=False, verbose_name='Добавлять/удалять сопутствующие товары')
+    add_combos = models.BooleanField(default=False, verbose_name='Добавлять/удалять комбо')
+    add_constructors = models.BooleanField(default=False, verbose_name='Добавлять/удалять конструкторы')
+    add_options = models.BooleanField(default=False, verbose_name='Добавлять/удалять опции')
+    add_chars = models.BooleanField(default=False, verbose_name='Добавлять/удалять характеристики')
+    upload_csv = models.BooleanField(default=False, verbose_name='Загружать данные из CSV')
+    view_customers = models.BooleanField(default=False, verbose_name='Просмотреть клиентов')
+    view_orders = models.BooleanField(default=False, verbose_name='Просмотреть заказы')
+    add_posts = models.BooleanField(default=False, verbose_name='Добавлять/удалять посты')
+    add_propmo = models.BooleanField(default=False, verbose_name='Добавлять/удалять промокоды')
+    redact_loyal_cart = models.BooleanField(default=False, verbose_name='Редактировать карты лояльности')
+    add_reviews = models.BooleanField(default=False, verbose_name='Добавлять/удалять отзывы')
+    change_settings = models.BooleanField(default=False, verbose_name='Изменять общие настройки сайта')
+    add_pay_systems = models.BooleanField(default=False, verbose_name='Добавлять/удалять платежные системы')
+    add_delivery_service = models.BooleanField(default=False, verbose_name='Добавлять/удалять службы доставки')
+    add_codes = models.BooleanField(default=False, verbose_name='Добавлять/удалять коды счетчиков')
+    add_subdomains = models.BooleanField(default=False, verbose_name='Добавлять/удалять субдомены')
+    add_integrations = models.BooleanField(default=False, verbose_name='Добавлять/удалять интеграции')
+    change_design = models.BooleanField(default=False, verbose_name='Изменять дизайн')
+
 
 class LoyaltyCardSettings(SingletonModel):
     active = models.BooleanField(default=False, verbose_name='Включить карты лояльности')

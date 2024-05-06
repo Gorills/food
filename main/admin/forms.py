@@ -6,11 +6,67 @@ from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings,
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
-from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
+from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserRigts
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
 from delivery.models import Delivery
+from django.contrib.auth.models import User
+
+
+
+class UserRightsForm(forms.ModelForm):
+    class Meta:
+        model = UserRigts
+        fields = '__all__'
+
+        widgets = {
+            'user': forms.TextInput(attrs={
+                'hidden': 'hidden',
+            }),
+
+        }
+        labels = {
+            
+            'user': '',
+            
+          
+        }
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'username',
+            'password',
+            'email',
+            'is_staff',
+            'is_superuser',
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'username': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'password': forms.PasswordInput(attrs={
+
+                'class': 'input',
+            }),
+            'email': forms.TextInput(attrs={
+                'class': 'input',
+            })
+
+
+        }
 
 
 
