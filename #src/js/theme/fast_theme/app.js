@@ -1360,6 +1360,8 @@ $(document).on('click', '#checkout__radio-bytime', function(e){
 function checkProducts() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let products = document.querySelectorAll('.btn-wrap');
+
+    // $('.cart__maby').load(location.href + " .cart__maby-refresh");
     
     products.forEach(function(product) {
         let id = product.getAttribute('data-cart-id');
@@ -1392,31 +1394,40 @@ function checkProducts() {
 
 
         if (cart[id]) {
-            let inHTML = `
-            <div class="cart__items-wrap">
-                <div class="cart__btn-wrapper">
-                    <button class="cart__plusminus" data-action="minus" data-id="${id}">-</button>
-                    <div class class="cart__quantity">${cart[id].quantity}</div>
-                    <button class="cart__plusminus" data-action="plus" data-id="${id}">+</button>
-                </div>
-            </div>
-            `;
 
-            let svgHTML = `
-                <div class="cart__svg">
-                    <?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#101820;}</style></defs><title/><g data-name="Layer 28" id="Layer_28"><path class="cls-1" d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"/><path class="cls-1" d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"/></g></svg>
-                    <p>В корзине</p>
-                </div>
-                `
-
-            product.classList.add('in-cart');
-            
-            productBtn.style.display = 'none';
-            productListItem.innerHTML = inHTML;
-            productSvgItem.innerHTML = svgHTML;
+            if (product.closest('.product-list__item').classList.contains('product-list__item--mini')) {
+                let product_item = product.closest('.product-list__item');
+                product_item.style.display = 'none';
+            } else {
                 
             
+                let inHTML = `
+                <div class="cart__items-wrap">
+                    <div class="cart__btn-wrapper">
+                        <button class="cart__plusminus" data-action="minus" data-id="${id}">-</button>
+                        <div class class="cart__quantity">${cart[id].quantity}</div>
+                        <button class="cart__plusminus" data-action="plus" data-id="${id}">+</button>
+                    </div>
+                </div>
+                `;
+
+                let svgHTML = `
+                    <div class="cart__svg">
+                        <?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#101820;}</style></defs><title/><g data-name="Layer 28" id="Layer_28"><path class="cls-1" d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"/><path class="cls-1" d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"/></g></svg>
+                        <p>В корзине</p>
+                    </div>
+                    `
+
+                product.classList.add('in-cart');
+                
+                productBtn.style.display = 'none';
+                productListItem.innerHTML = inHTML;
+                productSvgItem.innerHTML = svgHTML;
+                
+            }
         } else {
+            let product_item = product.closest('.product-list__item');
+            product_item.style.display = 'flex';
             product.classList.remove('in-cart');
            
            
@@ -1428,6 +1439,8 @@ function checkProducts() {
                 
             
         }
+        
+
         
 
 
@@ -1520,14 +1533,14 @@ $(document).on('click', '.add_to_cart', function(){
     let name = $button.parent('.btn-wrap').attr('data-name');
     let image = $button.parent('.btn-wrap').attr('data-image');
     
+    let parent = $button.closest('.product-list__item');
+    if (parent.hasClass('product-list__item--mini')) {
+        $('.product-options-popup').removeClass('product-options-popup--active')
+    }
 
     addToCart(id, name, price, image, optionsIdString, type);
     
-    $button.text('Добавлено');
-    
-    setTimeout(function(){
-        $button.text('В корзину');
-    }, 1000); 
+   
 });
 
 
@@ -1542,11 +1555,7 @@ $(document).on('click','.combo-popup__btn',function(){
 
     if ($(this).hasClass('combo-popup__btn--active')) {
         addToCart(id, name, price, image, optionsIdString, type);
-        $button.text('Добавлено');
-    
-        setTimeout(function(){
-            $button.text('В корзину');
-        }, 1000);
+        
 
     } else {
         
@@ -1707,6 +1716,9 @@ $(document).on('click', '.order_create', function(e) {
                 }
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
+
+                order.address = '';
+                localStorage.setItem('order', JSON.stringify(order));
 
                 
 
@@ -2548,9 +2560,10 @@ $(document).on('click', '.cart__item-option', function() {
     
     
         // Обновить отображение корзины и обновить счетчик
+        checkProducts();
         updateAll();
         refreshBalls();
-        checkProducts()
+        
 
     }
     
@@ -2586,7 +2599,10 @@ function displayCart() {
     cartItems.innerHTML = '';
     cartRelateds.innerHTML = '';
 
+    
+
     if (totalCount === 0) {
+        $('.cart__maby').hide()
         cartItems.innerHTML = `
             <div class="cart__empty">
 
@@ -2608,7 +2624,7 @@ function displayCart() {
         cartItems.style.height = 'fit-content;';
         document.getElementById('cart-bottom').style.display = 'none';
     } else {
-
+        $('.cart__maby').show()
         
         for (let itemId in sortedCart) {
             let item = cart[itemId];
@@ -3639,3 +3655,42 @@ $('.delivery-popup__btn').click(function() {
     localStorage.setItem('workTime', JSON.stringify({is_open: false}));
     $('.delivery-popup').removeClass('delivery-popup--active')
 })
+
+
+
+
+// Дополнительные товары в корзине
+function getCartProduct() {
+    fetch('/api/v1/get_cart_products/')
+        .then(response => response.json())
+        .then(data => {
+
+            for (let i = 0; i < data.length; i++) {
+                let item = data[i];
+                let itemHtml = `
+                    <div class="cart__item">
+                        <div class="cart__item-img">
+                            <a href="/catalog/${item.id}/">
+                                <img src="${item.thumb}" alt="${item.name}">
+                            </a>
+                        </div>
+                        <div class="cart__item-info">
+                            <div class="cart__item-name">
+                                <a href="/catalog/${item.id}/">
+                                    ${item.name}
+                                </a>
+                            </div>
+                            
+                        </div>
+                        <div class="cart__item-price">
+                            ${parseFloat(item.price).toFixed(2)}₽
+                        </div>
+                    </div>
+                `;
+                console.log(itemHtml)
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки товаров:', error));
+}
+
+// getCartProduct()

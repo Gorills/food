@@ -1520,6 +1520,7 @@ class ProductForm(forms.ModelForm):
             'thumb',
             'status',
             'sort_order',
+            'in_cart',
         ]
         labels = {
             'name': 'Название товара',

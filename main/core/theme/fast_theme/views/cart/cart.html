@@ -1,5 +1,7 @@
 
 
+{% load thumbnail %}
+{% load l10n %}
 
 
 <div class="order">
@@ -522,7 +524,7 @@
         
 
 
-<div class="cart">
+<div class="cart cart--active">
 
 
 
@@ -550,7 +552,19 @@
                     
                 </ul>
 
-                
+                <div class="cart__maby">
+
+                    <div class="cart__maby-refresh">
+
+                        <p class="cart__related-title">Возможно, вы забыли добавить в корзину</p>
+                        {% if cart_products %}
+                        
+                            {% include 'components/product_list.html' with slider='false' products=cart_products big='mini' size="image_size" %}
+
+                        
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
         

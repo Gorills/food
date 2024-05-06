@@ -1,6 +1,6 @@
 {% load thumbnail %}
 {% load l10n %}
-<div class="product-list {% if slider == 'true' %}product-list--slider owl-carousel{% endif %}">
+<div class="product-list  product-list--{{ big }} {% if slider == 'true' %}product-list--slider owl-carousel{% endif %}">
 
 
     {% for constructor in category.constructors.all %}
@@ -213,7 +213,7 @@
         
             
     {% for product in products %}
-    <div class="product-list__item {{ big }}">
+    <div class="product-list__item product-list__item--{{ big }}">
 
         <div class="product-list__top-top">
             <a href="{{ product.get_absolute_url }}" class="product-list__top" style="max-height:{{ shop_setup.min_height }}px;overflow:hidden;">
@@ -238,7 +238,7 @@
                 
 
 
-               
+                
                 <img 
                     loading="lazy" 
                     src="{{ product.get_thumb_mini }}" 
@@ -463,10 +463,12 @@
                                     <div class="product-options-popup__options-checkbox-row">
                                         {% for option in product.get_sort_options %}
                                             {% if option.type == type %}
-                                                
-                                                    <input id="cb{{ option.id }}" class="product-options-popup__options-checkbox-checkbox" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                                    <label>
+                                                        <input class="product-options-popup__options-checkbox-checkbox" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
                                                     
-                                                    <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
+                                                        {{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> 
+                                                
+                                                    </label>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -485,10 +487,12 @@
                                     <div class="product-options-popup__options-checkbox-row">
                                         {% for option in product.get_sort_options %}
                                             {% if option.type == type %}
-                                                
-                                                    <input id="cb{{ option.id }}" name="radio" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="radio" value="{{ option.option_value }}">
+                                                <label>
+                                                    <input name="radio" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="radio" value="{{ option.option_value }}">
                                                     
-                                                    <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
+                                                    {{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> 
+                                                    
+                                                </label>
                                             {% endif %}
                                         {% endfor %}
                                     </div>

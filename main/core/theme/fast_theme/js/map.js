@@ -861,6 +861,7 @@ $(document).ready(function() {
         
         // Найти родительский элемент всех выбранных checkbox
         var $parent = $(this).closest('.product-options-popup__inner');
+        // console.log($parent.html())
 
         
 

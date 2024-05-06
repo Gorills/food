@@ -46,6 +46,13 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
     serializer_class = ProductSerializer
 
 
+@api_view(['GET'])
+def get_cart_products(request):
+    products = Product.objects.filter(in_cart=True, status=True)
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ComboViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Combo.objects.all()
     serializer_class = ComboSerializer
@@ -367,6 +374,8 @@ def get_work_active(request, day):
     return Response(data, status=status.HTTP_200_OK)
 
 
+
+
 @api_view(['GET'])
 def get_order_status(request, pk):
     order = Order.objects.get(id=pk)
@@ -392,6 +401,10 @@ def dop_items(request):
     dop_items = DopItems.objects.filter(required=True)
     serializer = DopItemsSerializer(dop_items, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
 
 # !!! Is admin !!! 
 from sms.views import send_sms
