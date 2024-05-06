@@ -1731,7 +1731,7 @@ $(document).on('click', '.order_create', function(e) {
                 $('.order').removeClass('order--active')
                 
                 getLastOrder()
-
+                checkProducts()
                 updateAll()
 
                 // window.location.href = confirmationUrl;
@@ -2242,6 +2242,7 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
     localStorage.setItem('lastOrder', JSON.stringify(last_order))
     
     console.log(localStorage.setItem('lastOrder', JSON.stringify(last_order)))
+    
     
 
 })
