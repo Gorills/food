@@ -1715,8 +1715,11 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
-                let remove_order = JSON.parse(localStorage.getItem('lastOrder'));
-                delete remove_order
+                // Обновление или удаление данных из localStorage
+                localStorage.removeItem('order');
+                localStorage.removeItem('cart');
+                localStorage.removeItem('lastOrder');
+                
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
 
