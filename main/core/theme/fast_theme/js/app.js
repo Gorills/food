@@ -1886,32 +1886,36 @@ jQuery(document).ready(function () {
 
         // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
-        function updateOrderStatus() {
-            $.ajax({
-                url: '/api/v1/get_order_status/' + order_id + '/',
-                method: 'GET',
-                success: function(data) {
-                    
-                    last_order.status = data.status;
-                    localStorage.setItem('lastOrder', JSON.stringify(last_order));
-                    // Обновление popup с полученными данными
-                    updatePopup(data.status_list, data.status);
-    
-                    // Проверка на выполненный статус
-                    if (data.status === 'Выполнен') {
+
+        if (order_id != '') {
+
+            function updateOrderStatus() {
+                $.ajax({
+                    url: '/api/v1/get_order_status/' + order_id + '/',
+                    method: 'GET',
+                    success: function(data) {
                         
-                        clearInterval(intervalId); // Остановка повторения запросов
+                        last_order.status = data.status;
+                        localStorage.setItem('lastOrder', JSON.stringify(last_order));
+                        // Обновление popup с полученными данными
+                        updatePopup(data.status_list, data.status);
+        
+                        // Проверка на выполненный статус
+                        if (data.status === 'Выполнен') {
+                            
+                            clearInterval(intervalId); // Остановка повторения запросов
+                        }
+                        // Проверка на выполненный статус
+                        if (data.status === 'Отказ') {
+                            $('.popup-order-status').css('display', 'none')
+                            clearInterval(intervalId); // Остановка повторения запросов
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Ошибка при получении статуса заказа:', error);
                     }
-                    // Проверка на выполненный статус
-                    if (data.status === 'Отказ') {
-                        $('.popup-order-status').css('display', 'none')
-                        clearInterval(intervalId); // Остановка повторения запросов
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Ошибка при получении статуса заказа:', error);
-                }
-            });
+                });
+            }
         }
     
         function updatePopup(status_list, current_status) {
