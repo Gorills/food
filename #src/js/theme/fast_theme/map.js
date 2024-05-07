@@ -869,7 +869,7 @@ $(document).ready(function() {
 // TODO разобраться почему не работает при двух одинаковых товарах на странице
 
 $(document).ready(function() {
-    $('input[type="checkbox"], input[type="radio"]').change(function() {
+    $(document).on('change', 'input[type="checkbox"], input[type="radio"]', function() {
 
 
         
