@@ -1786,25 +1786,36 @@ $(document).on('click', '.order_create', function(e) {
                 }
 
                 // Обновление или удаление данных из localStorage
-                localStorage.removeItem('order');
-                localStorage.removeItem('cart');
-                localStorage.removeItem('lastOrder');
-                
-
-                localStorage.setItem('lastOrder', JSON.stringify(data));
-
                 order.address = '';
                 localStorage.setItem('order', JSON.stringify(order));
 
-                $('.order__load').removeClass('order__load--active')
-                $('.odred-done').addClass('odred-done--active')
-                $('.order').removeClass('order--active')
-                
-                getLastOrder()
-                checkProducts()
-                updateAll()
+                if (confirmationUrl != '/?order=True') {
+                    localStorage.setItem('lastOrder', JSON.stringify(data));
 
-                // window.location.href = confirmationUrl;
+                    window.location.href = confirmationUrl;
+                    
+
+                } else {
+
+                    localStorage.removeItem('order');
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('lastOrder');
+                    
+    
+                    localStorage.setItem('lastOrder', JSON.stringify(data));
+    
+                    $('.order__load').removeClass('order__load--active')
+                    $('.odred-done').addClass('odred-done--active')
+                    $('.order').removeClass('order--active')
+                    
+                    getLastOrder()
+                    checkProducts()
+                    updateAll()
+
+
+                }
+
+                
                
 
 
@@ -1991,318 +2002,332 @@ function getLastOrder() {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     res = pathname.replace(origin, '')
     
+    console.log(last_order)
+    let pay_method = last_order.pay_method
 
-    if(last_order) {
+    let is_site = pay_method.indexOf('сайт') > -1
+
+    if(last_order || res.indexOf('/?order=True') > -1) {
         
-        
-        
-        // Преобразуем объект в строку JSON-формата
-        let jsonString = JSON.stringify(order);
+        let show_last_order = true
+        if (res.indexOf('/?order=True') > -1) {
+            show_last_order = true
 
-        // Заменяем символы в строке
-        jsonString = jsonString.replace(/'/g, '"'); 
-        let newStr = jsonString.slice(1, -1);
-
-
-        // Преобразуем строку JSON-формата обратно в объект
-        let newObj = JSON.parse(newStr);
-
-       
-        dataLayer.push(newObj)
-
-
-        
-
-        
-
-
-        let order_delivery_items = ''
-        let order_delivery_method = ''
-        let order_delivery_address = ''
-
-        if (last_order.delivery_method == 'Самовывоз') {
-            order_delivery_method = 'самовывоза'
-            order_delivery_items = `
-                <div class="order__delivery-check-item order-done-delivery">Доставка</div>
-                <div class="order__delivery-check-item order-done-pickup order__delivery-check-item--active">Самовывоз</div>
-            `
-            order_delivery_address = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Точка самовывоза</div>
-                    <div class="odred-done__itog-value">${last_order.address_pickup}</div>
-
-                </div>
-            `
-        } else if (last_order.delivery_method == 'Доставка') {
-            order_delivery_method = 'доставки'
-            order_delivery_items = `
-                <div class="order__delivery-check-item order-done-delivery order__delivery-check-item--active">Доставка</div>
-                <div class="order__delivery-check-item order-done-pickup">Самовывоз</div>
-            `
-            order_delivery_address = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Адрес доставки</div>
-                    <div class="odred-done__itog-value">${last_order.address}</div>
-
-                </div>
-            `
+        } 
+        if(is_site && !(res.indexOf('/?order=True') > -1)) {
+            show_last_order = false
         }
 
+        console.log(show_last_order, is_site)
+        
+        if (show_last_order) {
+            // Преобразуем объект в строку JSON-формата
+            let jsonString = JSON.stringify(order);
 
-        let order_comment = ''
-        if(last_order.order_conmment) {
-            
-            order_comment = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Комментарий к заказу</div>
-                    <div class="odred-done__itog-value">${last_order.order_conmment}</div>
-                </div>
-                `
-        }
+            // Заменяем символы в строке
+            jsonString = jsonString.replace(/'/g, '"'); 
+            let newStr = jsonString.slice(1, -1);
+
+
+            // Преобразуем строку JSON-формата обратно в объект
+            let newObj = JSON.parse(newStr);
 
         
-        let address_comment = ''
-        if(last_order.address_comment) {
+            dataLayer.push(newObj)
+
+
             
-            address_comment = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Комментарий к адресу</div>
-                    <div class="odred-done__itog-value">${last_order.address_comment}</div>
-                </div>
-                `
-        }
-        
-        let order_flat = ''
-        if(last_order.flat) {
+
             
-            order_flat = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Квартира</div>
-                    <div class="odred-done__itog-value">${last_order.flat}</div>
-                </div>
+
+
+            let order_delivery_items = ''
+            let order_delivery_method = ''
+            let order_delivery_address = ''
+
+            if (last_order.delivery_method == 'Самовывоз') {
+                order_delivery_method = 'самовывоза'
+                order_delivery_items = `
+                    <div class="order__delivery-check-item order-done-delivery">Доставка</div>
+                    <div class="order__delivery-check-item order-done-pickup order__delivery-check-item--active">Самовывоз</div>
                 `
-        }
-        let oreder_flore = ''
-        if(last_order.floor) {
+                order_delivery_address = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Точка самовывоза</div>
+                        <div class="odred-done__itog-value">${last_order.address_pickup}</div>
+
+                    </div>
+                `
+            } else if (last_order.delivery_method == 'Доставка') {
+                order_delivery_method = 'доставки'
+                order_delivery_items = `
+                    <div class="order__delivery-check-item order-done-delivery order__delivery-check-item--active">Доставка</div>
+                    <div class="order__delivery-check-item order-done-pickup">Самовывоз</div>
+                `
+                order_delivery_address = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Адрес доставки</div>
+                        <div class="odred-done__itog-value">${last_order.address}</div>
+
+                    </div>
+                `
+            }
+
+
+            let order_comment = ''
+            if(last_order.order_conmment) {
+                
+                order_comment = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Комментарий к заказу</div>
+                        <div class="odred-done__itog-value">${last_order.order_conmment}</div>
+                    </div>
+                    `
+            }
+
             
-            oreder_flore = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Этаж</div>
-                    <div class="odred-done__itog-value">${last_order.floor}</div>
-                </div>
-                `
-        }
-
-        let order_entrance = ''
-        if(last_order.entrance) {
+            let address_comment = ''
+            if(last_order.address_comment) {
+                
+                address_comment = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Комментарий к адресу</div>
+                        <div class="odred-done__itog-value">${last_order.address_comment}</div>
+                    </div>
+                    `
+            }
             
-            order_entrance = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Подъезд</div>
-                    <div class="odred-done__itog-value">${last_order.entrance}</div>
-                </div>
-                `
-        }
-        let order_door_code = ''
-        if(last_order.door_code) {
+            let order_flat = ''
+            if(last_order.flat) {
+                
+                order_flat = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Квартира</div>
+                        <div class="odred-done__itog-value">${last_order.flat}</div>
+                    </div>
+                    `
+            }
+            let oreder_flore = ''
+            if(last_order.floor) {
+                
+                oreder_flore = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Этаж</div>
+                        <div class="odred-done__itog-value">${last_order.floor}</div>
+                    </div>
+                    `
+            }
+
+            let order_entrance = ''
+            if(last_order.entrance) {
+                
+                order_entrance = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Подъезд</div>
+                        <div class="odred-done__itog-value">${last_order.entrance}</div>
+                    </div>
+                    `
+            }
+            let order_door_code = ''
+            if(last_order.door_code) {
+                
+                order_door_code = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Код двери</div>
+                        <div class="odred-done__itog-value">${last_order.door_code}</div>
+                    </div>
+                    `
+            }
+
+            let order_pay_method = ''
+            if(last_order.pay_method) {
+                
+                order_pay_method = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Способ оплаты</div>
+                        <div class="odred-done__itog-value">${last_order.pay_method}</div>
+                    </div>
+                    `
+            }
+
+            let order_pay_change = ''
+            if(last_order.pay_change) {
+                
+                order_pay_change = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Сдача c</div>
+                        <div class="odred-done__itog-value">${last_order.pay_change}</div>
+                    </div>
+                    `
+            }
             
-            order_door_code = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Код двери</div>
-                    <div class="odred-done__itog-value">${last_order.door_code}</div>
-                </div>
-                `
-        }
+            let dataHtml = `       
+                    <div class="odred-done">
 
-        let order_pay_method = ''
-        if(last_order.pay_method) {
-            
-            order_pay_method = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Способ оплаты</div>
-                    <div class="odred-done__itog-value">${last_order.pay_method}</div>
-                </div>
-                `
-        }
-
-        let order_pay_change = ''
-        if(last_order.pay_change) {
-            
-            order_pay_change = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Сдача c</div>
-                    <div class="odred-done__itog-value">${last_order.pay_change}</div>
-                </div>
-                `
-        }
-        
-        let dataHtml = `       
-                <div class="odred-done">
-
-                <div class="odred-done__owerlay"></div>
+                    <div class="odred-done__owerlay"></div>
 
 
-                <div class="odred-done__container">
+                    <div class="odred-done__container">
 
-                    <div class="odred-done__inner">
+                        <div class="odred-done__inner">
 
-                        <div class="odred-done__top">
-                        
-                            <div class="odred-done__title">
-                                Заказ № <span id="odred-done__id">${last_order.order_id}</span>
-                            </div>
-
-
-                            <div class="odred-done__closer">
-                                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                            </div>
-
-                        </div>
-                        
-
-
-                        
-
-                        <div class="odred-done__body">
-                            <div class="order__delivery-check">
-                                ${order_delivery_items}
-                                
-                            </div>
-
-                            <ul class="checkout__counter">
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-                                    
-                                    <span class="checkout__counter-title">Адрес и контакты</span>
-                                    <div class="checkout__counter-line-wrap">
-                                        <i></i><div class="checkout__counter-line"></div>
-
-                                    </div>
-                                
-                                </li>
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-
-                                    <span class="checkout__counter-title">Оплата</span>
-                                    <div class="checkout__counter-line-wrap">
-                                    
-                                        <div class="checkout__counter-line"></div><i></i><div class="checkout__counter-line"></div>
-
-                                    </div>
-                                
-                                </li>
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-
-                                    <span class="checkout__counter-title">Завершение</span>
-
-
-                                    <div class="checkout__counter-line-wrap">
-                                        
-                                        <div class="checkout__counter-line"></div><i></i>
-                                    </div>
-                                
-                                </li>
-                            </ul>
-
-                            <div class="odred-done__body-wrap">
+                            <div class="odred-done__top">
                             
-                                <p class="odred-done__body-title">${data_title} ${data_text}</p>
+                                <div class="odred-done__title">
+                                    Заказ № <span id="odred-done__id">${last_order.order_id}</span>
+                                </div>
 
 
-                                <div class="odred-done__itog">
-                                    <div class="odred-done__itog-item">
-                                        <p class="odred-done__itog-title">Итоговые данные</p>
+                                <div class="odred-done__closer">
+                                    <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                </div>
+
+                            </div>
+                            
 
 
+                            
+
+                            <div class="odred-done__body">
+                                <div class="order__delivery-check">
+                                    ${order_delivery_items}
+                                    
+                                </div>
+
+                                <ul class="checkout__counter">
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
                                         
+                                        <span class="checkout__counter-title">Адрес и контакты</span>
+                                        <div class="checkout__counter-line-wrap">
+                                            <i></i><div class="checkout__counter-line"></div>
 
-                                        <div class="odred-done__itog-wrap">
-                                            <div class="odred-done__itog-data">Время ${order_delivery_method}</div>
-                                            <div class="odred-done__itog-value">${last_order.day} / ${last_order.time}</div>
+                                        </div>
+                                    
+                                    </li>
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                        <span class="checkout__counter-title">Оплата</span>
+                                        <div class="checkout__counter-line-wrap">
+                                        
+                                            <div class="checkout__counter-line"></div><i></i><div class="checkout__counter-line"></div>
+
+                                        </div>
+                                    
+                                    </li>
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                        <span class="checkout__counter-title">Завершение</span>
+
+
+                                        <div class="checkout__counter-line-wrap">
+                                            
+                                            <div class="checkout__counter-line"></div><i></i>
+                                        </div>
+                                    
+                                    </li>
+                                </ul>
+
+                                <div class="odred-done__body-wrap">
+                                
+                                    <p class="odred-done__body-title">${data_title} ${data_text}</p>
+
+
+                                    <div class="odred-done__itog">
+                                        <div class="odred-done__itog-item">
+                                            <p class="odred-done__itog-title">Итоговые данные</p>
+
+
+                                            
+
+                                            <div class="odred-done__itog-wrap">
+                                                <div class="odred-done__itog-data">Время ${order_delivery_method}</div>
+                                                <div class="odred-done__itog-value">${last_order.day} / ${last_order.time}</div>
+
+                                            </div>
+
+                                            ${order_delivery_address}
+                                            ${order_flat}
+                                            ${oreder_flore}
+                                            ${order_entrance}
+                                            ${order_door_code}
+
+
+
+                                            ${address_comment}
+
+
+                                            ${order_pay_method}
+                                            ${order_pay_change}
+
+                                            ${order_comment}
+
+                                            <div class="odred-done__itog-wrap odred-done__itog-wrap-summ" id="orderDonePrice">
+                                                <div class="odred-done__itog-data">Сумма заказа:</div>
+                                                <div class="odred-done__itog-value">${last_order.summ} ₽</div>
+
+                                            </div>
 
                                         </div>
 
-                                        ${order_delivery_address}
-                                        ${order_flat}
-                                        ${oreder_flore}
-                                        ${order_entrance}
-                                        ${order_door_code}
-
-
-
-                                        ${address_comment}
-
-
-                                        ${order_pay_method}
-                                        ${order_pay_change}
-
-                                        ${order_comment}
-
-                                        <div class="odred-done__itog-wrap odred-done__itog-wrap-summ" id="orderDonePrice">
-                                            <div class="odred-done__itog-data">Сумма заказа:</div>
-                                            <div class="odred-done__itog-value">${last_order.summ} ₽</div>
-
-                                        </div>
 
                                     </div>
 
 
                                 </div>
 
-
                             </div>
+                            
+                            
 
                         </div>
+                        <div class="odred-done__bottom">
+
+
                         
+                            
+                            
                         
+
+                        
+                            
+
+                        
+
+                            
+                        
+
+                            <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
+
+                        
+
+                            
+                        </div>
 
                     </div>
-                    <div class="odred-done__bottom">
 
 
-                    
-                        
-                        
-                    
-
-                    
-                        
-
-                    
-
-                        
-                    
-
-                        <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
-
-                    
-
-                        
                     </div>
+            `
 
-                </div>
+            
+            $('#orderDone').html(dataHtml)
 
-
-                </div>
-        `
-
-        
-        $('#orderDone').html(dataHtml)
-
-        if(last_order.show == true) {
-            $('.odred-done').addClass('odred-done--active')
-            $('body').addClass('body');
-        } else {
-            $('.odred-done').removeClass('odred-done--active')
-            $('body').removeClass('body');
+            if(last_order.show == true) {
+                $('.odred-done').addClass('odred-done--active')
+                $('body').addClass('body');
+            } else {
+                $('.odred-done').removeClass('odred-done--active')
+                $('body').removeClass('body');
+            }
+            
         }
-        
-        
         
     }
 
 }
-// getLastOrder()
+getLastOrder()
 
 $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
     $('.odred-done').removeClass('odred-done--active')
