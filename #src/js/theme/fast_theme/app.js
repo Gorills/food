@@ -1450,9 +1450,7 @@ function checkProducts() {
 }
 checkProducts()
 
-$(document).on('change', 'input[type="checkbox"], input[type="radio"]', function(){
-    checkProducts()
-}) 
+
 
 $(document).on('click','.product-options__item',function(e){
 
@@ -1521,6 +1519,78 @@ $(document).on('click','.product-options__item',function(e){
     // $productItem.find('.product-options__span-'+product_id).html(value)
 
 });
+
+
+
+
+// Дополнительные опции product-options-popup__options-checkbox-row
+// TODO разобраться почему не работает при двух одинаковых товарах на странице
+
+$(document).ready(function() {
+    $(document).on('change', 'input[type="checkbox"], input[type="radio"]', function() {
+
+
+        var $parent = $(this).closest('.product-options-popup__inner');
+
+
+        var checked_select_id = $parent.find('.product-options-popup__options-select--active').data('id');
+        var checked_select_value = $parent.find('.product-options-popup__options-select--active').data('value');
+        
+
+
+
+        // Обновить сумму всех выбранных чекбоксов и радио-кнопок
+        var sum = 0;
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            sum += parseFloat($(this).data('price'));
+        });
+
+        var price = $parent.find('.product-options-popup__price').attr('data-price');
+        var old_price = $parent.find('.product-options-popup__old-price').attr('data-price');
+        var new_price = parseFloat(price) + sum;
+        var new_old_price = parseFloat(old_price) + sum;
+
+        // Записать новую цену в атрибут data-price кнопки .btn
+        $parent.find('.btn-wrap').attr('data-price', new_price.toFixed(2));
+        $parent.find('.product-options-popup__price').html(new_price + ' ₽');
+        $parent.find('.product-options-popup__old-price').html(new_old_price + ' ₽');
+
+        
+        // Собрать значения data-id всех выбранных чекбоксов через запятую
+        var ids = [];
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            ids.push($(this).data('id'));
+        });
+        
+        // Записать значения data-id через запятую в атрибут data-options-id кнопки .btn
+        $parent.find('.btn-wrap').attr('data-optionsid', ids.join(','));
+        
+        // Собрать названия выбранных значений через запятую
+        var options = [];
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            options.push($(this).val());
+        });
+        
+        // Записать названия выбранных значений через запятую в атрибут data-options кнопки .btn
+        $parent.find('.btn-wrap').attr('data-options', options.join(', '));
+
+        if (checked_select_id != undefined && checked_select_value != undefined) {
+            var id_now = $parent.find('.btn-wrap').attr('data-optionsid');
+            var options_now = $parent.find('.btn-wrap').attr('data-options');
+            
+    
+            $parent.find('.btn-wrap').attr('data-optionsid', checked_select_id + ',' + id_now);
+            // $parent.find('.btn').attr('data-options', checked_select_value + ',' + options_now);
+        }
+
+        
+        checkProducts()
+
+
+
+    });
+});
+
 
 
 // Добавление в корзину
