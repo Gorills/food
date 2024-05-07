@@ -1791,7 +1791,7 @@ $(document).on('click', '.order_create', function(e) {
 
                 if (confirmationUrl != '/?order=True') {
                     localStorage.setItem('lastOrder', JSON.stringify(data));
-
+                    setOrder()
                     window.location.href = confirmationUrl;
                     
 
@@ -1800,6 +1800,8 @@ $(document).on('click', '.order_create', function(e) {
                     localStorage.removeItem('order');
                     localStorage.removeItem('cart');
                     localStorage.removeItem('lastOrder');
+
+
                     
     
                     localStorage.setItem('lastOrder', JSON.stringify(data));
@@ -1810,8 +1812,9 @@ $(document).on('click', '.order_create', function(e) {
                     
                     getLastOrder()
                     checkProducts()
+                    
+                    setOrder()
                     updateAll()
-
 
                 }
 
