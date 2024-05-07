@@ -2392,7 +2392,7 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
     localStorage.setItem('lastOrder', JSON.stringify(last_order))
     
     console.log(localStorage.setItem('lastOrder', JSON.stringify(last_order)))
-    
+    window.location.href = '/';
     
 
 })
