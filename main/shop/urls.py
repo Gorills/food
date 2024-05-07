@@ -10,6 +10,7 @@ urlpatterns = [
     
     path('<slug:slug>/', views.category_detail, name='category_detail'),
     path('<slug:parent>/<slug:slug>/', views.product_detail, name='product_detail'),
+    path('products/product_options/<int:pk>/', views.product_options, name='product_options'),
     
 
     # path('<slug:slug>/', views.category_detail, name='category_detail'),

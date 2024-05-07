@@ -250,3 +250,17 @@ def set_like(request):
     
     else:
         return redirect('home')
+    
+
+
+
+
+def product_options(request, pk):
+
+    product = Product.objects.get(id=pk)
+
+    context = {
+        'product': product,
+    }
+
+    return render(request, 'components/product_options.html', context)

@@ -1,3 +1,18 @@
+// Загрузка опций
+$(document).ready(function() {
+    // Находим все элементы с классом product-options-popup__refresh
+    $('.product-options-popup__refresh').each(function() {
+        var $this = $(this);
+        var productId = $this.data('id'); // Предполагается, что идентификатор продукта хранится в атрибуте data-product-id
+
+        // Загружаем данные с другой страницы по URL /catalog/products/product_options/<id>
+        $.get('/catalog/products/product_options/' + productId, function(data) {
+            // Загруженные данные помещаем внутрь элемента
+            $this.html(data);
+        });
+    });
+});
+
 
 
 function updateMinDelivery() {

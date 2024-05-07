@@ -1,0 +1,124 @@
+{% load thumbnail %}
+{% load l10n %}
+<div class="product-options-popup" id="product-options-popup-{{ product.id }}">
+
+    <div class="product-options-popup__layout"></div>
+    
+    <div class="product-options-popup__inner">
+        <a href="#" class="product-options-popup__closer">
+            <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </a>
+
+
+        <div class="product-options-popup__options-select-wrap">
+            {% for type in product.get_first_select %}
+            <div  data-id="{{ type.id }}" data-product-id="{{ product.id }}" data-price="{{ type.option_price |unlocalize }}" data-value="{{ type.option_value }}" class="product-options-popup__options-select {% if forloop.counter == 1 %}product-options-popup__options-select--active{% endif %}">
+                {{ type.option_value }}
+            </div>
+        
+        
+        
+        {% endfor %}
+        </div>
+
+        <div class="product-options-popup__options-row-wrap">
+            
+        
+        
+            
+
+            {% for type in product.get_all_options %}
+                {% if type.option_class == 'checkbox' %}
+                <div class="product-options-popup__options-row">
+                    <div class="product-options-popup__options-name">{{ type.name }}: </div>
+
+
+
+                
+                    {% if type.option_class == 'checkbox' %}
+                    <div class="product-options-popup__options-checkbox-row">
+                        {% for option in product.get_sort_options %}
+                            {% if option.type == type %}
+                                    <label>
+                                        <input class="product-options-popup__options-checkbox-checkbox" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                    
+                                        {{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> 
+                                
+                                    </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if type.option_class == 'radio' %}
+                <div class="product-options-popup__options-row">
+                    <div class="product-options-popup__options-name">{{ type.name }}: </div>
+
+
+
+                
+                    {% if type.option_class == 'radio' %}
+                    <div class="product-options-popup__options-checkbox-row">
+                        {% for option in product.get_sort_options %}
+                            {% if option.type == type %}
+                                <label>
+                                    <input name="radio" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="radio" value="{{ option.option_value }}">
+                                    
+                                    {{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> 
+                                    
+                                </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+        
+
+        <div class="product-options-popup__row">
+            
+
+
+            {% comment %} <div class="product-options-popup__counter">
+
+                <div class="product-options-popup__minus">
+                    <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
+                    </svg>
+                </div>
+
+                <input class="product-options-popup__input product-options-popup__count-inp" min="1" type="number" name="quantity" required="" id="id_quantity" value="1">
+                
+
+                <div class="product-options-popup__plus">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
+                    </svg>
+                </div>
+                
+                
+                
+            </div> {% endcomment %}
+            <div class="product-options-popup__price-wrap">
+                <div class="product-options-popup__price" data-price="{{ product.get_price_after_sale | floatformat:0 }}">{{ product.get_price_after_sale | floatformat:0 }} ₽</div>
+                {% if product.get_old_price %}
+                    <div class="product-options-popup__old-price" data-price="{{ product.get_old_price | floatformat:0 }}">{{ product.get_old_price | floatformat:0 }} ₽</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="btn-wrap" data-quantity="2" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+            <div class="btn-wrap__count"></div>
+            <div class="btn-wrap__svg"></div>
+            <button class="btn btn--primary add_to_cart">В корзину</button>
+        </div>
+    </div>
+    
+
+</div>
