@@ -1887,9 +1887,10 @@ jQuery(document).ready(function () {
         // console.log(last_order)
         $('.popup-order-status').css('display', 'flex')
 
-        if (order_id != '') {
+        
 
-            function updateOrderStatus() {
+        function updateOrderStatus() {
+            if (order_id != '') {
                 $.ajax({
                     url: '/api/v1/get_order_status/' + order_id + '/',
                     method: 'GET',
