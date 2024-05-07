@@ -2004,6 +2004,7 @@ function getLastOrder() {
     
     console.log(last_order)
     let pay_method = last_order.pay_method
+    let show_order_set = last_order.show
 
     let is_site = pay_method.indexOf('сайт') > -1
 
@@ -2017,6 +2018,12 @@ function getLastOrder() {
         if(is_site && !(res.indexOf('/?order=True') > -1)) {
             show_last_order = false
         }
+
+        if (!show_order_set) {
+            show_last_order = false
+        }
+
+
 
         console.log(show_last_order, is_site)
         
