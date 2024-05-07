@@ -144,7 +144,7 @@ function setLastOrder() {
 
     let data = {
         'show': false,
-        'order_id': '',
+        'order_id': false,
         'user_name': '',
         'user_phone': '',
         'address': '',
@@ -1853,6 +1853,7 @@ $(document).on('click', '.order_create', function(e) {
                     
                     setOrder()
                     updateAll()
+                    updateDeliveryInfo()
 
                 }
 
@@ -1879,9 +1880,10 @@ jQuery(document).ready(function () {
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     
     // console.log(last_order)
-    
-    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status) {
-        let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status && !order_id ) {
+
+        
         let intervalId; // переменная для хранения идентификатора интервала
 
         // console.log(last_order)
@@ -1890,7 +1892,7 @@ jQuery(document).ready(function () {
         
 
         function updateOrderStatus() {
-            if (order_id != '') {
+            
                 $.ajax({
                     url: '/api/v1/get_order_status/' + order_id + '/',
                     method: 'GET',
@@ -1916,7 +1918,7 @@ jQuery(document).ready(function () {
                         console.error('Ошибка при получении статуса заказа:', error);
                     }
                 });
-            }
+            
         }
     
         function updatePopup(status_list, current_status) {
