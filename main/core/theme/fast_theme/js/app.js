@@ -140,6 +140,43 @@ function setLoyalCart() {
 
 setLoyalCart()
 
+function setLastOrder() {
+
+    let data = {
+        'show': false,
+        'order_id': '',
+        'user_name': '',
+        'user_phone': '',
+        'address': '',
+        'address_pickup': '',
+        'address_comment': '',
+        'delivery_type': '',
+        'entrance': '',
+        'floor': '',
+        'flat': '',
+        'door_code': '',
+        
+        'day': '',
+        'time': '',
+        'pay_method': '',
+        'pay_change': '',
+        'delivery_method': '',
+        'delivery_price': '',
+        'order_conmment': '',
+        
+        'summ': '',
+    }
+
+    var lastOrder = localStorage.getItem('lastOrder');
+
+    if (!lastOrder) {
+        localStorage.setItem('lastOrder', JSON.stringify(data));
+    }
+}
+
+setLastOrder()
+
+
 
 // Инициализируем пустой заказ
 function setOrder() {
@@ -1801,17 +1838,7 @@ $(document).on('click', '.order_create', function(e) {
                     localStorage.removeItem('cart');
                     localStorage.removeItem('lastOrder');
 
-                    // Получаем список всех кук с помощью document.cookie
-                    var cookies = document.cookie.split(";");
-
-                    // Итерируемся по всем кукам и устанавливаем их срок действия в прошлое время
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = cookies[i];
-                        var eqPos = cookie.indexOf("=");
-                        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-                        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-                    }
-
+                    
 
                     
     
