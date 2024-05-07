@@ -6380,6 +6380,12 @@ td.product-thumbnail img {
   margin: 0 auto 40px;
 }
 
+.odred-done__body-sbp {
+  margin-bottom: 40px;
+  text-align: center;
+  font-weight: 400;
+}
+
 .odred-done__bottom {
   padding: 40px 40px 80px 40px;
   position: relative;

@@ -111,7 +111,8 @@ def get_shop_settings(request):
            
             'name': pay_method.name,
             'in_pay_delivery': pay_method.in_pay_delivery,
-            'in_pay_pickup': pay_method.in_pay_pickup
+            'in_pay_pickup': pay_method.in_pay_pickup,
+            'description': pay_method.description
         })
     
     if not pay_methods_arr:

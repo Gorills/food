@@ -159,6 +159,7 @@ function setLastOrder() {
         'day': '',
         'time': '',
         'pay_method': '',
+        'pay_description': '',
         'pay_change': '',
         'delivery_method': '',
         'delivery_price': '',
@@ -199,6 +200,7 @@ function setOrder() {
         'day': 'Сегодня',
         'time': 'Как можно скорее',
         'pay_method': '',
+        'pay_description': '',
         'pay_change': '',
         'delivery_method': '',
         'delivery_price': '',
@@ -243,7 +245,7 @@ function setOrder() {
 
     }
 
-    // console.log(order)
+    console.log(order)
 
     let phone = ''
     fetch('/api/v1/get_user/')
@@ -251,24 +253,13 @@ function setOrder() {
         .then(data => {
             if (data.phone != 'error') {
                
-
                 order.user_phone = data.phone;
                 localStorage.setItem('order', JSON.stringify(order));
 
-
                 if (data.cart_status) {
 
-                    
-                    
-
-
                 }
-                
-                
             }
-
-            
-
             
         })
         .catch(error => console.error('Ошибка загрузки пользователя:', error));
@@ -443,11 +434,14 @@ function payMethodUpdate() {
         input.name = 'checkoutpayment';
         input.value = method.name;
         input.dataset.tab = 'checkout-payment-1';
+
+        input.dataset.description = method.description;
         
         // Если count равен 0, устанавливаем атрибут checked для первого радио
         if (count === 0) {
             input.checked = true;
             order.pay_method = method.name;
+            order.pay_description = method.description;
             localStorage.setItem('order', JSON.stringify(order));
 
             // Проверяем, содержит ли method.name строку "наличн" в любом регистре
@@ -1811,6 +1805,7 @@ $(document).on('click', '.order_create', function(e) {
                     'day': order.day,
                     'time': order.time,
                     'pay_method': order.pay_method,
+                    'pay_description': order.pay_description,
                     'pay_change': order.pay_change,
                     'delivery_method': order.delivery_method,
                     'delivery_price': order.delivery_price,
@@ -1881,154 +1876,158 @@ jQuery(document).ready(function () {
     
     // console.log(last_order)
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
-    if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status && !order_id ) {
 
-        
-        let intervalId; // переменная для хранения идентификатора интервала
-
-        // console.log(last_order)
-        $('.popup-order-status').css('display', 'flex')
-
-        
-
-        function updateOrderStatus() {
-            
-                $.ajax({
-                    url: '/api/v1/get_order_status/' + order_id + '/',
-                    method: 'GET',
-                    success: function(data) {
-                        
-                        last_order.status = data.status;
-                        localStorage.setItem('lastOrder', JSON.stringify(last_order));
-                        // Обновление popup с полученными данными
-                        updatePopup(data.status_list, data.status);
-        
-                        // Проверка на выполненный статус
-                        if (data.status === 'Выполнен') {
-                            
-                            clearInterval(intervalId); // Остановка повторения запросов
-                        }
-                        // Проверка на выполненный статус
-                        if (data.status === 'Отказ') {
-                            $('.popup-order-status').css('display', 'none')
-                            clearInterval(intervalId); // Остановка повторения запросов
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Ошибка при получении статуса заказа:', error);
-                    }
-                });
-            
-        }
+    if (order_id != "") {
     
-        function updatePopup(status_list, current_status) {
-            // Очистка текущего содержимого popup
-            // и добавление новых пунктов списка статусов
-            let popupContent = '';
-            status_list.forEach(function(status) {
-                let activeClass = (status === current_status) ? 'status-item--active' : '';
-                let svg = getSVGByStatus(status); // Получение SVG для статуса
-                popupContent += '<div title="' + status + '" class="status-item ' + activeClass + '">' + status + svg + '</div>';
-            });
-            $('#popup-order-status').html(popupContent);
-        }
-    
-        function getSVGByStatus(status) {
-            // Возвращает SVG в зависимости от статуса
-            switch (status) {
-                case 'Новый':
+        if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status ) {
 
-                    
+            
+            let intervalId; // переменная для хранения идентификатора интервала
 
-                    return `
-                        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                            
-                            <title>new</title>
-                            <desc>Created with Sketch Beta.</desc>
-                            <defs>
+            // console.log(last_order)
+            $('.popup-order-status').css('display', 'flex')
 
-                        </defs>
-                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-516.000000, -99.000000)" fill="#000000">
-                                    <path d="M527.786,122.02 L522.414,125.273 C521.925,125.501 521.485,125.029 521.713,124.571 L524.965,119.195 L527.786,122.02 L527.786,122.02 Z M537.239,106.222 L540.776,109.712 L529.536,120.959 C528.22,119.641 526.397,117.817 526.024,117.444 L537.239,106.222 L537.239,106.222 Z M540.776,102.683 C541.164,102.294 541.793,102.294 542.182,102.683 L544.289,104.791 C544.677,105.18 544.677,105.809 544.289,106.197 L542.182,108.306 L538.719,104.74 L540.776,102.683 L540.776,102.683 Z M524.11,117.068 L519.81,125.773 C519.449,126.754 520.233,127.632 521.213,127.177 L529.912,122.874 C530.287,122.801 530.651,122.655 530.941,122.365 L546.396,106.899 C547.172,106.124 547.172,104.864 546.396,104.088 L542.884,100.573 C542.107,99.797 540.85,99.797 540.074,100.573 L524.619,116.038 C524.328,116.329 524.184,116.693 524.11,117.068 L524.11,117.068 Z M546,111 L546,127 C546,128.099 544.914,129.012 543.817,129.012 L519.974,129.012 C518.877,129.012 517.987,128.122 517.987,127.023 L517.987,103.165 C517.987,102.066 518.902,101 520,101 L536,101 L536,99 L520,99 C517.806,99 516,100.969 516,103.165 L516,127.023 C516,129.22 517.779,131 519.974,131 L543.817,131 C546.012,131 548,129.196 548,127 L548,111 L546,111 L546,111 Z" id="new" sketch:type="MSShapeGroup">
+            
 
-                        </path>
-                                </g>
-                            </g>
-                        </svg>
-                    `;
-                case 'Готовится':
-                    return `
-                        <?xml version="1.0" ?>
-
-                        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg fill="#000000" width="800px" height="800px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-
-                        <title/>
-
-                        <g id="Grid">
-
-                        <path d="M82.38,113.13H44.62a10.46,10.46,0,0,1-10.44-10.45V80.38a21.38,21.38,0,0,1,5.48-42,21,21,0,0,1,2.63.17,21.14,21.14,0,0,1-.16-2.64,21.37,21.37,0,0,1,42.74,0,21.14,21.14,0,0,1-.16,2.64,21,21,0,0,1,2.63-.17,21.38,21.38,0,0,1,5.48,42v22.3A10.46,10.46,0,0,1,82.38,113.13ZM39.66,41.34A18.38,18.38,0,0,0,36,77.72a1.49,1.49,0,0,1,1.2,1.47v23.49a7.45,7.45,0,0,0,7.44,7.45H82.38a7.45,7.45,0,0,0,7.44-7.45V79.19A1.49,1.49,0,0,1,91,77.72a18.38,18.38,0,0,0-3.68-36.38,18,18,0,0,0-4.14.48A1.5,1.5,0,0,1,81.39,40a18,18,0,0,0,.48-4.15,18.37,18.37,0,0,0-36.74,0A18,18,0,0,0,45.61,40a1.5,1.5,0,0,1-1.81,1.8A18,18,0,0,0,39.66,41.34Z"/>
-
-                        <path d="M92.64,119.5H34.36a1.5,1.5,0,0,1,0-3H92.64a1.5,1.5,0,0,1,0,3Z"/>
-
-                        <path d="M67.47,105.18a1.51,1.51,0,0,1-1.5-1.5V71.88a1.5,1.5,0,0,1,3,0v31.8A1.5,1.5,0,0,1,67.47,105.18Z"/>
-
-                        <path d="M75.42,105.18a1.5,1.5,0,0,1-1.5-1.5V87.78a1.5,1.5,0,0,1,3,0v15.9A1.5,1.5,0,0,1,75.42,105.18Z"/>
-
-                        </g>
-
-                        </svg>
-                    `;
-
-                case 'Готов к доставке':
-                    return `
-                    
-                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    `;
-                case 'Готов к выдаче':
-                    return `
-                    
-                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    `;
-                case 'Доставка':
-
-                    return `
-                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg fill="#000000" width="800px" height="800px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M15.48 12c-.13.004-.255.058-.347.152l-2.638 2.63-1.625-1.62c-.455-.474-1.19.258-.715.712l1.983 1.978c.197.197.517.197.715 0l2.995-2.987c.33-.32.087-.865-.367-.865zM.5 16h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3C.223 9 0 8.777 0 8.5S.223 8 .5 8zm24 11c-1.375 0-2.5 1.125-2.5 2.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-13-1C10.125 19 9 20.125 9 21.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-5-14C5.678 6 5 6.678 5 7.5v11c0 .822.678 1.5 1.5 1.5h2c.676.01.676-1.01 0-1h-2c-.286 0-.5-.214-.5-.5v-11c0-.286.214-.5.5-.5h13c.286 0 .5.214.5.5V19h-5.5c-.66 0-.648 1.01 0 1h7c.66 0 .654-1 0-1H21v-9h4.227L29 15.896V18.5c0 .286-.214.5-.5.5h-1c-.654 0-.654 1 0 1h1c.822 0 1.5-.678 1.5-1.5v-2.75c0-.095-.027-.19-.078-.27l-4-6.25c-.092-.143-.25-.23-.422-.23H21V7.5c0-.822-.678-1.5-1.5-1.5z"/></svg>
-                    `;
-
-                case 'Доставлен':
-                    return `
-                        <?xml version="1.0" encoding="utf-8"?>
-                        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" fill="" /><path d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" fill="" /></svg>
-                    `;
+            function updateOrderStatus() {
                 
-                case 'Выполнен':
-                    return `               
-                        <?xml version="1.0" ?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.65263 14.0304C6.29251 13.6703 6.29251 13.0864 6.65263 12.7263C7.01276 12.3662 7.59663 12.3662 7.95676 12.7263L11.6602 16.4297L19.438 8.65183C19.7981 8.29171 20.382 8.29171 20.7421 8.65183C21.1023 9.01195 21.1023 9.59583 20.7421 9.95596L12.3667 18.3314C11.9762 18.7219 11.343 18.7219 10.9525 18.3314L6.65263 14.0304Z" fill="#000000"/><path clip-rule="evenodd" d="M14 1C6.8203 1 1 6.8203 1 14C1 21.1797 6.8203 27 14 27C21.1797 27 27 21.1797 27 14C27 6.8203 21.1797 1 14 1ZM3 14C3 7.92487 7.92487 3 14 3C20.0751 3 25 7.92487 25 14C25 20.0751 20.0751 25 14 25C7.92487 25 3 20.0751 3 14Z" fill="#000000" fill-rule="evenodd"/></svg>
-                    `;
-
-                // Добавьте другие статусы и их SVG по мере необходимости
-                default:
-                    return '';
+                    $.ajax({
+                        url: '/api/v1/get_order_status/' + order_id + '/',
+                        method: 'GET',
+                        success: function(data) {
+                            
+                            last_order.status = data.status;
+                            localStorage.setItem('lastOrder', JSON.stringify(last_order));
+                            // Обновление popup с полученными данными
+                            updatePopup(data.status_list, data.status);
+            
+                            // Проверка на выполненный статус
+                            if (data.status === 'Выполнен') {
+                                
+                                clearInterval(intervalId); // Остановка повторения запросов
+                            }
+                            // Проверка на выполненный статус
+                            if (data.status === 'Отказ') {
+                                $('.popup-order-status').css('display', 'none')
+                                clearInterval(intervalId); // Остановка повторения запросов
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Ошибка при получении статуса заказа:', error);
+                        }
+                    });
+                
             }
-        }
-    
-        // Инициализация обновления статуса заказа и повторение каждые 2 секунды
-        updateOrderStatus();
-        intervalId = setInterval(updateOrderStatus, 2000);
+        
+            function updatePopup(status_list, current_status) {
+                // Очистка текущего содержимого popup
+                // и добавление новых пунктов списка статусов
+                let popupContent = '';
+                status_list.forEach(function(status) {
+                    let activeClass = (status === current_status) ? 'status-item--active' : '';
+                    let svg = getSVGByStatus(status); // Получение SVG для статуса
+                    popupContent += '<div title="' + status + '" class="status-item ' + activeClass + '">' + status + svg + '</div>';
+                });
+                $('#popup-order-status').html(popupContent);
+            }
+        
+            function getSVGByStatus(status) {
+                // Возвращает SVG в зависимости от статуса
+                switch (status) {
+                    case 'Новый':
 
+                        
+
+                        return `
+                            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                                
+                                <title>new</title>
+                                <desc>Created with Sketch Beta.</desc>
+                                <defs>
+
+                            </defs>
+                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                                    <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-516.000000, -99.000000)" fill="#000000">
+                                        <path d="M527.786,122.02 L522.414,125.273 C521.925,125.501 521.485,125.029 521.713,124.571 L524.965,119.195 L527.786,122.02 L527.786,122.02 Z M537.239,106.222 L540.776,109.712 L529.536,120.959 C528.22,119.641 526.397,117.817 526.024,117.444 L537.239,106.222 L537.239,106.222 Z M540.776,102.683 C541.164,102.294 541.793,102.294 542.182,102.683 L544.289,104.791 C544.677,105.18 544.677,105.809 544.289,106.197 L542.182,108.306 L538.719,104.74 L540.776,102.683 L540.776,102.683 Z M524.11,117.068 L519.81,125.773 C519.449,126.754 520.233,127.632 521.213,127.177 L529.912,122.874 C530.287,122.801 530.651,122.655 530.941,122.365 L546.396,106.899 C547.172,106.124 547.172,104.864 546.396,104.088 L542.884,100.573 C542.107,99.797 540.85,99.797 540.074,100.573 L524.619,116.038 C524.328,116.329 524.184,116.693 524.11,117.068 L524.11,117.068 Z M546,111 L546,127 C546,128.099 544.914,129.012 543.817,129.012 L519.974,129.012 C518.877,129.012 517.987,128.122 517.987,127.023 L517.987,103.165 C517.987,102.066 518.902,101 520,101 L536,101 L536,99 L520,99 C517.806,99 516,100.969 516,103.165 L516,127.023 C516,129.22 517.779,131 519.974,131 L543.817,131 C546.012,131 548,129.196 548,127 L548,111 L546,111 L546,111 Z" id="new" sketch:type="MSShapeGroup">
+
+                            </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        `;
+                    case 'Готовится':
+                        return `
+                            <?xml version="1.0" ?>
+
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="800px" height="800px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+
+                            <title/>
+
+                            <g id="Grid">
+
+                            <path d="M82.38,113.13H44.62a10.46,10.46,0,0,1-10.44-10.45V80.38a21.38,21.38,0,0,1,5.48-42,21,21,0,0,1,2.63.17,21.14,21.14,0,0,1-.16-2.64,21.37,21.37,0,0,1,42.74,0,21.14,21.14,0,0,1-.16,2.64,21,21,0,0,1,2.63-.17,21.38,21.38,0,0,1,5.48,42v22.3A10.46,10.46,0,0,1,82.38,113.13ZM39.66,41.34A18.38,18.38,0,0,0,36,77.72a1.49,1.49,0,0,1,1.2,1.47v23.49a7.45,7.45,0,0,0,7.44,7.45H82.38a7.45,7.45,0,0,0,7.44-7.45V79.19A1.49,1.49,0,0,1,91,77.72a18.38,18.38,0,0,0-3.68-36.38,18,18,0,0,0-4.14.48A1.5,1.5,0,0,1,81.39,40a18,18,0,0,0,.48-4.15,18.37,18.37,0,0,0-36.74,0A18,18,0,0,0,45.61,40a1.5,1.5,0,0,1-1.81,1.8A18,18,0,0,0,39.66,41.34Z"/>
+
+                            <path d="M92.64,119.5H34.36a1.5,1.5,0,0,1,0-3H92.64a1.5,1.5,0,0,1,0,3Z"/>
+
+                            <path d="M67.47,105.18a1.51,1.51,0,0,1-1.5-1.5V71.88a1.5,1.5,0,0,1,3,0v31.8A1.5,1.5,0,0,1,67.47,105.18Z"/>
+
+                            <path d="M75.42,105.18a1.5,1.5,0,0,1-1.5-1.5V87.78a1.5,1.5,0,0,1,3,0v15.9A1.5,1.5,0,0,1,75.42,105.18Z"/>
+
+                            </g>
+
+                            </svg>
+                        `;
+
+                    case 'Готов к доставке':
+                        return `
+                        
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        `;
+                    case 'Готов к выдаче':
+                        return `
+                        
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        `;
+                    case 'Доставка':
+
+                        return `
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="800px" height="800px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M15.48 12c-.13.004-.255.058-.347.152l-2.638 2.63-1.625-1.62c-.455-.474-1.19.258-.715.712l1.983 1.978c.197.197.517.197.715 0l2.995-2.987c.33-.32.087-.865-.367-.865zM.5 16h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3C.223 9 0 8.777 0 8.5S.223 8 .5 8zm24 11c-1.375 0-2.5 1.125-2.5 2.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-13-1C10.125 19 9 20.125 9 21.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-5-14C5.678 6 5 6.678 5 7.5v11c0 .822.678 1.5 1.5 1.5h2c.676.01.676-1.01 0-1h-2c-.286 0-.5-.214-.5-.5v-11c0-.286.214-.5.5-.5h13c.286 0 .5.214.5.5V19h-5.5c-.66 0-.648 1.01 0 1h7c.66 0 .654-1 0-1H21v-9h4.227L29 15.896V18.5c0 .286-.214.5-.5.5h-1c-.654 0-.654 1 0 1h1c.822 0 1.5-.678 1.5-1.5v-2.75c0-.095-.027-.19-.078-.27l-4-6.25c-.092-.143-.25-.23-.422-.23H21V7.5c0-.822-.678-1.5-1.5-1.5z"/></svg>
+                        `;
+
+                    case 'Доставлен':
+                        return `
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" fill="" /><path d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" fill="" /></svg>
+                        `;
+                    
+                    case 'Выполнен':
+                        return `               
+                            <?xml version="1.0" ?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.65263 14.0304C6.29251 13.6703 6.29251 13.0864 6.65263 12.7263C7.01276 12.3662 7.59663 12.3662 7.95676 12.7263L11.6602 16.4297L19.438 8.65183C19.7981 8.29171 20.382 8.29171 20.7421 8.65183C21.1023 9.01195 21.1023 9.59583 20.7421 9.95596L12.3667 18.3314C11.9762 18.7219 11.343 18.7219 10.9525 18.3314L6.65263 14.0304Z" fill="#000000"/><path clip-rule="evenodd" d="M14 1C6.8203 1 1 6.8203 1 14C1 21.1797 6.8203 27 14 27C21.1797 27 27 21.1797 27 14C27 6.8203 21.1797 1 14 1ZM3 14C3 7.92487 7.92487 3 14 3C20.0751 3 25 7.92487 25 14C25 20.0751 20.0751 25 14 25C7.92487 25 3 20.0751 3 14Z" fill="#000000" fill-rule="evenodd"/></svg>
+                        `;
+
+                    // Добавьте другие статусы и их SVG по мере необходимости
+                    default:
+                        return '';
+                }
+            }
+        
+            // Инициализация обновления статуса заказа и повторение каждые 2 секунды
+            updateOrderStatus();
+            intervalId = setInterval(updateOrderStatus, 2000);
+
+        }
     }
 
     
@@ -2215,6 +2214,16 @@ function getLastOrder() {
                     </div>
                     `
             }
+
+            let order_pay_description = ''
+            if(last_order.pay_description) {
+
+                var newValue = last_order.pay_description.replace(/\{summ\}/g, '<b>' +last_order.summ + ' руб.</b>')
+                order_pay_description = `
+                    <p class="odred-done__body-sbp">${newValue}</p>
+                    
+                    `
+            }
             
             let dataHtml = `       
                     <div class="odred-done">
@@ -2288,6 +2297,8 @@ function getLastOrder() {
                                 
                                     <p class="odred-done__body-title">${data_title} ${data_text}</p>
 
+                                    
+                                    ${order_pay_description}
 
                                     <div class="odred-done__itog">
                                         <div class="odred-done__itog-item">
@@ -2431,8 +2442,14 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
     
     let order = JSON.parse(localStorage.getItem('order'));
     order.pay_method = $(this).val();
-    
 
+    if ($(this).data('description') != 'undefined') {
+        order.pay_description = $(this).data('description');
+    } else {
+        order.pay_description = '';
+    }
+    
+    
     // Получаем простую строку из значения элемента
     let paymentMethod = $(this).val();
 
