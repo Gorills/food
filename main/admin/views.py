@@ -14,7 +14,7 @@ from integrations.models import Integrations
 from subdomains.models import Subdomain
 from delivery.models import Delivery
 
-from orders.models import Order
+from orders.models import Order, OrderView
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
@@ -34,9 +34,34 @@ from django.db.models import Sum
 import decimal
 from sms.views import send_sms
 
+from functools import wraps
 
 
-@user_passes_test(lambda u: u.is_superuser)
+def check_user_rights(required_rights):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            # Проверяем, авторизован ли пользователь
+            if not request.user.is_authenticated:
+                return redirect(f'/accounts/login/?next={request.path}')  # Перенаправляем на страницу авторизации с сохранением адреса
+
+            # Проверяем, является ли пользователь суперпользователем
+            if request.user.is_superuser:
+                return view_func(request, *args, **kwargs)
+
+            # Проверяем, есть ли у пользователя необходимые права доступа
+            user_rights = request.user.rights
+            if not all(getattr(user_rights, right, False) for right in required_rights):
+                return render(request, 'access_denied.html')  # Выводим страницу с сообщением о запрете доступа
+
+            return view_func(request, *args, **kwargs)
+
+        return _wrapped_view
+    return decorator
+
+
+
+@check_user_rights(['add_workers'])
 def get_workers(request):
     
     context = {
@@ -46,7 +71,7 @@ def get_workers(request):
     return render(request, 'workers/workers.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_workers'])
 def add_user(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
@@ -61,7 +86,7 @@ def add_user(request):
     return render(request, 'workers/add_user.html', {'form': form})
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_workers'])
 def delete_user(request, user_id):
     
     user = User.objects.get(id=user_id)
@@ -69,7 +94,7 @@ def delete_user(request, user_id):
     return redirect('get_workers')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_workers'])
 def edit_user(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
@@ -85,7 +110,7 @@ def edit_user(request, user_id):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_workers'])
 def edit_user_rights(request, user_id):
     user = User.objects.get(id=user_id)
     user_rights = UserRigts.objects.get(user=user)
@@ -115,21 +140,21 @@ def edit_user_rights(request, user_id):
 
 
 # Сессия с хранением состояния сайдбара в админке
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def sidebar_show(request): 
    
     request.session['sidebar'] = 'True' 
     
     return redirect('admin')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def sidebar_hide(request): 
     
     request.session['sidebar'] = 'False' 
     return redirect('admin')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def faq(request):
     
     context = {
@@ -139,19 +164,12 @@ def faq(request):
     return render(request, 'faq.html', context)
 
 
-from django.http import HttpResponseForbidden
-
-def superuser_prohibited(view_func):
-    def wrapped_view(request, *args, **kwargs):
-        if not request.user.is_superuser:
-            return HttpResponseForbidden("Вы не имеете права выполнить это действие.")
-        return view_func(request, *args, **kwargs)
-    return wrapped_view
 
 
-@user_passes_test(lambda u: u.is_superuser)
+
+@check_user_rights(['view_all_statictic'])
 def admin(request):
-    
+
     try:
         setup = BaseSettings.objects.get()
     except:
@@ -217,6 +235,8 @@ def admin(request):
         'orders': orders,
         'summ': summ,
         'clients': clients,
+        
+
     }
 
     return render(request, 'pages/index.html', context)
@@ -238,7 +258,7 @@ def general_settings_block(request):
         return redirect('general_settings')
     
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_settings'])
 def general_settings(request):
     setup = BaseSettings.objects.get()
 
@@ -270,7 +290,7 @@ def general_settings(request):
 
 
 # Способы оплаты
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def add_pay_method(request):
     if request.method == 'POST':
         form = PayMethodForm(request.POST, request.FILES)
@@ -286,7 +306,7 @@ def add_pay_method(request):
     return render(request, 'shop/pay_method/add_pay_method.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def edit_pay_method(request, pk):
     method = PayMethod.objects.get(id=pk)
     if request.method == 'POST':
@@ -302,7 +322,7 @@ def edit_pay_method(request, pk):
     }
     return render(request, 'shop/pay_method/add_pay_method.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def delete_pay_method(request, pk):
     method = PayMethod.objects.get(id=pk)
     method.delete()
@@ -310,7 +330,7 @@ def delete_pay_method(request, pk):
 
 
 # Настроки платежей
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def admin_payments(request):
 
     # payment = PaymentSet.objects.get()
@@ -376,7 +396,7 @@ def admin_payments(request):
     return render(request, 'settings/admin_payments.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def yookassa_save(request):
 
     if request.method == 'POST':
@@ -394,7 +414,7 @@ def yookassa_save(request):
         return redirect('admin_payments')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def alfabank_save(request):
 
     if request.method == 'POST':
@@ -412,7 +432,7 @@ def alfabank_save(request):
         return redirect('admin_payments')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def paykeeper_save(request):
 
     if request.method == 'POST':
@@ -430,7 +450,7 @@ def paykeeper_save(request):
         return redirect('admin_payments')
     
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_pay_systems'])
 def tinkoff_save(request):
 
     if request.method == 'POST':
@@ -473,7 +493,7 @@ def recaptcha_settings(request):
 
 
 # Настройки кастомных кодов POST/GET
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_codes'])
 def codes_settings(request):
     if request.method == 'POST':
         form = CustomCodeForm(request.POST)
@@ -491,7 +511,7 @@ def codes_settings(request):
     return render(request, 'settings/codes_settings.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_codes'])
 def codes_settings_edit(request, pk):
     codes = CustomCode.objects.get(pk=pk)
     if request.method == 'POST':
@@ -512,7 +532,7 @@ def codes_settings_edit(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_codes'])
 def codes_settings_delete(request, pk):
     codes = CustomCode.objects.get(pk=pk)
     codes.delete()
@@ -520,7 +540,7 @@ def codes_settings_delete(request, pk):
 
 
 # Настройки цвета
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_design'])
 def color_settings(request):
     try:
         color = Colors.objects.get()
@@ -546,7 +566,7 @@ def color_settings(request):
 
 
 # Настройка темы
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_design'])
 def theme_settings(request):
     if request.method == 'POST':
 
@@ -576,7 +596,7 @@ def theme_settings(request):
 
     return render(request, 'settings/theme_settings.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_design'])
 def font_settings(request):
     
     if request.method == 'POST':
@@ -596,7 +616,7 @@ def font_settings(request):
 
 # !!! МАРКЕТИНГ !!!
 # Промокоды
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_propmo'])
 def admin_promo(request):
 
     context = {
@@ -605,7 +625,7 @@ def admin_promo(request):
 
     return render(request, 'marketing/coupons/promo.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_propmo'])
 def promo_add(request):
 
     if request.method == 'POST':
@@ -621,7 +641,7 @@ def promo_add(request):
 
     return render(request, 'marketing/coupons/promo_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_propmo'])
 def promo_edit(request, pk):
     coupon = Coupon.objects.get(id=pk)
 
@@ -643,7 +663,7 @@ def promo_edit(request, pk):
 
     return render(request, 'marketing/coupons/promo_edit.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_propmo'])
 def promo_delete(request, pk):
     coupon = Coupon.objects.get(id=pk)
     coupon.delete()
@@ -653,7 +673,7 @@ def promo_delete(request, pk):
 
 
 # Карты лояльности
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def card_settings(request):
 
     settings = LoyaltyCardSettings.objects.get()
@@ -686,7 +706,7 @@ def card_settings(request):
     return render(request, 'marketing/loyalty_card/card_settings.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def admin_card(request):
 
 
@@ -727,7 +747,7 @@ def admin_card(request):
     return render(request, 'marketing/loyalty_card/admin_card.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def loyalty_card_status_edit(request, pk):
     card_status = LoyaltyCardStatus.objects.get(id=pk)
 
@@ -756,7 +776,7 @@ def loyalty_card_status_edit(request, pk):
     
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def loyalty_card_status_delete(request, pk):
     status = LoyaltyCardStatus.objects.get(id=pk)
     status.delete()
@@ -767,7 +787,7 @@ def loyalty_card_status_delete(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def card_add(request):
 
     context = {
@@ -777,7 +797,7 @@ def card_add(request):
 
     return render(request, 'marketing/loyalty_card/card_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def card_edit(request, pk):
 
     card = LoyaltyCard.objects.get(id=pk)
@@ -800,7 +820,7 @@ def card_edit(request, pk):
 
     return render(request, 'marketing/loyalty_card/card_edit.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['redact_loyal_cart'])
 def card_delete(request, pk):
     
     
@@ -820,20 +840,29 @@ def card_delete(request, pk):
 # !!! Продажи !!!
 
 # Заказы
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def admin_order(request):
     orders = Order.objects.all().order_by('-created')
+    
     context = {
-        'orders': orders
+        'orders': orders,
+        
     }
 
 
     return render(request, 'order/admin_order.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def order_detail(request, pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
+
+    user = request.user
+
+    try:
+        order_view = OrderView.objects.get(order=order, user=user)
+    except:
+        order_view = OrderView.objects.create(order=order, user=user)
 
     context = {
         'order': order,
@@ -844,11 +873,22 @@ def order_detail(request, pk):
     return render(request, 'order/order_detail.html', context)
 
 
+@check_user_rights(['view_orders'])
+def order_view_all(request):
+    orders = Order.objects.all().order_by('-created')
+    for order in orders:
+        try:
+            order_view = OrderView.objects.get(order=order, user=request.user)
+        except:
+            order_view = OrderView.objects.create(order=order, user=request.user)
+
+
+    return redirect('admin_order')
 
 from delivery.yandex_eda import yandex_create_order
 from orders.telegram import send_message
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
     order_prev_status = order.status
@@ -953,7 +993,7 @@ def order_status_change(request, pk):
             print(e)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['view_orders'])
 def order_delete(request, pk):
     order = Order.objects.get(id=pk)
     order.delete()
@@ -967,7 +1007,7 @@ def order_delete(request, pk):
 import json
 import os
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def zone_file(request):
 
     if request.method == 'POST':
@@ -1054,7 +1094,7 @@ def zone_file(request):
 # !!! district_setup !!!
 
 from .get_dictricts import get_file
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def district_setup(request):
 
     if request.method == 'POST':
@@ -1086,7 +1126,7 @@ def district_setup(request):
 
 
 # !!! Добавить зону доставки !!!
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def add_zone(request):
     if request.method == 'POST':
         form = PickupAreasForm(request.POST, request.FILES)
@@ -1102,7 +1142,7 @@ def add_zone(request):
     return render(request, 'shop/zones/add_zone.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def edit_zone(request, pk):
     zone = PickupAreas.objects.get(id=pk)
     if request.method == 'POST':
@@ -1119,7 +1159,7 @@ def edit_zone(request, pk):
     return render(request, 'shop/zones/add_zone.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def delete_zone(request, pk):
     zone = PickupAreas.objects.get(id=pk)
     zone.delete()
@@ -1132,7 +1172,7 @@ def delete_zone(request, pk):
 
 # !!!!! МАГАЗИН !!!!! 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def shop_settings(request):
     try:
         shop_setup = ShopSetup.objects.get()
@@ -1168,7 +1208,7 @@ def shop_settings(request):
     return render(request, 'shop/settings.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def dop_items_add(request):
 
     if request.method == 'POST':
@@ -1191,6 +1231,7 @@ def dop_items_add(request):
     return render(request, 'shop/dop_items/dop_items_add.html', context)
 
 
+@check_user_rights(['change_shop_settings'])
 def dop_items_edit(request, pk):
 
     if request.method == 'POST':
@@ -1212,6 +1253,7 @@ def dop_items_edit(request, pk):
     return render(request, 'shop/dop_items/dop_items_edit.html', context)
 
 
+@check_user_rights(['change_shop_settings'])
 def dop_items_delete(request, pk):
 
     item = DopItems.objects.get(id=pk)
@@ -1222,7 +1264,7 @@ def dop_items_delete(request, pk):
     
 
 # Настройка скидок на товары
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def admin_sale(request):
     
 
@@ -1237,7 +1279,7 @@ def admin_sale(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def add_sale(request):
     if request.method == 'POST':
         form = ProductSaleForm(request.POST, request.FILES)
@@ -1253,7 +1295,7 @@ def add_sale(request):
     return render(request, 'shop/sale/add_sale.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def edit_sale(request, pk):
     sale = ProductSale.objects.get(id=pk)
     if request.method == 'POST':
@@ -1269,7 +1311,7 @@ def edit_sale(request, pk):
     }
     return render(request, 'shop/sale/add_sale.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def delete_sale(request, pk):
     sale = ProductSale.objects.get(id=pk)
     sale.delete()
@@ -1277,7 +1319,7 @@ def delete_sale(request, pk):
 
 
 # Список категорий
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def admin_category(request):
     q = request.GET.get('q')
     sort = request.GET.getlist('sort')
@@ -1301,7 +1343,7 @@ def admin_category(request):
 
 
 # Добавление категорий
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def category_add(request):
     if request.method == 'POST':
         form_new = CategoryForm(request.POST, request.FILES)
@@ -1318,7 +1360,7 @@ def category_add(request):
 
 
 # Удаление категорий
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def category_delete(request, pk):
     category = Category.objects.get(id=pk)
     category.delete()
@@ -1326,7 +1368,7 @@ def category_delete(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def cat_orderby_edit(request, pk):
 
 
@@ -1342,7 +1384,7 @@ def cat_orderby_edit(request, pk):
 
 
 # Редкатирование категорий
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def category_edit(request, pk):
     cat = Category.objects.get(id=pk)
     if request.method == 'POST':
@@ -1366,7 +1408,7 @@ def category_edit(request, pk):
 
 
 # Производители
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def admin_manufacturer(request):
     q = request.GET.get('q')
     sort = request.GET.getlist('sort')
@@ -1388,7 +1430,7 @@ def admin_manufacturer(request):
     return render(request, 'shop/manufacturer/manufacturer.html', context)
 
 # Добавить производителя
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def manufacturer_add(request):
     if request.method == 'POST':
         form_new = ManufacturerForm(request.POST, request.FILES)
@@ -1406,7 +1448,7 @@ def manufacturer_add(request):
 
 # Редактировать производителя
 # !!! Некорректное поведение при редкатирвовании картинки, поправить !!!
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def manufacturer_edit(request, pk):
     manufacturer = Manufacturer.objects.get(id=pk)
     if request.method == 'POST':
@@ -1425,7 +1467,7 @@ def manufacturer_edit(request, pk):
 
 
 # Удалить производителя
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_categorys'])
 def manufacturer_delete(request, pk):
     manufacturer = Manufacturer.objects.get(id=pk)
     manufacturer.delete()
@@ -1434,7 +1476,7 @@ def manufacturer_delete(request, pk):
 
 
 # Опции
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def admin_option_type(request):
     q = request.GET.get('q')
     sort = request.GET.getlist('sort')
@@ -1457,7 +1499,7 @@ def admin_option_type(request):
 
 
 # Добавить опцию
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_type_add(request):
     if request.method == 'POST':
         form_new = OptionTypeForm(request.POST)
@@ -1473,7 +1515,7 @@ def option_type_add(request):
     return render(request, 'shop/option_type/option_type_add.html', context)
 
 # Редкатировать опцию
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_type_edit(request, pk):
     option_type = OptionType.objects.get(id=pk)
     if request.method == 'POST':
@@ -1491,26 +1533,18 @@ def option_type_edit(request, pk):
     return render(request, 'shop/option_type/option_type_edit.html', context)
 
 # Удалить опцию
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_type_delete(request, pk):
     option_type = OptionType.objects.get(id=pk)
     option_type.delete()
     return redirect('admin_option_type')
 
 
-# Характеристики
-@user_passes_test(lambda u: u.is_superuser)
-def admin_char(request):
-    context = {
-        'groups': CharGroup.objects.all(),
-        'chars': CharName.objects.filter(group=None)
-    }
-    return render(request, 'shop/char/char.html', context)
 
 
 # Автозаполнение для опций
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_autofield_add(request):
     if request.method == 'POST':
         form_new = AutoFieldOptionsForm(request.POST)
@@ -1529,7 +1563,7 @@ def option_autofield_add(request):
     return render(request, 'shop/option_type/option_autofield_add.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_autofield_edit(request, pk):
     option_autofield = AutoFieldOptions.objects.get(id=pk)
     if request.method == 'POST':
@@ -1546,14 +1580,14 @@ def option_autofield_edit(request, pk):
     }
     return render(request, 'shop/option_type/option_autofield_edit.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_autofield_delete(request, pk):
     option_autofield = AutoFieldOptions.objects.get(id=pk)
     option_autofield.delete()
     return redirect('admin_option_type')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_options'])
 def option_autofield_detail(request, pk):
     option = OptionType.objects.get(id=pk)
     context = {
@@ -1562,7 +1596,17 @@ def option_autofield_detail(request, pk):
     return render(request, 'shop/option_type/option_autofield_detail.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+
+# Характеристики
+@check_user_rights(['add_chars'])
+def admin_char(request):
+    context = {
+        'groups': CharGroup.objects.all(),
+        'chars': CharName.objects.filter(group=None)
+    }
+    return render(request, 'shop/char/char.html', context)
+
+@check_user_rights(['add_chars'])
 def char_group_add(request):
     if request.method == 'POST':
         form_new = CharGroupForm(request.POST)
@@ -1578,7 +1622,7 @@ def char_group_add(request):
     }
     return render(request, 'shop/char/char_group_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_chars'])
 def char_group_edit(request, pk):
     char_group = CharGroup.objects.get(id=pk)
     if request.method == 'POST':
@@ -1594,13 +1638,13 @@ def char_group_edit(request, pk):
     }
     return render(request, 'shop/char/char_group_edit.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_chars'])
 def char_group_delete(request, pk):
     char_group = CharGroup.objects.get(id=pk)
     char_group.delete()
     return redirect('admin_char')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_chars'])
 def char_add(request):
     if request.method == 'POST':
         form_new = CharNameForm(request.POST)
@@ -1616,7 +1660,7 @@ def char_add(request):
     }
     return render(request, 'shop/char/char_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_chars'])
 def char_edit(request, pk):
     char = CharName.objects.get(id=pk)
     if request.method == 'POST':
@@ -1633,7 +1677,7 @@ def char_edit(request, pk):
     }
     return render(request, 'shop/char/char_edit.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_chars'])
 def char_delete(request, pk):
     char = CharName.objects.get(id=pk)
     char.delete()
@@ -1641,7 +1685,7 @@ def char_delete(request, pk):
 
 
 # Товары
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def admin_product(request):
     q = request.GET.get('q')
     sort = request.GET.getlist('sort')
@@ -1666,7 +1710,7 @@ def admin_product(request):
     return render(request, 'shop/product/product.html', context)
 
 # Добавить товар
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_add(request):
     form = ProductForm()    
     option_form = ProductOptionForm()
@@ -1780,7 +1824,7 @@ def product_add(request):
     }
     return render(request, 'shop/product/product_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_edit(request, pk):
 
     product = Product.objects.get(id=pk)
@@ -1942,7 +1986,7 @@ def product_edit(request, pk):
 from django.db import transaction
 from django.apps import apps
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_save_as(request, pk):
     
     
@@ -2019,7 +2063,7 @@ def get_unique_slug(slug):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_delete(request, pk):
 
     product = Product.objects.get(id=pk)
@@ -2028,7 +2072,7 @@ def product_delete(request, pk):
 
     return redirect('admin_product')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_image_delete(request, pk):
 
     image = ProductImage.objects.get(id=pk)
@@ -2037,7 +2081,7 @@ def product_image_delete(request, pk):
     return redirect('admin_product')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def product_char_delete(request, pk):
 
     product_char = ProductChar.objects.get(id=pk)
@@ -2045,7 +2089,7 @@ def product_char_delete(request, pk):
 
     return redirect('admin_product')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def option_delete(request, pk):
         
     option = ProductOption.objects.get(id=pk)
@@ -2053,7 +2097,7 @@ def option_delete(request, pk):
 
     return redirect('admin_product')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_products'])
 def option_image_delete(request, pk):
 
     image = OptionImage.objects.get(id=pk)
@@ -2073,579 +2117,12 @@ def option_image_delete(request, pk):
 
 
 
-
-# !!! БЛОГ !!!
-@user_passes_test(lambda u: u.is_superuser)
-def blog_settings(request):
-    blog_settings = BlogSetup.objects.get()
-    if request.method == 'POST':
-        form = BlogSetupForm(request.POST, instance=blog_settings)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_settings')
-        else:
-            return render(request, 'blog/blog_settings.html', {'form':form})
-
-    form = BlogSetupForm(instance=blog_settings)
-    context = {
-        'form': form
-    }
-
-    return render(request, 'blog/blog_settings.html', context)
-
-
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def blog_category(request):
-    q = request.GET.get('q')
-    sort = request.GET.getlist('sort')
-    try:
-        sort_t = sort[0]
-    except:
-        sort_t = sort
-    try:
-        blog_category = BlogCategory.objects.filter(Q(name__icontains=q)).order_by(*sort)
-    except:
-        blog_category = BlogCategory.objects.all().order_by(*sort)
-    context = {
-        # Разрешить поиск на странице
-        'search': 'search',
-        'blog_category': blog_category,
-        'q': q,
-        'sort': sort_t,
-    }
-    return render(request, 'blog/blog_category/blog_category.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def blog_category_add(request):
-    if request.method == 'POST':
-        form = BlogCategoryForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_category')
-        else:
-            return render(request, 'blog/blog_category/blog_category_add.html', {'form': form})
-    form = BlogCategoryForm()
-    context = {
-        'form':form,
-    } 
-    return render(request, 'blog/blog_category/blog_category_add.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def blog_category_edit(request, pk):
-    blog_category = BlogCategory.objects.get(id=pk)
-    if request.method == 'POST':
-        form = BlogCategoryForm(request.POST, request.FILES, instance=blog_category)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_category')
-        else:
-            return render(request, 'blog/blog_category/blog_category_edit.html', {'form': form})
-    form = BlogCategoryForm(instance=blog_category)
-    context = {
-        'form':form,
-    } 
-    return render(request, 'blog/blog_category/blog_category_edit.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def blog_category_delete(request, pk):
-    blog_category = BlogCategory.objects.get(id=pk)
-    blog_category.delete()
-    return redirect('blog_category')
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def blog_post(request):
-    q = request.GET.get('q')
-    sort = request.GET.getlist('sort')
-    try:
-        sort_t = sort[0]
-    except:
-        sort_t = sort
-    try:
-        posts = Post.objects.filter(Q(name__icontains=q)).order_by(*sort)
-    except:
-        posts = Post.objects.all().order_by(*sort).order_by('-id')
-    context = {
-        # Разрешить поиск на странице
-        'search': 'search',
-        'posts': posts,
-        'q': q,
-        'sort': sort_t,
-    }
-
-
-    return render(request, 'blog/blog_post/blog_post.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_add(request):
-    try:
-        post = Post.objects.get(draft=True)
-    except:
-        post = Post(draft=True)
-        post.save()
-
-    form = PostForm(instance=post)
-    block_form = PostBlockForm()
-    if request.method == 'POST':
-        post.draft = False
-        post.published = True
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            form.save()
-
-            return redirect('blog_post')
-    context = {
-        'post': post,
-        'form': form,
-        'block_form': block_form,
-    }
-
-
-    return render(request, 'blog/blog_post/post_add.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_edit(request, pk):
-    
-    post = Post.objects.get(id=pk)
-    
-    form = PostForm(instance=post)
-    block_form = PostBlockForm()
-    if request.method == 'POST':
-        post.draft = False
-        post.published = True
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            form.save()
-
-            return redirect('blog_post')
-    context = {
-        'post': post,
-        'form': form,
-        'block_form': block_form,
-    }
-
-
-    return render(request, 'blog/blog_post/post_edit.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_delete(request, pk):
-    post = Post.objects.get(id=pk)
-    post.delete()
-    return redirect('blog_post')
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_draft(request):
-
-    if request.method == 'POST':
-        post = Post.objects.get(draft=True)
-        form = PostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            form.save() 
-
-            return redirect('blog_post')
-
-        else:
-
-            return render(request, 'blog/blog_post/post_add.html', {'form': form})
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_block(request):
-    if request.method == 'POST':
-        parent = request.POST['parent']
-        type = request.POST['type']
-        order = request.POST['order']
-        next = request.POST['next']
-        try:
-            text = request.POST['text']
-            block = PostBlock(parent_id=parent, text=text, type=type, order=order)
-            block.save()
-        except:
-            pass
-        try:
-            title = request.POST['title']
-            block = PostBlock(parent_id=parent, title=title, type=type, order=order)
-            block.save()
-        except:
-            pass
-        try:
-            image = request.FILES['image']
-            block = PostBlock(parent_id=parent, image=image, type=type, order=order)
-            block.save()
-        except:
-            pass
-        try:
-            video = request.FILES['video']
-            block = PostBlock(parent_id=parent, video=video, type=type, order=order)
-            block.save()
-        except:
-            pass
-
-        
-        return redirect(next)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_block_edit(request, pk):
-    block = PostBlock.objects.get(id=pk)
-    next = request.POST['next']
-    if request.method == 'POST':
-        try:
-            text = request.POST['text']
-            block.text = text
-            block.save()
-        except:
-            pass
-        try:
-            title = request.POST['title']
-            block.title = title
-            block.save()
-        except:
-            pass
-        try:
-            image = request.FILES['image']
-            block.image = image
-            block.save()
-        except:
-            pass
-        try:
-            video = request.FILES['video']
-            block.video = video
-            block.save()
-        except:
-            pass
-
-        
-        return redirect(next)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_block_edit_delete(request, pk):
-
-    block = PostBlock.objects.get(id=pk)
-    block.delete()
-
-    return redirect('post_edit', block.parent.id)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def post_block_add_delete(request, pk):
-
-    block = PostBlock.objects.get(id=pk)
-    block.delete()
-
-    return redirect('post_add')
-
-
-
-
-
-# !!! СТАТИКА !!!
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def admin_slider(request):
-    sliders = Slider.objects.all().order_by('order')
-    try:
-        slider_setup = SliderSetup.objects.get()
-    except:
-        slider_setup = SliderSetup()
-        slider_setup.save()
-
-    if request.method == 'POST':
-        form = SliderSetupForm(request.POST, instance=slider_setup)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_slider')
-        else:
-            return render(request, 'static/slider.html', {'form': form})
-
-    setup_form = SliderSetupForm(instance=slider_setup)
-    context = {
-        'setup_form': setup_form,
-        'sliders': sliders
-    }
-    return render(request, 'static/slider.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def slider_add(request):
-
-    if request.method == 'POST':
-        form = SliderForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_slider')
-
-        else:
-            return render(request, 'static/slider_add.html', {'form': form})
-    form = SliderForm()
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'static/slider_add.html', context)
-
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def slider_edit(request, pk):
-    slider = Slider.objects.get(id=pk)
-    if request.method == 'POST':
-        form = SliderForm(request.POST, request.FILES, instance=slider)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_slider')
-
-        else:
-            return render(request, 'static/slider_edit.html', {'form': form})
-    form = SliderForm(instance=slider)
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'static/slider_edit.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def slider_delete(request, pk):
-    slider = Slider.objects.get(id=pk)
-    slider.delete()
-    return redirect('admin_slider')
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def admin_pages(request):
-
-    context = {
-        'pages': Page.objects.all()
-    }
-
-    return render(request, 'static/admin_pages.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_add(request):
-
-    if request.method == 'POST':
-        form = PageForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_pages')
-
-        else:
-            return render(request, 'static/page_add.html', {'form': form})
-
-    form = PageForm()
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'static/page_add.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_edit(request, pk):
-    page = Page.objects.get(id=pk)
-    if request.method == 'POST':
-        form = PageForm(request.POST, request.FILES, instance=page)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_pages')
-        else:
-            return render(request, 'static/page_edit.html', {'form': form})
-            
-    form = PageForm(instance=page)
-    context = {
-        'form': form,
-    }
-    return render(request, 'static/page_edit.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_delete(request, pk):
-    page = Page.objects.get(id=pk)
-    page.delete()
-    return redirect('admin_pages')
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_item_add(request, pk):
-    page = Page.objects.get(id=pk)
-    if request.method == 'POST':
-        form = PageItemForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_pages')
-        else:
-            return render(request, 'static/page_item_add.html', {'form': form})
-
-    form = PageItemForm({
-        'page': page
-    })
-    context = {
-        'form': form,
-        'page': page
-    }
-
-    return render(request, 'static/page_item_add.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_item_edit(request, pk):
-    page_item = PageItem.objects.get(id=pk)
-    if request.method == 'POST':
-        form = PageItemForm(request.POST, request.FILES, instance=page_item)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_pages')
-        else:
-            return render(request, 'static/page_item_add.html', {'form': form})
-            
-    form = PageItemForm(instance=page_item)
-    context = {
-        'form': form,
-    }
-    return render(request, 'static/page_item_add.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def page_item_delete(request, pk):
-    page_item = PageItem.objects.get(id=pk)
-    page_item.delete()
-    return redirect('admin_pages')
-
-@user_passes_test(lambda u: u.is_superuser)
-def admin_images(request):
-
-
-    context = {
-        'images': PlaceImages.objects.all()
-    }
-
-    return render(request, 'static/admin_images.html', context)
-
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def image_add(request):
-
-    if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_images')
-    
-        else:
-            return render(request, 'static/image_add.html', {'form': form})
-        
-    form = ImageForm()
-
-    context = {
-        'form': form
-    }
-
-    return render(request, 'static/image_add.html', context)
-
-        
-@user_passes_test(lambda u: u.is_superuser)
-def image_edit(request, pk):
-    image = PlaceImages.objects.get(id=pk)
-    if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES, instance=image)
-        if form.is_valid():
-            form.save()
-            return redirect('admin_images')
-        else:
-            return render(request, 'static/image_add.html', {'form': form})
-            
-    form = ImageForm(instance=image)
-    context = {
-        'form': form,
-    }
-    return render(request, 'static/image_add.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def image_delete(request, pk):
-    image = PlaceImages.objects.get(id=pk)
-    image.delete()
-    return redirect('admin_images')
-
-# !!! СТАТИКА !!!
-
-
-# !!! Пользователи USERS !!!
-
-from itertools import chain
-@user_passes_test(lambda u: u.is_superuser)
-def admin_users(request):
-    q = request.GET.get('q')
-    sort = request.GET.getlist('sort')
-
-    try:
-        sort_t = sort[0]
-    except:
-        sort_t = sort
-
-    users = User.objects.all().exclude(is_staff=True)
-    try:
-        users_pr = UserProfile.objects.filter(Q(phone__icontains=q)).order_by(*sort)
-    except:
-        try:
-            users_pr = UserProfile.objects.all().order_by(*sort)
-        except:
-            users_pr = UserProfile.objects.all()
-
-
-    # Исключаем персонал и складываем две разные фильтрации
-    users_pr = list(chain(users_pr.filter(user=None), UserProfile.objects.filter(user__in=users)))
-
-    context = {
-        'users': users,
-        'users_pr': users_pr,
-        'search': 'search',
-        'q': q,
-        'sort': sort_t,
-    }
-
-    return render(request, 'users/admin_users.html', context)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def users_detail(request, pk):
-
-    user_pr = UserProfile.objects.get(id=pk)
-
-    context = {
-      
-        'user_pr': user_pr,
-       
-    }
-
-   
-    return render(request, 'users/users_detail.html', context)
-
-@user_passes_test(lambda u: u.is_superuser)
-def users_delete(request, pk):
-
-    user = UserProfile.objects.get(id=pk)
-    user.delete()
-
-    return redirect('admin_users')
-
-
-# !!! Пользователи USERS !!!
-
-
-
-
 # !!! Сопутствующие товары !!!
 
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_relateds'])
 def related(request):
 
     context = {
@@ -2655,7 +2132,7 @@ def related(request):
     return render(request, 'shop/related/related.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_relateds'])
 def related_add(request):
 
     if request.method == 'POST':
@@ -2683,7 +2160,7 @@ def related_add(request):
 
     return render(request, 'shop/related/related_add.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_relateds'])
 def related_edit(request, pk):
     related = Product.objects.get(id=pk)
     if request.method == 'POST':
@@ -2701,7 +2178,7 @@ def related_edit(request, pk):
     return render(request, 'shop/related/related_edit.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_relateds'])
 def related_delete(request, pk):
     related = Product.objects.get(id=pk)
     related.delete()
@@ -2715,7 +2192,7 @@ def related_delete(request, pk):
 from shop.models import Combo, ComboItem
 
 # !!! Комбо !!!
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_combos'])
 def admin_combo(request):
 
     combos = Combo.objects.all()    
@@ -2728,7 +2205,7 @@ def admin_combo(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_combos'])
 def add_combo(request):
 
     if request.method == 'POST':
@@ -2782,7 +2259,7 @@ def add_combo(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_combos'])
 def edit_combo(request, pk):
     combo = Combo.objects.get(id=pk)
 
@@ -2845,7 +2322,7 @@ def edit_combo(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_combos'])
 def delete_combo(request, pk):
     combo = Combo.objects.get(id=pk)
     combo.delete()
@@ -2853,7 +2330,7 @@ def delete_combo(request, pk):
     return redirect('admin_combo')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_combos'])
 def delete_combo_item(request, pk):
     
     item = ComboItem.objects.get(id=pk)
@@ -2870,6 +2347,573 @@ def delete_combo_item(request, pk):
 
 
 
+# !!! БЛОГ !!!
+@check_user_rights(['add_posts'])
+def blog_settings(request):
+    blog_settings = BlogSetup.objects.get()
+    if request.method == 'POST':
+        form = BlogSetupForm(request.POST, instance=blog_settings)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_settings')
+        else:
+            return render(request, 'blog/blog_settings.html', {'form':form})
+
+    form = BlogSetupForm(instance=blog_settings)
+    context = {
+        'form': form
+    }
+
+    return render(request, 'blog/blog_settings.html', context)
+
+
+
+
+@check_user_rights(['add_posts'])
+def blog_category(request):
+    q = request.GET.get('q')
+    sort = request.GET.getlist('sort')
+    try:
+        sort_t = sort[0]
+    except:
+        sort_t = sort
+    try:
+        blog_category = BlogCategory.objects.filter(Q(name__icontains=q)).order_by(*sort)
+    except:
+        blog_category = BlogCategory.objects.all().order_by(*sort)
+    context = {
+        # Разрешить поиск на странице
+        'search': 'search',
+        'blog_category': blog_category,
+        'q': q,
+        'sort': sort_t,
+    }
+    return render(request, 'blog/blog_category/blog_category.html', context)
+
+
+@check_user_rights(['add_posts'])
+def blog_category_add(request):
+    if request.method == 'POST':
+        form = BlogCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_category')
+        else:
+            return render(request, 'blog/blog_category/blog_category_add.html', {'form': form})
+    form = BlogCategoryForm()
+    context = {
+        'form':form,
+    } 
+    return render(request, 'blog/blog_category/blog_category_add.html', context)
+
+@check_user_rights(['add_posts'])
+def blog_category_edit(request, pk):
+    blog_category = BlogCategory.objects.get(id=pk)
+    if request.method == 'POST':
+        form = BlogCategoryForm(request.POST, request.FILES, instance=blog_category)
+        if form.is_valid():
+            form.save()
+            return redirect('blog_category')
+        else:
+            return render(request, 'blog/blog_category/blog_category_edit.html', {'form': form})
+    form = BlogCategoryForm(instance=blog_category)
+    context = {
+        'form':form,
+    } 
+    return render(request, 'blog/blog_category/blog_category_edit.html', context)
+
+@check_user_rights(['add_posts'])
+def blog_category_delete(request, pk):
+    blog_category = BlogCategory.objects.get(id=pk)
+    blog_category.delete()
+    return redirect('blog_category')
+
+
+@check_user_rights(['add_posts'])
+def blog_post(request):
+    q = request.GET.get('q')
+    sort = request.GET.getlist('sort')
+    try:
+        sort_t = sort[0]
+    except:
+        sort_t = sort
+    try:
+        posts = Post.objects.filter(Q(name__icontains=q)).order_by(*sort)
+    except:
+        posts = Post.objects.all().order_by(*sort).order_by('-id')
+    context = {
+        # Разрешить поиск на странице
+        'search': 'search',
+        'posts': posts,
+        'q': q,
+        'sort': sort_t,
+    }
+
+
+    return render(request, 'blog/blog_post/blog_post.html', context)
+
+
+@check_user_rights(['add_posts'])
+def post_add(request):
+    try:
+        post = Post.objects.get(draft=True)
+    except:
+        post = Post(draft=True)
+        post.save()
+
+    form = PostForm(instance=post)
+    block_form = PostBlockForm()
+    if request.method == 'POST':
+        post.draft = False
+        post.published = True
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+
+            return redirect('blog_post')
+    context = {
+        'post': post,
+        'form': form,
+        'block_form': block_form,
+    }
+
+
+    return render(request, 'blog/blog_post/post_add.html', context)
+
+@check_user_rights(['add_posts'])
+def post_edit(request, pk):
+    
+    post = Post.objects.get(id=pk)
+    
+    form = PostForm(instance=post)
+    block_form = PostBlockForm()
+    if request.method == 'POST':
+        post.draft = False
+        post.published = True
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+
+            return redirect('blog_post')
+    context = {
+        'post': post,
+        'form': form,
+        'block_form': block_form,
+    }
+
+
+    return render(request, 'blog/blog_post/post_edit.html', context)
+
+@check_user_rights(['add_posts'])
+def post_delete(request, pk):
+    post = Post.objects.get(id=pk)
+    post.delete()
+    return redirect('blog_post')
+
+
+@check_user_rights(['add_posts'])
+def post_draft(request):
+
+    if request.method == 'POST':
+        post = Post.objects.get(draft=True)
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save() 
+
+            return redirect('blog_post')
+
+        else:
+
+            return render(request, 'blog/blog_post/post_add.html', {'form': form})
+
+@check_user_rights(['add_posts'])
+def post_block(request):
+    if request.method == 'POST':
+        parent = request.POST['parent']
+        type = request.POST['type']
+        order = request.POST['order']
+        next = request.POST['next']
+        try:
+            text = request.POST['text']
+            block = PostBlock(parent_id=parent, text=text, type=type, order=order)
+            block.save()
+        except:
+            pass
+        try:
+            title = request.POST['title']
+            block = PostBlock(parent_id=parent, title=title, type=type, order=order)
+            block.save()
+        except:
+            pass
+        try:
+            image = request.FILES['image']
+            block = PostBlock(parent_id=parent, image=image, type=type, order=order)
+            block.save()
+        except:
+            pass
+        try:
+            video = request.FILES['video']
+            block = PostBlock(parent_id=parent, video=video, type=type, order=order)
+            block.save()
+        except:
+            pass
+
+        
+        return redirect(next)
+
+
+@check_user_rights(['add_posts'])
+def post_block_edit(request, pk):
+    block = PostBlock.objects.get(id=pk)
+    next = request.POST['next']
+    if request.method == 'POST':
+        try:
+            text = request.POST['text']
+            block.text = text
+            block.save()
+        except:
+            pass
+        try:
+            title = request.POST['title']
+            block.title = title
+            block.save()
+        except:
+            pass
+        try:
+            image = request.FILES['image']
+            block.image = image
+            block.save()
+        except:
+            pass
+        try:
+            video = request.FILES['video']
+            block.video = video
+            block.save()
+        except:
+            pass
+
+        
+        return redirect(next)
+
+
+@check_user_rights(['add_posts'])
+def post_block_edit_delete(request, pk):
+
+    block = PostBlock.objects.get(id=pk)
+    block.delete()
+
+    return redirect('post_edit', block.parent.id)
+
+
+@check_user_rights(['add_posts'])
+def post_block_add_delete(request, pk):
+
+    block = PostBlock.objects.get(id=pk)
+    block.delete()
+
+    return redirect('post_add')
+
+
+
+
+
+# !!! СТАТИКА !!!
+
+
+@check_user_rights(['add_sliders'])
+def admin_slider(request):
+    sliders = Slider.objects.all().order_by('order')
+    try:
+        slider_setup = SliderSetup.objects.get()
+    except:
+        slider_setup = SliderSetup()
+        slider_setup.save()
+
+    if request.method == 'POST':
+        form = SliderSetupForm(request.POST, instance=slider_setup)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_slider')
+        else:
+            return render(request, 'static/slider.html', {'form': form})
+
+    setup_form = SliderSetupForm(instance=slider_setup)
+    context = {
+        'setup_form': setup_form,
+        'sliders': sliders
+    }
+    return render(request, 'static/slider.html', context)
+
+@check_user_rights(['add_sliders'])
+def slider_add(request):
+
+    if request.method == 'POST':
+        form = SliderForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_slider')
+
+        else:
+            return render(request, 'static/slider_add.html', {'form': form})
+    form = SliderForm()
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'static/slider_add.html', context)
+
+
+
+@check_user_rights(['add_sliders'])
+def slider_edit(request, pk):
+    slider = Slider.objects.get(id=pk)
+    if request.method == 'POST':
+        form = SliderForm(request.POST, request.FILES, instance=slider)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_slider')
+
+        else:
+            return render(request, 'static/slider_edit.html', {'form': form})
+    form = SliderForm(instance=slider)
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'static/slider_edit.html', context)
+
+
+@check_user_rights(['add_sliders'])
+def slider_delete(request, pk):
+    slider = Slider.objects.get(id=pk)
+    slider.delete()
+    return redirect('admin_slider')
+
+
+@check_user_rights(['add_statics'])
+def admin_pages(request):
+
+    context = {
+        'pages': Page.objects.all()
+    }
+
+    return render(request, 'static/admin_pages.html', context)
+
+
+@check_user_rights(['add_statics'])
+def page_add(request):
+
+    if request.method == 'POST':
+        form = PageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+
+        else:
+            return render(request, 'static/page_add.html', {'form': form})
+
+    form = PageForm()
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'static/page_add.html', context)
+
+@check_user_rights(['add_statics'])
+def page_edit(request, pk):
+    page = Page.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PageForm(request.POST, request.FILES, instance=page)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+        else:
+            return render(request, 'static/page_edit.html', {'form': form})
+            
+    form = PageForm(instance=page)
+    context = {
+        'form': form,
+    }
+    return render(request, 'static/page_edit.html', context)
+
+
+@check_user_rights(['add_statics'])
+def page_delete(request, pk):
+    page = Page.objects.get(id=pk)
+    page.delete()
+    return redirect('admin_pages')
+
+@check_user_rights(['add_statics'])
+def page_item_add(request, pk):
+    page = Page.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PageItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+        else:
+            return render(request, 'static/page_item_add.html', {'form': form})
+
+    form = PageItemForm({
+        'page': page
+    })
+    context = {
+        'form': form,
+        'page': page
+    }
+
+    return render(request, 'static/page_item_add.html', context)
+
+
+@check_user_rights(['add_statics'])
+def page_item_edit(request, pk):
+    page_item = PageItem.objects.get(id=pk)
+    if request.method == 'POST':
+        form = PageItemForm(request.POST, request.FILES, instance=page_item)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_pages')
+        else:
+            return render(request, 'static/page_item_add.html', {'form': form})
+            
+    form = PageItemForm(instance=page_item)
+    context = {
+        'form': form,
+    }
+    return render(request, 'static/page_item_add.html', context)
+
+
+@check_user_rights(['add_statics'])
+def page_item_delete(request, pk):
+    page_item = PageItem.objects.get(id=pk)
+    page_item.delete()
+    return redirect('admin_pages')
+
+@check_user_rights(['add_statics'])
+def admin_images(request):
+
+
+    context = {
+        'images': PlaceImages.objects.all()
+    }
+
+    return render(request, 'static/admin_images.html', context)
+
+
+@check_user_rights(['add_statics'])
+def image_add(request):
+
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_images')
+    
+        else:
+            return render(request, 'static/image_add.html', {'form': form})
+        
+    form = ImageForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'static/image_add.html', context)
+
+        
+@check_user_rights(['add_statics'])
+def image_edit(request, pk):
+    image = PlaceImages.objects.get(id=pk)
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES, instance=image)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_images')
+        else:
+            return render(request, 'static/image_add.html', {'form': form})
+            
+    form = ImageForm(instance=image)
+    context = {
+        'form': form,
+    }
+    return render(request, 'static/image_add.html', context)
+
+@check_user_rights(['add_statics'])
+def image_delete(request, pk):
+    image = PlaceImages.objects.get(id=pk)
+    image.delete()
+    return redirect('admin_images')
+
+# !!! СТАТИКА !!!
+
+
+# !!! Пользователи USERS !!!
+
+from itertools import chain
+@check_user_rights(['view_customers'])
+def admin_users(request):
+    q = request.GET.get('q')
+    sort = request.GET.getlist('sort')
+
+    try:
+        sort_t = sort[0]
+    except:
+        sort_t = sort
+
+    users = User.objects.all().exclude(is_staff=True)
+    try:
+        users_pr = UserProfile.objects.filter(Q(phone__icontains=q)).order_by(*sort)
+    except:
+        try:
+            users_pr = UserProfile.objects.all().order_by(*sort)
+        except:
+            users_pr = UserProfile.objects.all()
+
+
+    # Исключаем персонал и складываем две разные фильтрации
+    users_pr = list(chain(users_pr.filter(user=None), UserProfile.objects.filter(user__in=users)))
+
+    context = {
+        'users': users,
+        'users_pr': users_pr,
+        'search': 'search',
+        'q': q,
+        'sort': sort_t,
+    }
+
+    return render(request, 'users/admin_users.html', context)
+
+
+@check_user_rights(['view_customers'])
+def users_detail(request, pk):
+
+    user_pr = UserProfile.objects.get(id=pk)
+
+    context = {
+      
+        'user_pr': user_pr,
+       
+    }
+
+   
+    return render(request, 'users/users_detail.html', context)
+
+@check_user_rights(['view_customers'])
+def users_delete(request, pk):
+
+    user = UserProfile.objects.get(id=pk)
+    user.delete()
+
+    return redirect('admin_users')
+
+
+# !!! Пользователи USERS !!!
+
+
+
+
+
+
 
 import zipfile
 from django.core.files.storage import FileSystemStorage
@@ -2882,7 +2926,7 @@ from PIL import Image
 
 from django.core.files.images import ImageFile
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['upload_csv'])
 def product_upload(request):
 
     
@@ -3011,7 +3055,7 @@ def product_upload(request):
                 
 # !!!! Загрузка csv
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['upload_csv'])
 def csv_upload(request):
 
     if request.method == 'POST':
@@ -3057,7 +3101,7 @@ def csv_upload(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)# !!! Субдомены !!!
+@check_user_rights(['change_settings'])
 def admin_subdomain(request):
 
     context = {
@@ -3067,7 +3111,7 @@ def admin_subdomain(request):
     return render(request, 'subdomain/admin_subdomain.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_settings'])
 def add_subdomain(request):
 
     if request.method == 'POST':
@@ -3093,7 +3137,7 @@ def add_subdomain(request):
     return render(request, 'subdomain/add_subdomain.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_settings'])
 def edit_subdomain(request, pk):
 
     subdomain = Subdomain.objects.get(id=pk)
@@ -3121,7 +3165,7 @@ def edit_subdomain(request, pk):
     return render(request, 'subdomain/edit_subdomain.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_settings'])
 def delete_subdomain(request, pk):
 
     subdomain = Subdomain.objects.get(id=pk)
@@ -3137,7 +3181,7 @@ def delete_subdomain(request, pk):
 
 # !!! Интеграции !!!
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def integration(request):
     try:
         integrations = Integrations.objects.get()
@@ -3152,7 +3196,7 @@ def integration(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def add_integration(request):
 
     if request.method == 'POST':
@@ -3171,7 +3215,7 @@ def add_integration(request):
     return render(request, 'integration/add_integration.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def edit_integration(request, pk):
     integration = Integrations.objects.get(id=pk)
     if request.method == 'POST':
@@ -3189,7 +3233,7 @@ def edit_integration(request, pk):
     return render(request, 'integration/add_integration.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def delete_integration(request, pk):
     integration = Integrations.objects.get(id=pk)
     integration.delete()
@@ -3197,7 +3241,7 @@ def delete_integration(request, pk):
 
 
 from integrations.iiko import load_menu
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def catalogs_synch(request):
 
     if request.method == 'POST':
@@ -3223,7 +3267,7 @@ def catalogs_synch(request):
 
         return redirect('integration')
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_integrations'])
 def synch_cron(request):
 
 
@@ -3238,7 +3282,7 @@ from integrations.cron import *
 
 # !!! Настройка рабочих дней и времени доставки !!!
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def add_worksday(request):
     if request.method == 'POST':
         form = WorksdayForm(request.POST)
@@ -3257,7 +3301,7 @@ def add_worksday(request):
     return render(request, 'shop/works_day/add_worksday.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def edit_worksday(request, pk):
     worksday = WorkDay.objects.get(id=pk)
     if request.method == 'POST':
@@ -3277,7 +3321,7 @@ def edit_worksday(request, pk):
     return render(request, 'shop/works_day/edit_worksday.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_shop_settings'])
 def delete_worksday(request, pk):
     worksday = WorkDay.objects.get(id=pk)
     worksday.delete()
@@ -3287,7 +3331,7 @@ def delete_worksday(request, pk):
 
 
 # !!! ДОСТАВКА !!!
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_delivery_service'])
 def admin_delivery(request):
 
     try:
@@ -3302,7 +3346,7 @@ def admin_delivery(request):
     return render(request, 'delivery/admin_delivery.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_delivery_service'])
 def delivery_add(request):
 
     if request.method == 'POST':
@@ -3322,7 +3366,7 @@ def delivery_add(request):
     return render(request, 'delivery/add_delivery.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_delivery_service'])
 def delivery_edit(request, pk):
     delivery = Delivery.objects.get(id=pk)
     if request.method == 'POST':
@@ -3343,7 +3387,7 @@ def delivery_edit(request, pk):
     return render(request, 'delivery/add_delivery.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_delivery_service'])
 def delivery_delete(request, pk):
     delivery = Delivery.objects.get(id=pk)
     delivery.delete()
@@ -3352,7 +3396,7 @@ def delivery_delete(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def admin_food_constructor(request):
 
     food_constructors = FoodConstructor.objects.all()
@@ -3364,7 +3408,7 @@ def admin_food_constructor(request):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def add_food_constructor(request):
 
     if request.method == 'POST':
@@ -3384,7 +3428,7 @@ def add_food_constructor(request):
     return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def edit_food_constructor(request, pk):
     food_constructor = FoodConstructor.objects.get(id=pk)
     if request.method == 'POST':
@@ -3403,14 +3447,14 @@ def edit_food_constructor(request, pk):
 
     return render(request, 'shop/food_constructor/constructor/add_food_constructor.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def delete_food_constructor(request, pk):
     food_constructor = FoodConstructor.objects.get(id=pk)
     food_constructor.delete()
     return redirect('admin_food_constructor')
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def add_constructor_category(request, pk):
 
     parent = FoodConstructor.objects.get(id=pk)
@@ -3434,7 +3478,7 @@ def add_constructor_category(request, pk):
     return render(request, 'shop/food_constructor/category/add_constructor_category.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def edit_constructor_category(request, pk):
 
     category = ConstructorCategory.objects.get(id=pk)
@@ -3455,7 +3499,7 @@ def edit_constructor_category(request, pk):
 
     return render(request, 'shop/food_constructor/category/add_constructor_category.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def delete_constructor_category(request, pk):
     category = ConstructorCategory.objects.get(id=pk)
     category.delete()
@@ -3463,7 +3507,7 @@ def delete_constructor_category(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def add_ingridients(request, pk):
 
     parent = ConstructorCategory.objects.get(id=pk)
@@ -3487,7 +3531,7 @@ def add_ingridients(request, pk):
     return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def edit_ingridients(request, pk):
 
     ingridient = Ingridients.objects.get(id=pk)
@@ -3508,7 +3552,7 @@ def edit_ingridients(request, pk):
 
     return render(request, 'shop/food_constructor/ingridients/add_ingridients.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_constructors'])
 def delete_ingridients(request, pk):
     ingridient = Ingridients.objects.get(id=pk)
     ingridient.delete()
@@ -3516,7 +3560,8 @@ def delete_ingridients(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+
+@check_user_rights(['change_time_sales'])
 def delivery_time_price(request):
 
     context = {
@@ -3526,7 +3571,7 @@ def delivery_time_price(request):
     return render(request, 'shop/delivery_time_price/delivery_time_price.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def add_delivery_time_price(request):
 
     if request.method == 'POST':
@@ -3546,7 +3591,7 @@ def add_delivery_time_price(request):
     return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def edit_delivery_time_price(request, pk):
 
     delivery_time_price = DeliveryTimePrice.objects.get(id=pk)
@@ -3568,7 +3613,7 @@ def edit_delivery_time_price(request, pk):
     return render(request, 'shop/delivery_time_price/add_delivery_time_price.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['change_time_sales'])
 def delete_delivery_time_price(request, pk):
     delivery_time_price = DeliveryTimePrice.objects.get(id=pk)
     delivery_time_price.delete()
@@ -3578,7 +3623,7 @@ def delete_delivery_time_price(request, pk):
 
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_reviews'])
 def admin_reviews(request):
 
     context = {
@@ -3588,7 +3633,7 @@ def admin_reviews(request):
     return render(request, 'marketing/reviews/reviews.html', context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_reviews'])
 def add_reviews(request):
 
     if request.method == 'POST':
@@ -3607,7 +3652,7 @@ def add_reviews(request):
 
     return render(request, 'marketing/reviews/add_reviews.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_reviews'])
 def edit_reviews(request, pk):
 
     review = Reviews.objects.get(id=pk)
@@ -3628,7 +3673,7 @@ def edit_reviews(request, pk):
 
     return render(request, 'marketing/reviews/add_reviews.html', context)
 
-@user_passes_test(lambda u: u.is_superuser)
+@check_user_rights(['add_reviews'])
 def delete_reviews(request, pk):
     review = Reviews.objects.get(id=pk)
     review.delete()

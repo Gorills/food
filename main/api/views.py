@@ -1,15 +1,16 @@
 from decimal import Decimal, ROUND_DOWN
 from rest_framework import viewsets, mixins
 from rest_framework import status
+from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
+from .serializers import BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, OrderViewSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
 from coupons.models import Coupon
 from home.models import SliderSetup, Slider, Page
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, OrderView
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper, Tinkoff
 from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
 from shop.models import DopItems, FoodConstructor, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
@@ -409,7 +410,25 @@ def dop_items(request):
 
 # !!! Is admin !!! 
 from sms.views import send_sms
-class OrderViewSet(viewsets.ModelViewSet):
+
+
+
+
+
+from rest_framework import generics
+class OrderViewList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderViewSerializer
+
+    def get_queryset(self):
+        # Получаем id заказа из URL-адреса
+        order_id = self.kwargs.get('order_id')
+        # Фильтруем OrderView по id заказа и текущему пользователю
+        queryset = OrderView.objects.filter(order_id=order_id, user=self.request.user)
+        return queryset
+
+
+class OrderSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     queryset = Order.objects.all()

@@ -19,12 +19,52 @@ body {
 }
 
 
+.access_denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    background-color: #fff;
+    border-radius: 50px;
+}
 
+#notifications-container {
+    display: flex;
+    flex-direction: column;
+}
 
 ::-webkit-scrollbar-thumb{background-color: $primary}
 ::-webkit-scrollbar{width:6px;background-color:#f8dbdd}
 
 
+.order {
+    position: relative;
+    // .order__eye
+
+    &__eye {
+        position: absolute;
+        left: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    // .order__eye-done
+
+    &__eye-done {
+        path {
+            fill: #17a2b8;
+        }
+    }
+    // .order__eye-none
+
+    &__eye-none {
+        path {
+            fill: #FFCA60;
+        }
+    }
+
+}
 
 
 *,

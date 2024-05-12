@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from coupons.models import Coupon
 from django.conf import settings
 from accounts.models import UserProfile
+from django.contrib.auth.models import User
 
 # Create your models here.
 from shop.models import Combo, Product, ProductOption, Ingridients, FoodConstructor
@@ -87,6 +88,13 @@ class Order(models.Model):
     request_id = models.CharField(max_length=450, verbose_name="ID запроса для доставки", null=True, blank=True)
     delivery_status = models.CharField(max_length=450, verbose_name="Статус доставки", null=True, blank=True)
 
+
+    def order_views(self):
+
+       
+        return self.views.all()
+        
+
     class Meta:
         ordering = ('-created',)
         verbose_name = 'Заказ'
@@ -142,3 +150,11 @@ class CustomField(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='custom_fields')
     name = models.CharField(max_length=250)
     value = models.TextField(max_length=250)
+
+
+
+
+class OrderView(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='views')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='views')
+    created = models.DateTimeField(auto_now_add=True)

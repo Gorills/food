@@ -3,12 +3,13 @@ from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, Loyal
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
 from coupons.models import Coupon
 from home.models import SliderSetup, Slider, Page
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, OrderView
 from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper, Tinkoff
 from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
 from shop.models import ConstructorCategory, FoodConstructor, Ingridients, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
 from subdomains.models import Subdomain
 
+from shop.models import DopItems
 
 
 
@@ -17,7 +18,6 @@ from subdomains.models import Subdomain
 # Home page
 
 
-from shop.models import DopItems
 
 class DopItemsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -195,6 +195,14 @@ class ShopSetupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopSetup
         fields = '__all__'
+
+
+
+class OrderViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderView
+        fields = '__all__'
+
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:

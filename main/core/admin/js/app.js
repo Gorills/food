@@ -906,3 +906,94 @@ $(document).ready(function(){
       
   });
 });
+
+
+
+
+
+
+// Функция для создания звукового уведомления
+function playNotificationSound() {
+  var audio = new Audio('/core/libs/audio/best-sms-tone-meloboom.mp3'); // Путь к вашему звуковому файлу
+  audio.play();
+}
+
+// Функция для показа всплывающего уведомления
+function showNotification(order_id) {
+  // Создание элемента уведомления как ссылки
+  var notification = document.createElement('a');
+  notification.href = `/admin/order_detail/${order_id}/`;
+  notification.className = 'admin_notification';
+  notification.textContent = `Новый заказ #${order_id}! Нажмите, чтобы просмотреть`;
+
+  // Добавление стилей
+  notification.style.background = '#333';
+  notification.style.color = '#fff';
+  notification.style.padding = '10px';
+  notification.style.borderRadius = '5px';
+  notification.style.marginBottom = '10px'; // Добавляем отступ между уведомлениями
+
+  // Добавление уведомления в контейнер
+  var container = document.getElementById('notifications-container');
+  container.appendChild(notification);
+
+  // Воспроизведение звукового уведомления
+  playNotificationSound();
+
+  // Обработчик события клика на уведомление
+  notification.addEventListener('click', function() {
+    
+    container.removeChild(notification); // Удаляем уведомление при клике
+  });
+
+  // Удаление самого старого уведомления, если их больше 5
+  var notifications = container.getElementsByClassName('admin_notification');
+  if (notifications.length > 10) {
+    container.removeChild(notifications[0]); // Удаляем самый старый элемент
+  }
+}
+
+// Обработчик события для кнопки показа уведомления
+$(document).ready(function() {
+  // Функция для обращения к API и получения списка заказов
+  if (window.location.pathname === '/admin/admin_order/') {
+    function fetchOrders() {
+        $.ajax({
+            url: '/api/v1/orders/',
+            type: 'GET',
+            success: function(response) {
+                // Перебираем каждый заказ из API
+                response.forEach(function(order) {
+                    // Проверяем, есть ли заказ на странице
+                    if ($('.order[data-order-id="' + order.id + '"]').length === 0) {
+                        // Если заказа нет на странице, показываем уведомление
+                        showNotification(order.id);
+                        $(".page__refresh").load(location.href + " .page");
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Ошибка при получении списка заказов:', error);
+            }
+        });
+    }
+  }
+
+  // Функция для показа уведомления о новом заказе
+ 
+
+  // Функция для запуска опроса API каждые 30 секунд
+  function startPolling() {
+      fetchOrders();
+      setInterval(fetchOrders, 5000);
+  }
+
+  // Проверяем, загрузилась ли страница, перед началом опроса API
+  if ($(document).readyState === "complete") {
+      startPolling();
+  } else {
+      $(document).ready(startPolling);
+  }
+});
+
+

@@ -28,6 +28,8 @@ urlpatterns = [
     path('order_detail/<int:pk>/', views.order_detail, name='order_detail'),
     path('order_delete/<int:pk>/', views.order_delete, name='order_delete'),
     path('order_status_change/<int:pk>/', views.order_status_change, name='order_status_change'),
+    path('order_view_all/', views.order_view_all, name='order_view_all'),
+
 
 
     # payments
