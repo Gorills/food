@@ -6732,6 +6732,12 @@ td.product-thumbnail img {
     border-radius: 0;
   }
 
+  .cart__bottom {
+    right: 20px;
+    left: 20px;
+    padding-bottom: 100px;
+  }
+
   .cart__related::-webkit-scrollbar {
     width: 0px;
     height: 0px;
@@ -7120,12 +7126,6 @@ td.product-thumbnail img {
     margin-top: 20px;
     white-space: nowrap;
     padding-bottom: 20px;
-  }
-
-  .cart__bottom {
-    right: 20px;
-    left: 20px;
-    padding-bottom: 85px;
   }
 
   .cart__total {
