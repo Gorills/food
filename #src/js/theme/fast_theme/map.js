@@ -846,6 +846,9 @@ $(document).on('click','.select-wrap__item',function(){
     $('.select-wrap__row').removeClass('select-wrap__row--active')
     $('.select-wrap').removeClass('select-wrap--active')
 
+    var $productItem = $(this).closest('.product-detail__inner');
+    $productItem.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+
     productDetailCalculate() 
 
 

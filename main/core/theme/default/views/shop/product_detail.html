@@ -165,11 +165,9 @@
                             <div class="product-detail__options-wrap">            
                                 {% for option in product_options %}
                                     {% if option.type == type %}
-                                        <div class="product-detail__option">
-                                            <div class="product-detail__option-value" data-price="{{ option.option_price |unlocalize }}" data-action="{% url "cart:cart_add" option.id %}" >
-                                                {{ option.option_value }}
-                                            </div>
-                                        </div>    
+                                        <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
+                                                
+                                        <label for="cb{{ option.id }}">{{ option.option_value }} +{{ option.option_price }}₽</label>
                                     {% endif %}
                                 {% endfor %}
                             </div>

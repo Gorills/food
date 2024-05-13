@@ -147,14 +147,13 @@
 
 
                             {% if type.option_class == 'radio' %}
-                            <div class="product-detail__options-wrap">            
+                            <div class="product-detail__options-checkbox-row">
                                 {% for option in product_options %}
                                     {% if option.type == type %}
-                                        <div class="product-detail__option">
-                                            <div class="product-detail__option-value" data-price="{{ option.option_price |unlocalize }}" data-action="{% url "cart:cart_add" option.id %}" >
-                                                {{ option.option_value }}
-                                            </div>
-                                        </div>    
+                                        
+                                            <input class="select-wrap__checkbox" id="cb{{ option.id }}" name="radio" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="radio" value="{{ option.option_value }}">
+                                            
+                                            <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -223,6 +222,8 @@
 
                         
                         <div class="btn-wrap btn-wrap-detail" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+                            <div class="btn-wrap__count"></div>
+                            <div class="btn-wrap__svg"></div>
                             <button class="btn btn--primary add_to_cart">В корзину</button>
                         </div>
                         {% comment %} <button class="options_btn btn btn--primary" data-csrf={{ csrf_token }} data-price="" data-options-id="" data-options="" data-quantity="" data-product="{{ product.id }}">В корзину</button> {% endcomment %}
