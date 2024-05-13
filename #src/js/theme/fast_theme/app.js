@@ -1392,10 +1392,13 @@ function checkProducts() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let products = document.querySelectorAll('.btn-wrap');
 
+    
     // $('.cart__maby').load(location.href + " .cart__maby-refresh");
     
     products.forEach(function(product) {
+        
         let id = product.getAttribute('data-cart-id');
+        console.log(id)
 
         let type = product.getAttribute('data-type');
         let optionsIdString = product.getAttribute('data-optionsid');
@@ -1426,9 +1429,9 @@ function checkProducts() {
 
         if (cart[id]) {
 
-            if (product.closest('.product-list__item').classList.contains('product-list__item--mini')) {
-                let product_item = product.closest('.product-list__item');
-                product_item.style.display = 'none';
+            let productItem = product.closest('.product-list__item');
+            if (productItem && productItem.classList.contains('product-list__item--mini')) {
+                productItem.style.display = 'none';
             } else {
                 
             
@@ -1457,17 +1460,23 @@ function checkProducts() {
                 
             }
         } else {
-            let product_item = product.closest('.product-list__item');
+           
+            let product_item = product.closest('.product-list__item') || product.closest('.product-detail');
+
+            
+
             product_item.style.display = 'flex';
             product.classList.remove('in-cart');
-           
-           
+            
+            
             
             productBtn.style.display = 'block';
                 
             productListItem.innerHTML = '';
             productSvgItem.innerHTML = '';
                 
+            
+          
             
         }
         
@@ -2075,22 +2084,20 @@ function getLastOrder() {
         console.log(show_last_order, is_site)
         
         if (show_last_order) {
-            // Преобразуем объект в строку JSON-формата
-            let jsonString = JSON.stringify(order);
+            // // Преобразуем объект в строку JSON-формата
+            // let jsonString = JSON.stringify(order);
 
-            // Заменяем символы в строке
-            jsonString = jsonString.replace(/'/g, '"'); 
-            let newStr = jsonString.slice(1, -1);
+            // // Заменяем символы в строке
+            // jsonString = jsonString.replace(/'/g, '"'); 
+            // let newStr = jsonString.slice(1, -1);
 
 
-            // Преобразуем строку JSON-формата обратно в объект
-            let newObj = JSON.parse(newStr);
+            // // Преобразуем строку JSON-формата обратно в объект
+            // let newObj = JSON.parse(newStr);
 
         
-            dataLayer.push(newObj)
+            // dataLayer.push(newObj)
 
-
-            
 
             
 

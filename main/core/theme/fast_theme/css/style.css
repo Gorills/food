@@ -7585,6 +7585,15 @@ td.product-thumbnail img {
     font-size: 9px;
   }
 
+  .contacts-design__item {
+    flex-direction: column;
+  }
+
+  .contacts-design__icon {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
   .popup-order-status__title {
     font-size: 10px;
     margin-right: 0;

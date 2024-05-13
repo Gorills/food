@@ -204,7 +204,11 @@
                                 
                             {% else %}
                                
-                                <div class="btn-wrap btn-wrap-detail" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="" data-image="{{ product.get_thumb_mini }}">
+                               
+
+                                <div class="btn-wrap btn-wrap-detail" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+                                    <div class="btn-wrap__count"></div>
+                                    <div class="btn-wrap__svg"></div>
                                     <button class="btn btn--primary add_to_cart">В корзину</button>
                                 </div>
 
