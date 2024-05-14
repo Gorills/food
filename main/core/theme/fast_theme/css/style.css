@@ -2817,6 +2817,21 @@ a {
   fill: #fff;
 }
 
+.footer .header__contacts-link-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer .header__contacts-link-wrap a {
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.footer .header__contacts-link-wrap svg {
+  display: none;
+}
+
 .footer__col {
   columns: 2;
 }
