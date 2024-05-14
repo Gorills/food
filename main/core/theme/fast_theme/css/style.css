@@ -1558,7 +1558,7 @@ a {
   background-color: #E8E9EB;
   z-index: 10000;
   overflow-y: scroll;
-  height: 100vh;
+  height: 100svh;
   justify-content: space-between;
 }
 
@@ -1595,7 +1595,7 @@ a {
 }
 
 .cart__empty {
-  height: calc(100vh - 280px);
+  height: calc(100svh - 280px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -5500,7 +5500,7 @@ td.product-thumbnail img {
   max-width: 790px;
   background-color: #E8E9EB;
   overflow-y: scroll;
-  height: 100vh;
+  height: 100svh;
   position: relative;
   z-index: 1000;
   display: flex;

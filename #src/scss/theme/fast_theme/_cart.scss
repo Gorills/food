@@ -40,7 +40,7 @@
         background-color: #E8E9EB;
         z-index: 10000;
         overflow-y: scroll;
-        height: 100vh;
+        height: 100svh;
         justify-content: space-between;
         @media screen and (max-width: 576px) {
             padding: 0;
@@ -95,7 +95,7 @@
     // .cart__empty
     &__empty {
         
-        height: calc(100vh - 280px);
+        height: calc(100svh - 280px);
         overflow-y: auto;
         display: flex;
         flex-direction: column;
