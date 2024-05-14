@@ -1915,7 +1915,8 @@ jQuery(document).ready(function () {
                             localStorage.setItem('lastOrder', JSON.stringify(last_order));
                             // Обновление popup с полученными данными
                             updatePopup(data.status_list, data.status);
-            
+                            
+                            console.log(data.status);
                             // Проверка на выполненный статус
                             if (data.status === 'Выполнен') {
                                 
@@ -1937,8 +1938,10 @@ jQuery(document).ready(function () {
             function updatePopup(status_list, current_status) {
                 // Очистка текущего содержимого popup
                 // и добавление новых пунктов списка статусов
+                
                 let popupContent = '';
                 status_list.forEach(function(status) {
+                    
                     let activeClass = (status === current_status) ? 'status-item--active' : '';
                     let svg = getSVGByStatus(status); // Получение SVG для статуса
                     popupContent += '<div title="' + status + '" class="status-item ' + activeClass + '">' + status + svg + '</div>';
