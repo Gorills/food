@@ -885,16 +885,18 @@ $(document).ready(function(){
   $(".change_input").change(function(){
       var selectedOption = $(this).val();
 
-      $(this).closest('li').removeClass()
-      $(this).closest('li').addClass('table-row')
+      $(this).closest('li').removeClass('table-row--new').removeClass('table-row--work').removeClass('table-row--obr').removeClass('table-row--done').removeClass('table-row--cancel').removeClass('table-row--work');
+      
 
 
 
       if (selectedOption == 'Новый') {
         $(this).closest('li').addClass('table-row--new')
-      } else if (selectedOption == 'В работе') {
-        $(this).closest('li').removeClass('table-row--work')
-      } else if (selectedOption == 'Обработан') {
+      } else if (selectedOption == 'Готовится') {
+        $(this).closest('li').addClass('table-row--work')
+      } else if (selectedOption == 'Передан курьеру') {
+        $(this).closest('li').addClass('table-row--obr')
+      } else if(selectedOption == 'Готов к выдаче') {
         $(this).closest('li').addClass('table-row--obr')
       } else if (selectedOption == 'Выполнен') {
         $(this).closest('li').addClass('table-row--done')

@@ -30,9 +30,9 @@
 <a href="{% url 'order_view_all' %}" class="btn btn--primary">Отметить все как просмотренные</a>
 <br>
 <br>
-<a href="{% url "order_status" %}" class="btn btn--primary">Статусы заказов</a>
+{% comment %} <a href="{% url "order_status" %}" class="btn btn--primary">Статусы заказов</a>
 <br>
-<br>
+<br> {% endcomment %}
 
 
 <div class="page__refresh">
@@ -82,7 +82,7 @@
 
                 {% for order in orders %}
                     
-                    <li data-order-id="{{ order.id }}" class="table-row order {% if order.status == 'Новый' %}table-row--new{% elif order.status == 'В работе' or order.status == 'Готов к доставке' %}table-row--work{% elif order.status == 'Обработан' %}table-row--obr{% elif order.status == 'Выполнен' %}table-row--done{% elif order.status == 'Отказ' %}table-row--cancel{% endif %}">
+                    <li data-order-id="{{ order.id }}" class="table-row order {% if order.status == 'Новый' %}table-row--new{% elif order.status == 'В работе' or order.status == 'Готов к доставке' %}table-row--work{% elif order.status == 'Обработан' or order.status == 'Передан курьеру' or order.status == 'Готов к выдаче' %}table-row--obr{% elif order.status == 'Выполнен' %}table-row--done{% elif order.status == 'Отказ' %}table-row--cancel{% endif %}">
                         
 
                         <div class="order__eye">
