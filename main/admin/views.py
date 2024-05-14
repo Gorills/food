@@ -1014,7 +1014,7 @@ def add_order_status(request):
         form = OrderStatusForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            subprocess.call(["touch", RESET_FILE])
+            
             return redirect('admin_order')
     else:
         form = OrderStatusForm()
@@ -1032,7 +1032,7 @@ def edit_order_status(request, pk):
         form = OrderStatusForm(request.POST, request.FILES, instance=order_status)
         if form.is_valid():
             form.save()
-            subprocess.call(["touch", RESET_FILE])
+            
             return redirect('admin_order')
     else:
         form = OrderStatusForm(instance=order_status)
@@ -1046,7 +1046,7 @@ def edit_order_status(request, pk):
 def delete_order_status(request, pk):
     order_status = OrderStatus.objects.get(id=pk)
     order_status.delete()
-    subprocess.call(["touch", RESET_FILE])
+    
     return redirect('admin_order')
 
 

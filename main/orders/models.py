@@ -127,11 +127,34 @@ class Order(models.Model):
     sale_percent = models.PositiveIntegerField(null=True, blank=True, default=0, verbose_name="Процент скидки")
     bonuses_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    STATUS_CLASS = default_order_status()
+    STATUS_CLASS = (
+        ('Новый', 'Новый'),
+       ('Готовится', 'Готовится'),
+       ('Готов к доставке', 'Готов к доставке'),
+       ('Готов к выдаче', 'Готов к выдаче'),
+       
+       ('Доставлен', 'Доставлен'),
+       ('Выполнен', 'Выполнен'),
+       ('Отказ', 'Отказ')
+    )
 
-    STATUS_CLASS_SELF_PICKUP = pickup_order_status()
+    STATUS_CLASS_SELF_PICKUP = (
+            ('Новый', 'Новый'),
+            ('Готовится', 'Готовится'),
+            ('Готов к выдаче', 'Готов к выдаче'),
+            ('Выполнен', 'Выполнен'),
+            ('Отказ', 'Отказ')
+        )
 
-    STATUS_CLASS_DELIVERY = delivery_order_status()
+    STATUS_CLASS_DELIVERY = (
+        ('Новый', 'Новый'),
+        ('Готовится', 'Готовится'),
+        ('Готов к доставке', 'Готов к доставке'),
+        ('Доставка', 'Доставка'),
+        ('Доставлен', 'Доставлен'),
+        ('Выполнен', 'Выполнен'),
+        ('Отказ', 'Отказ')
+    )
 
     status = models.CharField(max_length=250, verbose_name='Статус заказа', choices=STATUS_CLASS, default='Новый',)
     coupon = models.ForeignKey(Coupon,
