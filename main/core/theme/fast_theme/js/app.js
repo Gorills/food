@@ -1849,7 +1849,7 @@ $(document).on('click', '.order_create', function(e) {
                     
     
                     localStorage.setItem('lastOrder', JSON.stringify(data));
-                    localStorage.setItem('lastLastOrder', JSON.stringify(data));
+                    
     
                     $('.order__load').removeClass('order__load--active')
                     $('.odred-done').addClass('odred-done--active')
@@ -1883,9 +1883,9 @@ $(document).on('click', '.order_create', function(e) {
 
 // проверка последнего заказа
 jQuery(document).ready(function () {
-    let last_order = JSON.parse(localStorage.getItem('lastLastOrder'));
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
-    console.log(last_order)
+    
     
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
 
@@ -1902,6 +1902,9 @@ jQuery(document).ready(function () {
             
 
             function updateOrderStatus() {
+
+                    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+                    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
                 
                     $.ajax({
                         url: '/api/v1/get_order_status/' + order_id + '/',
@@ -2394,18 +2397,26 @@ getLastOrder()
 $(document).on('click','.odred-done__inner',function(e){
     
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-    let last_last_order = JSON.parse(localStorage.getItem('lastLastOrder'));
+    
     console.log(last_order)
-    console.log(last_last_order)
+    
 })
 
 $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
     $('.odred-done').removeClass('odred-done--active')
     $('body').removeClass('body');
-    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-    last_order.show = false
-    localStorage.setItem('lastOrder', JSON.stringify(last_order))
     
+    let storage_order = JSON.parse(localStorage.getItem('lastOrder'));
+    storage_order.show = false;
+
+    localStorage.removeItem('lastOrder');
+
+    localStorage.setItem('lastOrder', JSON.stringify(storage_order));
+
+
+    
+    
+    setLastOrder();
     
     window.location.href = '/';
     
