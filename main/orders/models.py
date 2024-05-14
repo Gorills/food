@@ -60,6 +60,8 @@ def pickup_order_status():
             ('Выполнен', 'Выполнен'),
             ('Отказ', 'Отказ')
         )
+
+    print(STATUS_CLASS_SELF_PICKUP)
     return STATUS_CLASS_SELF_PICKUP
 
 
@@ -84,7 +86,7 @@ def delivery_order_status():
             ('Отказ', 'Отказ')
         )
 
-    
+    print(STATUS_CLASS_DELIVERY)
     return STATUS_CLASS_DELIVERY
             
     
