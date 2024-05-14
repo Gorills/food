@@ -6,7 +6,7 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
@@ -14,7 +14,7 @@ from integrations.models import Integrations
 from subdomains.models import Subdomain
 from delivery.models import Delivery
 
-from orders.models import Order, OrderView
+from orders.models import Order, OrderStatus, OrderView
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
@@ -998,6 +998,55 @@ def order_delete(request, pk):
     order = Order.objects.get(id=pk)
     order.delete()
     return redirect('admin_order')
+
+@check_user_rights(['view_orders'])
+def order_status(request):
+    order_statuses = OrderStatus.objects.all().order_by('sort')
+    context = {
+        'order_statuses': order_statuses
+    }
+    return render(request, 'order/order_status.html', context)
+
+
+@check_user_rights(['view_orders'])
+def add_order_status(request):
+    if request.method == 'POST':
+        form = OrderStatusForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_order')
+    else:
+        form = OrderStatusForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'order/add_order_status.html', context)
+
+
+
+@check_user_rights(['view_orders'])
+def edit_order_status(request, pk):
+    order_status = OrderStatus.objects.get(id=pk)
+    if request.method == 'POST':
+        form = OrderStatusForm(request.POST, request.FILES, instance=order_status)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_order')
+    else:
+        form = OrderStatusForm(instance=order_status)
+    context = {
+        'form': form
+    }
+    return render(request, 'order/add_order_status.html', context)
+
+
+@check_user_rights(['view_orders'])
+def delete_order_status(request, pk):
+    order_status = OrderStatus.objects.get(id=pk)
+    order_status.delete()
+    return redirect('admin_order')
+
+
 # !!! end Продажи !!!
 
 

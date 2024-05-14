@@ -29,6 +29,10 @@ urlpatterns = [
     path('order_delete/<int:pk>/', views.order_delete, name='order_delete'),
     path('order_status_change/<int:pk>/', views.order_status_change, name='order_status_change'),
     path('order_view_all/', views.order_view_all, name='order_view_all'),
+    path('order_status/', views.order_status, name='order_status'),
+    path('add_order_status/', views.add_order_status, name='add_order_status'),
+    path('edit_order_status/<int:pk>/', views.edit_order_status, name='edit_order_status'),
+    path('delete_order_status/<int:pk>/', views.delete_order_status, name='delete_order_status'),
 
 
 

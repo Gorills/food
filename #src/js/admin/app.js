@@ -977,23 +977,24 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Функция для показа уведомления о новом заказе
+  
+
+    // Функция для запуска опроса API каждые 30 секунд
+    function startPolling() {
+        fetchOrders();
+        setInterval(fetchOrders, 5000);
+    }
+
+    // Проверяем, загрузилась ли страница, перед началом опроса API
+    if ($(document).readyState === "complete") {
+        startPolling();
+    } else {
+        $(document).ready(startPolling);
+    }
   }
 
-  // Функция для показа уведомления о новом заказе
- 
-
-  // Функция для запуска опроса API каждые 30 секунд
-  function startPolling() {
-      fetchOrders();
-      setInterval(fetchOrders, 5000);
-  }
-
-  // Проверяем, загрузилась ли страница, перед началом опроса API
-  if ($(document).readyState === "complete") {
-      startPolling();
-  } else {
-      $(document).ready(startPolling);
-  }
 });
 
 

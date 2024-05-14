@@ -1,7 +1,7 @@
 from django import forms
 from coupons.models import Coupon
 from subdomains.models import Subdomain
-from orders.models import Order 
+from orders.models import Order, OrderStatus 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -790,6 +790,13 @@ class OrderForm(forms.ModelForm):
         else:
             # Если экземпляр еще не создан, обычно используются стандартные статусы
             self.fields['status'].widget.choices = Order.STATUS_CLASS
+
+
+
+class OrderStatusForm(forms.ModelForm):
+    class Meta:
+        model = OrderStatus
+        fields = '__all__'
 
 
 

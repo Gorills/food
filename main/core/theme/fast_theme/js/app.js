@@ -245,7 +245,7 @@ function setOrder() {
 
     }
 
-    console.log(order)
+    
 
     let phone = ''
     fetch('/api/v1/get_user/')
@@ -1398,7 +1398,7 @@ function checkProducts() {
     products.forEach(function(product) {
         
         let id = product.getAttribute('data-cart-id');
-        console.log(id)
+        
 
         let type = product.getAttribute('data-type');
         let optionsIdString = product.getAttribute('data-optionsid');
@@ -1826,6 +1826,8 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
+                
+
                 // Обновление или удаление данных из localStorage
                 order.address = '';
                 localStorage.setItem('order', JSON.stringify(order));
@@ -1847,6 +1849,7 @@ $(document).on('click', '.order_create', function(e) {
                     
     
                     localStorage.setItem('lastOrder', JSON.stringify(data));
+                    localStorage.setItem('lastLastOrder', JSON.stringify(data));
     
                     $('.order__load').removeClass('order__load--active')
                     $('.odred-done').addClass('odred-done--active')
@@ -1880,10 +1883,10 @@ $(document).on('click', '.order_create', function(e) {
 
 // проверка последнего заказа
 jQuery(document).ready(function () {
-    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    let last_order = JSON.parse(localStorage.getItem('lastLastOrder'));
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
+    console.log(last_order)
     
-    // console.log(last_order)
     let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
 
     if (order_id != "") {
@@ -2058,11 +2061,13 @@ function getLastOrder() {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     res = pathname.replace(origin, '')
     
-    console.log(last_order)
+    
     let pay_method = last_order.pay_method
     let show_order_set = last_order.show
 
     let is_site = pay_method.indexOf('сайт') > -1
+
+    
 
     if(last_order || res.indexOf('/?order=True') > -1) {
         
@@ -2079,9 +2084,9 @@ function getLastOrder() {
             show_last_order = false
         }
 
-
-
+        console.log(last_order)
         console.log(show_last_order, is_site)
+        
         
         if (show_last_order) {
             // // Преобразуем объект в строку JSON-формата
@@ -2258,9 +2263,6 @@ function getLastOrder() {
                             </div>
                             
 
-
-                            
-
                             <div class="odred-done__body">
                                 <div class="order__delivery-check">
                                     ${order_delivery_items}
@@ -2358,24 +2360,9 @@ function getLastOrder() {
                         <div class="odred-done__bottom">
 
 
-                        
-                            
-                            
-                        
-
-                        
-                            
-
-                        
-
-                            
-                        
-
                             <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
 
-                        
-
-                            
+                
                         </div>
 
                     </div>
@@ -2402,6 +2389,16 @@ function getLastOrder() {
 }
 getLastOrder()
 
+
+
+$(document).on('click','.odred-done__inner',function(e){
+    
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    let last_last_order = JSON.parse(localStorage.getItem('lastLastOrder'));
+    console.log(last_order)
+    console.log(last_last_order)
+})
+
 $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
     $('.odred-done').removeClass('odred-done--active')
     $('body').removeClass('body');
@@ -2409,7 +2406,7 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
     last_order.show = false
     localStorage.setItem('lastOrder', JSON.stringify(last_order))
     
-    console.log(localStorage.setItem('lastOrder', JSON.stringify(last_order)))
+    
     window.location.href = '/';
     
 
@@ -2672,7 +2669,7 @@ async function addToCart(itemId, name, price, image, optionsIdString, type) {
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    console.log(cart)
+    
     fetchRelatedItems();
     updateAll();
     refreshBalls();
@@ -3290,7 +3287,7 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
                 localStorage.setItem('loyalCart', JSON.stringify(set_data));
                 maxBallsPay();
 
-                console.log(maxBallsPay())
+                
             })
             .catch(error => console.error('Ошибка загрузки пользователя:', error));
 
@@ -3856,46 +3853,6 @@ $('.delivery-popup__btn').click(function() {
 
 
 
-// Дополнительные товары в корзине
-function getCartProduct() {
-    fetch('/api/v1/get_cart_products/')
-        .then(response => response.json())
-        .then(data => {
-
-            for (let i = 0; i < data.length; i++) {
-                let item = data[i];
-                let itemHtml = `
-                    <div class="cart__item">
-                        <div class="cart__item-img">
-                            <a href="/catalog/${item.id}/">
-                                <img src="${item.thumb}" alt="${item.name}">
-                            </a>
-                        </div>
-                        <div class="cart__item-info">
-                            <div class="cart__item-name">
-                                <a href="/catalog/${item.id}/">
-                                    ${item.name}
-                                </a>
-                            </div>
-                            
-                        </div>
-                        <div class="cart__item-price">
-                            ${parseFloat(item.price).toFixed(2)}₽
-                        </div>
-                    </div>
-                `;
-                console.log(itemHtml)
-            }
-        })
-        .catch(error => console.error('Ошибка загрузки товаров:', error));
-}
-
-// getCartProduct()
-
-
-
-
-
 
 // Options product detail
 
@@ -3956,7 +3913,7 @@ $(document).ready(function() {
         // Получаем значение атрибута data-price первого элемента
         var optionPrice = firstOption.attr('data-price');
 
-        console.log(optionValue)
+        
     
         // Находим элемент select-wrap__input внутри текущего блока и устанавливаем его значение и атрибуты data-id и data-price
         $(this).find('.select-wrap__input').val(optionValue);

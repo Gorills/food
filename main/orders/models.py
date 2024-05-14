@@ -9,6 +9,87 @@ from django.contrib.auth.models import User
 # Create your models here.
 from shop.models import Combo, Product, ProductOption, Ingridients, FoodConstructor
 
+
+
+class OrderStatus(models.Model):
+    name = models.CharField(max_length=250, verbose_name='Название')
+    sort = models.PositiveIntegerField(default=0, verbose_name='Сортировка')
+    image = models.ImageField(upload_to='order_status', null=True, blank=True, verbose_name='Изображение')
+
+    ORDER_TYPE_CLASS = (
+        ('delivery', 'Доставка'),
+        ('pickup', 'Самовывоз'),
+        ('all', 'Все'),
+    )
+
+    order_type = models.CharField(max_length=250, choices=ORDER_TYPE_CLASS, default='delivery', verbose_name='Тип заказа')
+
+    def __str__(self):
+        return self.name
+
+
+
+def default_order_status():
+    STATUS_CLASS = (
+       ('Новый', 'Новый'),
+       ('Готовится', 'Готовится'),
+       ('Готов к доставке', 'Готов к доставке'),
+       ('Готов к выдаче', 'Готов к выдаче'),
+       
+       ('Доставлен', 'Доставлен'),
+       ('Выполнен', 'Выполнен'),
+       ('Отказ', 'Отказ')
+    )
+    return STATUS_CLASS
+
+def pickup_order_status():
+    statuses = OrderStatus.objects.filter(order_type='pickup')
+    STATUS_CLASS_SELF_PICKUP = (
+        ('Новый', 'Новый'),
+        
+    )
+    if len(statuses) > 0:
+        for status in statuses:
+            STATUS_CLASS_SELF_PICKUP += ((status.name, status.name),)
+    
+    else:
+        STATUS_CLASS_SELF_PICKUP = (
+            ('Новый', 'Новый'),
+            ('Готовится', 'Готовится'),
+            ('Готов к выдаче', 'Готов к выдаче'),
+            ('Выполнен', 'Выполнен'),
+            ('Отказ', 'Отказ')
+        )
+    return STATUS_CLASS_SELF_PICKUP
+
+
+
+def delivery_order_status():
+    statuses = OrderStatus.objects.filter(order_type='delivery')
+    STATUS_CLASS_DELIVERY = (
+        ('Новый', 'Новый'),
+    )
+    if len(statuses) > 0:
+        for status in statuses:
+            STATUS_CLASS_DELIVERY += ((status.name, status.name),)
+    
+    else:
+        STATUS_CLASS_DELIVERY = (
+            ('Новый', 'Новый'),
+            ('Готовится', 'Готовится'),
+            ('Готов к доставке', 'Готов к доставке'),
+            ('Доставка', 'Доставка'),
+            ('Доставлен', 'Доставлен'),
+            ('Выполнен', 'Выполнен'),
+            ('Отказ', 'Отказ')
+        )
+
+    
+    return STATUS_CLASS_DELIVERY
+            
+    
+
+
 class Order(models.Model):
     # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='user_order')
 
@@ -44,34 +125,11 @@ class Order(models.Model):
     sale_percent = models.PositiveIntegerField(null=True, blank=True, default=0, verbose_name="Процент скидки")
     bonuses_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    STATUS_CLASS = (
-       ('Новый', 'Новый'),
-       ('Готовится', 'Готовится'),
-       ('Готов к доставке', 'Готов к доставке'),
-       ('Готов к выдаче', 'Готов к выдаче'),
-       
-       ('Доставлен', 'Доставлен'),
-       ('Выполнен', 'Выполнен'),
-       ('Отказ', 'Отказ')
-    )
+    STATUS_CLASS = default_order_status()
 
-    STATUS_CLASS_SELF_PICKUP = (
-       ('Новый', 'Новый'),
-       ('Готовится', 'Готовится'),
-       ('Готов к выдаче', 'Готов к выдаче'),
-       ('Выполнен', 'Выполнен'),
-       ('Отказ', 'Отказ')
-    )
+    STATUS_CLASS_SELF_PICKUP = pickup_order_status()
 
-    STATUS_CLASS_DELIVERY = (
-       ('Новый', 'Новый'),
-       ('Готовится', 'Готовится'),
-       ('Готов к доставке', 'Готов к доставке'),
-       ('Доставка', 'Доставка'),
-       ('Доставлен', 'Доставлен'),
-       ('Выполнен', 'Выполнен'),
-       ('Отказ', 'Отказ')
-    )
+    STATUS_CLASS_DELIVERY = delivery_order_status()
 
     status = models.CharField(max_length=250, verbose_name='Статус заказа', choices=STATUS_CLASS, default='Новый',)
     coupon = models.ForeignKey(Coupon,
