@@ -312,8 +312,11 @@ def order_create(request):
         
         cart = []
             
+        text_to_pay_cart = ShopSetup.objects.get().text_to_pay_cart
 
-        if json_order['pay_method'] == 'Картой на сайте':
+        if json_order['pay_method'] == text_to_pay_cart:
+
+            print(text_to_pay_cart, json_order['pay_method'])
 
             # отправлять заказ в телеграм бот, даже если не прошла оплата
             info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway

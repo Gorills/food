@@ -1000,3 +1000,12 @@ $(document).ready(function() {
 });
 
 
+
+$(document).on('click','.toggle-menu',function(e){
+  e.preventDefault();
+  $(".menu-btn").toggleClass('menu-btn_active');
+  $(".sidebar").toggleClass('sidebar--active');
+  
+ 
+ 
+})

@@ -7,11 +7,11 @@
 
                
 
-                <div class="tabs">
+                {% comment %} <div class="tabs">
 
                   
                     <span class="tabs__glider {% if request.session.sidebar == 'False' %}tabs__glider--active{% endif %}"></span>
-                </div>
+                </div> {% endcomment %}
             </div>
            
             
@@ -40,6 +40,14 @@
                 {% endif %}
 
                 <a href="{% url 'home' %}" target="_blank" class="btn btn--primary">На сайт</a>
+
+                <div class="toggle-menu" id="menu">
+                    <div class="toggle-section">
+                        <a href="#" class="menu-btn">
+                            <span></span>
+                        </a>
+                    </div>
+                </div>
 
                 {% comment %} <div class="header__item">
 

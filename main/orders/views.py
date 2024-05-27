@@ -424,7 +424,7 @@ def order_confirm(request, pk):
         if status == 'succeeded':
             
 
-            if LoyaltyCardSettings.objects.get().active == True:
+            if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True: 
                 user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
                 try:
                     loyalty_card = LoyaltyCard.objects.get(user=user_profile)
@@ -456,7 +456,7 @@ def order_confirm(request, pk):
 
                 order_telegram(telegram_bot, telegram_group, order)
                 
-                send_sms(sms_text(order.id, order.summ), order.phone)
+                # send_sms(sms_text(order.id, order.summ), order.phone)
 
             return redirect(f'/?order=True')
         

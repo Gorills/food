@@ -3998,3 +3998,11 @@ $(document).ready(function() {
   
   
 
+
+
+function clearAll() {
+    
+    localStorage.clear();
+}
+
+// clearAll()

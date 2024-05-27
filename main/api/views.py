@@ -116,6 +116,7 @@ def get_shop_settings(request):
             'description': pay_method.description
         })
     
+    text_to_pay_cart = settings.text_to_pay_cart
     if not pay_methods_arr:
 
         if settings.only_pay_with_delivery:
@@ -137,7 +138,7 @@ def get_shop_settings(request):
 
     if pay_online:
         pay_methods_arr.append({
-            'name': 'Картой на сайте',
+            'name': text_to_pay_cart,
             'in_pay_delivery': True,
             'in_pay_pickup': True
         })

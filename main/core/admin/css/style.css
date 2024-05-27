@@ -712,44 +712,6 @@ label span {
   transition: all 0.5s ease;
 }
 
-.sidebar--min {
-  overflow-y: visible;
-  z-index: 999999999;
-  width: 64px;
-  text-align: center;
-}
-
-.sidebar--min .sidebar__logo {
-  display: none;
-}
-
-.sidebar--min .sidebar__mini-logo {
-  display: block;
-  margin: 0 auto;
-}
-
-.sidebar--min .sidebar__title span {
-  display: none;
-}
-
-.sidebar--min .sidebar__title {
-  justify-content: center;
-}
-
-.sidebar--min .sidebar__drop {
-  position: absolute;
-  left: 64px;
-  top: 0;
-  background-color: #fff;
-  padding: 20px;
-  white-space: nowrap;
-  box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
-}
-
-.sidebar--min .sidebar__link {
-  padding: 10px 10px 10px 10px;
-}
-
 .sidebar__top {
   padding: 24px;
   background-color: #f3f6f9;
@@ -2040,6 +2002,78 @@ label span {
   background-color: #9AFDD2;
 }
 
+.toggle-menu {
+  z-index: 9999;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  display: none;
+  position: relative;
+}
+
+.toggle-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  outline: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.menu-btn {
+  display: flex;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: relative;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.menu-btn span,
+.menu-btn span::before,
+.menu-btn span::after {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 50%;
+  margin-top: -1px;
+  left: 50%;
+  margin-left: -10px;
+  width: 20px;
+  height: 2px;
+  border-radius: 30px;
+  background-color: #000;
+}
+
+.menu-btn span::after {
+  width: 20px;
+}
+
+.menu-btn span::before,
+.menu-btn span::after {
+  content: "";
+  display: block;
+  transition: 0.2s;
+}
+
+.menu-btn span::before {
+  transform: translateY(-5px);
+}
+
+.menu-btn span::after {
+  transform: translateY(5px);
+}
+
+.menu-btn_active span:before {
+  transform: rotate(-45deg);
+}
+
+.menu-btn_active span {
+  height: 0;
+}
+
+.menu-btn_active span:after {
+  transform: rotate(45deg);
+  width: 20px;
+}
+
 @media screen and (max-width: 768px) {
   .page {
     flex-direction: column;
@@ -2056,6 +2090,11 @@ label span {
 
   .form--mini {
     max-width: 100%;
+  }
+
+  .toggle-menu {
+    display: block;
+    margin-left: 20px;
   }
 }
 
@@ -2088,41 +2127,20 @@ label span {
 
 @media screen and (max-width: 480px) {
   .sidebar {
-    overflow-y: visible;
-    z-index: 999999999;
-    width: 64px;
-    text-align: center;
-  }
-
-  .sidebar .sidebar__logo {
-    display: none;
-  }
-
-  .sidebar .sidebar__mini-logo {
-    display: block;
-    margin: 0 auto;
-  }
-
-  .sidebar .sidebar__title span {
-    display: none;
-  }
-
-  .sidebar .sidebar__title {
-    justify-content: center;
-  }
-
-  .sidebar .sidebar__drop {
     position: absolute;
-    left: 64px;
     top: 0;
-    background-color: #fff;
-    padding: 20px;
-    white-space: nowrap;
-    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    bottom: 0;
+    width: 100%;
+    z-index: 999;
+    left: -100%;
   }
 
-  .sidebar .sidebar__link {
-    padding: 10px 10px 10px 10px;
+  .sidebar--active {
+    left: 0;
+  }
+
+  .sidebar__top {
+    padding: 50px 24px;
   }
 
   .responsive-table .col {

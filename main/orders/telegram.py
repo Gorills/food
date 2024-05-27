@@ -23,7 +23,8 @@ def send_message(telegram_bot, telegram_group, message):
 
 def order_telegram(telegram_bot, telegram_group, order):
     pr = []
-                    
+    
+    print(order)
     
     for item in order.items.all():
         
