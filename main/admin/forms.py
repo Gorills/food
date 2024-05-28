@@ -872,11 +872,25 @@ class SliderSetupForm(forms.ModelForm):
         model = SliderSetup
         fields = "__all__"
         widgets = {
+
+
             'speed': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
             'height': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'height_mob': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'title_size': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'desc_size': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
             }),

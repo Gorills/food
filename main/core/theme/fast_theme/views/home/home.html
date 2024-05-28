@@ -32,12 +32,12 @@
         <div class="sl__item" height="{{ slider_setup.height }}">
             <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
                 <div class="container">
-                    <div class="sl__wrap-inner">
+                    <div class="sl__wrap-inner" style="text-align: {{ slider_setup.text_align }}">
                         {% if slider.title %}
-                            <h2 class="sl__title">{{ slider.title }}</h2>
+                            <h2 class="sl__title" style="font-size: {{ slider_setup.title_size }}px;text-align: {{ slider_setup.text_align }}">{{ slider.title }}</h2>
                         {% endif %}
                         {% if slider.text %}
-                            <p class="sl__text">{{ slider.text | safe }}</p>
+                            <p class="sl__text" style="font-size: {{ slider_setup.desc_size }}px;text-align: {{ slider_setup.text_align }}">{{ slider.text | safe }}</p>
                         {% endif %}
                     </div>
                     {% if slider.button_text %}
@@ -115,6 +115,7 @@
     {% endif %}
 </div>
 {% endif %}
+
 
 
 

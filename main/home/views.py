@@ -216,7 +216,7 @@ def home(request):
 
 
 
-    sliders = Slider.objects.filter(day__in=[7, current_day]).order_by('order')
+    sliders = Slider.objects.filter(day__in=[7, current_day], show=True).order_by('order')
 
     new_products = Product.objects.filter(new=True, status=True).exclude(stock=0).order_by('-id')[:8]
 

@@ -2576,8 +2576,6 @@ a {
   margin-bottom: 10px;
   font-size: 34px;
   width: 100%;
-  max-width: 650px;
-  margin: 0 auto;
 }
 
 .sl .owl-prev {
@@ -3937,8 +3935,7 @@ a {
 }
 
 .product-detail__image {
-  width: 100%;
-  max-width: 750px;
+  max-width: 500px;
 }
 
 .product-detail__left {

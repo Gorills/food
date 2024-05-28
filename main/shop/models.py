@@ -37,6 +37,8 @@ class ShopSetup(SingletonModel):
     free_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа для бесплатной доставки', default=0)
     min_delivery = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Минимальная сумма заказа для доставки', default=0)
 
+    cart_btn_text = models.CharField(max_length=250, verbose_name='Текст кнопки "В корзину"', null=True, blank=True, default='В корзину')
+
     show_descrioption = models.BooleanField(default=False, verbose_name='Показать короткое описание товара под карточкой')
     
     status = models.CharField(max_length=250, verbose_name='Товар при 0 остатке', choices=STATUS_CLASS, default='out_of_stock')

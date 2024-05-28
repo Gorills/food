@@ -15,6 +15,16 @@ class SliderSetup(SingletonModel):
     full_screen = models.BooleanField(default=True, verbose_name='Включить полноэкранный режим')
     height = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера')
     height_mob = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера для мобильного')
+    title_size = models.CharField(max_length=250, default=56, verbose_name='Размер шрифта заголовка')
+    desc_size = models.CharField(max_length=250, default=24, verbose_name='Размер шрифта описания')
+
+    TEXT_CHOISE = (
+        ('start', 'Слева'),
+        ('center', 'По центру'),
+        ('end', 'Справа'),
+    )
+
+    text_align = models.CharField(max_length=250, default='center', choices=TEXT_CHOISE, verbose_name='Выравнивание текста')
     image_compression = models.PositiveIntegerField(blank=True, null=True, default=1, verbose_name='Качество изображения')
 
 
@@ -48,6 +58,7 @@ class Slider(models.Model):
        (6, 'Воскресенье'),
     )
     day = models.PositiveIntegerField(default=7, verbose_name='День недели для показа', choices=DAY_CLASS)
+    show = models.BooleanField(default=True, verbose_name='Показывать')
 
     def __str__(self):
         return self.name
