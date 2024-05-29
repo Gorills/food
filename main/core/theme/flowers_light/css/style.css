@@ -5526,6 +5526,11 @@ td.product-thumbnail img {
   white-space: nowrap;
 }
 
+.order__checkup {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 .order__checkup-item {
   margin-bottom: 20px;
 }
