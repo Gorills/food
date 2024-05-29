@@ -29,7 +29,7 @@
         
         
         {% for slider in sliders %}
-        <div class="sl__item" height="{{ slider_setup.height }}">
+        <div class="sl__item" height="{{ slider_setup.height }}" style="background: {{ slider.bg }};">
             <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
                 <div class="container">
                     <div class="sl__wrap-inner" style="text-align: {{ slider_setup.text_align }}">
@@ -49,8 +49,8 @@
                 {% if slider.link %}
                     <a href="{{ slider.link }}" class="sl__item-link">
                 {% endif %}
-                <img src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
-                <img src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
                 {% if slider.link %}
                     </a>
                 {% endif %}
@@ -70,7 +70,7 @@
         
         
             {% for slider in sliders %}
-            <div class="sl__item">
+            <div class="sl__item" style="background: {{ slider.bg }};">
                 {% if slider.link %}
                     <a href="{{ slider.link }}" class="sl__item-link">
                 {% endif %}
@@ -96,8 +96,8 @@
 
                 {% if slider.file_format == 'photo' %}
                     
-                    <img src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
-                    <img src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                    <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                    <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
                    
                 {% elif slider.file_format == 'video' %}
                     <video class="sl__video" muted autoplay loop>

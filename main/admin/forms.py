@@ -937,6 +937,17 @@ class SliderForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Ссылка (не обязательно)',
             }),
+            'image_opacity': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'bg': forms.TextInput(attrs={
+                
+                'placeholder': 'Значение',  
+                "type": "color"
+            }),
+
+
         }
 
 

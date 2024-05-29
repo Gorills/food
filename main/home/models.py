@@ -42,6 +42,8 @@ class Slider(models.Model):
     
 
     image = models.FileField(upload_to=get_image_upload_path, verbose_name='Изображение/видео')
+    image_opacity = models.PositiveIntegerField(default=100, verbose_name='Непрозрачность изображения')
+    bg = models.CharField(max_length=250, null=True, blank=True, default='#FFFFFF', verbose_name='Цвет фона (не обязательно)')
     image_mob = models.FileField(upload_to=get_image_upload_path, verbose_name='Изображение/видео для мобильного', null=True, blank=True)
     text = models.TextField(null=True, blank=True, verbose_name='Текст (не обязательно)')
     button_text = models.CharField(max_length=250, null=True, blank=True, verbose_name='Текст кнопки (не обязательно)')
