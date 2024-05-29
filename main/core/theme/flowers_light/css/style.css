@@ -7087,6 +7087,7 @@ td.product-thumbnail img {
   .sl__item {
     padding: 15px;
     overflow: hidden;
+    background: none !important;
   }
 
   .sl__img {
