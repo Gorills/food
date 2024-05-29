@@ -23,6 +23,10 @@
     &__item {
         display: flex;
         margin-bottom: 40px;
+
+        @media screen and (max-width:480px) {
+            flex-direction: column;
+        }
     }
 
     // .contacts-design__icon
@@ -32,6 +36,13 @@
         max-width: 150px;
         margin-right: 60px;
         display: flex;
+
+        @media screen and (max-width:480px) {
+            margin: 0 auto;
+            justify-content: center;
+            margin-bottom: 40px;
+            
+        }
         
 
         svg {
@@ -39,6 +50,11 @@
             width: 30px;
             min-width: 30px;
             height: 30px;
+
+            @media screen and (max-width:480px) {
+                margin-right: 0;
+                
+            }
         }
         img {
             margin-right: 20px;
