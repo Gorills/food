@@ -6477,11 +6477,11 @@ td.product-thumbnail img {
 
 @media screen and (max-width: 786px) {
   .sl__title {
-    font-size: 60px;
+    font-size: 60px !important;
   }
 
   .sl__text {
-    font-size: 28px;
+    font-size: 28px !important;
   }
 }
 
@@ -7099,12 +7099,12 @@ td.product-thumbnail img {
   }
 
   .sl__title {
-    font-size: 30px;
+    font-size: 30px !important;
     line-height: 1;
   }
 
   .sl__text {
-    font-size: 16px;
+    font-size: 16px !important;
     line-height: 1;
   }
 

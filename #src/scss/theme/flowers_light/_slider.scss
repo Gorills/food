@@ -86,10 +86,10 @@
         font-size: 112px;
 
         @media screen and (max-width: 786px) {
-            font-size: 60px;
+            font-size: 60px!important;
         }
         @media screen and (max-width: 480px) {
-            font-size: 30px;
+            font-size: 30px!important;
             line-height: 1;
         }
     }
@@ -103,10 +103,10 @@
         // max-width: 650px;
         // margin: 0 auto;
         @media screen and (max-width: 786px) {
-            font-size: 28px;
+            font-size: 28px!important;
         }
         @media screen and (max-width: 480px) {
-            font-size: 16px;
+            font-size: 16px!important;
             line-height: 1;
         }
     }
