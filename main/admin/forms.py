@@ -2206,6 +2206,7 @@ class SetupForm(forms.ModelForm):
             'telegram',
             'viber',
             'ok',
+            'instagram',
             'meta_title',
             'meta_description',
             'meta_keywords',
@@ -2283,6 +2284,10 @@ class SetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Ссылка на OK',
                 
+            }),
+            'instagram': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на Instagram',
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'input',

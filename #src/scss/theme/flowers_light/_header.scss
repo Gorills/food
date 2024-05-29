@@ -22,6 +22,11 @@
         .header-bottom__link {
             padding: 8px;
         }
+
+        .header__left {
+            display: none;
+        }
+
         .header__logo {
             display: none;
         }
@@ -331,6 +336,27 @@
             margin-top: 10px;
            
         }
+    }
+
+    // .header__soc-wrap
+
+    &__soc-wrap {
+        display: flex;
+        align-items: center;
+
+        a {
+            color: #454545;
+        }
+
+        svg {
+            path {
+                fill: #454545!important;
+            }
+        }
+
+        // @media screen and (max-width:768px) {
+        //     display: none;
+        // }
     }
 
     // .header__sign

@@ -40,6 +40,7 @@ class BaseSettings(SingletonModel):
     telegram = models.CharField(max_length=350, blank=True, null=True)
     viber = models.CharField(max_length=350, blank=True, null=True)
     ok = models.CharField(max_length=350, blank=True, null=True)
+    instagram = models.CharField(max_length=350, blank=True, null=True)
     
         
     meta_title = models.CharField(max_length=350, blank=True, null=True)
