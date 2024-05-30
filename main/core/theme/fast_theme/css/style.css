@@ -3178,6 +3178,10 @@ a {
   grid-gap: 20px;
 }
 
+.product-list--slider .product-list__weight {
+  display: none;
+}
+
 .product-list--slider .product-list__item--big {
   padding: 20px;
 }

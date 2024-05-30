@@ -3167,6 +3167,14 @@ a {
   grid-gap: 10px;
 }
 
+.product-list--slider .product-list__weight {
+  display: none;
+}
+
+.product-list--slider .product-list__desc {
+  display: none;
+}
+
 .product-list .btn {
   text-align: center;
 }

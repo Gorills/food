@@ -18,6 +18,13 @@
     }
 
     &--slider {
+
+        .product-list__weight {
+            display: none;
+        }
+        .product-list__desc {
+            display: none;
+        }
         .product-list__item--big {
             // padding: 20px;
 

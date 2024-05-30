@@ -28,8 +28,13 @@
     }
 
     &--slider {
+        .product-list__weight {
+            display: none;
+        }
         .product-list__item--big {
             padding: 20px;
+
+            
 
             @media screen and (max-width: 480px) {
                 padding: 10px;
