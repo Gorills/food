@@ -2190,6 +2190,7 @@ class SetupForm(forms.ModelForm):
             'ogrn',
             'okpo',
             'phone',
+            'phone_desc',
             'email',
             'email_for_order',
             'telegram_bot',
@@ -2201,12 +2202,20 @@ class SetupForm(forms.ModelForm):
             
             'city',
             'address',
+            'site_link',
+            'site_desc',
             'vk',
+            'vk_desc',
             'whatsapp',
+            'whatsapp_desc',
             'telegram',
+            'telegram_desc',
             'viber',
+            'viber_desc',
             'ok',
+            'ok_desc',
             'instagram',
+            'instagram_desc',
             'meta_title',
             'meta_description',
             'meta_keywords',
@@ -2289,6 +2298,52 @@ class SetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Ссылка на Instagram',
             }),
+            'site_link': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Ссылка на сайт',
+                
+            }),
+            'phone_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание телефона',
+            }),
+            'site_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание сайта',
+                
+            }),
+            'vk_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание VK',
+                
+            }),
+            'whatsapp_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание WhatsApp',
+                
+            }),
+            'telegram_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание Telegram',
+                
+            }),
+            'viber_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание Viber',
+                
+            }),
+            'ok_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание OK',
+                
+            }),
+            'instagram_desc': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Описание Instagram',
+                
+            }),
+
+
             'phone': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Телефон',

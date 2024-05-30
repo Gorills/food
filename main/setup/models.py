@@ -18,6 +18,7 @@ class BaseSettings(SingletonModel):
     okpo = models.CharField(max_length=350, blank=True, null=True)
 
     phone = models.CharField(max_length=250, blank=True, null=True)
+    phone_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     email = models.EmailField(blank=True, null=True)
     email_for_order = models.EmailField(blank=True, null=True)
 
@@ -35,12 +36,21 @@ class BaseSettings(SingletonModel):
     city = models.CharField(max_length=350, blank=True, null=True)
     address = models.CharField(max_length=500, blank=True, null=True)
 
+
+    site_link = models.CharField(max_length=350, blank=True, null=True, verbose_name="Ссылка на сайт")
+    site_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание сайта для страницы info")
     vk = models.CharField(max_length=350, blank=True, null=True)
+    vk_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     whatsapp = models.CharField(max_length=350, blank=True, null=True)
+    whatsapp_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     telegram = models.CharField(max_length=350, blank=True, null=True)
+    telegram_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     viber = models.CharField(max_length=350, blank=True, null=True)
+    viber_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     ok = models.CharField(max_length=350, blank=True, null=True)
+    ok_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     instagram = models.CharField(max_length=350, blank=True, null=True)
+    instagram_desc = models.CharField(max_length=350, blank=True, null=True, verbose_name="Описание для страницы info")
     
         
     meta_title = models.CharField(max_length=350, blank=True, null=True)

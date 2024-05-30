@@ -1,0 +1,78 @@
+
+{% extends '../global/info.html' %}
+{% load thumbnail %}
+{% block title %}Страница контактов{% endblock %}
+{% block description %}Страница контактов{% endblock %}
+{% block keywords %}{{ setup.meta_keywords }}{% endblock %}
+{% block canonical %}{% endblock %}
+{% block og:title %}Страница контактов{% endblock %}
+{% block og:description %}Страница контактов{% endblock %}
+{% block og:url %}{% endblock %}
+{% block twitter:title %}Страница контактов{% endblock %}
+{% block twitter:description %}Страница контактов{% endblock %}
+{% block og:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block og:image:secure_url %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+{% block twitter:image %}{% thumbnail setup.social_image "537x240" format="PNG" as im %}{{ im.url }}{% endthumbnail %}{% endblock %}
+
+
+
+
+{% block body %}
+{% load static %}
+{% load thumbnail %}
+{% load theme_static %}
+
+
+<div class="taplink">
+
+    <div class="taplink__inner">
+
+        <div class="taplink__top">
+            <img src="{{ setup.logo_dark.url }}" alt="" class="taplink__logo">
+            <h1 class="taplink__title">{{ setup.site_link }}</h1>
+            <p class="taplink__text">{{ setup.site_desc }}</p>
+        </div>
+
+        {% if setup.whatsapp %}
+        <a href="{{ setup.whatsapp }}" class="taplink__item">
+            <p>WHATSAPP</p>
+            <p>{{ setup.whatsapp_desc }}</p>
+
+        </a>
+        {% endif %}
+        {% if setup.phone %}
+        <a href="tel:{{ setup.phone }}" class="taplink__item">
+            <p>ЗВОНОК</p>
+            <p>{{ setup.phone_desc }}</p>
+
+        </a>
+        {% endif %}
+        {% if setup.instagram %}
+        <a href="{{ setup.instagram }}" class="taplink__item">
+            <p>INSTAGRAM</p>
+            <p>{{ setup.instagram_desc }}</p>
+
+        </a>
+        {% endif %}
+        {% if setup.site_link %}
+        <a href="{{ setup.site_link }}" class="taplink__item">
+            <p>САЙТ</p>
+            <p>{{ setup.site_desc }}</p>
+
+        </a>
+        {% endif %}
+        {% if setup.telegram %}
+        <a href="{{ setup.telegram }}" class="taplink__item">
+            <p>ТЕЛЕГРАМ</p>
+            <p>{{ setup.telegram }}</p>
+
+        </a>
+        {% endif %}
+    </div>
+
+</div>
+
+
+
+
+{% endblock %}

@@ -364,3 +364,10 @@ def privacy(request):
     }
 
     return render(request, 'home/privacy.html', context)
+
+
+
+def info(request):
+
+    
+    return render(request, 'home/info.html')
