@@ -6295,6 +6295,11 @@ td.product-thumbnail img {
   margin-left: 20px;
 }
 
+.odred-done__ok {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
 .cookies {
   position: fixed;
   width: 100%;
