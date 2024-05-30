@@ -105,7 +105,7 @@ class Slider(models.Model):
         height = setup.height
         width = 1920
         image_compression = setup.image_compression
-        res = get_thumbnail(self.image, f'{width * image_compression}x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
+        res = get_thumbnail(self.image, f'x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
         return res
     
     def get_image_mob(self):
@@ -113,7 +113,7 @@ class Slider(models.Model):
         height = setup.height_mob
         width = 560
         image_compression = setup.image_compression
-        res = get_thumbnail(self.image_mob, f'{width * image_compression}x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
+        res = get_thumbnail(self.image_mob, f'x{int(height) * image_compression}', format="WEBP", crop='center', quality=100)
         return res
 
     class Meta:
