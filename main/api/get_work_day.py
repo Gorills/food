@@ -203,7 +203,7 @@ def get_hours(request):
     days = []
      
 
-    while count < 6:
+    while count < 24:
         mod_date = now_date + timedelta(days=count)
 
         day_count_now = mod_date.weekday()
