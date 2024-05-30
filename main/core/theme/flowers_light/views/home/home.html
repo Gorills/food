@@ -320,7 +320,7 @@
 
                 <h3 class="title">Витрина <span>{% now "d.m.y" %}</span></h3>
 
-                {% include 'components/product_list.html' with slider='true' products=cat.products.all big='product-list__item--big' size='290x193' %}
+                {% include 'components/product_list.html' with slider='true' products=cat.all_active_products big='product-list__item--big' size='290x193' %}
 
             </div>
         </div>
