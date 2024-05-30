@@ -2600,6 +2600,7 @@ a {
 .sl__item {
   display: block;
   width: 100%;
+  height: var(--slider-height);
   position: relative;
   color: var(--color-font);
 }
@@ -2613,8 +2614,8 @@ a {
 
 .sl__img-mobile {
   width: 100%;
-  height: fit-content;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
   display: none !important;
 }
 
@@ -7147,6 +7148,7 @@ td.product-thumbnail img {
   }
 
   .sl__item {
+    height: var(--slider-mobile-height);
     padding: 15px;
     overflow: hidden;
     background: none !important;

@@ -12,11 +12,13 @@
         width: 100%;
         // height: calc(100vh - 250px);
         // min-height: 374px;
+        height: var(--slider-height);
         position: relative;
         color: var(--color-font);
 
         @media screen and (max-width: 480px) {
             
+            height: var(--slider-mobile-height);
             padding: 15px;
             overflow: hidden;
 
@@ -42,8 +44,9 @@
     // .sl__img-mobile
     &__img-mobile {
         width: 100%;
-        height: fit-content;
-        object-fit: contain;
+        height: 100%;
+        // height: fit-content;
+        object-fit: cover;
 
         display: none!important;
 
