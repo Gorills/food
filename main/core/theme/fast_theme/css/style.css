@@ -2602,6 +2602,11 @@ a {
   padding-top: 20px;
 }
 
+.sl--min .sl__item {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .sl__item {
   display: block;
   width: 100%;

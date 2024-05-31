@@ -4,6 +4,11 @@
 
     &--min {
         padding-top: 20px;
+
+        .sl__item {
+            border-radius: 8px;
+            overflow: hidden;
+        }
     }
 
 
