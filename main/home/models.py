@@ -16,7 +16,10 @@ class SliderSetup(SingletonModel):
     height = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера')
     height_mob = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера для мобильного')
     title_size = models.CharField(max_length=250, default=56, verbose_name='Размер шрифта заголовка')
+    title_size_mob = models.CharField(max_length=250, default=36, verbose_name='Размер шрифта заголовка для мобильного')
     desc_size = models.CharField(max_length=250, default=24, verbose_name='Размер шрифта описания')
+    desc_size_mob = models.CharField(max_length=250, default=18, verbose_name='Размер шрифта описания для мобильного')
+    text_max_width = models.CharField(max_length=250, default=700, verbose_name='Максимальная ширина текста')
 
     TEXT_CHOISE = (
         ('start', 'Слева'),

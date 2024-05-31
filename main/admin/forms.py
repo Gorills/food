@@ -897,7 +897,27 @@ class SliderSetupForm(forms.ModelForm):
             'image_compression': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'Значение',
-            })
+            }),
+            'title_size': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'desc_size': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'title_size_mob': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'desc_size_mob': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
+            'text_max_width': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
         }
 
 
