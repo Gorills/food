@@ -587,11 +587,11 @@
         font-weight: 700;
         display: flex;
         align-items: center;
-        // color: var(--color-primary);
+        color: var(--color-header-font);
         svg {
             margin-right: 5px;
             path {
-                // fill: var(--color-primary);
+                fill: var(--color-header-font);
             }
         }
     }
