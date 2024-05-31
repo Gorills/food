@@ -59,6 +59,7 @@ function updateContentMargin() {
 
 
 $(document).ready(function() {
+    updateContentMargin()
     // Вызываем функцию при загрузке страницы и при изменении размеров окна
     $(window).on('load resize', function() {
       updateContentMargin();

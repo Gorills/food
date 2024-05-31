@@ -2598,6 +2598,10 @@ a {
   position: relative;
 }
 
+.sl--min {
+  padding-top: 20px;
+}
+
 .sl__item {
   display: block;
   width: 100%;
@@ -7307,8 +7311,8 @@ td.product-thumbnail img {
 
   .sl__item {
     height: var(--slider-mobile-height);
-    padding: 15px;
     overflow: hidden;
+    margin-top: 20px;
     background: none !important;
   }
 

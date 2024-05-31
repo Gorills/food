@@ -1,6 +1,12 @@
 .sl {
     position: relative;
     // padding: 40px 0;
+
+    &--min {
+        padding-top: 20px;
+    }
+
+
     // .sl__inner
     &__inner {
 
@@ -19,8 +25,9 @@
         @media screen and (max-width: 480px) {
             
             height: var(--slider-mobile-height);
-            padding: 15px;
+            // padding: 15px;
             overflow: hidden;
+            margin-top: 20px;
 
             background: none!important;
             

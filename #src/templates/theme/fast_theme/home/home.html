@@ -25,7 +25,7 @@
 {% if sliders.count > 0 %}
 <div class="start">
     {% if slider_setup.full_screen %}
-    <div class="sl owl-carousel" data-speed="{{ slider_setup.speed }}" data-nav="{{ slider_setup.nav }}" data-dots="{{ slider_setup.dots }}" data-autoplay="{{ slider_setup.autoplay }}" >
+    <div class="sl sl--full owl-carousel" data-speed="{{ slider_setup.speed }}" data-nav="{{ slider_setup.nav }}" data-dots="{{ slider_setup.dots }}" data-autoplay="{{ slider_setup.autoplay }}" >
         
         
         {% for slider in sliders %}
@@ -74,35 +74,36 @@
                 {% if slider.link %}
                     <a href="{{ slider.link }}" class="sl__item-link">
                 {% endif %}
-                <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
-                    <div class="container">
-                        
-                        <div class="sl__wrap-inner">
-                            {% if slider.title %}
-                                <h2 class="sl__title" style="font-size: {{ slider_setup.title_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
-                            {% endif %}
-                            {% if slider.text %}
-                                <p class="sl__text" style="font-size: {{ slider_setup.desc_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
-                            {% endif %}
+                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
+                            <div class="container">
+                                
+                                <div class="sl__wrap-inner">
+                                    {% if slider.title %}
+                                        <h2 class="sl__title" style="font-size: {{ slider_setup.title_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
+                                    {% endif %}
+                                    {% if slider.text %}
+                                        <p class="sl__text" style="font-size: {{ slider_setup.desc_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
+                                    {% endif %}
+                                </div>
+                                {% if slider.button_text %}
+                                    <p class="btn btn--primary">{{ slider.button_text }}</p>
+                                {% endif %}
+                            </div>
                         </div>
-                        {% if slider.button_text %}
-                            <p class="btn btn--primary">{{ slider.button_text }}</p>
+                
+
+                        {% if slider.file_format == 'photo' %}
+                            
+                            <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                            <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
+                        
+                        {% elif slider.file_format == 'video' %}
+                            <video class="sl__video" muted autoplay loop>
+                                <source src="{{ slider.image.url }}"  type="video/mp4">
+                            </video>
                         {% endif %}
-                    </div>
-                </div>
                 {% if slider.link %}
                     </a>
-                {% endif %}
-
-                {% if slider.file_format == 'photo' %}
-                    
-                    <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_max.url }}" class="sl__img" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
-                    <img style="opacity: {{ slider.image_opacity }}%;" src="{{ slider.get_image_mob.url  }}" class="sl__img-mobile" alt="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}" title="{% if slider.title %}{{ slider.title }}{% else %}{{ slider.name }}{% endif %}">
-                   
-                {% elif slider.file_format == 'video' %}
-                    <video class="sl__video" muted autoplay loop>
-                        <source src="{{ slider.image.url }}"  type="video/mp4">
-                    </video>
                 {% endif %}
             </div>
             {% endfor %}
