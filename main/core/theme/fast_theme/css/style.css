@@ -2608,12 +2608,20 @@ a {
 }
 
 .sl__item {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: var(--slider-height);
   position: relative;
   color: var(--color-font);
   overflow: hidden;
+}
+
+.sl__item-link {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: var(--slider-justify);
 }
 
 .sl__img {
@@ -2651,9 +2659,6 @@ a {
 
 .sl__wrap--bg {
   padding: 20px 40px;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 
 .sl__title {

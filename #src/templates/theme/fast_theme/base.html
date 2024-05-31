@@ -123,6 +123,8 @@
             --slider-text-desctop: {{ slider_setup.desc_size }}px;
             --slider-text-mobile: {{ slider_setup.desc_size_mob }}px;
             --slider-text-width: {{ slider_setup.text_max_width }}px;
+
+            --slider-justify: {% if slider_setup.text_align == 'start' %}flex-start{% elif slider_setup.text_align == 'center' %}center{% elif slider_setup.text_align == 'end' %}flex-end{% endif %}
         }
     </style>
     {% comment %} Fonts {% endcomment %}
