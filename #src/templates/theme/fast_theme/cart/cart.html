@@ -555,9 +555,10 @@
                 <div class="cart__maby">
 
                     <div class="cart__maby-refresh">
-
-                        <p class="cart__related-title">Возможно, вы забыли заказать</p>
+                        
                         {% if cart_products %}
+                        <p class="cart__related-title">Возможно, вы забыли заказать</p>
+                        
                         
                             {% include 'components/product_list.html' with slider='false' products=cart_products big='mini' size="image_size" %}
 

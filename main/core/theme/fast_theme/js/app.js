@@ -3659,7 +3659,7 @@ function init() {
                                         })
                                         .done(function( response ) {
                                             // Парсинг JSON-ответа
-                                            let price = response.price;
+                                            let price = parseInt(response.price);
                                             
                                             // console.log(response);
                                             

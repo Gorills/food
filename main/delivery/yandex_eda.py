@@ -13,7 +13,7 @@ from cart.cart import Cart
 
 
 try:
-    yandex = Delivery.objects.get(name='yandex')
+    yandex = Delivery.objects.filter().first()
     api_key = yandex.api_key
 
     city = yandex.city
@@ -25,8 +25,10 @@ try:
     auto_accept = yandex.auto_accept
 
     yandex_active = True
-except:
+except Exception as e:
+    print(e)
     yandex_active = False
+
 
 def format_str_coord(coord):
 
@@ -38,12 +40,15 @@ def format_str_coord(coord):
 
 def get_geo(query):
 
+    
+
     if yandex_active:
         
-        search_str = f'{query.replace(" ", "+")}'
+        search_str = f'{query.replace(" ", "+").replace(",", "")}'
         
-
-        geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=c49d80f0-26f7-42fb-b987-8af6aad1074d={search_str}&format=json'
+       
+        geo_url = f'https://geocode-maps.yandex.ru/1.x/?apikey=b0ace043-1020-4411-ac5e-80354ec8241c&geocode={search_str}&format=json'
+        # print(geo_url)
 
         response = requests.get(geo_url)
 
@@ -66,7 +71,7 @@ def get_geo(query):
     
 
 
-# print(get_geo('Томск, Ленина 210'))
+# print(get_geo('Ростов-на-Дону, улица Мадояна, 32'))
 
 
 def delivery_methods():
@@ -188,7 +193,7 @@ def check_price(request):
         return HttpResponse(response, content_type='application/json') 
 
 
-# check_price('Томск, проспект Ленина, 1')
+# check_price('Ростов-на-Дону, улица Мадояна, 32')
     
 
 
