@@ -25,47 +25,64 @@
 
 <div class="taplink">
 
-    <div class="taplink__top">
-        <img src="{{ setup.logo_dark.url }}" alt="" class="taplink__logo">
-        <h1 class="taplink__title">{{ setup.site_link }}</h1>
-        <p class="taplink__text">{{ setup.site_desc }}</p>
+    <div class="taplink__inner">
+
+        <div class="taplink__top">
+            <img src="{{ setup.logo_dark.url }}" alt="" class="taplink__logo">
+            {% if setup.site_link %}
+            <h1 class="taplink__title">{{ setup.site_link }}</h1>
+            {% endif %}
+            {% if setup.site_desc %}
+            <p class="taplink__text">{{ setup.site_desc }}</p>
+            {% endif %}
+        </div>
+
+        {% if setup.whatsapp %}
+        <a href="{{ setup.whatsapp }}" class="taplink__item">
+            <p>WHATSAPP</p>
+            {% if setup.whatsapp_desc %}
+            <p>{{ setup.whatsapp_desc }}</p>
+            {% endif %}
+
+        </a>
+        {% endif %}
+        {% if setup.phone %}
+        <a href="tel:{{ setup.phone }}" class="taplink__item">
+            <p>ЗВОНОК</p>
+            {% if setup.phone_desc %}
+            <p>{{ setup.phone_desc }}</p>
+            {% endif %}
+
+        </a>
+        {% endif %}
+        {% if setup.instagram %}
+        <a href="{{ setup.instagram }}" class="taplink__item">
+            <p>INSTAGRAM</p>
+            {% if setup.instagram_desc %}
+            <p>{{ setup.instagram_desc }}</p>
+            {% endif %}
+
+        </a>
+        {% endif %}
+        {% if setup.site_link %}
+        <a href="{{ setup.site_link }}" class="taplink__item">
+            <p>САЙТ</p>
+            {% if setup.site_desc %}
+            <p>{{ setup.site_desc }}</p>
+            {% endif %}
+        </a>
+        {% endif %}
+        {% if setup.telegram %}
+        <a href="{{ setup.telegram }}" class="taplink__item">
+            <p>ТЕЛЕГРАМ</p>
+            {% if setup.telegram_desc %}
+            <p>{{ setup.telegram_desc }}</p>
+            
+            {% endif %}
+
+        </a>
+        {% endif %}
     </div>
-
-    {% if setup.whatsapp %}
-    <a href="{{ setup.whatsapp }}" class="taplink__item">
-        <p>WHATSAPP</p>
-        <p>{{ setup.whatsapp_desc }}</p>
-
-    </a>
-    {% endif %}
-    {% if setup.phone %}
-    <a href="tel:{{ setup.phone }}" class="taplink__item">
-        <p>Звонок</p>
-        <p>{{ setup.phone_desc }}</p>
-
-    </a>
-    {% endif %}
-    {% if setup.instagram %}
-    <a href="{{ setup.instagram }}" class="taplink__item">
-        <p>INSTAGRAM</p>
-        <p>{{ setup.instagram_desc }}</p>
-
-    </a>
-    {% endif %}
-    {% if setup.site_link %}
-    <a href="{{ setup.site_link }}" class="taplink__item">
-        <p>САЙТ</p>
-        <p>{{ setup.site_desc }}</p>
-
-    </a>
-    {% endif %}
-    {% if setup.telegram %}
-    <a href="{{ setup.telegram }}" class="taplink__item">
-        <p>ТЕЛЕГРАМ</p>
-        <p>{{ setup.telegram }}</p>
-
-    </a>
-    {% endif %}
 
 </div>
 
