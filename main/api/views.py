@@ -73,8 +73,16 @@ def normalize_phone_number(phone_number):
 @api_view(['GET'])
 def first_delivery(request, number):
 
-    normal_number = normalize_phone_number(number)
-    print(normal_number)
+    normal_number = normalize_phone_number(number).replace(' ', '').replace('(', '').replace(')', '').replace('-', '').replace('+', '')
+
+    if normal_number[0] == '8' and len(normal_number) == 11:
+        normal_number = '7' + normal_number[1:]
+
+    normal_number = '+'+normal_number[0]+' ('+normal_number[1:4]+') '+normal_number[4:7]+' '+normal_number[7:9]+'-'+normal_number[9:]
+        
+
+    
+
     orders = Order.objects.filter(phone=normal_number).count()
     
 
