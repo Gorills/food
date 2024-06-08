@@ -1953,7 +1953,7 @@ def product_edit(request, pk):
             old_count = 0
             for old in old_id:
                 sort = old_option_sort[old_count]
-                print('SORT', sort)
+                # print('SORT', sort)
                 if sort == '':
                     sort = 0
                 price = old_option_price[old_count]
@@ -2167,6 +2167,19 @@ def change_price(request, pk):
         product.save()
         return redirect('admin_product')
     
+
+@check_user_rights(['add_products'])
+def change_old_price(request, pk):
+    product = Product.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        old_price = request.POST.get('price')
+        # print(old_price)
+        if old_price == '':
+            old_price = None
+        product.old_price = old_price
+        product.save()
+        return redirect('admin_product')
 
 
 @check_user_rights(['add_products'])

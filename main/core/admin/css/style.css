@@ -790,6 +790,10 @@ label span {
   font-size: 12px;
 }
 
+.change-price__btn--active {
+  display: block;
+}
+
 .sidebar {
   width: 270px;
   background-color: #fff;
@@ -1209,6 +1213,16 @@ label span {
   color: rgb(123, 123, 123);
   font-size: 14px;
   text-decoration: line-through;
+  cursor: pointer;
+}
+
+.responsive-table .col__old svg {
+  height: 10px;
+  margin-left: 5px;
+}
+
+.responsive-table .col__old svg path {
+  fill: rgb(123, 123, 123);
 }
 
 .responsive-table .col__center {

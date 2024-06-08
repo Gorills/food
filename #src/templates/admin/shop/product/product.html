@@ -94,9 +94,20 @@
                         </div>
                         <div class="col col-2 col__price" data-label="">
                             {% if product.old_price %}
-                            <p class="col__old">{{ product.old_price }} руб.</p>
+                            <p class="col__old" data-price="{{ product.old_price }}" data-id="{{ product.id }}" data-type="old" data-url="{% url 'change_old_price' product.id %}">
+                                {{ product.old_price }} руб.
+                                
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>
+                                
+                            </p>
                             {% endif %}
-                            <p class="col__new">{{ product.price }} руб.</p>
+                            <form class="change-price" data-price="{{ product.price | floatformat:0 }}" action="{% url "change_price" product.id %}" method="post">
+                                {% csrf_token %}
+                               
+                                <input type="number" class="change-price__item" name="price" value="{{ product.price | floatformat:0 }}">
+
+                                <input type="submit" class="change-price__btn" value="Ок">
+                            </form>
                             
 
                         </div>
@@ -160,9 +171,14 @@
                                 </div>
                                 <div class="col col-2 col__price" data-label="">
                                     {% if product.old_price %}
-                                    <p class="col__old">{{ product.old_price }} руб.</p>
+                                    <p class="col__old" data-price="{{ product.old_price | floatformat:0 }}" data-id="{{ product.id }}" data-type="old" data-url="{% url 'change_old_price' product.id %}">
+                                        {{ product.old_price }} руб.
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>
+                                        
+                                    </p>
                                     {% endif %}
-                                    {% comment %} <p class="col__new">{{ product.price }} руб.</p> {% endcomment %}
+                                    
 
                                     <form class="change-price" data-price="{{ product.price | floatformat:0 }}" action="{% url "change_price" product.id %}" method="post">
                                         {% csrf_token %}
@@ -238,9 +254,20 @@
                                     </div>
                                     <div class="col col-2 col__price" data-label="">
                                         {% if product.old_price %}
-                                        <p class="col__old">{{ product.old_price }} руб.</p>
+                                        <p class="col__old" data-price="{{ product.old_price }}" data-id="{{ product.id }}" data-type="old">
+                                            {{ product.old_price }} руб.
+                                            
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>
+                                            
+                                        </p>
                                         {% endif %}
-                                        <p class="col__new">{{ product.price }} руб.</p>
+                                        <form class="change-price" data-price="{{ product.price | floatformat:0 }}" action="{% url "change_price" product.id %}" method="post">
+                                            {% csrf_token %}
+                                           
+                                            <input type="number" class="change-price__item" name="price" value="{{ product.price | floatformat:0 }}">
+    
+                                            <input type="submit" class="change-price__btn" value="Ок">
+                                        </form>
                                         
                                         
 

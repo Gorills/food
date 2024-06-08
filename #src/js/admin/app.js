@@ -1050,6 +1050,8 @@ $(document).on('click','.change-price__btn',function(e){
   let csrf = $('input[name="csrfmiddlewaretoken"]').val()
   let price = $(this).prev('.change-price__item').val()
 
+  console.log(price)
+
   console.log(url)
   $.ajax({
     url: url,
@@ -1066,5 +1068,23 @@ $(document).on('click','.change-price__btn',function(e){
     }
   });
 
+
+})
+
+
+$(document).on('click','.col__old',function(e){
+  e.preventDefault();
+
+  let url = $(this).attr('data-url')
+  let price = $(this).attr('data-price')
+
+  let form = `<form class="change-price" action="${url}" method="POST">
+    <input type="hidden" name="csrfmiddlewaretoken" value="${$('input[name="csrfmiddlewaretoken"]').val()}">
+    <input type="number" class="change-price__item" name="old_price" value="${price}">
+    <input type="submit" class="change-price__btn change-price__btn--active" value="Ок">
+  </form>`
+  $(this).removeClass('col__old')
+
+  $(this).html(form)
 
 })

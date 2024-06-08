@@ -122,6 +122,15 @@
           color: rgb(123, 123, 123);
           font-size: 14px;
           text-decoration: line-through;
+          cursor: pointer;
+
+          svg {
+            height: 10px;
+            margin-left: 5px;
+            path {
+              fill: rgb(123, 123, 123);
+            }
+          }
         }
         // .col__new
         &__new {

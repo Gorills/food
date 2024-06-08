@@ -875,6 +875,10 @@ label {
         text-align: center;
         line-height: 20px;
         font-size: 12px;
+
+        &--active {
+            display: block;
+        }
         
     }
 }
