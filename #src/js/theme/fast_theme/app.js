@@ -26,7 +26,7 @@ function checkPriceCart() {
                 console.error('Ошибка:', error);
             });
         
-        console.log(url)
+        
         
         
     }
