@@ -122,6 +122,11 @@ urlpatterns = [
     path('product/save_us/<int:pk>/', views.product_save_as, name='product_save_as'),
     path('product/delete/<int:pk>/', views.product_delete, name='product_delete'),
 
+    path('product/stop_list/<int:pk>/', views.stop_list, name='stop_list'),
+    path('product/change_new/<int:pk>/', views.change_new, name='change_new'),
+    path('product/change_hit/<int:pk>/', views.change_hit, name='change_hit'),
+    path('product/change_price/<int:pk>/', views.change_price, name='change_price'),
+
     path('admin_sale/', views.admin_sale, name='admin_sale'),
     path('add_sale/', views.add_sale, name='add_sale'),
     path('edit_sale/<int:pk>/', views.edit_sale, name='edit_sale'),

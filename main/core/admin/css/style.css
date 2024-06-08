@@ -701,6 +701,95 @@ label span {
   cursor: pointer;
 }
 
+.change-product {
+  display: block;
+  width: 40px;
+  height: 20px;
+  border-radius: 20px;
+  border: 1px solid #bab8b8;
+  color: #fff;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+  position: relative;
+}
+
+.change-product::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 10px;
+  border: 1px solid #bab8b8;
+}
+
+.change-product--stop {
+  border-color: #F64E60;
+}
+
+.change-product--stop::before {
+  background-color: #F64E60;
+  border-color: #F64E60;
+  left: auto;
+  right: 2px;
+}
+
+.change-product--success {
+  border-color: #378e68;
+}
+
+.change-product--success::before {
+  background-color: #378e68;
+  border-color: #378e68;
+  left: auto;
+  right: 2px;
+}
+
+.change-price {
+  display: block;
+  position: relative;
+}
+
+.change-price__item {
+  display: inline-block;
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #bab8b8;
+  color: #333;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+  font-size: 16px;
+}
+
+.change-price__item::-webkit-outer-spin-button,
+.change-price__item::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.change-price__btn {
+  cursor: pointer;
+  display: none;
+  background-color: #fff;
+  position: absolute;
+  right: -35px;
+  top: 0;
+  border: 1px solid #bab8b8;
+  border-radius: 8px;
+  color: #333;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+}
+
 .sidebar {
   width: 270px;
   background-color: #fff;
@@ -1026,9 +1115,9 @@ label span {
 
 .responsive-table .table-header {
   border-bottom: 1px solid #FFCCD2;
-  font-size: 14px;
-  text-transform: uppercase;
+  font-size: 12px;
   letter-spacing: 0.03em;
+  text-align: center;
 }
 
 .responsive-table .table-header svg {
@@ -1107,6 +1196,7 @@ label span {
 
 .responsive-table .col img {
   width: 40px;
+  height: fit-content;
 }
 
 .responsive-table .col__price {
@@ -1165,7 +1255,7 @@ label span {
 }
 
 .responsive-table .col-5 {
-  flex-basis: 8%;
+  flex-basis: 12%;
   display: flex !important;
   gap: 5px;
 }
@@ -2149,6 +2239,12 @@ label span {
     text-align: center;
     justify-content: center;
     width: 100%;
+    white-space: normal;
+  }
+
+  .responsive-table .col img {
+    width: 150px;
+    height: fit-content;
   }
 }
 /*# sourceMappingURL=maps/style.css.map */

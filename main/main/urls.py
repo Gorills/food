@@ -18,6 +18,7 @@ urlpatterns = [
     path('yafeed.xml', include('yafeed.urls')),
     path('api/v1/', include('api.urls')),
     path('delivery/', include('delivery.urls')),
+    path('qr_menu/', include('qr_menu.urls')),
     
 
 

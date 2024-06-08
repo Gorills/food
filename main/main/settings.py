@@ -72,7 +72,8 @@ INSTALLED_APPS = [
     'yafeed',
     'pay',
     'sms',
-    'subdomains'
+    'subdomains',
+    'qr_menu',
 
     
 ]

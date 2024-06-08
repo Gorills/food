@@ -785,3 +785,96 @@ label {
 }
 
 
+.change-product {
+    display: block;
+    width: 40px;
+    height: 20px;
+    border-radius: 20px;
+    border: 1px solid #bab8b8;
+    color: #fff;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        border-radius: 10px;
+        border: 1px solid #bab8b8;
+    }
+
+    &--stop {
+        border-color: #F64E60;
+        &::before {
+            background-color: #F64E60;
+            border-color: #F64E60;
+            left: auto;
+            right: 2px;
+        }
+    }
+    &--success {
+        border-color: #378e68;
+        &::before {
+            background-color: #378e68;
+            border-color: #378e68;
+            left: auto;
+            right: 2px;
+        }
+    }
+}
+
+.change-price {
+    display: block;
+    position: relative;
+
+    // .change-price__item
+
+    &__item {
+        display: inline-block;
+        width: 80px;
+        height: 40px;
+        text-align: center;
+        border-radius: 8px;
+        border: 1px solid #bab8b8;
+        color: #333;
+        text-align: center;
+        line-height: 20px;
+        font-size: 12px;
+        font-size: 16px;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            /* display: none; <- Crashes Chrome on hover */
+            -webkit-appearance: none;
+            margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+        }
+        
+    }
+
+    // .change-price__btn
+
+    &__btn {
+        cursor: pointer;
+        display: none;
+        // width: 100%;
+        // height: 100%;
+        background-color: #fff;
+        position: absolute;
+        right: -35px;
+        top: 0;
+        border: 1px solid #bab8b8;
+        border-radius: 8px;
+        color: #333;
+        text-align: center;
+        line-height: 20px;
+        font-size: 12px;
+        
+    }
+}

@@ -2111,10 +2111,6 @@ def get_unique_slug(slug):
 
 
 
-
-
-
-
 @check_user_rights(['add_products'])
 def product_delete(request, pk):
 
@@ -2123,6 +2119,55 @@ def product_delete(request, pk):
 
 
     return redirect('admin_product')
+
+@check_user_rights(['add_products'])
+def stop_list(request, pk):
+    product = Product.objects.get(id=pk)
+
+    if product.status == True:
+        product.status = False
+        product.save()
+
+    else:
+        product.status = True
+        product.save()
+
+    return redirect('admin_product')
+
+@check_user_rights(['add_products'])
+def change_new(request, pk):
+    product = Product.objects.get(id=pk)
+    if product.new == True:
+        product.new = False
+        product.save()
+    else:
+        product.new = True
+        product.save()
+
+    return redirect('admin_product')
+
+@check_user_rights(['add_products'])
+def change_hit(request, pk):
+    product = Product.objects.get(id=pk)
+    if product.bestseller == True:
+        product.bestseller = False
+        product.save()
+    else:
+        product.bestseller = True
+        product.save()
+
+    return redirect('admin_product')
+
+@check_user_rights(['add_products'])
+def change_price(request, pk):
+    product = Product.objects.get(id=pk)
+    if request.method == 'POST':
+        price = request.POST.get('price')
+        product.price = price
+        product.save()
+        return redirect('admin_product')
+    
+
 
 @check_user_rights(['add_products'])
 def product_image_delete(request, pk):

@@ -1009,3 +1009,62 @@ $(document).on('click','.toggle-menu',function(e){
  
  
 })
+
+
+
+
+
+$(document).on('click','.change-product',function(e){
+  e.preventDefault();
+
+  let url = $(this).attr('href')
+  $.ajax({
+    url: url,
+    type: 'GET',
+    success: function(response) {
+      $(".page__refresh").load(location.href + " .page");
+
+    },
+    error: function(xhr, status, error) {
+      console.error('Ошибка:', error);
+    }
+  });
+  
+})
+
+$(document).on('keyup','.change-price__item',function(e){
+  e.preventDefault();
+
+  
+  $(this).next('.change-price__btn').show()
+  
+
+
+})
+
+
+$(document).on('click','.change-price__btn',function(e){
+  e.preventDefault();
+
+  let url = $(this).parent('.change-price').attr('action')
+  let csrf = $('input[name="csrfmiddlewaretoken"]').val()
+  let price = $(this).prev('.change-price__item').val()
+
+  console.log(url)
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: {
+      'price': price,
+      csrfmiddlewaretoken: csrf
+    },
+    success: function(response) {
+      $(".page__refresh").load(location.href + " .page");
+    },
+    error: function(xhr, status, error) {
+      console.error('Ошибка:', error);
+    }
+  });
+
+
+})
