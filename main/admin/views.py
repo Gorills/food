@@ -2180,6 +2180,19 @@ def change_old_price(request, pk):
         product.old_price = old_price
         product.save()
         return redirect('admin_product')
+    
+
+@check_user_rights(['add_products'])
+def product_in_cart(request, pk):
+    product = Product.objects.get(id=pk)
+    if product.in_cart == True:
+        product.in_cart = False
+        product.save()
+    else:
+        product.in_cart = True
+        product.save()
+
+    return redirect('admin_product')
 
 
 @check_user_rights(['add_products'])

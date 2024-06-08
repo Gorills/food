@@ -1272,6 +1272,7 @@ label span {
   flex-basis: 12%;
   display: flex !important;
   gap: 5px;
+  justify-content: flex-end;
 }
 
 .responsive-table .col-6 {
@@ -1290,6 +1291,14 @@ label span {
   flex-basis: 25%;
   display: flex;
   gap: 5px;
+}
+
+.responsive-table .col-9 {
+  flex-basis: 7%;
+  display: flex;
+  gap: 5px;
+  text-align: center;
+  justify-content: center;
 }
 
 .popup-add {

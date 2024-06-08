@@ -127,6 +127,7 @@ urlpatterns = [
     path('product/change_hit/<int:pk>/', views.change_hit, name='change_hit'),
     path('product/change_price/<int:pk>/', views.change_price, name='change_price'),
     path('product/change_old_price/<int:pk>/', views.change_old_price, name='change_old_price'),
+    path('product/product_in_cart/<int:pk>/', views.product_in_cart, name='product_in_cart'),
 
     path('admin_sale/', views.admin_sale, name='admin_sale'),
     path('add_sale/', views.add_sale, name='add_sale'),

@@ -180,6 +180,7 @@
         flex-basis: 12%;
         display: flex!important;
         gap: 5px;
+        justify-content: flex-end;
     }
     .col-6 {
       flex-basis: 55%;
@@ -195,6 +196,13 @@
       flex-basis: 25%;
       display: flex;
       gap: 5px;
+    }
+    .col-9 {
+      flex-basis: 7%;
+      display: flex;
+      gap: 5px;
+      text-align: center;
+      justify-content: center;
     }
     
     @media all and (max-width: 767px) {

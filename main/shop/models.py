@@ -507,7 +507,7 @@ class Product(models.Model):
     free = models.PositiveIntegerField(default=0, verbose_name='Бесплатно в заказе')
     minimum = models.PositiveIntegerField(default=1, verbose_name='Минимальное количество')
 
-    in_cart = models.BooleanField(default=False, verbose_name='В подборку рекоментованных товаров в корзине')
+    in_cart = models.BooleanField(default=False, verbose_name='В подборку рекомендованных товаров в корзине')
     
     # iiko
     iiko_type = models.CharField(max_length=200, null=True, blank=True, default='Dish')
