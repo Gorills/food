@@ -14,7 +14,7 @@ class SliderSetup(SingletonModel):
     speed = models.CharField(max_length=250, default=5000, verbose_name='Скорость автопролистывания (ms)')
     full_screen = models.BooleanField(default=True, verbose_name='Включить полноэкранный режим')
     height = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера')
-    height_mob = models.CharField(max_length=250, default=600, verbose_name='Высота слайдера для мобильного')
+    height_mob = models.CharField(max_length=250, default=250, verbose_name='Высота слайдера для мобильного')
     title_size = models.CharField(max_length=250, default=56, verbose_name='Размер шрифта заголовка')
     title_size_mob = models.CharField(max_length=250, default=36, verbose_name='Размер шрифта заголовка для мобильного')
     desc_size = models.CharField(max_length=250, default=24, verbose_name='Размер шрифта описания')
