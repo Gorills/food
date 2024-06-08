@@ -1,4 +1,39 @@
 
+// Проверяем цены товаров в корзине
+function checkPriceCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    
+    if (!cart) {
+        return;
+    }
+    for (let itemId in cart) {
+        let item = cart[itemId];
+
+
+        let url = `/api/v1/products/${item.itemId}/`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.price != item.price) {
+                    item.price = data.price;
+                    cart[itemId] = item;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+            })
+            .catch(error => {
+                // Обработка ошибок
+                console.error('Ошибка:', error);
+            });
+        
+        console.log(url)
+        
+        
+    }
+}
+
+checkPriceCart()
+
 
 
 // Сначала загружаем все настройки
@@ -1916,7 +1951,7 @@ jQuery(document).ready(function () {
                             // Обновление popup с полученными данными
                             updatePopup(data.status_list, data.status);
                             
-                            console.log(data.status);
+                            // console.log(data.status);
                             // Проверка на выполненный статус
                             if (data.status === 'Выполнен') {
                                 
@@ -2097,8 +2132,8 @@ function getLastOrder() {
             show_last_order = false
         }
 
-        console.log(last_order)
-        console.log(show_last_order, is_site)
+        // console.log(last_order)
+        // console.log(show_last_order, is_site)
         
         
         if (show_last_order) {
@@ -2404,13 +2439,13 @@ getLastOrder()
 
 
 
-$(document).on('click','.odred-done__inner',function(e){
+// $(document).on('click','.odred-done__inner',function(e){
     
-    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+//     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     
-    console.log(last_order)
+//     // console.log(last_order)
     
-})
+// })
 
 $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
     $('.odred-done').removeClass('odred-done--active')
