@@ -3703,14 +3703,34 @@ function init() {
                                             let deliveryText = item.properties._data.hintContent
                                             
                                             let deliveryFree = item.properties._data.balloonContentFooter
-                                           
-                                            let fd=parseInt(deliveryFree.match(/\d+/)[0]);
-                                            let min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
+                                            
+                                            let min_delivery = 0
+
+                                            if (deliveryFree.includes("НЕТ")) {
+                                                fd = 999999;
+                                                let matches = deliveryFree.match(/\d+/);
+                                                if (matches) {
+                                                    min_delivery = parseInt(matches[0]);
+                                                }
+                                            } else {
+                                                let matches = deliveryFree.match(/\d+/g);
+                                                if (matches && matches.length >= 2) {
+                                                    fd = parseInt(matches[0]);
+                                                    min_delivery = parseInt(matches[1]);
+                                                } else {
+                                                    console.log("Не удалось найти два числа в deliveryFree");
+                                                }
+                                            }
+                                            
+
+                                            
         
                                             
 
                                             let data = JSON.parse(localStorage.getItem('deliveryPrice'));
                                             let order = JSON.parse(localStorage.getItem('order'));
+
+                                            
 
                                             data.price_delivery = price
                                             data.free_delivery = fd
@@ -3738,39 +3758,55 @@ function init() {
 
                                     } else {
 
-                                        let deliveryText = item.properties._data.hintContent
-                                        let deliveryPrice = item.properties._data.balloonContentBody
-                                        let deliveryFree = item.properties._data.balloonContentFooter
-                                        let sd=parseInt(deliveryPrice.match(/\d+/)[0]);
-                                        let fd=parseInt(deliveryFree.match(/\d+/)[0]);
-                                        let min_delivery = item.properties._data.balloonContentFooter.match(/\d+/g)[1];
-    
+                                        let deliveryText = item.properties._data.hintContent;
+                                        let deliveryPrice = item.properties._data.balloonContentBody;
+                                        let deliveryFree = item.properties._data.balloonContentFooter;
+                                        let sd = parseInt(deliveryPrice.match(/\d+/)[0]);
+                                        let min_delivery = 0;
+                                        let fd;
+
+                                        
+
+                                        if (deliveryFree.includes("НЕТ")) {
+                                            fd = 999999;
+                                            let matches = deliveryFree.match(/\d+/);
+                                            if (matches) {
+                                                min_delivery = parseInt(matches[0]);
+                                            }
+                                        } else {
+                                            let matches = deliveryFree.match(/\d+/g);
+                                            if (matches && matches.length >= 2) {
+                                                fd = parseInt(matches[0]);
+                                                min_delivery = parseInt(matches[1]);
+                                            } else {
+                                                console.log("Не удалось найти два числа в deliveryFree");
+                                            }
+                                        }
+
                                         
 
                                         let data = JSON.parse(localStorage.getItem('deliveryPrice'));
                                         let order = JSON.parse(localStorage.getItem('order'));
 
-                                        data.price_delivery = sd
-                                        data.free_delivery = fd
-                                        
+                                        data.price_delivery = sd;
+                                        data.free_delivery = fd;
 
-                                        order.address = suggestElement.val()
-                                        order.delivery_price = sd
-    
-                                        if(min_delivery) {
-                                            let min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
+                                        order.address = suggestElement.val();
+                                        order.delivery_price = sd;
 
-                                            data.min_delivery = min_delivery_post
-                                            $('#suggest').attr('data-min', min_delivery_post)
-                                        } 
+                                        if (min_delivery) {
+                                            let min_delivery_post = min_delivery;
+
+                                            data.min_delivery = min_delivery_post;
+                                            $('#suggest').attr('data-min', min_delivery_post);
+                                        }
 
                                         localStorage.setItem('deliveryPrice', JSON.stringify(data));
                                         localStorage.setItem('order', JSON.stringify(order));
-
-
                                         
-                                        deliveryUpdate()
-                                        $('.show-map').removeClass('order__input--error')
+
+                                        deliveryUpdate();
+                                        $('.show-map').removeClass('order__input--error');
 
                                     }
                                     

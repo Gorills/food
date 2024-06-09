@@ -1086,15 +1086,26 @@ def zone_file(request):
                     try:
                         min_delivery = d['properties']['description'].split(':')[2]
                     except Exception as e:
-                        
                         min_delivery = None
 
-                    print(min_delivery)
-                    if min_delivery:
+                    try:
+                        free_delivery = d['properties']['description'].split(':')[1]
+                        if free_delivery == '999999' or free_delivery == '0' or free_delivery == 999999:
+                            free_delivery = None
+                    except Exception as e:
+                        free_delivery = None
+                        
 
+                    
+                    if free_delivery and min_delivery:
                         balloonContentFooter = f'''Бесплатная доставка от - ''' + d['properties']['description'].split(':')[1]  + ''' рублей,
                         минимальная сумма для заказа - ''' + d['properties']['description'].split(':')[2]  + ''' рублей'''
-                    else:
+
+                    elif min_delivery and not free_delivery:
+                        balloonContentFooter = f'''Бесплатная доставка - ''' + 'НЕТ'  + ''',
+                        минимальная сумма для заказа - ''' + d['properties']['description'].split(':')[2]  + ''' рублей'''
+
+                    elif free_delivery and not min_delivery:
                         balloonContentFooter = f'''Бесплатная доставка от - ''' + d['properties']['description'].split(':')[1]  + ''' рублей'''
 
                 except Exception as e:
