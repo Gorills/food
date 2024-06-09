@@ -43,7 +43,7 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
 
 
 class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = Product.objects.filter(related=False, status=True)
+    queryset = Product.objects.filter(status=True)
     serializer_class = ProductSerializer
 
 
