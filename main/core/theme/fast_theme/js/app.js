@@ -3718,7 +3718,7 @@ function init() {
                                                     fd = parseInt(matches[0]);
                                                     min_delivery = parseInt(matches[1]);
                                                 } else {
-                                                    console.log("Не удалось найти два числа в deliveryFree");
+                                                    fd = parseInt(matches[0]);
                                                 }
                                             }
                                             
@@ -3779,7 +3779,7 @@ function init() {
                                                 fd = parseInt(matches[0]);
                                                 min_delivery = parseInt(matches[1]);
                                             } else {
-                                                console.log("Не удалось найти два числа в deliveryFree");
+                                                fd = parseInt(matches[0]);
                                             }
                                         }
 
