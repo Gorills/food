@@ -128,7 +128,7 @@ def get_status(pay_id):
     
     count = 0
     while status == False and status_pay != 2:
-        if status_pay == 6 or count == 48:
+        if status_pay == 6:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
             
