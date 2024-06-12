@@ -123,13 +123,13 @@
                             </form>
                         </div>
 
-                        <div class="col col-4" data-label="">{{ order.pay_method }}</div>
+                        <div class="col col-4" style="font-size: 12px;white-space: normal;justify-content: center;" data-label="">{{ order.pay_method }}</div>
                         <div class="col col-4" data-label="">{{ order.delivery_method }}</div>
 
 
 
-                        {% if order.pay_method == 'Оплата картой на сайте' or order.pay_method == 'Картой на сайте' %}
-                        <div style="font-size: 12px;" class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
+                        {% if order.pay_method == shop_setup.text_to_pay_cart %}
+                        <div style="font-size: 12px;white-space: wrap;" class="col col-2 col__stock {% if order.paid == True %}col__stock--success{% else %}col__stock--warn{% endif %}" data-label="">
                                 {% if order.paid == True %}Оплачен{% else %}Не оплачен{% endif %}
                         </div>
                         {% else %}
