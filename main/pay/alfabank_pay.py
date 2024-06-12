@@ -135,9 +135,12 @@ def get_status(pay_id):
             send_message(telegram_bot_work, telegram_group_work, message)
             break
         else:
-            r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
-            # print(r.json())
-            status_pay = r.json()['OrderStatus']  
+            try:
+                r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
+                # print(r.json())
+                status_pay = r.json()['OrderStatus']  
+            except:
+                status_pay = 0
 
         if status_pay == 2:
             status = True
