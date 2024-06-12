@@ -113,7 +113,7 @@
                                 {% csrf_token %}
 
                                 
-                                <select name="status" class="input change_input" id="id_status">
+                                <select style="font-size: 12px;" name="status" class="input change_input" id="id_status">
                                     {% for status in order.get_status_class_choices %}
                                         <option value="{{ status.0 }}" {% if order.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
                                    
@@ -141,8 +141,8 @@
                         <div class="col col-4" style="font-size: 12px;" data-label="">{{ order.created }}</div>
 
                         <div class="col col-5" data-label="">
-
-                        {% if order.pay_method == 'Оплата картой на сайте' %}
+                            
+                            {% if order.pay_method == shop_setup.text_to_pay_cart and pay %}
                             <a href="{% url 'orders:alpha_check' order.id %}" class="edit">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg>
 

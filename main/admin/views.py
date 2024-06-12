@@ -843,9 +843,11 @@ def card_delete(request, pk):
 @check_user_rights(['view_orders'])
 def admin_order(request):
     orders = Order.objects.all().order_by('-created')
+    pay = PaymentSet.objects.filter(status=True, name='alfabank').first()
     
     context = {
         'orders': orders,
+        'pay': pay
         
     }
 
