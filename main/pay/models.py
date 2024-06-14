@@ -11,6 +11,17 @@ class PaymentSet(SingletonModel):
     name = models.CharField(max_length=250, choices=PAY_CLASS, verbose_name='Платежная система')
     status = models.BooleanField(default=False, verbose_name='Включить онлайн оплаты')
 
+    callback_link = models.BooleanField(default=False, verbose_name='Отслеживать ответ банка по статической ссылке')
+
+
+    def get_callback_link(self):
+
+        url = '/pay/callback/'
+        if self.name == 'yookassa' and self.callback_link:
+            return url
+
+        else:
+            return None
 
 
 

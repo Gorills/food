@@ -125,6 +125,8 @@ def get_status(pay_id):
 
     telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
     telegram_group_work = '-1001850576262'
+
+    payment_set = PaymentSet.objects.get(name='alfabank')
     
     count = 0
     while status == False and status_pay != 2:

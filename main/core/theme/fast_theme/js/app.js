@@ -1,38 +1,41 @@
 
-// Проверяем цены товаров в корзине
 function checkPriceCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
-    
+
     if (!cart) {
         return;
     }
+
     for (let itemId in cart) {
         let item = cart[itemId];
-
-
         let url = `/api/v1/products/${item.itemId}/`;
 
+        
+
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.price != item.price) {
+                if (data.price !== item.price && (!item.options || item.options.length === 0)) {
                     item.price = data.price;
                     cart[itemId] = item;
                     localStorage.setItem('cart', JSON.stringify(cart));
                 }
             })
             .catch(error => {
-                // Обработка ошибок
                 console.error('Ошибка:', error);
+                delete cart[itemId];
+                localStorage.setItem('cart', JSON.stringify(cart));
             });
-        
-        
-        
-        
-    }
+        }
 }
 
-checkPriceCart()
+checkPriceCart();
+
 
 
 
