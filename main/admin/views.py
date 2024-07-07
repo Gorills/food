@@ -1110,8 +1110,11 @@ def zone_file(request):
                     elif free_delivery and not min_delivery:
                         balloonContentFooter = f'''Бесплатная доставка от - ''' + d['properties']['description'].split(':')[1]  + ''' рублей'''
 
+                    else:
+                        balloonContentFooter = f'''Бесплатная доставка - ''' + 'НЕТ'
+
                 except Exception as e:
-                   
+                    print(e)
                     balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'] + ' рублей'
                     
             coords = []
