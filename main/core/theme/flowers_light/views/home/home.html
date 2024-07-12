@@ -355,16 +355,16 @@
                 <div class="collections">
                 {% for cat in home_cats %}
                     {% if cat.sort_order > 1 %}
-                        <a href="{{ cat.get_absolute_url }}" class="collections__item">
+                        <a style="background-color: {{ cat.bg_color }};" href="{{ cat.get_absolute_url }}" class="collections__item">
 
                             {% thumbnail cat.image "594x721" crop="center" as im %}
-                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="collections__img">
+                                <img style="opacity: {{ cat.opacity }};" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cat.name }}" title="{{ cat.name }}" class="collections__img">
                             {% endthumbnail %}
 
                             <div class="collections__row">
-                                <div class="collections__title">{{ cat.name }}</div>
+                                <div class="collections__title" style="color: {{ cat.font_color }}">{{ cat.name }}</div>
                                 {% if cat.short_description %}
-                                <div class="collections__text">{{ cat.short_description }}</div>
+                                <div class="collections__text" style="color: {{ cat.font_color }}">{{ cat.short_description }}</div>
                                 {% endif %}
                             </div>
 
