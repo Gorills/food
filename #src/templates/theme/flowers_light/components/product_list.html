@@ -1,6 +1,6 @@
 {% load thumbnail %}
 {% load l10n %}
-<div class="product-list {% if slider == 'true' %}product-list--slider owl-carousel{% endif %}">
+<div class="product-list  product-list--{{ big }} {% if slider == 'true' %}product-list--slider owl-carousel{% endif %}">
 
 
     {% for constructor in category.constructors.all %}
@@ -183,6 +183,8 @@
                         {% comment %} <a href="#" class="constructor-popup__btn" data-price="" data-id="{{ constructor.id }}" data-csrf="{{ csrf_token }}"></a> {% endcomment %}
                     
                         <div class="btn-wrap" data-quantity="1" data-cart-id="{{constructor.id}}" data-type="constructor" data-name="{{constructor.name}}" data-price="{{constructor.price}}" data-optionsid="" data-image="{{ constructor.get_thumb_mini }}">
+                            <div class="btn-wrap__count"></div>
+                            <div class="btn-wrap__svg"></div>
                             <button class="btn btn--primary add_to_cart constructor-popup__btn">Добавить в корзину за <span class="constructor-popup__price">350</span> ₽</button>
                         </div>
                     
@@ -211,7 +213,7 @@
         
             
     {% for product in products %}
-    <div class="product-list__item {{ big }}">
+    <div class="product-list__item product-list__item--{{ big }}">
 
         <div class="product-list__top-top">
             <a href="{{ product.get_absolute_url }}" class="product-list__top" style="max-height:{{ shop_setup.min_height }}px;overflow:hidden;">
@@ -236,7 +238,7 @@
                 
 
 
-               
+                
                 <img 
                     loading="lazy" 
                     src="{{ product.get_thumb_mini }}" 
@@ -321,10 +323,28 @@
 
 
                
-                
-                {% if product.weight %}
-                <div class="product-list__weight product-list__weight-{{ product.id }}">{{ product.weight }}</div>
-                {% endif %}
+                <div class="product-list__data">
+                    {% if product.weight %}
+                    <div class="product-list__weight product-list__weight-{{ product.id }}">{{ product.weight }}</div>
+                    {% endif %}
+                    
+                    <div class="product-list__data-wrap">
+                        {% if product.nutritional_value %}
+                            <div class="product-list__data-item">Эн.цен.: {{ product.nutritional_value }}</div>
+                        {% endif %}
+                        {% if product.protein %}
+                            <div class="product-list__data-item">Б: {{ product.protein }}</div>
+                        {% endif %}
+                        {% if product.fat %}
+                            <div class="product-list__data-item">Ж: {{ product.fat }}</div>
+                        {% endif %}
+                        {% if product.carb %}
+                            <div class="product-list__data-item">У: {{ product.carb }}</div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
                 {% if shop_setup.show_descrioption == True and product.short_description %}
                 <div class="product-list__desc">
                 {{ product.short_description }}
@@ -350,7 +370,7 @@
                 
                 {% if product.get_all_options %}
                 <a href="#" class="option_setup">
-                    Опции
+                    Добавки
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="14.91" height="14.288" viewBox="0 0 14.91 14.288">
                         <g id="adjust_1_" data-name="adjust (1)" transform="translate(0 -10.667)">
@@ -378,23 +398,21 @@
             </div>
 
             <div class="product-options">
-            {% if product.get_first_select %}
-                {% for option in product.get_first_select %}
-                
-                
-                <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if option.images.count > 0 %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{{ product.get_thumb_mini }}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.get_price_after_discount }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
-                    {{ option.option_value }}
+                {% if product.get_first_select %}
+                    {% for option in product.get_first_select %}
+                    
+                    
+                    <div data-weight="{% if forloop.counter == 1 %}{{ product.weight }}{% else %}{{ option.option_weight }}{% endif %}" data-image="{% if option.images.count > 0 %}{% thumbnail option.images.first.src size format="WEBP" crop="center" as im %}{{ im.url }}{% endthumbnail %}{% else %}{{ product.get_thumb_mini }}{% endif %}" data-id="{{ option.id }}" data-product-id="{{ product.id }}" data-price="{{ option.get_price_after_discount }}" data-value="{{ option.option_value }}" class="product-options__item {% if forloop.counter == 1 %}product-options__item--active{% endif %}">
+                        {{ option.option_value }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
                 </div>
-                {% endfor %}
-            {% endif %}
-            </div>
 
             <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
-                <button class="btn btn--primary add_to_cart">
-                    
-                    {{ shop_setup.cart_btn_text }}
-                
-                </button>
+                <div class="btn-wrap__count"></div>
+                <div class="btn-wrap__svg"></div>
+                <button class="btn btn--primary add_to_cart">{{ shop_setup.cart_btn_text }}</button>
             </div>
 
             
@@ -405,101 +423,8 @@
             
 
             {% if product.get_all_options %}
-            <div class="product-options-popup__refresh-{{ product.id }}">
-                <div class="product-options-popup" id="product-options-popup-{{ product.id }}">
-
-                    <div class="product-options-popup__layout"></div>
-                    
-                    <div class="product-options-popup__inner">
-                        <a href="#" class="product-options-popup__closer">
-                            <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a>
-
-
-                        <div class="product-options-popup__options-select-wrap">
-                            {% for type in product.get_first_select %}
-                            <div  data-id="{{ type.id }}" data-product-id="{{ product.id }}" data-price="{{ type.option_price |unlocalize }}" data-value="{{ type.option_value }}" class="product-options-popup__options-select {% if forloop.counter == 1 %}product-options-popup__options-select--active{% endif %}">
-                                {{ type.option_value }}
-                            </div>
-                        
-                        
-                        
-                        {% endfor %}
-                        </div>
-
-                        <div class="product-options-popup__options-row-wrap">
-                            
-                        
-                        
-                            
-
-                            {% for type in product.get_all_options %}
-                                {% if type.option_class == 'checkbox' %}
-                                <div class="product-options-popup__options-row">
-                                    <div class="product-options-popup__options-name">{{ type.name }}: </div>
-
-
-
-                                
-                                    {% if type.option_class == 'checkbox' %}
-                                    <div class="product-options-popup__options-checkbox-row">
-                                        {% for option in product.options.all %}
-                                            {% if option.type == type %}
-                                                
-                                                    <input id="cb{{ option.id }}" name="checkbox" data-id="{{ option.id }}" data-price="{{ option.option_price |unlocalize }}" type="checkbox" value="{{ option.option_value }}">
-                                                    
-                                                    <label for="cb{{ option.id }}">{{ option.option_value }} {% if option.option_price != 0 %} <small>(+{{ option.option_price | floatformat:0 }} ₽){% endif %}</small> </label>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-
-                            {% endfor %}
-                        </div>
-                        
-
-                        <div class="product-options-popup__row">
-                            
-
-
-                            {% comment %} <div class="product-options-popup__counter">
-
-                                <div class="product-options-popup__minus">
-                                    <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <line y1="1" x2="12" y2="1" stroke="#000" stroke-width="2"></line>
-                                    </svg>
-                                </div>
-
-                                <input class="product-options-popup__input product-options-popup__count-inp" min="1" type="number" name="quantity" required="" id="id_quantity" value="1">
-                                
-
-                                <div class="product-options-popup__plus">
-                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M5.832 13.536H7.96V8.132H13.084V6.228H7.96V0.907999H5.832V6.228H0.568V8.132H5.832V13.536Z" fill="#000"></path>
-                                    </svg>
-                                </div>
-                                
-                                
-                                
-                            </div> {% endcomment %}
-                            <div class="product-options-popup__price-wrap">
-                                <div class="product-options-popup__price" data-price="{{ product.get_price_after_sale | floatformat:0 }}">{{ product.get_price_after_sale | floatformat:0 }} ₽</div>
-                                {% if product.get_old_price %}
-                                    <div class="product-options-popup__old-price" data-price="{{ product.get_old_price | floatformat:0 }}">{{ product.get_old_price | floatformat:0 }} ₽</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="btn-wrap" data-quantity="2" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
-                            <button class="btn btn--primary add_to_cart">{{ shop_setup.cart_btn_text }}</button>
-                        </div>
-                    </div>
-                    
-
-                </div>
+            <div class="product-options-popup__refresh product-options-popup__refresh-{{ product.id }}" data-id="{{ product.id }}">
+                
             </div>
             {% endif %}
 

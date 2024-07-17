@@ -1,4 +1,42 @@
 
+function checkPriceCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    if (!cart) {
+        return;
+    }
+
+    for (let itemId in cart) {
+        let item = cart[itemId];
+        let url = `/api/v1/products/${item.itemId}/`;
+
+        
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.price !== item.price && (!item.options || item.options.length === 0)) {
+                    item.price = data.price;
+                    cart[itemId] = item;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                delete cart[itemId];
+                localStorage.setItem('cart', JSON.stringify(cart));
+            });
+        }
+}
+
+checkPriceCart();
+
+
 
 
 // Сначала загружаем все настройки
@@ -140,6 +178,44 @@ function setLoyalCart() {
 
 setLoyalCart()
 
+function setLastOrder() {
+
+    let data = {
+        'show': false,
+        'order_id': false,
+        'user_name': '',
+        'user_phone': '',
+        'address': '',
+        'address_pickup': '',
+        'address_comment': '',
+        'delivery_type': '',
+        'entrance': '',
+        'floor': '',
+        'flat': '',
+        'door_code': '',
+        
+        'day': '',
+        'time': '',
+        'pay_method': '',
+        'pay_description': '',
+        'pay_change': '',
+        'delivery_method': '',
+        'delivery_price': '',
+        'order_conmment': '',
+        
+        'summ': '',
+    }
+
+    var lastOrder = localStorage.getItem('lastOrder');
+
+    if (!lastOrder) {
+        localStorage.setItem('lastOrder', JSON.stringify(data));
+    }
+}
+
+setLastOrder()
+
+
 
 // Инициализируем пустой заказ
 function setOrder() {
@@ -152,6 +228,7 @@ function setOrder() {
         'address': '',
         'address_pickup': '',
         'address_comment': '',
+        'cutlery': 0,
         'delivery_type': '',
         'entrance': '',
         'floor': '',
@@ -161,6 +238,7 @@ function setOrder() {
         'day': 'Сегодня',
         'time': 'Как можно скорее',
         'pay_method': '',
+        'pay_description': '',
         'pay_change': '',
         'delivery_method': '',
         'delivery_price': '',
@@ -205,7 +283,7 @@ function setOrder() {
 
     }
 
-    // console.log(order)
+    
 
     let phone = ''
     fetch('/api/v1/get_user/')
@@ -213,24 +291,13 @@ function setOrder() {
         .then(data => {
             if (data.phone != 'error') {
                
-
                 order.user_phone = data.phone;
                 localStorage.setItem('order', JSON.stringify(order));
 
-
                 if (data.cart_status) {
 
-                    
-                    
-
-
                 }
-                
-                
             }
-
-            
-
             
         })
         .catch(error => console.error('Ошибка загрузки пользователя:', error));
@@ -405,11 +472,14 @@ function payMethodUpdate() {
         input.name = 'checkoutpayment';
         input.value = method.name;
         input.dataset.tab = 'checkout-payment-1';
+
+        input.dataset.description = method.description;
         
         // Если count равен 0, устанавливаем атрибут checked для первого радио
         if (count === 0) {
             input.checked = true;
             order.pay_method = method.name;
+            order.pay_description = method.description;
             localStorage.setItem('order', JSON.stringify(order));
 
             // Проверяем, содержит ли method.name строку "наличн" в любом регистре
@@ -683,6 +753,7 @@ $('.order__input').on('change input', function() {
     let dataName = $(this).data('name'); // Получаем значение атрибута 'data-name'
     let value = $(this).val(); // Получаем значение поля ввода
     let order = JSON.parse(localStorage.getItem('order'));
+    
 
     // Обновляем соответствующее значение в объекте order
     order[dataName] = value;
@@ -702,7 +773,6 @@ $('.order__input').on('change input', function() {
     }
 
     
-
     $(this).removeClass('order__input--error');
 
     // Сохраняем обновленный объект order в локальное хранилище
@@ -714,6 +784,29 @@ $('.order__input').on('change input', function() {
 });
 
 
+// приборы
+$(document).on('click', '.order__checkup-cutlery-btn', function() {
+    
+    let cutlery = parseInt($(this).closest('.order__checkup-cutlery').find('.order__input').val())
+    
+
+    if($(this).hasClass('minus')) {
+        
+
+        if (cutlery > 0) {
+
+            cutlery = cutlery - 1
+        }
+    } else {
+        cutlery = cutlery + 1
+    }
+    $(this).closest('.order__checkup-cutlery').find('.order__input').val(cutlery)
+    $(this).closest('.order__checkup-cutlery').find('.order__input').val(cutlery).change();
+    // console.log(optionsIds)
+    
+})
+
+
 
 // Функции математики в корзине
 
@@ -721,6 +814,7 @@ $('.order__input').on('change input', function() {
 function getTotalPriceToBallMath(exclude_combos) {
     
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    let order = JSON.parse(localStorage.getItem('order'));
     
     let totalPrice = 0;
 
@@ -741,6 +835,8 @@ function getTotalPriceToBallMath(exclude_combos) {
     }
 
     totalPrice = totalPrice - getAllDiscount()
+
+    
     
     
     return totalPrice
@@ -749,11 +845,15 @@ function getTotalPriceToBallMath(exclude_combos) {
 
 
 
-
+// считаем доступные баллы
 function maxBallsPay() {
+    
+
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
+
+    // console.log(order)
     
     // console.log(daliveryType);
 
@@ -774,7 +874,7 @@ function maxBallsPay() {
 
 
 
-    let summ = 0;
+    
     let max_active_balls = 0;
 
     if (daliveryType == '1') {
@@ -799,26 +899,76 @@ function maxBallsPay() {
     max_active_balls = Math.floor(max_active_balls);
     // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
-
-    let innerHtms = '';
-    if (max_active_balls > 0) {
-        innerHtms = `
-        <div class="order__info-item" id="balls_info">
-            <p>Доступно баллов:</p>
-            <div>${balls} (можно списать ${max_active_balls})</div>
+    // console.log(max_active_balls,order_balls)
+    let innerHtml = '';
+    if (max_active_balls > 0 && order_balls == 0) {
+        innerHtml = `
+        <div class="order__info-item" >
+            <p>Баллов на счету:</p>
+            <div>${balls}₽</div>
+        </div>
+        <div class="order__info-item">
+            <p><small>Списать ${max_active_balls} суммы покупки баллами?</small></p>
+            <div><a href="#" id="balls-pay" class="order__info-link">Списать баллы</a></div>
         </div>
         `
-    } else {
-        innerHtms = ''
+    } else if(order_balls > 0) {
+        innerHtml = `
+        <div class="order__info-item" >
+            <p>Баллов на счету:</p>
+            <div>${balls}₽ (-${order_balls}) <div><a href="#" id="balls-refresh" class="order__info-link">Отменить</a></div></div>
+        </div>
+       
+        `
     }
-
-    $('#balls').html(innerHtms);
     
 
-    return summ
+    $('#balls').html(innerHtml);
+    
+    
+
+    return max_active_balls
 
 }
+// maxBallsPay()
+// активировать баллы
 
+$(document).on('click','.active_balls', function(e) {
+    e.preventDefault();
+    setLoyalCart();
+    maxBallsPay()
+    getTotalPriceAfterDiscount();
+    $(this).remove();
+})
+
+$(document).on('click','#balls-pay', function(e) {
+    e.preventDefault();
+    let max_active_balls = maxBallsPay();
+    let order = JSON.parse(localStorage.getItem('order'));
+    order.bonuses_pay = max_active_balls;
+    localStorage.setItem('order', JSON.stringify(order));
+    maxBallsPay()
+    getTotalPriceAfterDiscount();
+    // $('#balls').remove();
+})
+
+$(document).on('click','#balls-refresh', function(e) {
+    e.preventDefault();
+    refreshBalls();
+    getTotalPriceAfterDiscount();
+    
+})
+
+// сбросить баллы
+function refreshBalls() {
+    let order = JSON.parse(localStorage.getItem('order'));
+    order.bonuses_pay = 0;
+    localStorage.setItem('order', JSON.stringify(order));
+    maxBallsPay()
+    getTotalPriceAfterDiscount();
+}
+
+// refreshBalls()
 
 // Сумма всех скидок
 function getAllDiscount() {
@@ -878,7 +1028,7 @@ function getAllDiscount() {
     
 
 
-    // Вычитаем из суммы заказа активные баллы
+    // добавляем к сумме скидок заказа активные баллы
     
     let active_balls = order.bonuses_pay
 
@@ -905,33 +1055,99 @@ function getTotalPrice() {
         totalPrice += item.price * item.quantity;
         
     }
+
+    
     document.getElementById("total_price").innerText = totalPrice;
     
     return totalPrice
 }
 getTotalPrice()
 
+// Дополнительные наценки в корзине
+function getDopItems() {
+
+    let deliveryType = localStorage.getItem("deliveryType");
+    
+
+    return fetch('/api/v1/dop_items/')
+        .then(response => response.json())
+        .then(data => {
+            let summ = 0;
+            let itemsHTML = ''; // Строка для хранения HTML-кода элементов
+            data.forEach(function(item) {
+                let price = parseFloat(item['price']).toFixed(2); // Форматируем цену до двух знаков после запятой
+                price = price.replace(/(\.0+|0+)$/, '');
+                let name = item['name'];
+                let description = item['description'];
+
+                let delivery = item['delivery'];
+                let pickup = item['pickup'];
+
+                if (deliveryType == '1' && delivery) {
+                    summ = summ + parseFloat(price);
+                
+                    // Создаем HTML-код для текущего элемента
+                    let itemHTML = `
+                        <div class="dop-item">
+                            <div class="dop-item__wrap">
+                                <h3>${name}</h3>
+                                <p class="dop-item__description">${description}</p>
+                            </div>
+                                <p class="dop-item__price">${parseFloat(price)}₽</p>
+                        </div>
+                    `;
+                    itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+
+                }
+                if (deliveryType == '0' && pickup) {
+                    summ = summ + parseFloat(price);
+                
+                    // Создаем HTML-код для текущего элемента
+                    let itemHTML = `
+                        <div class="dop-item">
+                            <div class="dop-item__wrap">
+                                <h3>${name}</h3>
+                                <p class="dop-item__description">${description}</p>
+                            </div>
+                                <p class="dop-item__price">${parseFloat(price)}₽</p>
+                        </div>
+                    `;
+                    itemsHTML += itemHTML; // Добавляем HTML-код элемента к общей строке
+
+                }
+
+                
+                
+            });
+            
+            // Добавляем собранный HTML-код всех элементов в контейнер с id="dop_items_container"
+            document.getElementById('dop_items_container').innerHTML = itemsHTML;
+            
+            return summ;
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки:', error);
+            return 0; // Возвращаем 0 в случае ошибки
+        });
+}
+
 
 // Общая сумма с доставкой и скидками
 function getTotalPriceAfterDiscount() {
-
-    
-
-
-    res = getTotalPrice() + getDeliverySumm() - getAllDiscount()
-
-    document.getElementById("total_price_after_discount").innerText = res + '₽';
-
-
-    let order = JSON.parse(localStorage.getItem('order'));
-
-    order.summ = res
-    localStorage.setItem('order', JSON.stringify(order));
-
-    // console.log(order)
-    
-
-    return res
+    Promise.all([getTotalPrice(), getDopItems(), getDeliverySumm(), getAllDiscount()])
+        .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount]) => {
+            let res = totalPrice + dopItemsSum + deliverySumm - allDiscount;
+            document.getElementById("total_price_after_discount").innerText = res + '₽';
+            let order = JSON.parse(localStorage.getItem('order'));
+            order.summ = res;
+            localStorage.setItem('order', JSON.stringify(order));
+            // console.log(res);
+            return res;
+        })
+        .catch(error => {
+            // Обработка ошибок
+            console.error('Ошибка:', error);
+        });
 }
 
 
@@ -1209,21 +1425,285 @@ $(document).on('click', '#checkout__radio-bytime', function(e){
 })
 
 
+// Перебор всех товаров на странице и поиск их в корзине
+function checkProducts() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let products = document.querySelectorAll('.btn-wrap');
+
+    
+    // $('.cart__maby').load(location.href + " .cart__maby-refresh");
+    
+    products.forEach(function(product) {
+        
+        let id = product.getAttribute('data-cart-id');
+        
+
+        let type = product.getAttribute('data-type');
+        let optionsIdString = product.getAttribute('data-optionsid');
+        let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
+
+
+        if (type === 'product') {
+            id += '000';
+        } else if (type === 'combo') {
+            id += '111';
+        } else if (type === 'constructor') {
+            id += '222';
+        } 
+
+        id += optionsIdArray.join('');
+
+        let productListItem = product.querySelector('.btn-wrap__count');
+        let productSvgItem = product.querySelector('.btn-wrap__svg');
+
+        let productBtn = product.querySelector('.add_to_cart');
+
+        if (!productBtn) {
+            productBtn = product.querySelector('.combo-popup__btn');
+        }
+
+        
+
+
+        if (cart[id]) {
+
+            let productItem = product.closest('.product-list__item');
+            if (productItem && productItem.classList.contains('product-list__item--mini')) {
+                productItem.style.display = 'none';
+            } else {
+                
+            
+                let inHTML = `
+                <div class="cart__items-wrap">
+                    <div class="cart__btn-wrapper">
+                        <button class="cart__plusminus" data-action="minus" data-id="${id}">-</button>
+                        <div class class="cart__quantity">${cart[id].quantity}</div>
+                        <button class="cart__plusminus" data-action="plus" data-id="${id}">+</button>
+                    </div>
+                </div>
+                `;
+
+                let svgHTML = `
+                    <div class="cart__svg">
+                        <?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#101820;}</style></defs><title/><g data-name="Layer 28" id="Layer_28"><path class="cls-1" d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"/><path class="cls-1" d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"/></g></svg>
+                        <p>В корзине</p>
+                    </div>
+                    `
+
+                product.classList.add('in-cart');
+                
+                productBtn.style.display = 'none';
+                productListItem.innerHTML = inHTML;
+                productSvgItem.innerHTML = svgHTML;
+                
+            }
+        } else {
+           
+            let product_item = product.closest('.product-list__item') || product.closest('.product-detail');
+
+            
+
+            product_item.style.display = 'flex';
+            product.classList.remove('in-cart');
+            
+            
+            
+            productBtn.style.display = 'block';
+                
+            productListItem.innerHTML = '';
+            productSvgItem.innerHTML = '';
+                
+            
+          
+            
+        }
+        
+
+        
+
+
+
+    })
+
+}
+checkProducts()
+
+
+
+$(document).on('click','.product-options__item',function(e){
+
+    
+    var id = $(this).attr('data-id')
+    var price = parseFloat($(this).attr('data-price'))
+    var value = $(this).attr('data-value')
+    var product_id = $(this).attr('data-product-id')
+    var image = $(this).attr('data-image')
+    var weight = $(this).attr('data-weight')
+    var $productItem = $(this).closest('.product-list__item');
+
+
+    
+    $productItem.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+    
+
+    if (weight != '') {
+        $productItem.find('.product-list__weight-'+product_id).html(weight)
+
+    }
+
+    if (image != '') {
+      
+        $productItem.find('.product-list__thumb-'+product_id).attr('src', image)
+
+    }
+
+    var pr_price = parseFloat($('.price-'+product_id).attr('data-price'))
+    var old_price = parseFloat($('.old_price-'+product_id).attr('data-price'))
+
+    
+    
+    $(this).parent().find('.product-options__item').removeClass('product-options__item--active')
+
+   
+    $(this).addClass('product-options__item--active')
+
+    
+
+    var res_price = price + pr_price;
+    var res_old_price = old_price + price;
+
+    $productItem.find('.btn-wrap').attr('data-price', res_price).attr('data-optionsid', id)
+
+    $productItem.find('.product-list__price').html(res_price + ' ₽')
+    $productItem.find('.product-list__old').html(res_old_price + ' ₽')
+
+
+    $productItem.find('.product-options-popup__options-select-wrap').find('.product-options-popup__options-select').removeClass('product-options-popup__options-select--active')
+    $productItem.find('.product-options-popup__options-select-wrap').find(`[data-id='${id}']`).addClass('product-options-popup__options-select--active')
+
+    $productItem.find('.product-options-popup__price').attr('data-price', res_price)
+    $productItem.find('.product-options-popup__old-price').attr('data-price', res_old_price)
+
+    $productItem.find('.product-options-popup__price').text(res_price + ' ₽')
+    $productItem.find('.product-options-popup__old-price').text(res_old_price + ' ₽')
+
+    // .product-options-popup_btn
+    $productItem.find('.product-options-popup_btn').attr('data-price', res_price).attr('data-optionsid', id)
+    
+
+    
+    
+    checkProducts()
+    // $productItem.find('.product-options__span-'+product_id).html(value)
+
+});
+
+
+
+
+// Дополнительные опции product-options-popup__options-checkbox-row
+// TODO разобраться почему не работает при двух одинаковых товарах на странице
+
+$(document).ready(function() {
+    $(document).on('change', 'input[type="checkbox"], input[type="radio"]', function() {
+
+
+        var $parent = $(this).closest('.product-options-popup__inner');
+
+
+        var checked_select_id = $parent.find('.product-options-popup__options-select--active').data('id');
+        var checked_select_value = $parent.find('.product-options-popup__options-select--active').data('value');
+        
+
+
+
+        // Обновить сумму всех выбранных чекбоксов и радио-кнопок
+        var sum = 0;
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            sum += parseFloat($(this).data('price'));
+        });
+
+        var price = $parent.find('.product-options-popup__price').attr('data-price');
+        var old_price = $parent.find('.product-options-popup__old-price').attr('data-price');
+        var new_price = parseFloat(price) + sum;
+        var new_old_price = parseFloat(old_price) + sum;
+
+        // Записать новую цену в атрибут data-price кнопки .btn
+        $parent.find('.btn-wrap').attr('data-price', new_price.toFixed(2));
+        $parent.find('.product-options-popup__price').html(new_price + ' ₽');
+        $parent.find('.product-options-popup__old-price').html(new_old_price + ' ₽');
+
+        
+        // Собрать значения data-id всех выбранных чекбоксов через запятую
+        var ids = [];
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            ids.push($(this).data('id'));
+        });
+        
+        // Записать значения data-id через запятую в атрибут data-options-id кнопки .btn
+        $parent.find('.btn-wrap').attr('data-optionsid', ids.join(','));
+        
+        // Собрать названия выбранных значений через запятую
+        var options = [];
+        $parent.find('input[type="checkbox"]:checked, input[type="radio"]:checked').each(function() {
+            options.push($(this).val());
+        });
+        
+        // Записать названия выбранных значений через запятую в атрибут data-options кнопки .btn
+        $parent.find('.btn-wrap').attr('data-options', options.join(', '));
+
+        if (checked_select_id != undefined && checked_select_value != undefined) {
+            var id_now = $parent.find('.btn-wrap').attr('data-optionsid');
+            var options_now = $parent.find('.btn-wrap').attr('data-options');
+            
+    
+            $parent.find('.btn-wrap').attr('data-optionsid', checked_select_id + ',' + id_now);
+            // $parent.find('.btn').attr('data-options', checked_select_value + ',' + options_now);
+        }
+
+        
+        checkProducts()
+
+
+
+    });
+});
+
+
 
 // Добавление в корзину
-$(document).on('click','.add_to_cart',function(){
-    let id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    let type = $(this).parent('.btn-wrap').attr('data-type')
-    addToCart($(this), id, type);
+$(document).on('click', '.add_to_cart', function(){
+    let $button = $(this);
+    let id = $button.parent('.btn-wrap').attr('data-cart-id');
+    let type = $button.parent('.btn-wrap').attr('data-type');
+    let optionsIdString = $button.parent('.btn-wrap').attr('data-optionsid');
+    let price = $button.parent('.btn-wrap').attr('data-price');
+    let name = $button.parent('.btn-wrap').attr('data-name');
+    let image = $button.parent('.btn-wrap').attr('data-image');
     
-})
+    let parent = $button.closest('.product-list__item');
+    if (parent.hasClass('product-list__item--mini')) {
+        $('.product-options-popup').removeClass('product-options-popup--active')
+    }
+
+    addToCart(id, name, price, image, optionsIdString, type);
+    
+   
+});
+
 
 $(document).on('click','.combo-popup__btn',function(){
+    let $button = $(this);
     let id = $(this).parent('.btn-wrap').attr('data-cart-id')
-    let type = $(this).parent('.btn-wrap').attr('data-type')
+    let type = $button.parent('.btn-wrap').attr('data-type');
+    let optionsIdString = $button.parent('.btn-wrap').attr('data-optionsid');
+    let price = $button.parent('.btn-wrap').attr('data-price');
+    let name = $button.parent('.btn-wrap').attr('data-name');
+    let image = $button.parent('.btn-wrap').attr('data-image');
 
     if ($(this).hasClass('combo-popup__btn--active')) {
-        addToCart($(this), id, type);
+        addToCart(id, name, price, image, optionsIdString, type);
+        
 
     } else {
         
@@ -1326,6 +1806,8 @@ $(document).on('click', '.order_create', function(e) {
 
 
 
+    $('.order__load').addClass('order__load--active')
+
     // console.log(order)
 
     let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
@@ -1370,6 +1852,7 @@ $(document).on('click', '.order_create', function(e) {
                     'day': order.day,
                     'time': order.time,
                     'pay_method': order.pay_method,
+                    'pay_description': order.pay_description,
                     'pay_change': order.pay_change,
                     'delivery_method': order.delivery_method,
                     'delivery_price': order.delivery_price,
@@ -1381,12 +1864,47 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
-                localStorage.setItem('lastOrder', JSON.stringify(data));
-
                 
 
+                // Обновление или удаление данных из localStorage
+                order.address = '';
+                localStorage.setItem('order', JSON.stringify(order));
 
-                window.location.href = confirmationUrl;
+                if (confirmationUrl != '/?order=True') {
+                    localStorage.setItem('lastOrder', JSON.stringify(data));
+                    setOrder()
+                    window.location.href = confirmationUrl;
+                    
+
+                } else {
+
+                    localStorage.removeItem('order');
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('lastOrder');
+
+                    
+
+                    
+    
+                    localStorage.setItem('lastOrder', JSON.stringify(data));
+                    
+    
+                    $('.order__load').removeClass('order__load--active')
+                    $('.odred-done').addClass('odred-done--active')
+                    $('.order').removeClass('order--active')
+                    
+                    getLastOrder()
+                    checkProducts()
+                    
+                    setOrder()
+                    updateAll()
+                    updateDeliveryInfo()
+
+                }
+
+                
+               
+
 
             } else {
                 console.error('Ответ не содержит confirmation_url');
@@ -1401,9 +1919,186 @@ $(document).on('click', '.order_create', function(e) {
 
 })
 
-
-
+// проверка последнего заказа
 jQuery(document).ready(function () {
+    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
+    
+    
+    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+
+    if (order_id != "") {
+    
+        if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status ) {
+
+            
+            let intervalId; // переменная для хранения идентификатора интервала
+
+            // console.log(last_order)
+            $('.popup-order-status').css('display', 'flex')
+
+            
+
+            function updateOrderStatus() {
+
+                    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+                    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+                
+                    $.ajax({
+                        url: '/api/v1/get_order_status/' + order_id + '/',
+                        method: 'GET',
+                        success: function(data) {
+                            
+                            last_order.status = data.status;
+                            localStorage.setItem('lastOrder', JSON.stringify(last_order));
+                            // Обновление popup с полученными данными
+                            updatePopup(data.status_list, data.status);
+                            
+                            // console.log(data.status);
+                            // Проверка на выполненный статус
+                            if (data.status === 'Выполнен') {
+                                
+                                clearInterval(intervalId); // Остановка повторения запросов
+                            }
+                            // Проверка на выполненный статус
+                            if (data.status === 'Отказ') {
+                                $('.popup-order-status').css('display', 'none')
+                                clearInterval(intervalId); // Остановка повторения запросов
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Ошибка при получении статуса заказа:', error);
+                        }
+                    });
+                
+            }
+        
+            function updatePopup(status_list, current_status) {
+                // Очистка текущего содержимого popup
+                // и добавление новых пунктов списка статусов
+                
+                let popupContent = '';
+                status_list.forEach(function(status) {
+                    
+                    let activeClass = (status === current_status) ? 'status-item--active' : '';
+                    let svg = getSVGByStatus(status); // Получение SVG для статуса
+                    popupContent += '<div title="' + status + '" class="status-item ' + activeClass + '">' + status + svg + '</div>';
+                });
+                $('#popup-order-status').html(popupContent);
+            }
+        
+            function getSVGByStatus(status) {
+                // Возвращает SVG в зависимости от статуса
+                switch (status) {
+                    case 'Новый':
+
+                        
+
+                        return `
+                            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                                
+                                <title>new</title>
+                                <desc>Created with Sketch Beta.</desc>
+                                <defs>
+
+                            </defs>
+                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                                    <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-516.000000, -99.000000)" fill="#000000">
+                                        <path d="M527.786,122.02 L522.414,125.273 C521.925,125.501 521.485,125.029 521.713,124.571 L524.965,119.195 L527.786,122.02 L527.786,122.02 Z M537.239,106.222 L540.776,109.712 L529.536,120.959 C528.22,119.641 526.397,117.817 526.024,117.444 L537.239,106.222 L537.239,106.222 Z M540.776,102.683 C541.164,102.294 541.793,102.294 542.182,102.683 L544.289,104.791 C544.677,105.18 544.677,105.809 544.289,106.197 L542.182,108.306 L538.719,104.74 L540.776,102.683 L540.776,102.683 Z M524.11,117.068 L519.81,125.773 C519.449,126.754 520.233,127.632 521.213,127.177 L529.912,122.874 C530.287,122.801 530.651,122.655 530.941,122.365 L546.396,106.899 C547.172,106.124 547.172,104.864 546.396,104.088 L542.884,100.573 C542.107,99.797 540.85,99.797 540.074,100.573 L524.619,116.038 C524.328,116.329 524.184,116.693 524.11,117.068 L524.11,117.068 Z M546,111 L546,127 C546,128.099 544.914,129.012 543.817,129.012 L519.974,129.012 C518.877,129.012 517.987,128.122 517.987,127.023 L517.987,103.165 C517.987,102.066 518.902,101 520,101 L536,101 L536,99 L520,99 C517.806,99 516,100.969 516,103.165 L516,127.023 C516,129.22 517.779,131 519.974,131 L543.817,131 C546.012,131 548,129.196 548,127 L548,111 L546,111 L546,111 Z" id="new" sketch:type="MSShapeGroup">
+
+                            </path>
+                                    </g>
+                                </g>
+                            </svg>
+                        `;
+                    case 'Готовится':
+                        return `
+                            <?xml version="1.0" ?>
+
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="800px" height="800px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+
+                            <title/>
+
+                            <g id="Grid">
+
+                            <path d="M82.38,113.13H44.62a10.46,10.46,0,0,1-10.44-10.45V80.38a21.38,21.38,0,0,1,5.48-42,21,21,0,0,1,2.63.17,21.14,21.14,0,0,1-.16-2.64,21.37,21.37,0,0,1,42.74,0,21.14,21.14,0,0,1-.16,2.64,21,21,0,0,1,2.63-.17,21.38,21.38,0,0,1,5.48,42v22.3A10.46,10.46,0,0,1,82.38,113.13ZM39.66,41.34A18.38,18.38,0,0,0,36,77.72a1.49,1.49,0,0,1,1.2,1.47v23.49a7.45,7.45,0,0,0,7.44,7.45H82.38a7.45,7.45,0,0,0,7.44-7.45V79.19A1.49,1.49,0,0,1,91,77.72a18.38,18.38,0,0,0-3.68-36.38,18,18,0,0,0-4.14.48A1.5,1.5,0,0,1,81.39,40a18,18,0,0,0,.48-4.15,18.37,18.37,0,0,0-36.74,0A18,18,0,0,0,45.61,40a1.5,1.5,0,0,1-1.81,1.8A18,18,0,0,0,39.66,41.34Z"/>
+
+                            <path d="M92.64,119.5H34.36a1.5,1.5,0,0,1,0-3H92.64a1.5,1.5,0,0,1,0,3Z"/>
+
+                            <path d="M67.47,105.18a1.51,1.51,0,0,1-1.5-1.5V71.88a1.5,1.5,0,0,1,3,0v31.8A1.5,1.5,0,0,1,67.47,105.18Z"/>
+
+                            <path d="M75.42,105.18a1.5,1.5,0,0,1-1.5-1.5V87.78a1.5,1.5,0,0,1,3,0v15.9A1.5,1.5,0,0,1,75.42,105.18Z"/>
+
+                            </g>
+
+                            </svg>
+                        `;
+
+                    case 'Готов к доставке':
+                        return `
+                        
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        `;
+                    case 'Готов к выдаче':
+                        return `
+                        
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 14L8.23309 16.4248C8.66178 16.7463 9.26772 16.6728 9.60705 16.2581L18 6" stroke="#33363F" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        `;
+                    case 'Доставка':
+
+                        return `
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="800px" height="800px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M15.48 12c-.13.004-.255.058-.347.152l-2.638 2.63-1.625-1.62c-.455-.474-1.19.258-.715.712l1.983 1.978c.197.197.517.197.715 0l2.995-2.987c.33-.32.087-.865-.367-.865zM.5 16h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3C.223 9 0 8.777 0 8.5S.223 8 .5 8zm24 11c-1.375 0-2.5 1.125-2.5 2.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-13-1C10.125 19 9 20.125 9 21.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-5-14C5.678 6 5 6.678 5 7.5v11c0 .822.678 1.5 1.5 1.5h2c.676.01.676-1.01 0-1h-2c-.286 0-.5-.214-.5-.5v-11c0-.286.214-.5.5-.5h13c.286 0 .5.214.5.5V19h-5.5c-.66 0-.648 1.01 0 1h7c.66 0 .654-1 0-1H21v-9h4.227L29 15.896V18.5c0 .286-.214.5-.5.5h-1c-.654 0-.654 1 0 1h1c.822 0 1.5-.678 1.5-1.5v-2.75c0-.095-.027-.19-.078-.27l-4-6.25c-.092-.143-.25-.23-.422-.23H21V7.5c0-.822-.678-1.5-1.5-1.5z"/></svg>
+                        `;
+
+                    case 'Передан курьеру':
+
+                        return `
+                            <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg fill="#000000" width="800px" height="800px" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M15.48 12c-.13.004-.255.058-.347.152l-2.638 2.63-1.625-1.62c-.455-.474-1.19.258-.715.712l1.983 1.978c.197.197.517.197.715 0l2.995-2.987c.33-.32.087-.865-.367-.865zM.5 16h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3c-.277 0-.5-.223-.5-.5s.223-.5.5-.5zm0-4h3c.277 0 .5.223.5.5s-.223.5-.5.5h-3C.223 9 0 8.777 0 8.5S.223 8 .5 8zm24 11c-1.375 0-2.5 1.125-2.5 2.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-13-1C10.125 19 9 20.125 9 21.5s1.125 2.5 2.5 2.5 2.5-1.125 2.5-2.5-1.125-2.5-2.5-2.5zm0 1c.834 0 1.5.666 1.5 1.5s-.666 1.5-1.5 1.5-1.5-.666-1.5-1.5.666-1.5 1.5-1.5zm-5-14C5.678 6 5 6.678 5 7.5v11c0 .822.678 1.5 1.5 1.5h2c.676.01.676-1.01 0-1h-2c-.286 0-.5-.214-.5-.5v-11c0-.286.214-.5.5-.5h13c.286 0 .5.214.5.5V19h-5.5c-.66 0-.648 1.01 0 1h7c.66 0 .654-1 0-1H21v-9h4.227L29 15.896V18.5c0 .286-.214.5-.5.5h-1c-.654 0-.654 1 0 1h1c.822 0 1.5-.678 1.5-1.5v-2.75c0-.095-.027-.19-.078-.27l-4-6.25c-.092-.143-.25-.23-.422-.23H21V7.5c0-.822-.678-1.5-1.5-1.5z"/></svg>
+                        `;
+
+                    case 'Доставлен':
+                        return `
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 1024 1024" fill="#000000" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M959.018 208.158c0.23-2.721 0.34-5.45 0.34-8.172 0-74.93-60.96-135.89-135.89-135.89-1.54 0-3.036 0.06-6.522 0.213l-611.757-0.043c-1.768-0.085-3.563-0.17-5.424-0.17-74.812 0-135.67 60.84-135.67 135.712l0.188 10.952h-0.306l0.391 594.972-0.162 20.382c0 74.03 60.22 134.25 134.24 134.25 1.668 0 7.007-0.239 7.1-0.239l608.934 0.085c2.985 0.357 6.216 0.468 9.55 0.468 35.815 0 69.514-13.954 94.879-39.302 25.373-25.34 39.344-58.987 39.344-94.794l-0.145-12.015h0.918l-0.008-606.41z m-757.655 693.82l-2.585-0.203c-42.524 0-76.146-34.863-76.537-79.309V332.671H900.79l0.46 485.186-0.885 2.865c-0.535 1.837-0.8 3.58-0.8 5.17 0 40.382-31.555 73.766-71.852 76.002l-10.816 0.621v-0.527l-615.533-0.01zM900.78 274.424H122.3l-0.375-65.934 0.85-2.924c0.52-1.82 0.782-3.63 0.782-5.247 0-42.236 34.727-76.665 78.179-76.809l0.45-0.068 618.177 0.018 2.662 0.203c42.329 0 76.767 34.439 76.767 76.768 0 1.326 0.196 2.687 0.655 4.532l0.332 0.884v68.577z" fill="" /><path d="M697.67 471.435c-7.882 0-15.314 3.078-20.918 8.682l-223.43 223.439L346.599 596.84c-5.544-5.603-12.95-8.69-20.842-8.69s-15.323 3.078-20.918 8.665c-5.578 5.518-8.674 12.9-8.7 20.79-0.017 7.908 3.07 15.357 8.69 20.994l127.55 127.558c5.57 5.56 13.01 8.622 20.943 8.622 7.925 0 15.364-3.06 20.934-8.63l244.247-244.247c5.578-5.511 8.674-12.883 8.7-20.783 0.017-7.942-3.079-15.408-8.682-20.986-5.552-5.612-12.958-8.698-20.85-8.698z" fill="" /></svg>
+                        `;
+                    
+                    case 'Выполнен':
+                        return `               
+                            <?xml version="1.0" ?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                            <svg width="800px" height="800px" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.65263 14.0304C6.29251 13.6703 6.29251 13.0864 6.65263 12.7263C7.01276 12.3662 7.59663 12.3662 7.95676 12.7263L11.6602 16.4297L19.438 8.65183C19.7981 8.29171 20.382 8.29171 20.7421 8.65183C21.1023 9.01195 21.1023 9.59583 20.7421 9.95596L12.3667 18.3314C11.9762 18.7219 11.343 18.7219 10.9525 18.3314L6.65263 14.0304Z" fill="#000000"/><path clip-rule="evenodd" d="M14 1C6.8203 1 1 6.8203 1 14C1 21.1797 6.8203 27 14 27C21.1797 27 27 21.1797 27 14C27 6.8203 21.1797 1 14 1ZM3 14C3 7.92487 7.92487 3 14 3C20.0751 3 25 7.92487 25 14C25 20.0751 20.0751 25 14 25C7.92487 25 3 20.0751 3 14Z" fill="#000000" fill-rule="evenodd"/></svg>
+                        `;
+
+                    // Добавьте другие статусы и их SVG по мере необходимости
+                    default:
+                        return '';
+                }
+            }
+        
+            // Инициализация обновления статуса заказа и повторение каждые 2 секунды
+            updateOrderStatus();
+            intervalId = setInterval(updateOrderStatus, 2000);
+
+        }
+    }
+
+    
+});
+
+
+
+function getLastOrder() {
     var pathname = window.location.href; 
     var origin   = window.location.origin;
 
@@ -1417,327 +2112,364 @@ jQuery(document).ready(function () {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
     res = pathname.replace(origin, '')
     
+    
+    let pay_method = last_order.pay_method
+    let show_order_set = last_order.show
 
-    if(last_order && res.indexOf('/?order=True') > -1) {
+    let is_site = pay_method.indexOf('сайт') > -1
+
+    
+
+    if(last_order || res.indexOf('/?order=True') > -1) {
+        
+        let show_last_order = true
+        if (res.indexOf('/?order=True') > -1) {
+            show_last_order = true
+
+        } 
+        if(is_site && !(res.indexOf('/?order=True') > -1)) {
+            show_last_order = false
+        }
+
+        if (!show_order_set) {
+            show_last_order = false
+        }
+
+        // console.log(last_order)
+        // console.log(show_last_order, is_site)
         
         
-        
-        // Преобразуем объект в строку JSON-формата
-        let jsonString = JSON.stringify(order);
+        if (show_last_order) {
+            // // Преобразуем объект в строку JSON-формата
+            // let jsonString = JSON.stringify(order);
 
-        // Заменяем символы в строке
-        jsonString = jsonString.replace(/'/g, '"'); 
-        let newStr = jsonString.slice(1, -1);
+            // // Заменяем символы в строке
+            // jsonString = jsonString.replace(/'/g, '"'); 
+            // let newStr = jsonString.slice(1, -1);
 
 
-        // Преобразуем строку JSON-формата обратно в объект
-        let newObj = JSON.parse(newStr);
-
-       
-        dataLayer.push(newObj)
-
+            // // Преобразуем строку JSON-формата обратно в объект
+            // let newObj = JSON.parse(newStr);
 
         
-
-        
-
-
-        let order_delivery_items = ''
-        let order_delivery_method = ''
-        let order_delivery_address = ''
-
-        if (last_order.delivery_method == 'Самовывоз') {
-            order_delivery_method = 'самовывоза'
-            order_delivery_items = `
-                <div class="order__delivery-check-item order-done-delivery">Доставка</div>
-                <div class="order__delivery-check-item order-done-pickup order__delivery-check-item--active">Самовывоз</div>
-            `
-            order_delivery_address = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Точка самовывоза</div>
-                    <div class="odred-done__itog-value">${last_order.address_pickup}</div>
-
-                </div>
-            `
-        } else if (last_order.delivery_method == 'Доставка') {
-            order_delivery_method = 'доставки'
-            order_delivery_items = `
-                <div class="order__delivery-check-item order-done-delivery order__delivery-check-item--active">Доставка</div>
-                <div class="order__delivery-check-item order-done-pickup">Самовывоз</div>
-            `
-            order_delivery_address = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Адрес доставки</div>
-                    <div class="odred-done__itog-value">${last_order.address}</div>
-
-                </div>
-            `
-        }
+            // dataLayer.push(newObj)
 
 
-        let order_comment = ''
-        if(last_order.order_conmment) {
             
-            order_comment = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Комментарий к заказу</div>
-                    <div class="odred-done__itog-value">${last_order.order_conmment}</div>
-                </div>
-                `
-        }
 
-        
-        let address_comment = ''
-        if(last_order.address_comment) {
+
+            let order_delivery_items = ''
+            let order_delivery_method = ''
+            let order_delivery_address = ''
+
+            if (last_order.delivery_method == 'Самовывоз') {
+                order_delivery_method = 'самовывоза'
+                order_delivery_items = `
+                    <div class="order__delivery-check-item order-done-delivery">Доставка</div>
+                    <div class="order__delivery-check-item order-done-pickup order__delivery-check-item--active">Самовывоз</div>
+                `
+                order_delivery_address = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Точка самовывоза</div>
+                        <div class="odred-done__itog-value">${last_order.address_pickup}</div>
+
+                    </div>
+                `
+            } else if (last_order.delivery_method == 'Доставка') {
+                order_delivery_method = 'доставки'
+                order_delivery_items = `
+                    <div class="order__delivery-check-item order-done-delivery order__delivery-check-item--active">Доставка</div>
+                    <div class="order__delivery-check-item order-done-pickup">Самовывоз</div>
+                `
+                order_delivery_address = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Адрес доставки</div>
+                        <div class="odred-done__itog-value">${last_order.address}</div>
+
+                    </div>
+                `
+            }
+
+
+            let order_comment = ''
+            if(last_order.order_conmment) {
+                
+                order_comment = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Комментарий к заказу</div>
+                        <div class="odred-done__itog-value">${last_order.order_conmment}</div>
+                    </div>
+                    `
+            }
+
             
-            address_comment = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Комментарий к адресу</div>
-                    <div class="odred-done__itog-value">${last_order.address_comment}</div>
-                </div>
-                `
-        }
-        
-        let order_flat = ''
-        if(last_order.flat) {
+            let address_comment = ''
+            if(last_order.address_comment) {
+                
+                address_comment = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Комментарий к адресу</div>
+                        <div class="odred-done__itog-value">${last_order.address_comment}</div>
+                    </div>
+                    `
+            }
             
-            order_flat = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Квартира</div>
-                    <div class="odred-done__itog-value">${last_order.flat}</div>
-                </div>
-                `
-        }
-        let oreder_flore = ''
-        if(last_order.floor) {
+            let order_flat = ''
+            if(last_order.flat) {
+                
+                order_flat = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Квартира</div>
+                        <div class="odred-done__itog-value">${last_order.flat}</div>
+                    </div>
+                    `
+            }
+            let oreder_flore = ''
+            if(last_order.floor) {
+                
+                oreder_flore = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Этаж</div>
+                        <div class="odred-done__itog-value">${last_order.floor}</div>
+                    </div>
+                    `
+            }
+
+            let order_entrance = ''
+            if(last_order.entrance) {
+                
+                order_entrance = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Подъезд</div>
+                        <div class="odred-done__itog-value">${last_order.entrance}</div>
+                    </div>
+                    `
+            }
+            let order_door_code = ''
+            if(last_order.door_code) {
+                
+                order_door_code = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Код двери</div>
+                        <div class="odred-done__itog-value">${last_order.door_code}</div>
+                    </div>
+                    `
+            }
+
+            let order_pay_method = ''
+            if(last_order.pay_method) {
+                
+                order_pay_method = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Способ оплаты</div>
+                        <div class="odred-done__itog-value">${last_order.pay_method}</div>
+                    </div>
+                    `
+            }
+
+            let order_pay_change = ''
+            if(last_order.pay_change) {
+                
+                order_pay_change = `
+                    <div class="odred-done__itog-wrap">
+                        <div class="odred-done__itog-data">Сдача c</div>
+                        <div class="odred-done__itog-value">${last_order.pay_change}</div>
+                    </div>
+                    `
+            }
+
+            let order_pay_description = ''
+            if(last_order.pay_description) {
+
+                var newValue = last_order.pay_description.replace(/\{summ\}/g, '<b>' +last_order.summ + ' руб.</b>')
+                order_pay_description = `
+                    <p class="odred-done__body-sbp">${newValue}</p>
+                    
+                    `
+            }
             
-            oreder_flore = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Этаж</div>
-                    <div class="odred-done__itog-value">${last_order.floor}</div>
-                </div>
-                `
-        }
+            let dataHtml = `       
+                    <div class="odred-done">
 
-        let order_entrance = ''
-        if(last_order.entrance) {
-            
-            order_entrance = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Подъезд</div>
-                    <div class="odred-done__itog-value">${last_order.entrance}</div>
-                </div>
-                `
-        }
-        let order_door_code = ''
-        if(last_order.door_code) {
-            
-            order_door_code = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Код двери</div>
-                    <div class="odred-done__itog-value">${last_order.door_code}</div>
-                </div>
-                `
-        }
-
-        let order_pay_method = ''
-        if(last_order.pay_method) {
-            
-            order_pay_method = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Способ оплаты</div>
-                    <div class="odred-done__itog-value">${last_order.pay_method}</div>
-                </div>
-                `
-        }
-
-        let order_pay_change = ''
-        if(last_order.pay_change) {
-            
-            order_pay_change = `
-                <div class="odred-done__itog-wrap">
-                    <div class="odred-done__itog-data">Сдача c</div>
-                    <div class="odred-done__itog-value">${last_order.pay_change}</div>
-                </div>
-                `
-        }
-        
-        let dataHtml = `       
-                <div class="odred-done">
-
-                <div class="odred-done__owerlay"></div>
+                    <div class="odred-done__owerlay"></div>
 
 
-                <div class="odred-done__container">
+                    <div class="odred-done__container">
 
-                    <div class="odred-done__inner">
+                        <div class="odred-done__inner">
 
-                        <div class="odred-done__top">
-                        
-                            <div class="odred-done__title">
-                                Заказ № <span id="odred-done__id">${last_order.order_id}</span>
-                            </div>
-
-
-                            <div class="odred-done__closer">
-                                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                            </div>
-
-                        </div>
-                        
-
-
-                        
-
-                        <div class="odred-done__body">
-                            <div class="order__delivery-check">
-                                ${order_delivery_items}
-                                
-                            </div>
-
-                            <ul class="checkout__counter">
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-                                    
-                                    <span class="checkout__counter-title">Адрес и контакты</span>
-                                    <div class="checkout__counter-line-wrap">
-                                        <i></i><div class="checkout__counter-line"></div>
-
-                                    </div>
-                                
-                                </li>
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-
-                                    <span class="checkout__counter-title">Оплата</span>
-                                    <div class="checkout__counter-line-wrap">
-                                    
-                                        <div class="checkout__counter-line"></div><i></i><div class="checkout__counter-line"></div>
-
-                                    </div>
-                                
-                                </li>
-                                <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
-
-                                    <span class="checkout__counter-title">Завершение</span>
-
-
-                                    <div class="checkout__counter-line-wrap">
-                                        
-                                        <div class="checkout__counter-line"></div><i></i>
-                                    </div>
-                                
-                                </li>
-                            </ul>
-
-                            <div class="odred-done__body-wrap">
+                            <div class="odred-done__top">
                             
-                                <p class="odred-done__body-title">${data_title} ${data_text}</p>
+                                <div class="odred-done__title">
+                                    Заказ № <span id="odred-done__id">${last_order.order_id}</span>
+                                </div>
 
 
-                                <div class="odred-done__itog">
-                                    <div class="odred-done__itog-item">
-                                        <p class="odred-done__itog-title">Итоговые данные</p>
+                                <div class="odred-done__closer">
+                                    <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                </div>
 
+                            </div>
+                            
 
+                            <div class="odred-done__body">
+                                <div class="order__delivery-check">
+                                    ${order_delivery_items}
+                                    
+                                </div>
+
+                                <ul class="checkout__counter">
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
                                         
+                                        <span class="checkout__counter-title">Адрес и контакты</span>
+                                        <div class="checkout__counter-line-wrap">
+                                            <i></i><div class="checkout__counter-line"></div>
 
-                                        <div class="odred-done__itog-wrap">
-                                            <div class="odred-done__itog-data">Время ${order_delivery_method}</div>
-                                            <div class="odred-done__itog-value">${last_order.day} / ${last_order.time}</div>
+                                        </div>
+                                    
+                                    </li>
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                        <span class="checkout__counter-title">Оплата</span>
+                                        <div class="checkout__counter-line-wrap">
+                                        
+                                            <div class="checkout__counter-line"></div><i></i><div class="checkout__counter-line"></div>
+
+                                        </div>
+                                    
+                                    </li>
+                                    <li class="checkout__counter-item checkout__counter-item--active checkout__counter-item--line">
+
+                                        <span class="checkout__counter-title">Завершение</span>
+
+
+                                        <div class="checkout__counter-line-wrap">
+                                            
+                                            <div class="checkout__counter-line"></div><i></i>
+                                        </div>
+                                    
+                                    </li>
+                                </ul>
+
+                                <div class="odred-done__body-wrap">
+                                
+                                    <p class="odred-done__body-title">${data_title} ${data_text}</p>
+
+                                    
+                                    ${order_pay_description}
+
+                                    <div class="odred-done__itog">
+                                        <div class="odred-done__itog-item">
+                                            <p class="odred-done__itog-title">Итоговые данные</p>
+
+
+                                            
+
+                                            <div class="odred-done__itog-wrap">
+                                                <div class="odred-done__itog-data">Время ${order_delivery_method}</div>
+                                                <div class="odred-done__itog-value">${last_order.day} / ${last_order.time}</div>
+
+                                            </div>
+
+                                            ${order_delivery_address}
+                                            ${order_flat}
+                                            ${oreder_flore}
+                                            ${order_entrance}
+                                            ${order_door_code}
+
+
+
+                                            ${address_comment}
+
+
+                                            ${order_pay_method}
+                                            ${order_pay_change}
+
+                                            ${order_comment}
+
+                                            <div class="odred-done__itog-wrap odred-done__itog-wrap-summ" id="orderDonePrice">
+                                                <div class="odred-done__itog-data">Сумма заказа:</div>
+                                                <div class="odred-done__itog-value">${last_order.summ} ₽</div>
+
+                                            </div>
 
                                         </div>
 
-                                        ${order_delivery_address}
-                                        ${order_flat}
-                                        ${oreder_flore}
-                                        ${order_entrance}
-                                        ${order_door_code}
-
-
-
-                                        ${address_comment}
-
-
-                                        ${order_pay_method}
-                                        ${order_pay_change}
-
-                                        ${order_comment}
-
-                                        <div class="odred-done__itog-wrap odred-done__itog-wrap-summ" id="orderDonePrice">
-                                            <div class="odred-done__itog-data">Сумма заказа:</div>
-                                            <div class="odred-done__itog-value">${last_order.summ} ₽</div>
-
-                                        </div>
 
                                     </div>
 
 
                                 </div>
 
-
                             </div>
+                            
+                            
 
                         </div>
-                        
-                        
+                        <div class="odred-done__bottom">
+
+
+                            <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
+
+                
+                        </div>
 
                     </div>
-                    <div class="odred-done__bottom">
 
 
-                    
-                        
-                        
-                    
-
-                    
-                        
-
-                    
-
-                        
-                    
-
-                        <a href="#" class="btn btn--primary odred-done__ok">Ок</a>
-
-                    
-
-                        
                     </div>
+            `
 
-                </div>
+            
+            $('#orderDone').html(dataHtml)
 
-
-                </div>
-        `
-
-        
-        $('#orderDone').html(dataHtml)
-
-        if(last_order.show == true) {
-            $('.odred-done').addClass('odred-done--active')
-            $('body').addClass('body');
-        } else {
-            $('.odred-done').removeClass('odred-done--active')
-            $('body').removeClass('body');
+            if(last_order.show == true) {
+                $('.odred-done').addClass('odred-done--active')
+                $('body').addClass('body');
+            } else {
+                $('.odred-done').removeClass('odred-done--active')
+                $('body').removeClass('body');
+            }
+            
         }
         
-        
-        $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
-            $('.odred-done').removeClass('odred-done--active')
-            $('body').removeClass('body');
-            last_order.show = false
-            localStorage.setItem('lastOrder', JSON.stringify(last_order))
-            clearCart()
-            window.location.href = `/`
-            
-
-        })
     }
 
-})
+}
+getLastOrder()
 
+
+
+// $(document).on('click','.odred-done__inner',function(e){
+    
+//     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    
+//     // console.log(last_order)
+    
+// })
+
+$(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__closer',function(e){
+    $('.odred-done').removeClass('odred-done--active')
+    $('body').removeClass('body');
+    
+    let storage_order = JSON.parse(localStorage.getItem('lastOrder'));
+    storage_order.show = false;
+
+    localStorage.removeItem('lastOrder');
+
+    localStorage.setItem('lastOrder', JSON.stringify(storage_order));
+
+
+    
+    
+    setLastOrder();
+    
+    window.location.href = '/';
+    
+
+})
 
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
@@ -1773,8 +2505,14 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
     
     let order = JSON.parse(localStorage.getItem('order'));
     order.pay_method = $(this).val();
-    
 
+    if ($(this).data('description') != 'undefined') {
+        order.pay_description = $(this).data('description');
+    } else {
+        order.pay_description = '';
+    }
+    
+    
     // Получаем простую строку из значения элемента
     let paymentMethod = $(this).val();
 
@@ -1915,30 +2653,26 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 // Функция для добавления товара в корзину
 
 
-async function addToCart(context, itemId, type) {
+async function addToCart(itemId, name, price, image, optionsIdString, type) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
-    
+
 
     setLoyalCart()
-
-    let itemElement = document.querySelector(`[data-cart-id="${itemId}"][data-type="${type}"]`);
-
-
-    // console.log(itemElement)
     
-
-    let optionsIdString = itemElement.dataset.optionsid;
+   
     let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
 
+
+    
 
     let id = itemId;
     let related = false
     if (type === 'product') {
-        id += '00000';
+        id += '000';
     } else if (type === 'combo') {
-        id += '11111';
+        id += '111';
     } else if (type === 'constructor') {
-        id += '22222';
+        id += '222';
     } 
     
     let optionsNameArray = [];
@@ -1972,47 +2706,149 @@ async function addToCart(context, itemId, type) {
             }
         }
     }
-    
-    
+    // Определите порядковый номер элемента в списке корзины
+    let position = Object.keys(cart).length + 1;
+
+    // Добавьте эту позицию в объект itemInfo
     let itemInfo = {
         id: id,
         itemId: itemId,
-        type: itemElement.dataset.type,
-        name: itemElement.dataset.name,
-        price: parseFloat(itemElement.dataset.price),
-        image: itemElement.dataset.image,
+        type: type,
+        name: name,
+        price: parseFloat(price),
+        image: image,
         quantity: cart[id] ? cart[id].quantity + 1 : 1,
         options: optionsIdArray,
         options_name: optionsNameArray,
-        related: related
+        related: related,
+        position: position // Добавляем порядковый номер в объект itemInfo
     };
+   
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    // console.log(cart)
-    fetchRelatedItems()
+    
+    fetchRelatedItems();
     updateAll();
+    refreshBalls();
+    checkProducts()
+    
 }
 
 
+// Пересчитать опции товаров
 
+$(document).on('click', '.cart__item-option', function() {
+
+    if ($(this).hasClass('deactivated')) {
+        return
+    } else {
+        let id = $(this).attr('data-id');
+        let price = $(this).attr('data-price');
+        let parent = $(this).attr('data-parent');
+    
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
+        let item = cart[parent];
+        let type = item.type;
+        let parent_id = item.itemId;
+    
+        let options = item.options;
+        let options_name = item.options_name;
+    
+        // Найти индекс элемента с заданным id в массивах options и options_name
+        let optionIndex = options.indexOf(parseInt(id));
+        let optionNameIndex = options_name.findIndex(option => option.id === parseInt(id));
+    
+        // Удалить элемент из обоих массивов, если найден
+        if (optionIndex !== -1 && optionNameIndex !== -1) {
+            options.splice(optionIndex, 1);
+            options_name.splice(optionNameIndex, 1);
+        }
+    
+        // Преобразовать список options в строку, если это необходимо
+        let optionsString = options.join(''); // Преобразовать список options в строку, если это необходимо
+    
+        let new_id = parent_id
+    
+        if (type === 'product') {
+            new_id += '000';
+        } else if (type === 'combo') {
+            new_id += '111';
+        } else if (type === 'constructor') {
+            new_id += '222';
+        } 
+    
+        new_id += optionsString
+
+        let position = cart[parent].position;
+    
+        item.id = new_id;
+        item.position = position;
+        item.price -= price;
+    
+        // Удалить старый элемент из корзины с использованием старого ключа
+        delete cart[parent];
+    
+        // Установить новый ключ для элемента
+        let newParent = new_id; // замените на нужный вам ключ
+    
+        // Добавить элемент в корзину с использованием нового ключа
+        if (cart[newParent]) {
+            cart[newParent].quantity += 1;
+        } else {
+            cart[newParent] = item;
+        }
+        
+    
+        // Обновить localStorage с обновленными данными корзины
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+    
+        // Обновить отображение корзины и обновить счетчик
+        checkProducts();
+        updateAll();
+        refreshBalls();
+        
+
+    }
+    
+});
 
 
 
 // Функция для отображения содержимого корзины
 function displayCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+    // Преобразуем объект корзины в массив
+    let cartArray = Object.values(cart);
+
+    // Сортируем массив по значению position
+    cartArray.sort((a, b) => a.position - b.position);
+
+    // Преобразуем отсортированный массив обратно в объект
+    let sortedCart = {};
+    cartArray.forEach(item => {
+        sortedCart[item.id] = item;
+    });
+
+
     let cartItems = document.getElementById('cart-items');
     let cartRelateds = document.getElementById('cart-related');
     
     
     let totalCount = getTotalCount()
 
+    // console.log(sortedCart)
+
     cartItems.innerHTML = '';
     cartRelateds.innerHTML = '';
 
+    
+
     if (totalCount === 0) {
+        $('.cart__maby').hide()
         cartItems.innerHTML = `
             <div class="cart__empty">
 
@@ -2034,9 +2870,9 @@ function displayCart() {
         cartItems.style.height = 'fit-content;';
         document.getElementById('cart-bottom').style.display = 'none';
     } else {
-
+        $('.cart__maby').show()
         
-        for (let itemId in cart) {
+        for (let itemId in sortedCart) {
             let item = cart[itemId];
             
                 
@@ -2055,13 +2891,53 @@ function displayCart() {
 
                     for (const item of options_name) {
 
-                        options_str += `<div class="cart__item-option">${item.option_value}</div>`
+                        
+                        let set_remove = false
+
+                        
+
+                        try {
+                            // Ваш код здесь
+                            if (item.type.option_class !== 'select') {
+                                // Если это условие выполняется, будет вызвана ошибка,
+                                // если item.type не содержит свойства option_class или не существует
+                                set_remove = true;
+                            }
+                        } catch (error) {
+                            // Если произошла ошибка, мы попадаем сюда
+                            console.error('Произошла ошибка:', error);
+                            // Здесь вы можете вызвать вашу функцию
+                            clearCart();
+                        }
+                        
+
+                        let deactivate_str = ''
+                        let remove_btn = ''
+                        if (set_remove == false) {
+                            deactivate_str = 'deactivated';
+                            
+                        } else {
+                            remove_btn = `
+                            <div class="cart__option-remove" data-id="${item.id}">
+                                <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </div>`
+                        }
+
+
+                        options_str += `
+                        <div class="cart__item-option ${deactivate_str}" data-id="${item.id}" data-parent="${itemId}" data-price="${item.option_price}">
+                            ${item.option_value}
+                            ${remove_btn}
+                        
+                        </div>`
                     }
                 }
 
 
                 cartItem.innerHTML = `
-                    <div class="cart__left">
+                    <div class="cart__left" data-position="${item.position}">
                         <div class="cart__left-wrap">
 
                             <div class="cart__left-img">
@@ -2082,12 +2958,12 @@ function displayCart() {
 
                     <div class="cart__items-wrap">
                         <div class="cart__btn-wrapper">
-                            <button class="cart__plusminus" onclick="minusFromCart(${itemId})">-</button>
+                            <button class="cart__plusminus" data-action="minus" data-id="${itemId}">-</button>
                             <div class class="cart__quantity">${item.quantity}</div>
-                            <button class="cart__plusminus" onclick="plusFromCart(${itemId})">+</button>
+                            <button class="cart__plusminus" data-action="plus" data-id="${itemId}">+</button>
                         </div>
                         <div class="cart__summ">${item.price * item.quantity} ₽</div>
-                        <button class="cart__remove" onclick="removeFromCart(${itemId})">
+                        <button class="cart__remove" data-id="${itemId}">
                             
                             <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
                             <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2115,7 +2991,7 @@ function displayCart() {
                     <div class="cart__related-left">
 
                         <div class="cart__related-left-wrap">
-                            <img src="${item.image}" alt="${item.name}" style="width: 50px;">
+                            <img src="${item.image}" alt="${item.name}" style="width: 50px;height: 50px">
 
                             
                         </div>
@@ -2200,24 +3076,60 @@ function minusFromCart(itemId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
+    refreshBalls();
+    checkProducts()
 }
 
 function plusFromCart(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    
     cart[itemId].quantity++;
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
+    refreshBalls();
+    checkProducts()
 }
 
+$(document).on('click','.cart__plusminus', function(e) {
+    let itemId = $(this).attr('data-id')
+    let action = $(this).attr('data-action')
+
+    if (action == 'plus') {
+
+        plusFromCart(itemId)
+    } else {
+        minusFromCart(itemId)
+    }
+
+})
+
 // Функция для удаления товара из корзины
-function removeFromCart(itemId) {
+function removeFromCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    delete cart[itemId];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    document.getElementById('cart__related-row').style.display = 'none';
+    updateAll();
+    refreshBalls();
+    
+}
+
+
+
+
+
+
+$(document).on('click','.cart__remove', function(e) {
+    let itemId = $(this).attr('data-id')
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
-}
+    refreshBalls();
+    checkProducts();
+})
 
 // Функция для очистки корзины
 function clearCart() {
@@ -2253,13 +3165,24 @@ function fetchRelatedItems() {
             let cart = JSON.parse(localStorage.getItem('cart')) || {};
             let relatedItems = data.items
 
+            if (relatedItems.length === 0) {
+                // Если список сопутствующих товаров пуст, удаляем связанные товары из корзины
+                for (let key in cart) {
+                    if (cart[key].related) {
+                        delete cart[key];
+                    }
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+                return; // Завершаем выполнение функции
+            }
+
             relatedItems.forEach(item => {
-                
                 let id = item.id
                 let itemId = id + '33333'
 
                 if (cart[itemId]) {
-                    return
+                    return;
                 } else {
                     let itemInfo = {
                         id: itemId,
@@ -2273,22 +3196,18 @@ function fetchRelatedItems() {
                         options_name: [],
                         related: true
                     };
-    
+
                     cart[itemId] = itemInfo;
                     localStorage.setItem('cart', JSON.stringify(cart));
                 }
-                
-
             })
 
-            
-            displayCart()
-
+            displayCart();
         })
         .catch(error => console.error('Ошибка загрузки сопутствующих товаров:', error));
-
 }
-fetchRelatedItems()
+fetchRelatedItems();
+
 
 
 
@@ -2383,7 +3302,7 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
     let phone = $('.order__input-login').val()
     let code = $('.order__register-input').val()
    
-
+    let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     
 
     $.ajax({
@@ -2397,17 +3316,49 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
         }
     }).done(function() {
 
-      
+        
+        
+
+        // console.log(maxBallsPay())
+
+        getTotalPriceAfterDiscount();
 
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = phone
         localStorage.setItem('order', JSON.stringify(order));
+
+        
+        fetch('/api/v1/get_user/')
+            .then(response => response.json())
+            .then(data => {
+                
+                set_data = {
+                    'cart_balls': data.cart_balls,
+                    'percent_down': data.percent_down,
+                    'percent_down_pickup': data.percent_down_pickup,
+                    'percent_pay': data.percent_pay,
+                    'percent_pay_pickup': data.percent_pay_pickup,
+                    'balls_min_summ': data.balls_min_summ,
+                    'exclude_combos': data.exclude_combos,
+                    'exclude_sales': data.exclude_sales,
+                }
+                
+                localStorage.setItem('loyalCart', JSON.stringify(set_data));
+                maxBallsPay();
+
+                
+            })
+            .catch(error => console.error('Ошибка загрузки пользователя:', error));
+
+        
+        
        
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         
-
         
-        updateAll()
+        var existingElement = $('#balls');
+       
+
         
     }).fail(function() {
         
@@ -2423,12 +3374,23 @@ $(document).on('click', '.order__register-logout' ,function(e){
     $.get("/logout/")
     .done(function(  ) {
 
+        setLoyalCart();
+        maxBallsPay();
+        // console.log(maxBallsPay())
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
         let order = JSON.parse(localStorage.getItem('order'));
         order.user_phone = ''
+        order.bonuses_pay = 0;
         localStorage.setItem('order', JSON.stringify(order));
         
-        updateAll()
+
+        $('.active_balls').remove();
+        $('#balls').html('')
+
+        
+        getTotalPriceAfterDiscount();
+        
+
     })
     
 })
@@ -2921,32 +3883,203 @@ function init() {
 
 
 
-// Проверка на заполненность полей открытки и анонимного заказа
+// Рабочее время
 
-function checkAnonimAndPostcard() {
 
-    let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
+function checkCurrentTime() {
+    var d = new Date();
+    var currentTime = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-    if (order.anonim == true) {
-        $('input[name="anonim_user"]').prop('checked', true)
-        $('.anonim').addClass('anonim--active')
-        $('input[name="anonim_user_phone"]').addClass('required')
-        $('input[name="anonim_user_name"]').addClass('required')
-
-        $('input[name="anonim_user_phone"]').val(order.anonim_user_phone)
-        $('input[name="anonim_user_name"]').val(order.anonim_user_name)
-
-    }
     
-    if (order.postcard == true) {
-        $('input[name="postcard"]').prop('checked', true)
-        $('.postcard').addClass('postcard--active')
-        $('textarea[name="postcard_text"]').val(order.postcard_text)
+    let day = d.getDay()
+
+    if (d.getDay() == 0) {
+        day = 6
     }
+
+    fetch(`/api/v1/get_work_active/${day}/`)
+        .then(response => response.json())
+        .then(data => {
+            var startDelivery = data.start_delivery;
+            var endDelivery = data.end_delivery;
+            var startSecondDelivery = data.start_second_delivery;
+            var endSecondDelivery = data.end_second_delivery;
+
+            if ((currentTime >= startDelivery && currentTime <= endDelivery) || (currentTime >= startSecondDelivery && currentTime <= endSecondDelivery)) {
+                
+                // Здесь можно выполнить какие-то действия, если текущее время попадает в один из диапазонов
+            } else {
+
+                let workTime = JSON.parse(localStorage.getItem('workTime')) || {};
+
+                
+
+                if (!workTime.is_open) {
+                    $('.delivery-popup').removeClass('delivery-popup--active')
+                } else {
+                    $('.delivery-popup').addClass('delivery-popup--active')
+                }
+
+                
+                
+
+                
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
 }
 
-checkAnonimAndPostcard()
+$(document).ready(function() {
+    checkCurrentTime();
+    let workTime = JSON.parse(localStorage.getItem('workTime'));
+    if (!workTime) {
+        localStorage.setItem('workTime', JSON.stringify({is_open: true}));
+    } 
+    
 
+
+});
+
+$('.delivery-popup__btn').click(function() {
+    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
+    $('.delivery-popup').removeClass('delivery-popup--active')
+})
+
+
+
+
+
+// Options product detail
+
+function productDetailCalculate() {
+
+    let totalPrice = parseFloat($('.product-detail__price').attr('data-price'));
+    let oldPrice = parseFloat($('.product-detail__price-old').attr('data-price'));
+    let optionsIds = '';
+    let options = '';
+    
+
+
+    $('.product-detail .select-wrap__input').each(function() {
+        var price = parseFloat($(this).attr('data-price'));
+        totalPrice += price;
+        oldPrice += price;
+        optionsIds += $(this).attr('data-id') + ',';
+        options += $(this).val().split(',')[0] + ',';
+    });
+
+    $('.product-detail .select-wrap__checkbox').each(function() {
+
+        if ($(this).is(':checked')) {
+            var price = parseFloat($(this).attr('data-price'));
+            totalPrice += price;
+            oldPrice += price;
+            optionsIds += $(this).attr('data-id') + ',';
+            options += $(this).val().split(',')[0] + ',';
+        }
+        
+    });
+
+    
+    
+    
+    optionsIds = optionsIds.slice(0, -1);
+    options = options.slice(0, -1);
+
+    // console.log(optionsIds)
+    $('.product-detail__price-old').html(oldPrice + '₽');
+    $('.product-detail__price').html(totalPrice + '₽');
+    $('.btn-wrap-detail').attr('data-price', totalPrice).attr('data-optionsid', optionsIds);
+}
+
+
+
+
+
+$(document).ready(function() {
+  // Для каждого блока с классом select-wrap на странице
+  $('.select-wrap').each(function() {
+        // Получаем первый элемент с классом select-wrap__item внутри текущего блока
+        var firstOption = $(this).find('.select-wrap__item').first();
+    
+        // Получаем значение атрибута data-value первого элемента
+        var optionValue = firstOption.attr('data-value');
+    
+        // Получаем значение атрибута data-price первого элемента
+        var optionPrice = firstOption.attr('data-price');
+
+        
+    
+        // Находим элемент select-wrap__input внутри текущего блока и устанавливаем его значение и атрибуты data-id и data-price
+        $(this).find('.select-wrap__input').val(optionValue);
+        $(this).find('.select-wrap__input').attr('data-id', firstOption.attr('data-id')).attr('data-price', optionPrice);
+        $(this).find('.select-wrap__checked').html(optionValue);
+    });
+});
+
+
+
+
+
+
+
+$(document).on('click','.select-wrap__checked',function(){
+
+    $(this).next('.select-wrap__row').toggleClass('select-wrap__row--active')
+    $(this).parent('.select-wrap').toggleClass('select-wrap--active')
+    
+});
+
+
+
+$(document).on('click','.select-wrap__item',function(){
+    
+    
+
+    let res = $(this).attr('data-value')
+    let id = $(this).attr('data-id')
+    let price = $(this).attr('data-price')
+
+
+
+    $(this).parent().next('.select-wrap__input').val(res)
+    $(this).parent().next('.select-wrap__input').attr('data-id', id)
+    $(this).parent().next('.select-wrap__input').attr('data-price', price)
+
+
+    $(this).parent().prev('.select-wrap__checked').html(res)
+    $('.select-wrap__row').removeClass('select-wrap__row--active')
+    $('.select-wrap').removeClass('select-wrap--active')
+
+    var $productItem = $(this).closest('.product-detail__inner');
+    $productItem.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+
+    productDetailCalculate() 
+    checkProducts()
+
+
+});
+
+$(document).ready(function() {
+    
+    
+    $(document).on('change','.select-wrap__input, .select-wrap__checkbox',function(){
+    
+        productDetailCalculate()
+        checkProducts()
+    });
+  });
+  
+  
+
+
+
+function clearAll() {
+    
+    localStorage.clear();
+}
+
+// clearAll()
 
 
 // Анонимный заказ и добавление открытки
