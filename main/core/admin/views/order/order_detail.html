@@ -110,6 +110,8 @@
         {% if  order.order_conmment%}
         <p class="page-order__info">Комментарий к заказу: {{ order.order_conmment }}</p>
         {% endif %}
+        <p class="page-order__info">Отправлено ли сообщение в телеграм: {{ order.order_send_status }}</p>
+
         <div class="page-order__status">
          
             <div class="page-order__status-item {% if order.status == 'Новый' %}page-order--new{% endif %}">
@@ -121,6 +123,8 @@
             
             </div>
         </div>
+
+        
 
     </div>
 </div>

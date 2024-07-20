@@ -129,7 +129,7 @@ def get_status(pay_id):
     payment_set = PaymentSet.objects.get(name='alfabank')
     
     count = 0
-    while status == False and status_pay != 2:
+    while status == False:
         if status_pay == 6:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
@@ -151,7 +151,7 @@ def get_status(pay_id):
             
 
             order_telegram(telegram_bot, telegram_group, order)
-            yandex_create_order(order)
+            # yandex_create_order(order)
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
         
