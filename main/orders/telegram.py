@@ -232,10 +232,11 @@ def order_telegram(telegram_bot, telegram_group, order):
 Время самовывоза: {time}
 Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
 '''
-
-    while order.order_send_status == False:
+    send_status = False
+    while send_status:
         try:
             send_message(telegram_bot, telegram_group, message)
+            send_status = True
             order.order_send_status = True
             order.save()
             print('Telegram message sent')
