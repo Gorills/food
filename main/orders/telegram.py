@@ -233,16 +233,17 @@ def order_telegram(telegram_bot, telegram_group, order):
 Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
 '''
     send_status = order.order_send_status
-    while send_status == False:
-        try:
-            send_message(telegram_bot, telegram_group, message)
-            send_status = True
-            order.order_send_status = True
-            order.save()
-            print('Telegram message sent')
-            break
+    if send_status == False:
+        while send_status == False:
+            try:
+                send_message(telegram_bot, telegram_group, message)
+                send_status = True
+                order.order_send_status = True
+                order.save()
+                print('Telegram message sent')
+                break
 
-        except Exception as e:
-            send_message(telegram_bot, telegram_group, e)
+            except Exception as e:
+                send_message(telegram_bot, telegram_group, e)
 
         
