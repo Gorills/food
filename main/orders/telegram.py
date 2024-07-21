@@ -232,7 +232,7 @@ def order_telegram(telegram_bot, telegram_group, order):
 Время самовывоза: {time}
 Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
 '''
-    send_status = False
+    send_status = order.order_send_status
     while send_status:
         try:
             send_message(telegram_bot, telegram_group, message)
