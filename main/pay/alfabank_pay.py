@@ -144,7 +144,7 @@ def get_status(pay_id):
             except:
                 status_pay = 0
 
-        if status_pay == 2:
+        if status_pay == 2 and order.order_send_status == False:
             status = True
             order.paid = True
             order.save()
