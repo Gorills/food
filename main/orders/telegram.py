@@ -19,6 +19,8 @@ def send_message(telegram_bot, telegram_group, message):
     telegramBot.sendMessage(telegram_group, message, parse_mode="Markdown")
 
 
+telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
+telegram_group_work = '-1001850576262'
 
 
 def order_telegram(telegram_bot, telegram_group, order):
@@ -240,6 +242,9 @@ def order_telegram(telegram_bot, telegram_group, order):
             send_status = True
             order.order_send_status = True
             order.save()
+
+            message_work = f'Статус отправки сообщения: {send_status}'
+            send_message(telegram_bot_work, telegram_group_work, message_work)
             print('Telegram message sent')
             
 
