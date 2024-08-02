@@ -132,6 +132,11 @@ def get_status(pay_id):
         status_pay = r.json()['OrderStatus']  
 
 
+        order_send_status = order.order_send_status
+        if order_send_status == True:
+            break
+
+
         if status_pay == 6:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
