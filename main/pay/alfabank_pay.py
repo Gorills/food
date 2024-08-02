@@ -127,7 +127,7 @@ def get_status(pay_id):
     status_pay = 0
     count = 0
 
-    while status_pay != 2:
+    while status_pay != 2 and order.order_send_status == False:
         r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
         status_pay = r.json()['OrderStatus']  
 
