@@ -588,15 +588,7 @@ def alpha_check(request, pk):
 
 
 def order_success(request):
-    subdomain = get_subdomain(request)
-    try:
-        telegram_bot = subdomain.telegram_bot
-    except:
-        telegram_bot = BaseSettings.objects.get().telegram_bot
-    try:
-        telegram_group = subdomain.telegram_group
-    except:
-        telegram_group = BaseSettings.objects.get().telegram_group
+
 
     cart = Cart(request)
 
@@ -604,49 +596,11 @@ def order_success(request):
 
     data = get_status(pay_id)
 
-    if data['status'] == 2:
-        order = data['order']
-
-        
-
-        if LoyaltyCardSettings.objects.get().active == True:
-            user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
-            try:
-                loyalty_card = LoyaltyCard.objects.get(user=user_profile)
-                loyalty_card.summ += order.summ
-            except:
-                loyalty_card = LoyaltyCard.objects.create(
-                    user=user_profile,
-                    summ=Decimal('0.00')
-                    )
-                loyalty_card.summ += order.summ
-                loyalty_card.save()
-
-            try:
-                if order.bonuses_pay > 0:
-                    loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
-
-            except:
-                pass
-            
-            loyalty_card.save()
+    order = data['order']
+    
+    return redirect(f'/?order=True&id={order.id}')
 
 
-        cart.combo_clear()
-        cart.clear()
-        cart.constructor_clear()
-        request.session['delivery'] = 1
-        order.paid = True
-        
-        order.save()
-
-        # order_telegram(telegram_bot, telegram_group, order)
-        send_sms(sms_text(order.id, order.summ), order.phone)
-        
-        return redirect(f'/?order=True&id={order.id}')
-
-    else:
-        return redirect('orders:order_error')
 
 
 

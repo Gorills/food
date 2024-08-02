@@ -319,10 +319,10 @@ def order_create(request):
             # print(text_to_pay_cart, json_order['pay_method'])
 
             # отправлять заказ в телеграм бот, даже если не прошла оплата
-            info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
+            # info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
             
-            if info_to_order_anyway:
-                order_telegram(telegram_bot, telegram_group, order)
+            # if info_to_order_anyway:
+            #     order_telegram(telegram_bot, telegram_group, order)
 
 
             if pay_name == 'yookassa':

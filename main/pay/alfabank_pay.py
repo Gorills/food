@@ -119,9 +119,6 @@ def get_status(pay_id):
             
     }
 
-    status = order.paid
-
-
     telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
     telegram_group_work = '-1001850576262'
 
@@ -129,7 +126,7 @@ def get_status(pay_id):
     
     status_pay = 0
     count = 0
-    
+
     while status_pay != 2:
         r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
         status_pay = r.json()['OrderStatus']  
@@ -150,7 +147,7 @@ def get_status(pay_id):
                 status_pay = 0
 
         if status_pay == 2 and order.order_send_status == False:
-            status = True
+            
             order.paid = True
             order.save()
             
