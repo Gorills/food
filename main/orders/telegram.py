@@ -201,47 +201,47 @@ def order_telegram(telegram_bot, telegram_group, order):
         if order.delivery_method == 'Доставка':
             
             message = f'''
-    *ЗАКАЗ №: {order.id}*
+*ЗАКАЗ №: {order.id}*
 
-    Дата: {formatted_date}
-    Сумма заказа: *{order.summ}* р. 
-    Тип: {order.delivery_method}
-    Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
-    Стоимость доставки: {order.delivery_price}
-    {custom_str}
+Дата: {formatted_date}
+Сумма заказа: *{order.summ}* р. 
+Тип: {order.delivery_method}
+Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+Стоимость доставки: {order.delivery_price}
+{custom_str}
 
-    *Товары:*
-    {str(res)} 
+*Товары:*
+{str(res)} 
 
-    *Контактные данные:*
-    Имя: {order.name}
-    Телефон: {phone}
+*Контактные данные:*
+Имя: {order.name}
+Телефон: {phone}
 
-    *Адрес:*
-    Время доставки: {time}
-    Улица: {order.address}{entrance}{floor}{flat}{address_comment}
-    '''
+*Адрес:*
+Время доставки: {time}
+Улица: {order.address}{entrance}{floor}{flat}{address_comment}
+'''
         else:
             message = f'''
-    *ЗАКАЗ №: {order.id}*
+*ЗАКАЗ №: {order.id}*
 
-    Дата: {formatted_date}
-    Сумма заказа: *{order.summ}* р. 
-    Тип: {order.delivery_method}
-    Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
-    {custom_str}
+Дата: {formatted_date}
+Сумма заказа: *{order.summ}* р. 
+Тип: {order.delivery_method}
+Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+{custom_str}
 
-    *Товары:*
-    {str(res)} 
+*Товары:*
+{str(res)} 
 
-    *Контактные данные:*
-    Имя: {order.name}
-    Телефон: {phone}
+*Контактные данные:*
+Имя: {order.name}
+Телефон: {phone}
 
-    *Адрес:*
-    Время самовывоза: {time}
-    Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
-    '''
+*Адрес:*
+Время самовывоза: {time}
+Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
+'''
         send_status = order.order_send_status
         if send_status == False:
             
