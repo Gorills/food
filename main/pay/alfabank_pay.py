@@ -104,85 +104,41 @@ from setup.models import BaseSettings
 from orders.telegram import order_telegram, send_message
 from delivery.yandex_eda import yandex_create_order
 
-def get_status(pay_id):
 
+def get_status(pay_id):
     telegram_bot = BaseSettings.objects.get().telegram_bot
     telegram_group = BaseSettings.objects.get().telegram_group
-
     order = Order.objects.get(payment_id=pay_id)
 
-    post_data={
-        'userName': login, 
-        'password': password, 
+    post_data = {
+        'userName': login,
+        'password': password,
         'orderId': pay_id,
         'orderNumber': order.id
-            
     }
 
-    telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
-    telegram_group_work = '-1001850576262'
-
-    payment_set = PaymentSet.objects.get(name='alfabank')
-    
     status_pay = 0
     count = 0
 
-    while status_pay != 2 and order.order_send_status == False:
-        r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
-        status_pay = r.json()['OrderStatus']  
+    while status_pay != 2 and not order.order_send_status:
+        r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data)
+        status_pay = r.json().get('OrderStatus', 0)
 
-
-        order_send_status = order.order_send_status
-        if order_send_status == True:
+        if order.order_send_status:
             break
-
 
         if status_pay == 6:
-
-            message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-            
-            send_message(telegram_bot_work, telegram_group_work, message)
             break
-        else:
-            try:
-                r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
-                # print(r.json())
-                status_pay = r.json()['OrderStatus']  
-            except:
-                status_pay = 0
-
-        if status_pay == 2 and order.order_send_status == False:
-            
+        elif status_pay == 2 and not order.order_send_status:
             order.paid = True
             order.save()
-            
-
             order_telegram(telegram_bot, telegram_group, order)
-            # yandex_create_order(order)
-
-            message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-        
-            send_message(telegram_bot_work, telegram_group_work, message)
             break
         
-        count +=1
+        count += 1
         time.sleep(20)
-
-        message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
-      
-        send_message(telegram_bot_work, telegram_group_work, message)
-        # print(status_pay)
-        # print(count)
-
-
-
-    data = {
-        'status': status_pay,
-        'order': order
-    }
-
-
-    return data
+    
+    return {'status': status_pay, 'order': order}
 
     
 
