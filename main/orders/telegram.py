@@ -212,7 +212,7 @@ def order_telegram(telegram_bot, telegram_group, order):
 Улица: {order.address}{entrance}{floor}{flat}{address_comment}
 '''
     else:
-                message = f'''
+        message = f'''
 *ЗАКАЗ №: {order.id}*
 
 Дата: {formatted_date}
@@ -234,16 +234,16 @@ def order_telegram(telegram_bot, telegram_group, order):
 '''
     send_status = order.order_send_status
     if send_status == False:
-        while send_status == False:
-            try:
-                send_message(telegram_bot, telegram_group, message)
-                send_status = True
-                order.order_send_status = True
-                order.save()
-                print('Telegram message sent')
-                break
+        
+        try:
+            send_message(telegram_bot, telegram_group, message)
+            send_status = True
+            order.order_send_status = True
+            order.save()
+            print('Telegram message sent')
+            
 
-            except Exception as e:
-                send_message(telegram_bot, telegram_group, e)
+        except Exception as e:
+            send_message(telegram_bot, telegram_group, e)
 
         
