@@ -120,16 +120,21 @@ def get_status(pay_id):
     }
 
     status = order.paid
-    r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
-    status_pay = r.json()['OrderStatus']  
+
 
     telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
     telegram_group_work = '-1001850576262'
 
     payment_set = PaymentSet.objects.get(name='alfabank')
     
+    status_pay = 0
     count = 0
+    
     while status_pay != 2:
+        r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data) 
+        status_pay = r.json()['OrderStatus']  
+
+
         if status_pay == 6:
 
             message = f'Статус оплаты: {status_pay}, сайт: {BaseSettings.objects.get().name}, Счетчик: {count}'
