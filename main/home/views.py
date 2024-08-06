@@ -235,7 +235,7 @@ def home(request):
     sale_products = Product.objects.filter(id__in=sale_products_list)[:8]
 
 
-    hit_products = Product.objects.filter(bestseller=True).exclude(stock=0)[:8]
+    hit_products = Product.objects.filter(bestseller=True, status=True).exclude(stock=0)[:8]
     if hit_products.count() == 0:
 
         hit_products = Product.objects.all().order_by('-sales').exclude(sales=0).exclude(related=True).exclude(stock=0)[:8]
