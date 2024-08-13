@@ -34,8 +34,11 @@ function checkPriceCart() {
         }
 }
 
-checkPriceCart();
+window.onload = function() {
 
+    checkPriceCart();
+
+}
 
 
 
@@ -92,8 +95,13 @@ function fetchAndSaveSettings() {
         .catch(error => console.error('Ошибка загрузки настроек:', error));
 }
   
-fetchAndSaveSettings();
 
+window.onload = function() {
+
+    fetchAndSaveSettings();
+
+
+}
 
 
 function setLoyalCart() {
@@ -176,7 +184,11 @@ function setLoyalCart() {
     
 }
 
-setLoyalCart()
+window.onload = function() {
+
+    setLoyalCart()
+
+}
 
 function setLastOrder() {
 
@@ -213,7 +225,11 @@ function setLastOrder() {
     }
 }
 
-setLastOrder()
+window.onload = function() {
+
+    setLastOrder()
+
+}
 
 
 
@@ -332,9 +348,9 @@ function updateDeliveryType() {
     
   }
 
-
+window.onload = function() {
   updateDeliveryType()
-  
+};
       
   function saveToLocalStorage(deliveryType) {
     localStorage.setItem("deliveryType", deliveryType);
@@ -750,7 +766,12 @@ function addOrderFields() {
         $(this).mask("+7 (999) 999 99-99");
     });
 };
-addOrderFields()
+
+window.onload = function() {
+
+    addOrderFields()
+
+};
 
 // Обработчик события change для каждого поля ввода
 $('.order__input').on('change input', function() {
@@ -1069,7 +1090,11 @@ function getTotalPrice() {
     
     return totalPrice
 }
-getTotalPrice()
+window.onload = function() {
+
+    getTotalPrice()
+
+};
 
 // Дополнительные наценки в корзине
 function getDopItems() {
@@ -1564,7 +1589,12 @@ function checkProducts() {
     })
 
 }
+
+window.onload = function() {
+
 checkProducts()
+
+};
 
 
 
@@ -2476,8 +2506,13 @@ function getLastOrder() {
     }
 
 }
-getLastOrder()
 
+window.onload = function() {
+
+    getLastOrder()
+
+
+};
 
 
 // $(document).on('click','.odred-done__inner',function(e){
@@ -3244,7 +3279,12 @@ function fetchRelatedItems() {
         })
         .catch(error => console.error('Ошибка загрузки сопутствующих товаров:', error));
 }
-fetchRelatedItems();
+
+window.onload = function() {
+
+    fetchRelatedItems();
+
+}
 
 
 
