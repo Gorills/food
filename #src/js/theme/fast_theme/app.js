@@ -1154,6 +1154,7 @@ function getPromoDiscount() {
       // Округляем до ближайшего целого числа
 
     console.log(discount);
+    console.log(order);
     
     return discount;
 }
