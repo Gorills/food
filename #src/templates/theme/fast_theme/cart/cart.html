@@ -381,7 +381,7 @@
 
                     </div>
                     
-                    
+                    {% endif %}
                     <div class="order__checkup-item ">
                         <p class="order__checkup-title" id="order__checkup-delivery-title">Настройка времени</p>
 
@@ -427,9 +427,7 @@
 
                             </div>
                         </div>       
-                        {% endif %}
-                    
-                        
+
                         
                         <div class="form__acceptance">
                             <label>
@@ -455,14 +453,9 @@
 
         </div>
         <div class="order__bottom">
-            
-            
-            <div class="order__info">
 
-                <div class="order__info-item" id="coupon_info">
-                    <p>Купон:</p>
-                    <div id="coupon"></div>
-                </div>
+
+            <div class="order__info">
 
                 <div id="dop_items_container"></div>
 
@@ -499,16 +492,6 @@
                     <div id="total_price_after_discount"></div>
                 </div>
 
-                {% if coupon_count %}
-                            
-                <form action="#" class="coupon-form">
-                    {% csrf_token %}
-                    <input type="text" placeholder="Промокод" name="coupon" class="coupon-form__input">
-                    <button class="coupon-form__btn">Применить</button>
-                </form>
-                
-
-                {% endif %}
 
             </div>
             
