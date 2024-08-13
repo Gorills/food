@@ -1138,8 +1138,10 @@ function getPromoDiscount() {
 
     let order = JSON.parse(localStorage.getItem('order'));
     let promo = order.promo
-    let discount = 0
-    if (promo) {
+
+    let promo_discount = order.promo_discount 
+    
+    if (promo_discount) {
         discount = order.promo_discount 
         var order_summ = order.summ
         discount = discount * order_summ / 100   
