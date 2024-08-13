@@ -429,16 +429,7 @@
                         </div>       
                         {% endif %}
                     
-                        {% if coupon_count %}
-                            
-                        <form action="#" class="coupon-form">
-                            {% csrf_token %}
-                            <input type="text" placeholder="Промокод" name="coupon" class="coupon-form__input">
-                            <button class="coupon-form__btn">Применить</button>
-                        </form>
                         
-
-                        {% endif %}
                         
                         <div class="form__acceptance">
                             <label>
@@ -500,12 +491,24 @@
 
                 </div>
                 
+                
 
 
                 <div class="order__info-item">
                     <p>Итого:</p>
                     <div id="total_price_after_discount"></div>
                 </div>
+
+                {% if coupon_count %}
+                            
+                <form action="#" class="coupon-form">
+                    {% csrf_token %}
+                    <input type="text" placeholder="Промокод" name="coupon" class="coupon-form__input">
+                    <button class="coupon-form__btn">Применить</button>
+                </form>
+                
+
+                {% endif %}
 
             </div>
             

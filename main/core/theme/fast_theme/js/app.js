@@ -252,6 +252,8 @@ function setOrder() {
         'balls': 0,
         'percent_pay': 0,
         'delivery_status': '',
+        'promo': '',
+        'promo_discount': '',
     }
 
     var order = localStorage.getItem('order');
@@ -1034,7 +1036,11 @@ function getAllDiscount() {
 
     summ = summ + active_balls
 
-    // console.log(summ)
+    if (summ) {
+        summ = Math.ceil(summ)
+    } else {
+        summ = 0
+    }
 
     return summ;
 }
@@ -1132,16 +1138,46 @@ function getDopItems() {
 }
 
 
+function getPromoDiscount() {
+
+    let order = JSON.parse(localStorage.getItem('order'));
+    let promo = order.promo
+
+    let promo_discount = order.promo_discount 
+
+    if (promo_discount) {
+        discount = order.promo_discount 
+        var order_summ = order.summ
+        discount = discount * order_summ / 100   
+        discount = Math.round(discount);
+        $('#coupon_info').show()
+        $('#coupon').html(`${promo} <small>(Скидка ${discount}₽</small>)`)
+    } else {
+        discount = 0
+        $('#coupon_info').hide()
+    }
+
+      // Округляем до ближайшего целого числа
+
+    console.log(discount);
+    // console.log(order);
+    
+    return discount;
+}
+
+
 // Общая сумма с доставкой и скидками
 function getTotalPriceAfterDiscount() {
-    Promise.all([getTotalPrice(), getDopItems(), getDeliverySumm(), getAllDiscount()])
-        .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount]) => {
-            let res = totalPrice + dopItemsSum + deliverySumm - allDiscount;
+    Promise.all([getTotalPrice(), getDopItems(), getDeliverySumm(), getAllDiscount(), getPromoDiscount()])
+        .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount, getPromoDiscount]) => {
+
+            let res = totalPrice + dopItemsSum + deliverySumm - allDiscount - getPromoDiscount;
             document.getElementById("total_price_after_discount").innerText = res + '₽';
             let order = JSON.parse(localStorage.getItem('order'));
             order.summ = res;
             localStorage.setItem('order', JSON.stringify(order));
-            // console.log(res);
+            
+
             return res;
         })
         .catch(error => {
@@ -3419,6 +3455,47 @@ window.addEventListener('pageshow', function(event) {
 });
 
 
+$(document).on('submit','.coupon-form',function(e){
+    e.preventDefault();
+
+    $form = $(this)
+
+    $.ajax({
+        type: "POST",
+        url: '/api/v1/check_promo/',
+        data: $form.serialize(),
+        success: function(data) {
+            var order = JSON.parse(localStorage.getItem('order'));
+            var promo = data['promo']
+            var coupon = data['coupon']
+            
+
+            if (promo) {
+
+                order.promo = promo
+                order.promo_discount = coupon
+                localStorage.setItem('order', JSON.stringify(order));
+                
+            } else {
+
+                order.promo = ''
+                order.promo_discount = 0
+                localStorage.setItem('order', JSON.stringify(order));
+
+            }
+            console.log(data)
+            console.log(order)
+            updateAll();
+            
+            
+        }
+    });
+    
+    
+
+});
+
+
 
 // Обновление всех значений при изменении корзины
 function updateAll() {
@@ -4074,9 +4151,12 @@ $(document).ready(function() {
 
 
 
+
 function clearAll() {
     
     localStorage.clear();
 }
 
 // clearAll()
+
+
