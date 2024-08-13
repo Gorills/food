@@ -267,8 +267,8 @@ function setOrder() {
     // console.log(order)
 
     
-    document.getElementById('day').innerHTML = order.day;
-    document.getElementById('time').innerHTML = order.time;
+    // document.getElementById('day').innerHTML = order.day;
+    // document.getElementById('time').innerHTML = order.time;
 
 
     // Отображаем выбранное время и настройки для доставки
