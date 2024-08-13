@@ -109,7 +109,7 @@
                         <div class="col col-4" data-label="">{{ order.phone }}</div>
 
                         <div class="col col-2 order-status" data-label="">
-                            <form class="form-ajax" action="{% url 'order_status_change' order.id %}" method="post">
+                            <form class="form-ajax change-status" action="{% url 'order_status_change' order.id %}" method="post">
                                 {% csrf_token %}
 
                                 

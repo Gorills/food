@@ -1465,6 +1465,14 @@ label span {
   gap: 20px;
 }
 
+.form-error {
+  outline: none;
+}
+
+.form-error select {
+  border: 1px solid #f00 !important;
+}
+
 .option__row {
   display: flex;
   justify-content: space-between;

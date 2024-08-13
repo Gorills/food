@@ -67,3 +67,11 @@
         gap: 20px;
     }
 }
+
+
+.form-error {
+    outline: none;
+    select {
+        border: 1px solid #f00 !important;
+    }
+}

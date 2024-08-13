@@ -608,15 +608,29 @@ $(document).on('click','.post-result__remove',function(e){
 $(function() {
   $(document).on('submit','.form-ajax',function(e){
     var $form = $(this);
+    
+    orderstatus = $form.find('.change_input').val()
+    
+
     $.ajax({
       type: $form.attr('method'),
       url: $form.attr('action'),
       data: $form.serialize()
     }).done(function() {
+
       $(".post-result").load(location.href + " .post-result__refresh");
+      $form.addClass('form-success')
+
+      changeStatus($form, orderstatus)
       
     }).fail(function() {
-      console.log('fail');
+      
+      if($form.hasClass('change-status')){
+          $('.page__refresh').load(location.href + " .page");
+
+          
+          $form.addClass('form-error')
+      }
     });
     e.preventDefault();
   });
@@ -881,35 +895,57 @@ $(document).on('click','.order-status__link',function(e){
 
 
 
-$(document).ready(function(){
-  $(".change_input").change(function(){
-      var selectedOption = $(this).val();
+// $(document).ready(function(){
+//   $(".change_input").change(function(){
+//       var selectedOption = $(this).val();
 
-      $(this).closest('li').removeClass('table-row--new').removeClass('table-row--work').removeClass('table-row--obr').removeClass('table-row--done').removeClass('table-row--cancel').removeClass('table-row--work');
+//       $(this).closest('li').removeClass('table-row--new').removeClass('table-row--work').removeClass('table-row--obr').removeClass('table-row--done').removeClass('table-row--cancel').removeClass('table-row--work');
       
 
 
 
-      if (selectedOption == 'Новый') {
-        $(this).closest('li').addClass('table-row--new')
-      } else if (selectedOption == 'Готовится') {
-        $(this).closest('li').addClass('table-row--work')
-      } else if (selectedOption == 'Передан курьеру') {
-        $(this).closest('li').addClass('table-row--obr')
-      } else if(selectedOption == 'Готов к выдаче') {
-        $(this).closest('li').addClass('table-row--obr')
-      } else if (selectedOption == 'Выполнен') {
-        $(this).closest('li').addClass('table-row--done')
-      } else if (selectedOption == 'Отказ') {
-        $(this).closest('li').addClass('table-row--cancel')
-      } else if (selectedOption == 'Готов к доставке') {
-        $(this).closest('li').addClass('table-row--work')
-      }
+//       if (selectedOption == 'Новый') {
+//         $(this).closest('li').addClass('table-row--new')
+//       } else if (selectedOption == 'Готовится') {
+//         $(this).closest('li').addClass('table-row--work')
+//       } else if (selectedOption == 'Передан курьеру') {
+//         $(this).closest('li').addClass('table-row--obr')
+//       } else if(selectedOption == 'Готов к выдаче') {
+//         $(this).closest('li').addClass('table-row--obr')
+//       } else if (selectedOption == 'Выполнен') {
+//         $(this).closest('li').addClass('table-row--done')
+//       } else if (selectedOption == 'Отказ') {
+//         $(this).closest('li').addClass('table-row--cancel')
+//       } else if (selectedOption == 'Готов к доставке') {
+//         $(this).closest('li').addClass('table-row--work')
+//       }
       
-  });
-});
+//   });
+// });
 
 
+function changeStatus(form, data) { 
+  var selectedOption = data;
+
+  form.closest('li').removeClass('table-row--new').removeClass('table-row--work').removeClass('table-row--obr').removeClass('table-row--done').removeClass('table-row--cancel').removeClass('table-row--work');
+  
+
+  if (selectedOption == 'Новый') {
+    form.closest('li').addClass('table-row--new')
+  } else if (selectedOption == 'Готовится') {
+    form.closest('li').addClass('table-row--work')
+  } else if (selectedOption == 'Передан курьеру') {
+    form.closest('li').addClass('table-row--obr')
+  } else if(selectedOption == 'Готов к выдаче') {
+    form.closest('li').addClass('table-row--obr')
+  } else if (selectedOption == 'Выполнен') {
+    form.closest('li').addClass('table-row--done')
+  } else if (selectedOption == 'Отказ') {
+    form.closest('li').addClass('table-row--cancel')
+  } else if (selectedOption == 'Готов к доставке') {
+    form.closest('li').addClass('table-row--work')
+  }
+}
 
 
 
