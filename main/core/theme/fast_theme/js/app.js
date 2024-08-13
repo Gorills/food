@@ -1036,7 +1036,11 @@ function getAllDiscount() {
 
     summ = summ + active_balls
 
-    // console.log(summ)
+    if (summ) {
+        summ = Math.ceil(summ)
+    } else {
+        summ = 0
+    }
 
     return summ;
 }
@@ -1140,7 +1144,7 @@ function getPromoDiscount() {
     let promo = order.promo
 
     let promo_discount = order.promo_discount 
-    
+
     if (promo_discount) {
         discount = order.promo_discount 
         var order_summ = order.summ
@@ -1156,7 +1160,7 @@ function getPromoDiscount() {
       // Округляем до ближайшего целого числа
 
     console.log(discount);
-    console.log(order);
+    // console.log(order);
     
     return discount;
 }
@@ -1166,12 +1170,14 @@ function getPromoDiscount() {
 function getTotalPriceAfterDiscount() {
     Promise.all([getTotalPrice(), getDopItems(), getDeliverySumm(), getAllDiscount(), getPromoDiscount()])
         .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount, getPromoDiscount]) => {
+
             let res = totalPrice + dopItemsSum + deliverySumm - allDiscount - getPromoDiscount;
             document.getElementById("total_price_after_discount").innerText = res + '₽';
             let order = JSON.parse(localStorage.getItem('order'));
             order.summ = res;
             localStorage.setItem('order', JSON.stringify(order));
-            console.log(res);
+            
+
             return res;
         })
         .catch(error => {
