@@ -272,18 +272,18 @@ function setOrder() {
 
 
     // Отображаем выбранное время и настройки для доставки
-    if (order.data_time == 0) {
-        document.getElementById('checkout__radio-bytime').checked = false;
-        document.getElementById('checkout__radio-now').checked = true;
+    // if (order.data_time == 0) {
+    //     document.getElementById('checkout__radio-bytime').checked = false;
+    //     document.getElementById('checkout__radio-now').checked = true;
 
-        document.getElementById('order__times-row').style.display = 'none';
+    //     document.getElementById('order__times-row').style.display = 'none';
 
-    } else {
-        document.getElementById('checkout__radio-bytime').checked = true;
-        document.getElementById('checkout__radio-now').checked = false;
-        document.getElementById('order__times-row').style.display = 'block';
+    // } else {
+    //     document.getElementById('checkout__radio-bytime').checked = true;
+    //     document.getElementById('checkout__radio-now').checked = false;
+    //     document.getElementById('order__times-row').style.display = 'block';
 
-    }
+    // }
 
     
 
