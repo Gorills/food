@@ -243,6 +243,7 @@ TEMPLATES = [
                 'orders.context_processors.calback_form',
                 'orders.context_processors.order_cr_form',
                 'coupons.context_processors.coupon_form',
+                'coupons.context_processors.coupon',
                 'pay.context_processors.cart_active',
                 'blog.context_processors.posts',
                 'subdomains.context_processors.subdomain',

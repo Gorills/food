@@ -688,3 +688,39 @@
 
    
 
+.coupon-form {
+    display: flex;
+    margin-bottom: 30px;
+    // .coupon-form__input
+
+    &__input {
+        width: 100%;
+        background: #FFFFFF;
+        border: 1px solid #D5DBE7;
+        border-radius: 5px;
+        height: 45px;
+        padding-left: 15px;
+        outline: none;
+        font-weight: 500;
+        font-size: 14px;
+        color: #0F2034;
+        margin-right: 10px;
+        &::placeholder {
+            color: #767E91;
+        }
+    }
+
+    // .coupon-form__btn
+
+    &__btn {
+        border: 1px solid rgb(233, 12, 78);
+        color: rgb(233, 12, 78);
+        border-radius: 5px;
+        padding: 0 20px;
+        height: 45px;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 45px;
+        text-align: center;
+    }
+}

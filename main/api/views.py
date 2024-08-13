@@ -213,6 +213,8 @@ def get_shop_settings(request):
 
 
 
+
+
 @api_view(['GET'])
 def related_products(request):
 
@@ -414,6 +416,40 @@ def dop_items(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+@api_view(['POST'])
+def check_promo(request):
+    coupon = request.data.get('coupon')
+    
+    now = timezone.now()
+
+    try:
+        coupon = Coupon.objects.get(
+            code=coupon,
+            valid_from__lte=now,
+            valid_to__gte=now,
+            active=True
+        )
+        print(coupon)
+    except Exception as e:
+        print(e)
+        coupon = None
+
+    if coupon:
+        data = {
+            'message': 'Купон найден',
+            'promo': coupon.code,
+            'status': True,
+            'coupon': coupon.discount
+        }
+    else:
+        data = {
+            'message': 'Купон не найден',
+            'status': False,
+            'coupon': 0
+        }
+
+    return Response(data, status=status.HTTP_200_OK)
 
 
 
