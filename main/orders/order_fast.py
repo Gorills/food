@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
+from coupons.models import Coupon
 from subdomains.utilites import get_subdomain
 from shop.models import Combo, ComboItem, FoodConstructor, Product, ProductOption, ShopSetup
 from .models import Order, OrderItem, CustomField
@@ -140,7 +141,13 @@ def order_create(request):
                 loyalty_card.save()
 
 
-        
+        try:
+            coupon = Coupon.objects.get(code=json_order['coupon'])
+            coupon_discount = coupon.discount
+
+        except:
+            coupon = None
+            coupon_discount = 0
 
         order = Order.objects.create(
             phone = json_order['user_phone'],
@@ -161,6 +168,9 @@ def order_create(request):
             paid = False,
             sale_percent = json_order['sale_percent'],
             bonuses_pay = bonuses_pay,
+            coupon = coupon,
+            discount = coupon_discount,
+            
 
         )
 
