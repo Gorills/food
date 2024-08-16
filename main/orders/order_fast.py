@@ -142,7 +142,7 @@ def order_create(request):
 
 
         try:
-            coupon = Coupon.objects.get(code=json_order['coupon'])
+            coupon = Coupon.objects.get(code=json_order['promo'])
             coupon_discount = coupon.discount
 
         except:
