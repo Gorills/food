@@ -1145,21 +1145,22 @@ function getPromoDiscount() {
 
     let promo_discount = order.promo_discount 
 
-    if (promo_discount) {
+    if (promo_discount != 0) {
         discount = order.promo_discount 
         var order_summ = order.summ
         discount = discount * order_summ / 100   
         discount = Math.round(discount);
+
         $('#coupon_info').show()
-        $('#coupon').html(`${promo} <small>(Скидка ${discount}₽</small>)`)
+        $('#coupon').html(`${promo} <small>(Скидка ${discount }₽</small>)`)
+
     } else {
         discount = 0
         $('#coupon_info').hide()
     }
 
-      // Округляем до ближайшего целого числа
-
-    console.log(discount);
+      
+    console.log(promo_discount);
     // console.log(order);
     
     return discount;
