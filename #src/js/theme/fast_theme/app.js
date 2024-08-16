@@ -1160,7 +1160,7 @@ function getPromoDiscount() {
     }
 
       
-    console.log(discount);
+    // console.log(discount);
     // console.log(order);
     
     return discount;
@@ -3486,8 +3486,8 @@ $(document).on('submit','.coupon-form',function(e){
                 localStorage.setItem('order', JSON.stringify(order));
 
             }
-            console.log(data)
-            console.log(order)
+            // console.log(data)
+            // console.log(order)
             updateAll();
             
             
