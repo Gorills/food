@@ -419,7 +419,7 @@ def dop_items(request):
 
 @api_view(['POST'])
 def check_promo(request):
-    coupon = request.data.get('coupon')
+    coupon = request.data.get('promo')
     
     now = timezone.now()
 

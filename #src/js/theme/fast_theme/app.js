@@ -1147,7 +1147,7 @@ function getPromoDiscount() {
 
     if (promo_discount != 0) {
         discount = order.promo_discount 
-        var order_summ = order.summ
+        var order_summ = getTotalPrice()
         discount = discount * order_summ / 100   
         discount = Math.round(discount);
 
@@ -1160,7 +1160,7 @@ function getPromoDiscount() {
     }
 
       
-    console.log(promo_discount);
+    console.log(discount);
     // console.log(order);
     
     return discount;
@@ -3476,6 +3476,8 @@ $(document).on('submit','.coupon-form',function(e){
                 order.promo = promo
                 order.promo_discount = coupon
                 localStorage.setItem('order', JSON.stringify(order));
+
+                $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`)
                 
             } else {
 
