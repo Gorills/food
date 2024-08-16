@@ -208,6 +208,7 @@ def order_telegram(telegram_bot, telegram_group, order):
 Тип: {order.delivery_method}
 Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
 Стоимость доставки: {order.delivery_price}
+{coupon_comment}
 {custom_str}
 
 *Товары:*
@@ -229,6 +230,7 @@ def order_telegram(telegram_bot, telegram_group, order):
 Сумма заказа: *{order.summ}* р. 
 Тип: {order.delivery_method}
 Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+{coupon_comment}
 {custom_str}
 
 *Товары:*
