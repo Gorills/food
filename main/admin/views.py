@@ -1665,7 +1665,7 @@ def admin_option_autofield(request, pk):
 
     context = {
         'option': option,
-        'products': Product.objects.all(),
+        'products': Product.objects.all().order_by('parent'),
     }
     return render(request, 'shop/option_type/option_autofield.html', context)
 
