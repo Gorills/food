@@ -197,6 +197,8 @@ urlpatterns = [
     path('option_autofield/remove/<int:pk>/', views.option_autofield_delete, name='option_autofield_delete'),
     path('option_autofield/detail/<int:pk>/', views.option_autofield_detail, name='option_autofield_detail'),
 
+    path('option_autofield/<int:pk>/', views.admin_option_autofield, name='admin_option_autofield'),
+
 
     path('char/', views.admin_char, name='admin_char'),
     path('char/group/add', views.char_group_add, name='char_group_add'),

@@ -835,7 +835,7 @@ class AutoFieldOptions(models.Model):
 
 
     def __str__(self):
-        return self.name
+        return self.value
     
     class Meta:
         verbose_name = 'Автоопция'

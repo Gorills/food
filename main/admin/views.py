@@ -1631,6 +1631,46 @@ def option_autofield_add(request):
     return render(request, 'shop/option_type/option_autofield_add.html', context)
 
 
+# Распределение опций на товары
+@check_user_rights(['add_options'])
+def admin_option_autofield(request, pk):
+    option = OptionType.objects.get(id=pk)
+    autofield = AutoFieldOptions.objects.filter(parent=option)
+
+    
+    
+
+    if request.method == 'POST':
+        
+        products = request.POST.getlist('products[]')
+
+        for product in products:
+            product = Product.objects.get(id=product)
+
+            for auto in autofield:
+                opt = ProductOption(
+                    type=option,
+                    parent=product,
+                    option_value=auto.value,
+                    option_price=auto.price,
+                    option_weight=auto.weight
+                )
+
+                opt.save()
+
+
+        # autofield.products.set(products)
+        return redirect('admin_option_type')
+
+
+    context = {
+        'option': option,
+        'products': Product.objects.all(),
+    }
+    return render(request, 'shop/option_type/option_autofield.html', context)
+
+
+
 @check_user_rights(['add_options'])
 def option_autofield_edit(request, pk):
     option_autofield = AutoFieldOptions.objects.get(id=pk)
