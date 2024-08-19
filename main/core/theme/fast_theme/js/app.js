@@ -259,7 +259,7 @@ function setOrder() {
     // Получаем текущий order из localStorage
     let order = JSON.parse(localStorage.getItem('order'));
 
-    сonsole.log(order)
+    
 
     // Если order нет в localStorage, сохраняем новый объект
     if (!order) {
