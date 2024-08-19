@@ -219,8 +219,8 @@ setLastOrder()
 
 // Инициализируем пустой заказ
 function setOrder() {
-
-    data = {
+    // Новый объект order со всеми необходимыми полями
+    const defaultOrder = {
         'order_id': '',
         'user_id': '',
         'user_name': '',
@@ -254,59 +254,66 @@ function setOrder() {
         'delivery_status': '',
         'promo': '',
         'promo_discount': '',
-    }
+    };
 
-    var order = localStorage.getItem('order');
+    // Получаем текущий order из localStorage
+    let order = JSON.parse(localStorage.getItem('order'));
 
+    сonsole.log(order)
+
+    // Если order нет в localStorage, сохраняем новый объект
     if (!order) {
-        localStorage.setItem('order', JSON.stringify(data));
+        localStorage.setItem('order', JSON.stringify(defaultOrder));
+        order = defaultOrder; // Теперь order указывает на новый объект
+    } else {
+        // Проверяем, чтобы все ключи в order совпадали с defaultOrder
+        let orderNeedsUpdate = false;
+        for (const key in defaultOrder) {
+            if (!(key in order) || typeof order[key] !== typeof defaultOrder[key]) {
+                order[key] = defaultOrder[key];
+                orderNeedsUpdate = true;
+            }
+        }
+
+        // Если что-то изменилось, обновляем order в localStorage
+        if (orderNeedsUpdate) {
+            localStorage.setItem('order', JSON.stringify(order));
+        }
     }
 
-    var order = JSON.parse(localStorage.getItem('order'));
-
-    // console.log(order)
-
-    
+    // Устанавливаем значения на странице
     document.getElementById('day').innerHTML = order.day;
     document.getElementById('time').innerHTML = order.time;
-
 
     // Отображаем выбранное время и настройки для доставки
     if (order.data_time == 0) {
         document.getElementById('checkout__radio-bytime').checked = false;
         document.getElementById('checkout__radio-now').checked = true;
-
         document.getElementById('order__times-row').style.display = 'none';
-
     } else {
         document.getElementById('checkout__radio-bytime').checked = true;
         document.getElementById('checkout__radio-now').checked = false;
         document.getElementById('order__times-row').style.display = 'block';
-
     }
 
-    
-
-    let phone = ''
+    // Загрузка данных пользователя
     fetch('/api/v1/get_user/')
         .then(response => response.json())
         .then(data => {
             if (data.phone != 'error') {
-               
                 order.user_phone = data.phone;
                 localStorage.setItem('order', JSON.stringify(order));
 
                 if (data.cart_status) {
-
+                    // Обработка статуса корзины, если необходимо
                 }
             }
-            
         })
         .catch(error => console.error('Ошибка загрузки пользователя:', error));
-
 }
 
-setOrder()
+setOrder();
+
 
 
 
