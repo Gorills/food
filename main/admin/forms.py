@@ -1323,6 +1323,7 @@ class CouponForm(forms.ModelForm):
             'valid_to': 'Дата окончания акции',
             'discount': 'Скидка',
             'active': 'Активность',
+            'promo_type': 'Действие промокода',
         }
         widgets = {
             'code': forms.TextInput(attrs={
@@ -1345,6 +1346,11 @@ class CouponForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Скидка',
             }),
+
+            'promo_type': forms.Select(attrs={
+                'class': 'input',
+                
+            })
            
             
         }

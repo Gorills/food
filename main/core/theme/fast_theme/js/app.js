@@ -253,7 +253,8 @@ function setOrder() {
         'percent_pay': 0,
         'delivery_status': '',
         'promo': '',
-        'promo_discount': '',
+        'promo_discount': 0,
+        'promo_type': '',
     };
 
     // Получаем текущий order из localStorage
@@ -280,6 +281,8 @@ function setOrder() {
             localStorage.setItem('order', JSON.stringify(order));
         }
     }
+
+    
 
     // Устанавливаем значения на странице
     document.getElementById('day').innerHTML = order.day;
@@ -1148,18 +1151,25 @@ function getDopItems() {
 function getPromoDiscount() {
 
     let order = JSON.parse(localStorage.getItem('order'));
+    let deliveryType = localStorage.getItem("deliveryType"); 
+
+    
+
+    let promo_type = order.promo_type
+    
     let promo = order.promo
 
     let promo_discount = order.promo_discount 
 
-    if (promo_discount != 0) {
+    if ((promo_discount != 0 && promo_type == 'all') || (promo_discount != 0 && promo_type == 'delivery' && deliveryType == '1') || (promo_discount != 0 && promo_type == 'pickup' && deliveryType == '0')) {
         discount = order.promo_discount 
-        var order_summ = getTotalPrice()
+        let order_summ = getTotalPrice()
         discount = discount * order_summ / 100   
         discount = Math.round(discount);
 
         $('#coupon_info').show()
         $('#coupon').html(`${promo} <small>(Скидка ${discount }₽</small>)`)
+        $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`)
 
     } else {
         discount = 0
@@ -1173,6 +1183,7 @@ function getPromoDiscount() {
     return discount;
 }
 
+// getPromoDiscount()
 
 // Общая сумма с доставкой и скидками
 function getTotalPriceAfterDiscount() {
@@ -3476,15 +3487,18 @@ $(document).on('submit','.coupon-form',function(e){
             var order = JSON.parse(localStorage.getItem('order'));
             var promo = data['promo']
             var coupon = data['coupon']
-            
+            var promo_type = data['type']
 
             if (promo) {
 
                 order.promo = promo
                 order.promo_discount = coupon
+                order.promo_type = promo_type
                 localStorage.setItem('order', JSON.stringify(order));
 
                 $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`)
+
+                
                 
             } else {
 

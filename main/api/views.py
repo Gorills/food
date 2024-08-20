@@ -440,7 +440,8 @@ def check_promo(request):
             'message': 'Купон найден',
             'promo': coupon.code,
             'status': True,
-            'coupon': coupon.discount
+            'coupon': coupon.discount,
+            'type': coupon.promo_type
         }
     else:
         data = {

@@ -50,6 +50,9 @@
     {{ form.active.label_tag }}
     {{ form.active }}
     {{ form.active.errors }}
+
+    {{ form.promo_type.label_tag }}
+    {{ form.promo_type }}
     <div class="form__wrap">
         <button class="btn btn--success">Сохранить</button>
         <a href="{% url 'admin_promo' %}" class="btn btn--danger">Отменить</a>
