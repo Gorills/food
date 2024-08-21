@@ -737,6 +737,29 @@ class ProductImage(models.Model):
         folder = 'products/images/'  # Fixed folder name
         return f"{folder}{transliterate_file(instance, filename)}"
     src = models.ImageField(upload_to=get_image_upload_path)
+
+    def get_thumb_maxi(self):
+        res = self.src.url
+        setup = ShopSetup.objects.get()
+        image_compression = setup.image_compression
+        try:
+            if setup.max_height and not setup.max_width:
+                res = get_thumbnail(self.src, f'x{int(setup.max_height)*image_compression}', format="WEBP", crop='center', quality=100)
+            elif setup.max_width and not setup.max_height:
+                res = get_thumbnail(self.src, f'{int(setup.max_width)*image_compression}x', format="WEBP", crop='center', quality=100)
+            elif setup.max_height and setup.max_width:
+                res = get_thumbnail(self.src, f'{int(setup.max_width)*image_compression}x{int(setup.max_height)*image_compression}', format="WEBP", crop='center', quality=100)
+            else:
+                res = get_thumbnail(self.src, '750x500', crop='center', format="WEBP", quality=100)
+
+            res = res.url
+        except Exception as e:
+            print(e)
+            res = '/core/libs/no-image.webp'
+
+        return res
+
+
     class Meta:
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображения'

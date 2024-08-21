@@ -4173,7 +4173,7 @@ a {
 }
 
 .product-detail__nav-image--active {
-  border: 1px solid #d6d6d6;
+  border: 1px solid var(--color-primary);
 }
 
 .product-detail__image {

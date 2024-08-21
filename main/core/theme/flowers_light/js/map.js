@@ -122,6 +122,10 @@ $(document).on('click','.product-detail__nav-image',function(e){
     e.preventDefault();
     
     var image = $(this).next().attr('data-image')
+
+    $('.product-detail__nav-image').removeClass('product-detail__nav-image--active')
+
+    $(this).addClass('product-detail__nav-image--active')
     
     console.log(image)
    

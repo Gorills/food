@@ -65,8 +65,10 @@
                 {% if product.images.count != 0 %}
                 <div class="product-detail__nav">
                     
-                    <img src="{{ product.get_thumb_maxi.url }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
-                   
+                    
+                    {% thumbnail product.thumb "80x80" format="WEBP" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image product-detail__nav-image--active">
+                    {% endthumbnail %}
                    
                     <div data-image="{{ product.get_thumb_maxi }}"></div>
                     
@@ -75,7 +77,7 @@
                             <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}" class="product-detail__nav-image">
                         {% endthumbnail %}
                  
-                        <div data-image="{{ product.get_thumb_maxi }}"></div>
+                        <div data-image="{{ image.get_thumb_maxi }}"></div>
                       
                     {% endfor %}
                 </div>
