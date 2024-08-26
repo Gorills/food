@@ -208,7 +208,7 @@ class Category(models.Model):
 
         products = self.products.filter(status=True, stock__gt=0)
         childrens = Category.objects.filter(parent=self)
-        children_products = Product.objects.filter(parent__in=childrens)
+        children_products = Product.objects.filter(parent__in=childrens, status=True)
 
 
         products_add = self.products_add.filter(status=True, stock__gt=0)
