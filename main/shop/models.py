@@ -222,11 +222,11 @@ class Category(models.Model):
 
     def all_products(self):
 
-        products = self.products.filter(status=True, stock__gt=0)
+        products = self.products.filter(stock__gt=0)
         childrens = Category.objects.filter(parent=self)
         
 
-        products_add = self.products_add.filter(status=True, stock__gt=0)
+        products_add = self.products_add.filter(stock__gt=0)
         
 
         products = products | products_add 
