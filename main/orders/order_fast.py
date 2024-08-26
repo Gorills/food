@@ -95,6 +95,9 @@ def order_create(request):
        
 
         json_order = json.loads(request.POST['order'])
+
+        if json_order == {}:
+            return HttpResponse(status=204)
         
         
         
