@@ -162,7 +162,7 @@
                             </a>
                         </h2>
                         <br>
-                        {% for product in cat.all_active_products %}
+                        {% for product in cat.all_products %}
                             <li class="table-row">
                                 <div class="col col-2">
                                     <a href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
@@ -252,7 +252,7 @@
                             </a>
                         </h2>
                         <br>
-                            {% for product in children.all_active_products %}
+                            {% for product in children.all_products %}
                                 <li class="table-row table-row--children">
                                     <div class="col col-2">
                                         <a href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">

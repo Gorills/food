@@ -219,6 +219,21 @@ class Category(models.Model):
         unique_products = products.distinct()
         return unique_products
     
+    def all_products(self):
+
+        products = self.products.filter(status=True, stock__gt=0)
+        childrens = Category.objects.filter(parent=self)
+        children_products = Product.objects.filter(parent__in=childrens)
+
+
+        products_add = self.products_add.filter(stock__gt=0)
+        
+
+        products = products | products_add | children_products
+
+        unique_products = products.distinct()
+        return unique_products
+    
     
 
     # def get_parent_path(self, list=None):
