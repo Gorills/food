@@ -337,7 +337,7 @@ class SearchResultsView(ListView):
     def get_queryset(self): # новый
         query = self.request.GET.get('q')
         return Product.objects.filter(
-            Q(name__icontains=query)
+            Q(name__icontains=query), status=True
         )
     
 
