@@ -218,7 +218,7 @@
                                         <li class="contacts-design__list-item">Время работы {{ shop_setup.work_time }}</li>
                                     {% endif %}
                                     <li class="contacts-design__list-item">Доставка заказов осуществляется c {{ shop_setup.start_delivery }} до {{ shop_setup.end_delivery }}</li>
-                                    <li class="contacts-design__list-item">Доставка от 1 часа. Подробнее о времени и стоимости доставки — <a href="/oplata/">здесь</a>.</li>
+                                    <li class="contacts-design__list-item">Доставка от {{ shop_setup.delay }} {% if shop_setup.delay == "1" %}часа{% else %}минут{% endif %}. Подробнее о времени и стоимости доставки — <a href="/oplata/">здесь</a>.</li>
                                 
                                 </ul>
                             </div>
