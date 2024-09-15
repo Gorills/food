@@ -1725,6 +1725,24 @@ $(document).ready(function() {
 });
 
 
+function showTemporaryBlock(product) {
+    // Создаем новый блок
+
+    let text = `<p class="cart-info__add-text">${product}</p><small>добавлено в корзину</small>`;
+
+    let newBlock = $('<div class="cart-info__add"></div>').html(text);
+    
+    // Добавляем его в контейнер
+    $('#cart-info').append(newBlock);
+    
+    // Блок отображается 2 секунды, а потом исчезает и удаляется
+    setTimeout(function() {
+        newBlock.fadeOut(1000, function() {
+            $(this).remove(); // Удаляем блок после анимации
+        });
+    }, 2000);
+}
+
 
 // Добавление в корзину
 $(document).on('click', '.add_to_cart', function(){
@@ -1735,6 +1753,8 @@ $(document).on('click', '.add_to_cart', function(){
     let price = $button.parent('.btn-wrap').attr('data-price');
     let name = $button.parent('.btn-wrap').attr('data-name');
     let image = $button.parent('.btn-wrap').attr('data-image');
+
+    
     
     let parent = $button.closest('.product-list__item');
     if (parent.hasClass('product-list__item--mini')) {
@@ -1742,6 +1762,8 @@ $(document).on('click', '.add_to_cart', function(){
     }
 
     addToCart(id, name, price, image, optionsIdString, type);
+
+    showTemporaryBlock(name)
     
    
 });

@@ -354,3 +354,44 @@ a   {
         
     }
 }
+
+
+
+.cart-info {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 999;
+    max-width: 350px;
+    min-width: 350px;
+
+    @media screen and (max-width: 420px) {
+        bottom: 10px;
+        right: 10px;
+        width: calc(100% - 20px);
+        max-width: calc(100% - 20px);
+        min-width: calc(100% - 20px);
+
+    }
+
+
+    // .cart-info__add
+    &__add {
+        padding: 10px 20px;
+        border-radius: 8px;
+        background-color: #000000d7;
+        color: #fff;
+        
+    }
+
+    &__add + &__add {
+        margin-top: 10px;
+    }
+
+    // .cart-info__add-text
+    &__add-text {
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    
+}

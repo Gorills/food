@@ -30,13 +30,13 @@
 
     // .footer__phone-wrap
 
-    .header__contacts-link-wrap {
+    .footer__phone-wrap {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
 
         a {
-          color: #fff;
+          color: var(--color-footer-font);
           margin-bottom: 5px;
         }
 
@@ -83,7 +83,7 @@
   }
   .footer-col h4{
     font-size: 18px;
-    color: var(--color-footer-font);;
+    color: var(--color-footer-font);
     text-transform: capitalize;
     margin-bottom: 35px;
     font-weight: 500;

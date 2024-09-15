@@ -126,7 +126,8 @@ def create_payment(order, request):
 
 
     token = [{"Amount": f"{total}"},{"Description": "Покупка товаров в магазине"},{"OrderId": f"{order.id}"},{"Password": f"{password}"},{"TerminalKey": f"{terminalkey}"}]
-
+    
+    print(token)
     
     # Конкатенация значений пар в одну строку
     concatenated_string = ''.join([list(item.values())[0] for item in token])
@@ -168,7 +169,7 @@ def create_payment(order, request):
             "Taxation": taxation,
             "Items": items_arr
         },
-        "Token": hashed_value
+        # "Token": hashed_value
     }
     
     headers = {'content-type': 'application/json'}
@@ -180,7 +181,7 @@ def create_payment(order, request):
     
 
     response = requests.post('https://securepay.tinkoff.ru/v2/Init', headers=headers, data=payList)
-    # print(response.text)
+    print(response.text)
     res = response.json()
     
     url = res['PaymentURL']
