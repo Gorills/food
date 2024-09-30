@@ -27,6 +27,7 @@ static_setup.py
 **/staticfiles.json
 **/whitenoise.py
 main/main/whitenoise.py
+main/main/whitenoise_main.py
 .htaccess
 node_modules
 venv

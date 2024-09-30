@@ -96,7 +96,13 @@ LOGOUT_REDIRECT_URL = '/'
 # ACCOUNT_SIGNUP_FORM_CLASS = 'myaccount.forms.NewSignupForm'
 
 
-from .whitenoise import MIDDLEWARE
+try:
+    from .whitenoise import MIDDLEWARE
+except:
+    from .whitenoise_main import MIDDLEWARE
+
+
+
 MIDDLEWARE.append('home.middleware.SubdomainRedirectMiddleware',)
 
 
