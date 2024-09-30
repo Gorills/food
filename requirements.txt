@@ -44,3 +44,4 @@ whitenoise==6.5.0
 wrapt==1.15.0
 yarl==1.9.2
 yookassa==2.4.0
+mysql==2.2.4
