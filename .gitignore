@@ -47,3 +47,4 @@ main/csv_upload
 **/db.json
 
 **/result.geojson
+core/rest_framework/
