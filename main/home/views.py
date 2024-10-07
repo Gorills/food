@@ -25,6 +25,8 @@ from integrations.views import *
 from pay.paykeeper_pay import get_status
 from subdomains.utilites import get_protocol
 from delivery.yandex_eda import *
+from parser.views import *
+from parser.vkusno import *
 
 
 # get_status()
