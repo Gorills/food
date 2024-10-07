@@ -87,6 +87,7 @@ def create_payment(order, cart, request):
 
     return data
 
+
 def get_status(pay_id):
     login, password, _ = get_alfa_bank_credentials()
     telegram_bot = BaseSettings.objects.get().telegram_bot
@@ -121,7 +122,7 @@ def get_status(pay_id):
 
 
 
-        if status_pay == 2 and not order.order_send_status:
+        if status_pay == 2:
             send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay}')
             order.paid = True
             order.save()
