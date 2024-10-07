@@ -88,6 +88,12 @@ def create_payment(order, cart, request):
     return data
 
 
+
+try:
+    site_name = BaseSettings.objects.get().name
+except BaseSettings.DoesNotExist:
+    site_name = ''
+
 def get_status(pay_id):
     login, password, _ = get_alfa_bank_credentials()
     telegram_bot = BaseSettings.objects.get().telegram_bot
@@ -123,14 +129,14 @@ def get_status(pay_id):
 
 
         if status_pay == 2:
-            send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay}')
+            send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay} - {site_name}')
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
         
 
         time.sleep(20)
-        send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay}')
+        send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay} - {site_name}')
 
     return {'status': status_pay, 'order': order}
 
