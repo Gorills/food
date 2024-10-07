@@ -120,9 +120,11 @@ def get_status(pay_id):
         status_pay = response_data.get('OrderStatus', 0)
 
         if order.order_send_status:
+            send_message(telegram_bot, telegram_group, f'Статус оплаты: {status_pay}')
             break
 
         if status_pay == 2 and not order.order_send_status:
+            send_message(telegram_bot, telegram_group, f'Статус оплаты: {status_pay}')
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
