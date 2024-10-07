@@ -13,8 +13,8 @@ from delivery.yandex_eda import yandex_create_order
 from subdomains.utilites import get_protocol
 
 
-telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-telegram_group = '-1001850576262'
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
 
             
 
@@ -119,19 +119,17 @@ def get_status(pay_id):
 
         status_pay = response_data.get('OrderStatus', 0)
 
-        if order.order_send_status:
-            send_message(telegram_bot, telegram_group, f'Статус оплаты: {status_pay}')
-            break
+
 
         if status_pay == 2 and not order.order_send_status:
-            send_message(telegram_bot, telegram_group, f'Статус оплаты: {status_pay}')
+            send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay}')
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
-            break
+        
 
         time.sleep(20)
-        send_message(telegram_bot, telegram_group, f'Статус оплаты: {status_pay}')
+        send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay}')
 
     return {'status': status_pay, 'order': order}
 
