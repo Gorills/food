@@ -991,10 +991,12 @@ function showNotification(order_id) {
   }
 }
 
-// Обработчик события для кнопки показа уведомления
+
 $(document).ready(function() {
   // Функция для обращения к API и получения списка заказов
   if (window.location.pathname === '/admin/admin_order/') {
+    let previousOrders = {};
+
     function fetchOrders() {
         $.ajax({
             url: '/api/v1/orders/',
@@ -1002,12 +1004,31 @@ $(document).ready(function() {
             success: function(response) {
                 // Перебираем каждый заказ из API
                 response.forEach(function(order) {
-                    // Проверяем, есть ли заказ на странице
-                    if ($('.order[data-order-id="' + order.id + '"]').length === 0) {
-                        // Если заказа нет на странице, показываем уведомление
-                        showNotification(order.id);
+                    const orderElement = $('.table-row[data-order-id="' + order.id + '"]');
+                    const paidStatusElement = orderElement.find('.col__stock');
+                    
+                    // Если заказа нет на странице, показываем уведомление и обновляем страницу
+                    if (orderElement.length === 0) {
+                        showNotification('Новый заказ: #' + order.id);
                         $(".page__refresh").load(location.href + " .page");
+                    } else {
+                        // Проверяем изменение статуса оплаты
+                        const prevOrder = previousOrders[order.id];
+                        if (prevOrder && prevOrder.paid !== order.paid) {
+                            const statusText = order.paid ? 'Оплачен' : 'Не оплачен';
+                            const statusClass = order.paid ? 'col__stock--success' : 'col__stock--warn';
+
+                            // Обновляем текст и класс элемента статуса оплаты
+                            paidStatusElement.text(statusText);
+                            paidStatusElement.removeClass('col__stock--success col__stock--warn').addClass(statusClass);
+
+                            // Показать уведомление
+                            showNotification('Изменение статуса оплаты: #' + order.id + ' - ' + statusText);
+                        }
                     }
+
+                    // Обновляем состояние предыдущих заказов
+                    previousOrders[order.id] = order;
                 });
             },
             error: function(xhr, status, error) {
@@ -1016,23 +1037,25 @@ $(document).ready(function() {
         });
     }
 
-    // Функция для показа уведомления о новом заказе
-  
+    // Функция для показа уведомления о новом или изменённом заказе
+    function showNotification(message) {
+        // Здесь можно реализовать более сложное уведомление
+        alert(message);
+    }
 
-    // Функция для запуска опроса API каждые 30 секунд
+    // Функция для запуска опроса API каждые 5 секунд
     function startPolling() {
         fetchOrders();
         setInterval(fetchOrders, 5000);
     }
 
     // Проверяем, загрузилась ли страница, перед началом опроса API
-    if ($(document).readyState === "complete") {
+    if (document.readyState === "complete") {
         startPolling();
     } else {
         $(document).ready(startPolling);
     }
   }
-
 });
 
 
