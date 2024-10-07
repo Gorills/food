@@ -14,7 +14,7 @@ from subdomains.utilites import get_protocol
 
 
 telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-telegram_group = '-1002079435900'
+telegram_group = '-1001850576262'
 
             
 
