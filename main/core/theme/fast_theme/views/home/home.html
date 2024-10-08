@@ -32,16 +32,16 @@
         <div class="sl__item" style="background: {{ slider.bg }};">
             <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
                 <div class="container">
-                    <div class="sl__wrap-inner" style="text-align: {{ slider_setup.text_align }}">
+                    <div class="sl__wrap-inner" style="text-align: {{ slider.text_align }}">
                         {% if slider.title %}
-                            <h2 class="sl__title" style="text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
+                            <h2 class="sl__title" style="text-align: {{ slider.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
                         {% endif %}
                         {% if slider.text %}
-                            <p class="sl__text" style="text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
+                            <p class="sl__text" style="text-align: {{ slider.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
                         {% endif %}
                     </div>
                     {% if slider.button_text %}
-                        <p class="btn btn--primary">{{ slider.button_text }}</p>
+                        <p class="btn btn--primary" style="text-align: {{ slider.text_align }};">{{ slider.button_text }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -72,21 +72,23 @@
             {% for slider in sliders %}
             <div class="sl__item" style="background: {{ slider.bg }};">
                 {% if slider.link %}
-                    <a href="{{ slider.link }}" class="sl__item-link">
+                    <a href="{{ slider.link }}" class="sl__item-link" style="justify-content: {{ slider.text_align }};">
                 {% endif %}
                         <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
                             <div class="container">
                                 
                                 <div class="sl__wrap-inner">
                                     {% if slider.title %}
-                                        <h2 class="sl__title" style="font-size: {{ slider_setup.title_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
+                                        <h2 class="sl__title" style="font-size: {{ slider_setup.title_size }}px;text-align: {{ slider.text_align }};color: {{ slider.text_color }};">{{ slider.title }}</h2>
                                     {% endif %}
                                     {% if slider.text %}
-                                        <p class="sl__text" style="font-size: {{ slider_setup.desc_size }}px;text-align: {{ slider_setup.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
+                                        <p class="sl__text" style="font-size: {{ slider_setup.desc_size }}px;text-align: {{ slider.text_align }};color: {{ slider.text_color }};">{{ slider.text | safe }}</p>
                                     {% endif %}
                                 </div>
                                 {% if slider.button_text %}
-                                    <p class="btn btn--primary">{{ slider.button_text }}</p>
+                                <div style="text-align: {{ slider.text_align }};display: flex;justify-content: {{ slider.text_align }};">
+                                    <p class="btn btn--primary" >{{ slider.button_text }}</p>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
