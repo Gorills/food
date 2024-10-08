@@ -952,9 +952,15 @@ function changeStatus(form, data) {
 
 // Функция для создания звукового уведомления
 function playNotificationSound() {
-  var audio = new Audio('/core/libs/audio/best-sms-tone-meloboom.mp3'); // Путь к вашему звуковому файлу
-  audio.play();
+  var audio = new Audio('/core/libs/audio/joyful-welcome-alert.mp3'); // Путь к вашему звуковому файлу
+
+  for (let i = 0; i < 3; i++) {
+    setTimeout(function() {
+      audio.play();
+    }, i * 1000); // Задержка увеличивается на 1 секунду с каждым повторением
+  }
 }
+
 
 // Функция для показа всплывающего уведомления
 function showNotification(order_id) {
