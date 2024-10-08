@@ -2719,6 +2719,7 @@ a {
 
 .sl {
   position: relative;
+  font-family: var(--slider-font);
 }
 
 .sl--min {

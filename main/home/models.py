@@ -21,6 +21,14 @@ class SliderSetup(SingletonModel):
     desc_size_mob = models.CharField(max_length=250, default=18, verbose_name='Размер шрифта описания для мобильного')
     text_max_width = models.CharField(max_length=250, default=700, verbose_name='Максимальная ширина текста')
 
+
+    FONTS_CHOICES = (
+        ('Roboto', 'Roboto'),
+        ('Certa', 'Certa'),
+        ('Zombie', 'Zombie'),
+    )
+
+    font = models.CharField(max_length=250, choices=FONTS_CHOICES, default='Roboto', verbose_name='Шрифт')
     TEXT_CHOISE = (
         ('start', 'Слева'),
         ('center', 'По центру'),
