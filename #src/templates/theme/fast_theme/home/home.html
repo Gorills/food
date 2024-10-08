@@ -70,11 +70,11 @@
         
         
             {% for slider in sliders %}
-            <div class="sl__item" style="background: {{ slider.bg }};">
+            <div class="sl__item" style="background: {{ slider.bg }}; align-items: {{ slider.text_align }}">
                 {% if slider.link %}
                     <a href="{{ slider.link }}" class="sl__item-link" style="justify-content: {{ slider.text_align }};">
                 {% endif %}
-                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}">
+                        <div class="sl__wrap {% if slider.title or slider.text or slider.button_text %}sl__wrap--bg{% endif %}" style="justify-content: {{ slider.text_align }};">
                             <div class="container">
                                 
                                 <div class="sl__wrap-inner">
