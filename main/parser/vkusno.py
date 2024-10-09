@@ -32,11 +32,13 @@ def generate_unique_slug(name, model):
         counter += 1
     return slug
 
+
+
 # Функция для парсинга категорий и товаров с сайта "Вкусноиточка"
 def parse_vkusnoitochka(category_urls, product_class, name_class, price_class, image_class):
     # Настройка Selenium WebDriver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    wait = WebDriverWait(driver, 15)  # Ожидание загрузки элементов
+    wait = WebDriverWait(driver, 25)  # Ожидание загрузки элементов
 
     parent, _ = Category.objects.get_or_create(
         name='Вкусно и точка',
@@ -86,6 +88,8 @@ def parse_vkusnoitochka(category_urls, product_class, name_class, price_class, i
                     product_price = None
                     print(f"Товар '{product_name}' без указанной цены.")
 
+
+
                 # Создание или обновление товара в базе данных
                 product_slug = generate_unique_slug(product_name, Product)
                 print(f"Создание или обновление товара: {product_name} ({slugify(product_name)})")
@@ -93,6 +97,7 @@ def parse_vkusnoitochka(category_urls, product_class, name_class, price_class, i
                 if not created:
                     product.price = product_price
                     product.parent = category
+                    
                     product.save()
                     print(f"Обновлена цена для товара '{product_name}'")
                 
@@ -120,16 +125,14 @@ def parse_vkusnoitochka(category_urls, product_class, name_class, price_class, i
 
 # Пример использования
 category_urls = {
-    'Новинки': 'https://vkusnoitochka.ru/menu/novinki',
     'Сеты и пары': 'https://vkusnoitochka.ru/menu/sety-i-pary',
-    'Популярное': 'https://vkusnoitochka.ru/menu/popулярноe',
-    'Напитки': 'https://vkusnoитоchка.ru/menu/napитки',
-    'Картофель, стартеры и салаты': 'https://vkusноитоchка.ru/menu/kартофель-starterы-и-салаты',
-    'Кафе': 'https://vkusноитоchка.ru/menu/kаfé',
-    'Завтрак': 'https://vkusноитоchка.ru/menu/zавтрак',
-    'Кидз Комбо': 'https://vkusноитоchка.ru/menu/kidz-комбо',
-    'Десерты': 'https://vkusноитоchка.ru/menu/dесерты_2',
-    'Соусы': 'https://vkusноитоchka.ru/menu/sоусы'
+    'Напитки': 'https://vkusnoitochka.ru/menu/napitki',
+    'Картофель, стартеры и салаты': 'https://vkusnoitochka.ru/menu/kartofel-startery-i-salaty',
+    'Кафе': 'https://vkusnoitochka.ru/menu/kafe',
+    'Завтрак': 'https://vkusnoitochka.ru/menu/zavtrak',
+    'Кидз Комбо': 'https://vkusnoitochka.ru/menu/kidz-kombo',
+    'Десерты': 'https://vkusnoitochka.ru/menu/deserty_2',
+    'Соусы': 'https://vkusnoitochka.ru/menu/sousy'
 }
 
 # delete_products()

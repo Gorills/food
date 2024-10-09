@@ -3857,3 +3857,38 @@ def delete_reviews(request, pk):
     review = Reviews.objects.get(id=pk)
     review.delete()
     return redirect('admin_reviews')
+
+
+
+
+
+@check_user_rights(['add_workers'])
+def parsers(request):
+
+
+    return render(request, 'parsers/parsers.html')
+
+
+from parser.vkusno import parse_vkusnoitochka
+
+@check_user_rights(['add_workers'])
+def vkusno(request):
+    category_urls = {
+        'Сеты и пары': 'https://vkusnoitochka.ru/menu/sety-i-pary',
+        'Напитки': 'https://vkusnoitochka.ru/menu/napitki',
+        'Картофель, стартеры и салаты': 'https://vkusnoitochka.ru/menu/kartofel-startery-i-salaty',
+        'Кафе': 'https://vkusnoitochka.ru/menu/kafe',
+        'Завтрак': 'https://vkusnoitochka.ru/menu/zavtrak',
+        'Кидз Комбо': 'https://vkusnoitochka.ru/menu/kidz-kombo',
+        'Десерты': 'https://vkusnoitochka.ru/menu/deserty_2',
+        'Соусы': 'https://vkusnoitochka.ru/menu/sousy'
+    }
+    parse_vkusnoitochka(
+        category_urls=category_urls,
+        product_class='product-card',     # Класс карточки товара
+        name_class='product-card__title', # Класс имени товара
+        price_class='font-bold',          # Класс цены товара
+        image_class='common-image__img'   # Класс изображения товара
+    )
+
+    return redirect('parsers')
