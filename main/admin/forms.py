@@ -966,6 +966,10 @@ class SliderForm(forms.ModelForm):
                 'placeholder': 'Значение',  
                 "type": "color"
             }),
+            'order': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
 
 
         }

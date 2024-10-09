@@ -952,7 +952,7 @@ function changeStatus(form, data) {
 
 // Функция для создания звукового уведомления
 function playNotificationSound() {
-  var audio = new Audio('/core/libs/audio/best-sms-tone-meloboom.mp3'); // Путь к вашему звуковому файлу
+  var audio = new Audio('/core/libs/audio/joyful-welcome-alert.mp3'); // Путь к вашему звуковому файлу
   audio.play();
 }
 

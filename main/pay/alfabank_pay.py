@@ -4,28 +4,37 @@ import requests
 from .models import PaymentSet, AlfaBank
 from orders.models import Order
 from shop.models import Product
-
-try:
-    login = AlfaBank.objects.get().login
-    password = AlfaBank.objects.get().password
-    token = AlfaBank.objects.get().token
-except:
-    login = ''
-    password = ''
-    token = ''
-
-gateway_url = ''
-
-
+import json
+import threading
+import time
+from setup.models import BaseSettings
+from orders.telegram import order_telegram, send_message
+from delivery.yandex_eda import yandex_create_order
 from subdomains.utilites import get_protocol
 
-def create_payment(order, cart, request):
 
-    returnUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST']+'/orders/success/'
-    failUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST']+'/orders/error/'
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
+
+            
+
+def get_alfa_bank_credentials():
+    try:
+        alfa_bank = AlfaBank.objects.get()
+        return alfa_bank.login, alfa_bank.password, alfa_bank.token
+    except AlfaBank.DoesNotExist:
+        return '', '', ''
+
+def create_payment(order, cart, request):
+    login, password, token = get_alfa_bank_credentials()
+
+    if not login or not password:
+        return {'order_id': order.id, 'id': '0', 'confirmation_url': '/pay-error/missing_credentials/'}
+
+    returnUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST'] + '/orders/success/'
+    failUrl = f'{get_protocol(request)}://' + request.META['HTTP_HOST'] + '/orders/error/'
 
     def dec_to_cop(price):
-
         res = str(round(price, 2))
         res_filter = res.replace(',', '').replace('.', '')
         return res_filter
@@ -33,59 +42,42 @@ def create_payment(order, cart, request):
     items = []
     count = 1
     for item in order.items.all():
-
-        if (item.price != 0):
-
-            if item.product:
-                product = item.product
-            elif item.combo:
-                product = item.combo
-            elif item.constructor:
-                product = item.constructor
-
-            
+        if item.price != 0:
+            product = item.product or item.combo or item.constructor
             i = {
-                "positionId":count,
-                "name":product.name,
-                "quantity":
-                    {
-                        "value":int(item.quantity),
-                        "measure":"шт"
-                    },
-                "itemAmount":dec_to_cop(Decimal(item.price)*item.quantity),
-                "itemCode":product.id,
-                "itemPrice":dec_to_cop(Decimal(item.price)),
-                }
+                "positionId": count,
+                "name": product.name,
+                "quantity": {
+                    "value": int(item.quantity),
+                    "measure": "шт"
+                },
+                "itemAmount": dec_to_cop(Decimal(item.price) * item.quantity),
+                "itemCode": product.id,
+                "itemPrice": dec_to_cop(Decimal(item.price)),
+            }
             count += 1
             items.append(i)
 
-
-   
-
-    post_data={
-        'userName': login, 
-        'password': password, 
+    post_data = {
+        'userName': login,
+        'password': password,
         'orderNumber': order.id,
         'amount': dec_to_cop(order.summ),
         'returnUrl': returnUrl,
         'failUrl': failUrl,
-
-        "cartItems": items
-            
+        "cartItems": json.dumps(items)  # Сериализуем items в строку JSON
     }
-    
-    r = requests.post("https://payment.alfabank.ru/payment/rest/register.do", post_data) 
-    print(r.json())
 
     try:
-        confirmation_url = r.json()['formUrl']
-        pay_id = r.json()['orderId']
-    except:
-        error = r.json()['errorCode']
-        confirmation_url = '/pay-error/'+error+'/'
-        pay_id = '0'
+        r = requests.post("https://payment.alfabank.ru/payment/rest/register.do", post_data)
+        r.raise_for_status()
+        response_data = r.json()
+    except requests.RequestException as e:
+        print(f"Error during payment request: {e}")
+        return {'order_id': order.id, 'id': '0', 'confirmation_url': '/pay-error/network_error/'}
 
-   
+    confirmation_url = response_data.get('formUrl', '/pay-error/unknown_error/')
+    pay_id = response_data.get('orderId', '0')
 
     data = {
         'order_id': order.id,
@@ -93,22 +85,25 @@ def create_payment(order, cart, request):
         'confirmation_url': confirmation_url
     }
 
-
     return data
-   
 
 
-import threading
-import time
-from setup.models import BaseSettings
-from orders.telegram import order_telegram, send_message
-from delivery.yandex_eda import yandex_create_order
 
+try:
+    site_name = BaseSettings.objects.get().name
+except BaseSettings.DoesNotExist:
+    site_name = ''
 
 def get_status(pay_id):
+    login, password, _ = get_alfa_bank_credentials()
     telegram_bot = BaseSettings.objects.get().telegram_bot
     telegram_group = BaseSettings.objects.get().telegram_group
-    order = Order.objects.get(payment_id=pay_id)
+
+    try:
+        order = Order.objects.get(payment_id=pay_id)
+    except Order.DoesNotExist:
+        print(f"Order with payment_id {pay_id} does not exist.")
+        return {'status': 0, 'order': None}
 
     post_data = {
         'userName': login,
@@ -118,38 +113,33 @@ def get_status(pay_id):
     }
 
     status_pay = 0
-    count = 0
 
-    while status_pay != 2 and not order.order_send_status:
-        r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data)
-        status_pay = r.json().get('OrderStatus', 0)
+    while status_pay not in [2, 6] and not order.order_send_status:
+        try:
+            r = requests.post("https://payment.alfabank.ru/payment/rest/getOrderStatus.do", post_data)
+            r.raise_for_status()
+            response_data = r.json()
+        except requests.RequestException as e:
+            print(f"Error during status request: {e}")
+            time.sleep(20)
+            continue
 
-        if order.order_send_status:
-            break
+        status_pay = response_data.get('OrderStatus', 0)
 
-        if status_pay == 6:
-            break
-        elif status_pay == 2 and not order.order_send_status:
+
+
+        if status_pay == 2:
+            send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay} - {site_name}')
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
-            break
         
-        count += 1
+
         time.sleep(20)
-    
+        send_message(wo_elegram_bot, wo_telegram_group, f'Статус оплаты: {status_pay} - {site_name}')
+
     return {'status': status_pay, 'order': order}
 
-    
-
-
-    
-
-
-
-
-
-
 def start_background_task(pay_id):
-    thread = threading.Thread(target=get_status, args=(pay_id, ))
+    thread = threading.Thread(target=get_status, args=(pay_id,))
     thread.start()

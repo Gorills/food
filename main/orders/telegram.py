@@ -244,21 +244,19 @@ def order_telegram(telegram_bot, telegram_group, order):
 Время самовывоза: {time}
 Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
 '''
-        send_status = order.order_send_status
-        if send_status == False:
+
+        try:
+            send_message(telegram_bot, telegram_group, message)
+            send_status = True
+            order.order_send_status = True
+            order.save()
+
+            message_work = f'Статус отправки сообщения: {send_status}'
+            send_message(telegram_bot_work, telegram_group_work, message_work)
+            print('Telegram message sent')
             
-            try:
-                send_message(telegram_bot, telegram_group, message)
-                send_status = True
-                order.order_send_status = True
-                order.save()
 
-                message_work = f'Статус отправки сообщения: {send_status}'
-                send_message(telegram_bot_work, telegram_group_work, message_work)
-                print('Telegram message sent')
-                
-
-            except Exception as e:
-                send_message(telegram_bot, telegram_group, e)
+        except Exception as e:
+            send_message(telegram_bot, telegram_group, e)
 
         

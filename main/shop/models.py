@@ -24,7 +24,7 @@ class ShopSetup(SingletonModel):
     end_delivery = models.TimeField(default="21:00:00", verbose_name='Время окончания доставки (указывайте время с интервалом в 30 минут, значения с другими параметрами может вызвать ошибку)')
 
     delivery_full = models.BooleanField(default=False, verbose_name='Доставка 24/7')
-    delay = models.PositiveIntegerField(default=1, verbose_name='Задержка при формировании заказа на доставку. Считается так: текущее время + время задержки')
+    delay = models.PositiveIntegerField(default=60, verbose_name='Задержка при формировании заказа на доставку (в минутах). Считается так: текущее время + время задержки')
     interval = models.PositiveIntegerField(default=30, verbose_name='Интервалы по времени доставки в минутах')
 
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')

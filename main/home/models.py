@@ -21,13 +21,14 @@ class SliderSetup(SingletonModel):
     desc_size_mob = models.CharField(max_length=250, default=18, verbose_name='Размер шрифта описания для мобильного')
     text_max_width = models.CharField(max_length=250, default=700, verbose_name='Максимальная ширина текста')
 
-    TEXT_CHOISE = (
-        ('start', 'Слева'),
-        ('center', 'По центру'),
-        ('end', 'Справа'),
+
+    FONTS_CHOICES = (
+        ('Roboto', 'Roboto'),
+        ('Certa', 'Certa'),
+        ('Zombie', 'Zombie'),
     )
 
-    text_align = models.CharField(max_length=250, default='center', choices=TEXT_CHOISE, verbose_name='Выравнивание текста')
+    font = models.CharField(max_length=250, choices=FONTS_CHOICES, default='Roboto', verbose_name='Шрифт')
     image_compression = models.PositiveIntegerField(blank=True, null=True, default=1, verbose_name='Качество изображения')
 
 
@@ -63,6 +64,15 @@ class Slider(models.Model):
        (6, 'Воскресенье'),
     )
     day = models.PositiveIntegerField(default=7, verbose_name='День недели для показа', choices=DAY_CLASS)
+
+    TEXT_CHOISE = (
+        ('start', 'Слева'),
+        ('center', 'По центру'),
+        ('end', 'Справа'),
+    )
+
+    text_align = models.CharField(max_length=250, default='start', choices=TEXT_CHOISE, verbose_name='Выравнивание текста')
+
     show = models.BooleanField(default=True, verbose_name='Показывать')
 
     def __str__(self):
