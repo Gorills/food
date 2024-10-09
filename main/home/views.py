@@ -357,7 +357,6 @@ def privacy(request):
     site = f'{get_protocol(request)}://{decoded_domain}'
     privacy_email = f'privacy@{decoded_domain}'
 
-    
     context = {
         'site': site,
         'privacy_email': privacy_email,
@@ -371,3 +370,23 @@ def info(request):
 
     
     return render(request, 'home/info.html')
+
+
+def user_agreement(request):
+
+    domain = f'{request.META["HTTP_HOST"]}'
+    try:
+        decoded_domain = idna.decode(domain)
+    except:
+        decoded_domain = domain
+
+    site = f'{get_protocol(request)}://{decoded_domain}'
+    privacy_email = f'privacy@{decoded_domain}'
+
+    context = {
+        'site': site,
+        'privacy_email': privacy_email,
+    }
+
+
+    return render(request, 'home/user_agreement.html', context)
