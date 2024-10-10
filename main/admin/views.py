@@ -6,7 +6,7 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
@@ -16,7 +16,7 @@ from delivery.models import Delivery
 
 from orders.models import Order, OrderStatus, OrderView
 from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
-from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, ThemeSettings
+from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, SoundSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 
@@ -844,10 +844,16 @@ def card_delete(request, pk):
 def admin_order(request):
     orders = Order.objects.all().order_by('-created')
     pay = PaymentSet.objects.filter(status=True, name='alfabank').first()
+    try:
+        sound = SoundSettings.objects.get()
+    except:
+        sound = SoundSettings.objects.create()
+
     
     context = {
         'orders': orders,
-        'pay': pay
+        'pay': pay,
+        'sound': sound.sound
         
     }
 
@@ -1050,6 +1056,31 @@ def delete_order_status(request, pk):
     order_status.delete()
     
     return redirect('admin_order')
+
+
+
+from setup.models import get_sound_choices
+@check_user_rights(['view_orders'])
+def order_setup(request):
+
+    if request.method == 'POST':
+        sound = request.POST['sound']
+        SoundSettings.objects.update(sound=sound)
+
+        return redirect('order_setup')
+    
+    try:
+        sound_now = SoundSettings.objects.get()
+    except:
+        sound_now = SoundSettings.objects.create()
+
+
+    context = {
+        'form': SoundSettingsForm(),
+        'sounds': get_sound_choices(),
+        'sound_now': sound_now.sound   
+    }
+    return render(request, 'order/order_setup.html', context)
 
 
 # !!! end Продажи !!!
