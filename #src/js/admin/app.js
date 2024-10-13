@@ -949,12 +949,24 @@ function changeStatus(form, data) {
 
 
 
+$(document).on('click','.enable-sound',function(e){
+  e.preventDefault();
+  $(this).removeClass('btn--danger').addClass('btn--success')
+});
 
-// Функция для создания звукового уведомления
+
+
 function playNotificationSound() {
-  var audio = new Audio('/core/libs/audio/joyful-welcome-alert.mp3'); // Путь к вашему звуковому файлу
-  audio.play();
+
+  setTimeout(function() {
+    let sound = $("#notifications-container").data("sound");
+      var audio = new Audio(`/core/libs/audio/${sound}`);
+      audio.play().catch(function(error) {
+          console.log('Автозапуск аудио был заблокирован:', error);
+      });
+  }, 1000);
 }
+
 
 // Функция для показа всплывающего уведомления
 function showNotification(order_id) {

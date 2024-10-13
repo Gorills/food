@@ -10,11 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from distutils.log import debug
+import logging
+
 import email
 from pathlib import Path
 import os
 
+
+debug = logging.debug
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +31,16 @@ SECRET_KEY = 'django-insecure-i66qhm!jgy*kj2z2ow9r@wv9pwe)!c4s5a6!nnx!m%9*e&w%a(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+from .local_settings import RECAPTCHA_PRIVATE_KEY
+from .local_settings import RECAPTCHA_PUBLIC_KEY
+from .local_settings import RECAPTCHA_DEFAULT_ACTION
+from .local_settings import RECAPTCHA_SCORE_THRESHOLD
+from .local_settings import RECAPTCHA_LANGUAGE
+
+
+
+from .local_settings import ALLOWED_HOSTS
+from .local_settings import RESET_FILE
 
 
 
@@ -197,18 +210,13 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-try:
-    import django
-    django.setup()
-    from setup.models import ThemeSettings
-    name = ThemeSettings.objects.get().name
-    theme_name = 'core/theme/'+ name +'/views'
-
-except:
-    name = 'sushi'
-    theme_name = 'core/theme/'+ name +'/views'
 
 
+from pathlib import Path
+from .settings_loader import get_theme_name
+
+# Получаем название темы
+theme_name = get_theme_name()
 
 TEMPLATES = [
     {
@@ -264,14 +272,9 @@ TEMPLATES = [
     },
 ]
 
-try:
-    import django
-    django.setup()
-    from setup.models import BaseSettings
-    setup = BaseSettings.objects.get()
-    DEBUG = setup.debugging_mode
-except:
-    DEBUG = True
+
+from .settings_loader import get_debug
+DEBUG = get_debug
     
 
 
@@ -288,16 +291,6 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-from .local_settings import RECAPTCHA_PRIVATE_KEY
-from .local_settings import RECAPTCHA_PUBLIC_KEY
-from .local_settings import RECAPTCHA_DEFAULT_ACTION
-from .local_settings import RECAPTCHA_SCORE_THRESHOLD
-from .local_settings import RECAPTCHA_LANGUAGE
-
-
-
-from .local_settings import ALLOWED_HOSTS
-from .local_settings import RESET_FILE
 
 
 

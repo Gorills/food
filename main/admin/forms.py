@@ -2,7 +2,7 @@ from django import forms
 from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order, OrderStatus 
-from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts
+from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts, SoundSettings
 from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
@@ -13,6 +13,19 @@ from integrations.models import Integrations
 from delivery.models import Delivery
 from django.contrib.auth.models import User
 
+
+
+
+class SoundSettingsForm(forms.ModelForm):
+    class Meta:
+        model = SoundSettings
+        fields = '__all__'
+
+        widgets = {
+            'sound': forms.Select(attrs={
+                'class': 'input',
+            })
+        }
 
 
 class UserRightsForm(forms.ModelForm):

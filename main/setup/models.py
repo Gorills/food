@@ -176,6 +176,16 @@ class BaseSettings(SingletonModel):
 
     
 
+import os
+from django.conf import settings
+def get_sound_choices():
+    audio_path = os.path.join(settings.BASE_DIR, 'core/libs/audio')  # Укажите путь к папке
+    sound_files = [f for f in os.listdir(audio_path) if os.path.isfile(os.path.join(audio_path, f))]
+    return [(file, file) for file in sound_files]
+
+class SoundSettings(SingletonModel):
+    SOUND_CHOICES = get_sound_choices()
+    sound = models.CharField(max_length=250, verbose_name="Звук", choices=SOUND_CHOICES, null=True, blank=True, default='soft-tune-meloboom.mp3')
 
 
 
