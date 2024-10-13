@@ -1,5 +1,6 @@
 from decimal import Decimal
-from distutils.log import debug
+import logging
+
 from itertools import product
 from multiprocessing import context
 from django.http import HttpResponseNotFound, HttpResponseRedirect
@@ -36,6 +37,7 @@ from sms.views import send_sms
 
 from functools import wraps
 
+debug = logging.debug
 
 def check_user_rights(required_rights):
     def decorator(view_func):

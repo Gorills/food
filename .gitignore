@@ -31,6 +31,7 @@ main/main/whitenoise_main.py
 .htaccess
 node_modules
 venv
+venv3.10
 .idea
 passenger_wsgi.py
 
