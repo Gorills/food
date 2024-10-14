@@ -561,6 +561,7 @@ class LoyaltyCardSettingsForm(forms.ModelForm):
         fields = [
             'active',
             'status_up',
+            'status_down',
             'show_status',
             'show_summ',
             'balls_min_summ',
