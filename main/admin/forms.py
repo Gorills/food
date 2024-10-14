@@ -560,7 +560,7 @@ class LoyaltyCardSettingsForm(forms.ModelForm):
         model = LoyaltyCardSettings
         fields = [
             'active',
-            # 'status_up',
+            'status_up',
             'show_status',
             'show_summ',
             'balls_min_summ',
