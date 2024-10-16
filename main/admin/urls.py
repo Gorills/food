@@ -291,10 +291,6 @@ urlpatterns = [
     path('synch_cron/', views.synch_cron, name='synch_cron'),
 
 
-    # Parsers
-    path('parsers/vkusno/', views.vkusno, name='vkusno'),
-
-
 ]
 
 
