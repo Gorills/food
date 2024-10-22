@@ -8,8 +8,8 @@ def get_theme_name():
             theme_name = ThemeSettings.objects.get().name
             return 'core/theme/' + theme_name + '/views'
         except (ThemeSettings.DoesNotExist, OperationalError):
-            return 'core/theme/flowers_light/views'
-    return 'core/theme/flowers_light/views'
+            return 'core/theme/fast_theme/views'
+    return 'core/theme/fast_theme/views'
 
 def get_debug():
     if apps.ready:
