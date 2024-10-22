@@ -217,10 +217,11 @@ setLastOrder()
 
 
 
+
 // Инициализируем пустой заказ
 function setOrder() {
-
-    data = {
+    // Новый объект order со всеми необходимыми полями
+    const defaultOrder = {
         'order_id': '',
         'user_id': '',
         'user_name': '',
@@ -235,8 +236,8 @@ function setOrder() {
         'flat': '',
         'door_code': '',
         'data_time': 0,
-        'day': 'Сегодня',
-        'time': 'Как можно скорее',
+        'day': '',
+        'time': '',
         'pay_method': '',
         'pay_description': '',
         'pay_change': '',
@@ -252,64 +253,195 @@ function setOrder() {
         'balls': 0,
         'percent_pay': 0,
         'delivery_status': '',
-    }
+        'promo': '',
+        'promo_discount': 0,
+        'promo_type': '',
+    };
 
-    var order = localStorage.getItem('order');
+    // Получаем текущий order из localStorage
+    let order = JSON.parse(localStorage.getItem('order'));
 
+    // Если order нет в localStorage, сохраняем новый объект
     if (!order) {
-        localStorage.setItem('order', JSON.stringify(data));
+        localStorage.setItem('order', JSON.stringify(defaultOrder));
+        order = defaultOrder; // Теперь order указывает на новый объект
+    } else {
+        // Проверяем, чтобы все ключи в order совпадали с defaultOrder
+        let orderNeedsUpdate = false;
+        for (const key in defaultOrder) {
+            if (!(key in order) || typeof order[key] !== typeof defaultOrder[key]) {
+                order[key] = defaultOrder[key];
+                orderNeedsUpdate = true;
+            }
+        }
+
+        // Если что-то изменилось, обновляем order в localStorage
+        if (orderNeedsUpdate) {
+            localStorage.setItem('order', JSON.stringify(order));
+        }
     }
 
-    var order = JSON.parse(localStorage.getItem('order'));
+    // Получаем доступные рабочие часы из хранилища или сервера
+    const storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
+    if (!storedSettingsJson) {
+        // Если настроек нет в localStorage, загружаем их с сервера
+        fetch('/api/v1/shop_settings/')
+            .then(response => response.json())
+            .then(data => {
+                localStorage.setItem('shopSettings', JSON.stringify(data));
+                updateOrderWithNearestTime(order, data);
+            })
+            .catch(error => console.error('Ошибка загрузки настроек магазина:', error));
+    } else {
+        updateOrderWithNearestTime(order, storedSettingsJson);
+    }
 
-    // console.log(order)
+    // Устанавливаем значения на странице
+    if (document.getElementById('day')) {
+        document.getElementById('day').innerHTML = order.day;
+    }
 
-    
-    document.getElementById('day').innerHTML = order.day;
-    document.getElementById('time').innerHTML = order.time;
-
+    if (document.getElementById('time')) {
+        document.getElementById('time').innerHTML = order.time;
+    }
 
     // Отображаем выбранное время и настройки для доставки
-    if (order.data_time == 0) {
-        document.getElementById('checkout__radio-bytime').checked = false;
-        document.getElementById('checkout__radio-now').checked = true;
-
-        document.getElementById('order__times-row').style.display = 'none';
-
-    } else {
-        document.getElementById('checkout__radio-bytime').checked = true;
-        document.getElementById('checkout__radio-now').checked = false;
-        document.getElementById('order__times-row').style.display = 'block';
-
+    if (document.getElementById('checkout__radio-bytime') && document.getElementById('checkout__radio-now')) {
+        if (order.data_time == 0) {
+            document.getElementById('checkout__radio-bytime').checked = false;
+            document.getElementById('checkout__radio-now').checked = true;
+            document.getElementById('order__times-row').style.display = 'none';
+        } else {
+            document.getElementById('checkout__radio-bytime').checked = true;
+            document.getElementById('checkout__radio-now').checked = false;
+            document.getElementById('order__times-row').style.display = 'block';
+        }
     }
 
-    
-
-    let phone = ''
+    // Загрузка данных пользователя
     fetch('/api/v1/get_user/')
         .then(response => response.json())
         .then(data => {
             if (data.phone != 'error') {
-               
                 order.user_phone = data.phone;
                 localStorage.setItem('order', JSON.stringify(order));
 
                 if (data.cart_status) {
-
+                    // Обработка статуса корзины, если необходимо
                 }
             }
-            
         })
         .catch(error => console.error('Ошибка загрузки пользователя:', error));
-
 }
 
-setOrder()
 
 
 
+function updateOrderWithNearestTime(order, shopSettings) {
+    // Получаем текущую дату и время
+    const currentDate = new Date();
 
+    // Проверяем, нужно ли обновить ближайшее время
+    const orderDate = parseOrderDate(order.day);
+    const shouldUpdate =
+        (!order.day || !order.time) || // Если дата или время не установлены
+        (orderDate && orderDate < currentDate) || // Если дата уже в прошлом
+        (order.day === 'Сегодня' && !isDeliveryAvailableToday(shopSettings.work_hours)) || // Если доставка сегодня, но интервалов нет
+        isHoliday(order.day, shopSettings.holidays); // Если выбранный день является выходным
 
+    if (shouldUpdate && shopSettings && shopSettings.work_hours) {
+        const work_hours = shopSettings.work_hours;
+
+        // Проверяем, есть ли доступные интервалы на сегодня или ближайшие дни
+        let nearestDay = '';
+        let nearestTime = '';
+        let todayAvailable = isDeliveryAvailableToday(work_hours);
+
+        if (order.day === 'Сегодня' && !todayAvailable) {
+            todayAvailable = false;
+        }
+
+        if (todayAvailable) {
+            nearestDay = 'Сегодня';
+            const todayData = work_hours.find(dayData => dayData.while.includes('Сегодня'));
+            nearestTime = todayData ? todayData.times[0] : 'Как можно скорее';
+        } else {
+            for (let i = 0; i < work_hours.length; i++) {
+                const dayData = work_hours[i];
+                if (dayData.times && dayData.times.length > 0 && !isHoliday(dayData.while, shopSettings.holidays)) {
+                    // Устанавливаем ближайший день и время
+                    nearestDay = dayData.while;
+                    nearestTime = dayData.times[0]; // Берем первый доступный интервал времени
+                    break; // После нахождения ближайшего дня и времени, выходим из цикла
+                }
+            }
+        }
+
+        if (nearestDay && nearestTime) {
+            order.day = nearestDay;
+            order.time = nearestTime;
+            order.data_time = 1; // Устанавливаем data_time в 1, чтобы указать, что время установлено
+            localStorage.setItem('order', JSON.stringify(order));
+        }
+    }
+}
+
+// Проверка доступности доставки сегодня
+function isDeliveryAvailableToday(work_hours) {
+    if (work_hours && work_hours.length > 0) {
+        const todayData = work_hours.find(dayData => dayData.while.includes('Сегодня'));
+        if (todayData && todayData.times && todayData.times.length > 0) {
+            return true; // Есть доступные интервалы на сегодня
+        }
+    }
+    return false; // Нет доступных интервалов на сегодня
+}
+
+// Проверка является ли день выходным
+function isHoliday(day, holidays) {
+    if (!holidays || holidays.length === 0) {
+        return false;
+    }
+    return holidays.includes(day);
+}
+
+// Парсинг даты из строки, используемой в заказе
+function parseOrderDate(orderDay) {
+    if (!orderDay || orderDay.trim() === '') {
+        return null;
+    }
+    // Обработка строковых значений, таких как "Сегодня" или "Завтра"
+    const currentDate = new Date();
+    if (orderDay.includes('Сегодня')) {
+        return currentDate;
+    } else if (orderDay.includes('Завтра')) {
+        const tomorrow = new Date(currentDate);
+        tomorrow.setDate(currentDate.getDate() + 1);
+        return tomorrow;
+    } else {
+        // Обработка остальных дней, например, "5 Октября"
+        const [day, month] = orderDay.split(' ');
+        const monthMap = {
+            'Января': 0,
+            'Февраля': 1,
+            'Марта': 2,
+            'Апреля': 3,
+            'Мая': 4,
+            'Июня': 5,
+            'Июля': 6,
+            'Августа': 7,
+            'Сентября': 8,
+            'Октября': 9,
+            'Ноября': 10,
+            'Декабря': 11,
+        };
+        const monthIndex = monthMap[month];
+        const parsedDate = new Date(currentDate.getFullYear(), monthIndex, parseInt(day, 10));
+        return parsedDate;
+    }
+}
+
+setOrder();
 
 
 

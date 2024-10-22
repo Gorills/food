@@ -189,15 +189,25 @@ def order_create(request):
         except:
             pass
         
+
+        
         try:
-            if json_order['anonim']:
-                
-                anonim_true = CustomField(
-                    order = order,
-                    name = '*!!!Анонимный заказ!!!*',
-                    value = True,
-                )
-                anonim_true.save()
+            
+
+            if json_order['anonim_user_phone'] and json_order['anonim_user_name']:
+                try:
+                    if json_order['anonim']:
+                    
+                        anonim_true = CustomField(
+                            order = order,
+                            name = '*!!!Анонимный заказ!!!*',
+                            value = True,
+                        )
+                        anonim_true.save()
+
+                except Exception as e:
+                    print(e)
+
 
                 anonim_user_phone = CustomField(
                     order = order,
@@ -230,8 +240,8 @@ def order_create(request):
                 )
 
                 postcard_text.save()
-        except:
-            pass
+        except Exception as e:
+            print(e)
         
 
         
