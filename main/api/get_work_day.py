@@ -19,7 +19,6 @@ months = {
     12: 'Декабря'
 }
 
-
 def custom_round_time(current_time, interval):
     current_datetime = datetime.strptime(current_time, "%H:%M") if isinstance(current_time, str) else current_time
     minutes = current_datetime.minute
@@ -35,7 +34,6 @@ def custom_round_time(current_time, interval):
     rounded_time = current_datetime.time()
     return rounded_time
 
-
 def generate_time_intervals(start_datetime, end_datetime, interval, delay):
     time_list = []
     current_time_while = start_datetime + timedelta(minutes=delay)
@@ -46,14 +44,14 @@ def generate_time_intervals(start_datetime, end_datetime, interval, delay):
         current_time_while = end_time
     return time_list
 
-
 def generate_now_intervals(current_time, delay, start_datetime, end_datetime, interval, count=0):
-    current_datetime = datetime.strptime(current_time.time().strftime("%H:%M"), "%H:%M").time()
+    current_datetime = current_time.time()
 
+    # Начнем с текущего времени или старта рабочего дня в зависимости от того, что больше
     if start_datetime.time() > current_datetime:
         now_start_time = start_datetime
     else:
-        now_start_time = datetime.combine(current_time.date(), custom_round_time(current_time.time().strftime("%H:%M"), interval))
+        now_start_time = datetime.combine(current_time.date(), custom_round_time(current_datetime.strftime("%H:%M"), interval))
 
     now_start_time += timedelta(minutes=delay)
     time_intervals_now = []
@@ -79,31 +77,6 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
 
     return time_intervals_now
 
-
-def generate_dop_intervals(start_datetime, end_datetime, interval, delay):
-    dop_time_list = []
-    
-    if end_datetime < start_datetime:
-        # Начинаем с полуночи следующего дня, добавляем delay
-        dop_start_date = datetime.combine(end_datetime.date(), time(0, 0, 0)) + timedelta(days=1)
-        current_time_while = dop_start_date + timedelta(minutes=delay)
-
-        while current_time_while < dop_start_date + timedelta(days=1):
-            # Добавляем delay на каждый новый интервал
-            end_time = current_time_while + timedelta(minutes=interval)
-
-            # Проверяем, чтобы время не вышло за рамки следующего дня
-            if end_time > dop_start_date + timedelta(days=1):
-                break
-
-            dop_time_list.append(f"{current_time_while.time().strftime('%H:%M')} - {end_time.time().strftime('%H:%M')}")
-            current_time_while = end_time + timedelta(minutes=delay)
-
-    return dop_time_list
-
-
-
-
 def get_hours(request):
     workdays = WorkDay.objects.filter(active=True)
     current_time = timezone.now().astimezone(pytz.timezone(TIME_ZONE))
@@ -125,8 +98,13 @@ def get_hours(request):
 
     start_datetime = datetime.combine(datetime.today(), start)
     end_datetime = datetime.combine(datetime.today(), end)
-    
 
+    # Если время заканчивается на следующий день
+    next_day_delivery = False
+    if end < start:
+        end_datetime += timedelta(days=1)
+        next_day_delivery = True
+    
     count = 0
     days = []
     now_date = current_time
@@ -143,39 +121,44 @@ def get_hours(request):
         if not workday:
             start_delivery = datetime.combine(mod_date, start)
             end_delivery = datetime.combine(mod_date, end)
-            end_delivery_fix = datetime.combine(end_delivery.date(), time(23, 59, 59)) if end_delivery < start_delivery else end_delivery
+            if next_day_delivery:
+                end_delivery += timedelta(days=1)
 
-            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery_fix, interval, count)
-            time_intervals = generate_time_intervals(start_delivery, end_delivery_fix, interval, delay)
-            dop_time_list = generate_dop_intervals(start_delivery, end_delivery, interval, delay) if time_intervals_now == [] else []
+            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
+            time_intervals = generate_time_intervals(start_delivery, end_delivery, interval, delay)
 
             if count == 0 and time_intervals_now:
                 days.append({'while': 'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
             elif count == 1:
-                days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + dop_time_list + time_intervals})
+                if next_day_delivery:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': time_intervals})
+                else:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + time_intervals})
             else:
-                days.append({'while': f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
+                days.append({'while': f'{day_now} {months[month_now]}', 'times': time_intervals})
             
             count += 1
             continue
-        
 
         if workday and workday.active:
             start_delivery = datetime.combine(mod_date, workday.start_delivery if workday else start)
             end_delivery = datetime.combine(mod_date, workday.end_delivery if workday else end)
-            end_delivery_fix = datetime.combine(end_delivery.date(), time(23, 59, 59)) if end_delivery < start_delivery else end_delivery
+            if workday.end_delivery < workday.start_delivery:
+                end_delivery += timedelta(days=1)
+                next_day_delivery = True
             
-            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery_fix, interval, count)
-            time_intervals = generate_time_intervals(start_delivery, end_delivery_fix, interval, delay)
-            dop_time_list = generate_dop_intervals(start_delivery, end_delivery, interval, delay) if time_intervals_now == [] else []
+            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
+            time_intervals = generate_time_intervals(start_delivery, end_delivery, interval, delay)
 
             if count == 0 and workday and workday.active and time_intervals_now:
                 days.append({'while': 'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
             elif count == 1 and workday and workday.active:
-                days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + dop_time_list + time_intervals})
+                if next_day_delivery:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': time_intervals})
+                else:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + time_intervals})
             else:
-                days.append({'while': f'{day_now} {months[month_now]}', 'times': dop_time_list + time_intervals})
-        
+                days.append({'while': f'{day_now} {months[month_now]}', 'times': time_intervals})
 
         count += 1
 
