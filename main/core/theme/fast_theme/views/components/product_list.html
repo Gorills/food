@@ -362,7 +362,7 @@
 
                 <div class="product-list__prices-inner">
                   
-                    <p class="product-list__price price-{{ product.id }}" id="" data-price="{{ product.get_price_after_sale }}">{{ product.get_price_after_sale | floatformat:0 }} ₽</p>
+                    <p class="product-list__price price-{{ product.id }}" id="" data-price="{{ product.get_price_after_sale | floatformat:0 }}">{{ product.get_price_after_sale | floatformat:0 }} ₽</p>
                     {% if product.get_old_price %}
                         <p class="product-list__old old_price-{{ product.id }}" id="" data-price="{{ product.get_old_price }}">{{ product.get_old_price | floatformat:0 }}₽</p>
                     {% endif %}
@@ -397,7 +397,7 @@
                 {% endif %}
             </div>
 
-            <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{product.price}}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+            <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{ product.get_price_after_sale | floatformat:0 }}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
                 <div class="btn-wrap__count"></div>
                 <div class="btn-wrap__svg"></div>
                 <button class="btn btn--primary add_to_cart">{{ shop_setup.cart_btn_text }}</button>
