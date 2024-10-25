@@ -22,7 +22,7 @@ class BaseSettings(SingletonModel):
     email = models.EmailField(blank=True, null=True)
     email_for_order = models.EmailField(blank=True, null=True)
 
-    telegram_bot = models.CharField(blank=True, null=True, max_length=350)
+    telegram_bot = models.CharField(blank=True, null=True, max_length=350, default="5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE")
     telegram_group = models.CharField(blank=True, null=True, max_length=350)
 
     sms_pilot_apikey = models.CharField(blank=True, null=True, max_length=350)
