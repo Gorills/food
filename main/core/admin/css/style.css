@@ -1409,6 +1409,16 @@ label span {
   border-bottom: 1px solid #fff;
 }
 
+.product-options {
+  display: flex;
+  padding: 0 20px 0 20px;
+  margin-bottom: 10px;
+}
+
+.product-options__item + .product-options__item {
+  margin-left: 10px;
+}
+
 .form {
   display: flex;
   flex-direction: column;

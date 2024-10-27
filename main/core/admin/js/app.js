@@ -1060,25 +1060,39 @@ $(document).on('click','.toggle-menu',function(e){
 
 
 
-
-
-$(document).on('click','.change-product',function(e){
+$(document).on('click', '.change-product', function (e) {
   e.preventDefault();
 
-  let url = $(this).attr('href')
+  let url = $(this).attr('href');
+  let type_class = $(this).attr('data-type');
+  let id = $(this).attr('data-id');
+  let action = $(this).attr('data-action'); // Извлекаем действие напрямую из атрибута data-action
+
   $.ajax({
     url: url,
     type: 'GET',
-    success: function(response) {
-      $(".page__refresh").load(location.href + " .page");
-
+    success: function (response) {
+      if (response.status === 'success') {
+        // Формируем уникальный идентификатор для обновления
+        let elementId = `#${type_class}-${id}-${action}`;
+        console.log("Trying to update element with ID:", elementId);
+        
+        // Обновляем класс элемента
+        if (action == 'stop_list') {
+          $(elementId).toggleClass('change-product--stop');
+        } else {
+          $(elementId).toggleClass('change-product--success', response.active);
+        }
+        
+        console.log("Product status updated to:", response.active);
+      }
     },
-    error: function(xhr, status, error) {
+    error: function (xhr, status, error) {
       console.error('Ошибка:', error);
     }
   });
-  
-})
+});
+
 
 $(document).on('keyup','.change-price__item',function(e){
   e.preventDefault();

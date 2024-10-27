@@ -1518,7 +1518,8 @@ class OptionTypeForm(forms.ModelForm):
         model = OptionType
         fields = [
             'name',
-            'option_class',   
+            'option_class',  
+            'active', 
         ]
         labels = {
             'name': 'Название опции',

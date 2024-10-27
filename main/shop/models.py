@@ -659,7 +659,7 @@ class Product(models.Model):
             if not select_parent:
                 return None
             
-            select_option = select_parent.t_options.filter(type__option_class='select', parent=self)
+            select_option = select_parent.t_options.filter(type__option_class='select', type__active=True, parent=self, active=True)
             
             if not select_option:
                 return None
@@ -705,7 +705,7 @@ class Product(models.Model):
 
 
             else:
-                select_option = self.options.all()
+                select_option = self.options.filter(active=True)
                 
                 products_op = []
                 for pr in select_option:
@@ -791,6 +791,7 @@ class OptionType(models.Model):
     )
     name = models.CharField(max_length=250)
     option_class = models.CharField(max_length=200, choices=OPTION_CLASS, default='select')
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -821,6 +822,8 @@ class ProductOption(models.Model):
     image_status = models.BooleanField(default=False)
 
     sort = models.PositiveIntegerField(default=0)
+
+    active = models.BooleanField(default=True)
 
     def get_price_after_discount(self):
 

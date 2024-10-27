@@ -1,5 +1,6 @@
 from decimal import Decimal
 import logging
+from django.http import JsonResponse
 
 from itertools import product
 from multiprocessing import context
@@ -2211,41 +2212,67 @@ def product_delete(request, pk):
 
 @check_user_rights(['add_products'])
 def stop_list(request, pk):
-    product = Product.objects.get(id=pk)
+    if request.method == 'GET':
+        product = Product.objects.get(id=pk)
 
-    if product.status == True:
-        product.status = False
-        product.save()
+        if product.status == True:
+            product.status = False
+            product.save()
 
-    else:
-        product.status = True
-        product.save()
+        else:
+            product.status = True
+            product.save()
 
-    return redirect('admin_product')
+        return JsonResponse({'status': 'success', 'active': product.status})
+
+    return JsonResponse({'status': 'failed'}, status=400)
 
 @check_user_rights(['add_products'])
 def change_new(request, pk):
-    product = Product.objects.get(id=pk)
-    if product.new == True:
-        product.new = False
-        product.save()
-    else:
-        product.new = True
-        product.save()
+    if request.method == 'GET':
+        product = Product.objects.get(id=pk)
+        if product.new == True:
+            product.new = False
+            product.save()
+        else:
+            product.new = True
+            product.save()
 
-    return redirect('admin_product')
+        return JsonResponse({'status': 'success', 'active': product.new})
+
+    return JsonResponse({'status': 'failed'}, status=400)
 
 @check_user_rights(['add_products'])
 def change_hit(request, pk):
-    product = Product.objects.get(id=pk)
-    if product.bestseller == True:
-        product.bestseller = False
-        product.save()
-    else:
-        product.bestseller = True
-        product.save()
+    if request.method == 'GET':
+        product = Product.objects.get(id=pk)
+        if product.bestseller == True:
+            product.bestseller = False
+            product.save()
+        else:
+            product.bestseller = True
+            product.save()
 
-    return redirect('admin_product')
+        return JsonResponse({'status': 'success', 'active': product.bestseller})
+
+    return JsonResponse({'status': 'failed'}, status=400)
+
+
+@check_user_rights(['add_products'])
+def product_in_cart(request, pk):
+    if request.method == 'GET':
+        product = Product.objects.get(id=pk)
+        if product.in_cart == True:
+            product.in_cart = False
+            product.save()
+        else:
+            product.in_cart = True
+            product.save()
+
+        return JsonResponse({'status': 'success', 'active': product.in_cart})
+
+    return JsonResponse({'status': 'failed'}, status=400)
+
 
 @check_user_rights(['add_products'])
 def change_price(request, pk):
@@ -2271,17 +2298,7 @@ def change_old_price(request, pk):
         return redirect('admin_product')
     
 
-@check_user_rights(['add_products'])
-def product_in_cart(request, pk):
-    product = Product.objects.get(id=pk)
-    if product.in_cart == True:
-        product.in_cart = False
-        product.save()
-    else:
-        product.in_cart = True
-        product.save()
 
-    return redirect('admin_product')
 
 
 @check_user_rights(['add_products'])
@@ -2327,6 +2344,15 @@ def option_image_delete(request, pk):
     return redirect('admin_product')
 
 
+
+@check_user_rights(['add_products'])
+def option_active_edit(request, pk):
+    if request.method == 'GET':
+        option = ProductOption.objects.get(id=pk)
+        option.active = not option.active
+        option.save()
+        return JsonResponse({'status': 'success', 'active': option.active})
+    return JsonResponse({'status': 'failed'}, status=400)
 
 
 # !!! Сопутствующие товары !!!

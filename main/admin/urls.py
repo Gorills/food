@@ -176,6 +176,7 @@ urlpatterns = [
 
     path('option_image/delete/<int:pk>/', views.option_image_delete, name='option_image_delete'),
     path('option/delete/<int:pk>/', views.option_delete, name='option_delete'),
+    path('option_active/edit/<int:pk>/', views.option_active_edit, name='option_active_edit'),
 
     path('product_char/delete/<int:pk>/', views.product_char_delete, name='product_char_delete'),
     path('product_image/delete/<int:pk>/', views.product_image_delete, name='product_image_delete'),
