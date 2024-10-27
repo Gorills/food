@@ -156,7 +156,7 @@
                             <div  data-product-id="{{ product.id }}"  class="product-options__item">
                                 {{ option.option_value }}
 
-                                <a data-id="{{ option.id }}" data-type="option" id="#option-{{ option.id }}" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
+                                <a data-id="{{ option.id }}" a-action="option_active_edit" data-type="option" id="option-{{ option.id }}-option_active_edit" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
                                     
                                 </a>
                             </div>
@@ -266,7 +266,7 @@
                                 <div  data-product-id="{{ product.id }}"  class="product-options__item">
                                     {{ option.option_value }}
 
-                                    <a data-id="{{ option.id }}" data-type="option" id="#option-{{ option.id }}" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
+                                    <a data-id="{{ option.id }}" data-type="option" a-action="option_active_edit" id="option-{{ option.id }}-option_active_edit" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
                                         
                                     </a>
                                 </div>
