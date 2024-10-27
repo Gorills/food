@@ -79,7 +79,7 @@
                 
                     <li class="table-row">
                         <div class="col col-2">
-                            <a href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
+                            <a data-id="{{ product.id }}" data-action="stop_list" data-type="product" id="product-{{ product.id }}-stop_list" href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
                                     
                             </a>
 
@@ -118,21 +118,21 @@
                         
                         <div class="col col-9">
                                     
-                            <a href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
+                            <a data-id="{{ product.id }}" data-action="change_new" data-type="product" id="product-{{ product.id }}-change_new" href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
                                     
                             </a>
     
                         </div>
                         <div href="" class="col col-9">
                             
-                            <a href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
+                            <a data-id="{{ product.id }}" data-action="change_hit" data-type="product" id="product-{{ product.id }}-change_hit" href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
                                     
                             </a>
     
                         </div>
                         <div href="" class="col col-9">
                             
-                            <a href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
+                            <a data-id="{{ product.id }}" data-action="product_in_cart" data-type="product" id="product-{{ product.id }}-product_in_cart" href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
                                     
                             </a>
     
@@ -149,6 +149,22 @@
                             </a>
                         </div>
                     </li>
+                    {% if product.options.count > 0 %}
+                    <div class="product-options">
+                        
+                            {% for option in product.options.all %}
+                            <div  data-product-id="{{ product.id }}"  class="product-options__item">
+                                {{ option.option_value }}
+
+                                <a data-id="{{ option.id }}" a-action="option_active_edit" data-type="option" id="option-{{ option.id }}-option_active_edit" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
+                                    
+                                </a>
+                            </div>
+                            
+                            {% endfor %}
+                    </div>
+                    
+                    {% endif %}
                 {% endfor %}
 
                 
@@ -165,7 +181,7 @@
                         {% for product in cat.all_products %}
                             <li class="table-row">
                                 <div class="col col-2">
-                                    <a href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
+                                    <a data-id="{{ product.id }}" data-action="stop_list" data-type="product" id="product-{{ product.id }}-stop_list" href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
                                             
                                     </a>
 
@@ -205,21 +221,21 @@
                                 
                                 <div class="col col-9">
                                     
-                                    <a href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
+                                    <a data-id="{{ product.id }}" data-action="change_new" data-type="product" id="product-{{ product.id }}-change_new" href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
                                             
                                     </a>
             
                                 </div>
                                 <div href="" class="col col-9">
                                     
-                                    <a href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
+                                    <a data-id="{{ product.id }}" data-action="change_hit" data-type="product" id="product-{{ product.id }}-change_hit" href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
                                             
                                     </a>
             
                                 </div>
                                 <div href="" class="col col-9">
                                     
-                                    <a href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
+                                    <a data-id="{{ product.id }}" data-action="product_in_cart" data-type="product" id="product-{{ product.id }}-product_in_cart" href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
                                             
                                     </a>
             
@@ -243,6 +259,22 @@
                                     </a>
                                 </div>
                             </li>
+                            {% if product.options.count > 0 %}
+                            <div class="product-options">
+                                
+                                {% for option in product.options.all %}
+                                <div  data-product-id="{{ product.id }}"  class="product-options__item">
+                                    {{ option.option_value }}
+
+                                    <a data-id="{{ option.id }}" data-type="option" a-action="option_active_edit" id="option-{{ option.id }}-option_active_edit" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
+                                        
+                                    </a>
+                                </div>
+                                
+                                {% endfor %}
+                            </div>
+                            
+                            {% endif %}
                         {% endfor %}
                         
                         {% for children in cat.children.all %}
@@ -255,7 +287,7 @@
                             {% for product in children.all_products %}
                                 <li class="table-row table-row--children">
                                     <div class="col col-2">
-                                        <a href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
+                                        <a data-id="{{ product.id }}" data-action="stop_list" data-type="product" id="product-{{ product.id }}-stop_list" href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
                                             
                                         </a>
         
@@ -294,14 +326,14 @@
                                     </div>
                                     <div class="col col-9">
                                     
-                                        <a href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
+                                        <a data-id="{{ product.id }}" data-action="change_new" data-type="product" id="product-{{ product.id }}-change_new" href="{% url 'change_new' product.id %}" class="change-product {% if product.new == True %}change-product--success{% endif %}">
                                                 
                                         </a>
                 
                                     </div>
                                     <div href="" class="col col-9">
                                         
-                                        <a href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
+                                        <a data-id="{{ product.id }}" data-action="change_hit" data-type="product" id="product-{{ product.id }}-change_hit" href="{% url 'change_hit' product.id %}" class="change-product {% if product.bestseller == True %}change-product--success{% endif %}">
                                                 
                                         </a>
                 
@@ -309,7 +341,7 @@
 
                                     <div href="" class="col col-9">
                                     
-                                        <a href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
+                                        <a data-id="{{ product.id }}" data-action="product_in_cart" data-type="product" id="product-{{ product.id }}-product_in_cart" href="{% url 'product_in_cart' product.id %}" class="change-product {% if product.in_cart == True %}change-product--success{% endif %}">
                                                 
                                         </a>
                 
@@ -328,6 +360,23 @@
                                         </a>
                                     </div>
                                 </li>
+                                {% if product.options.count > 0 %}
+                                <div class="product-options">
+                                   
+                                        {% for option in product.options.all %}
+                                        <div class="product-options__item">
+                                            {{ option.option_value }}
+
+                                            <a data-id="{{ option.id }}" data-action="option_active_edit" data-type="option" id="option-{{ option.id }}-option_active_edit" href="{% url 'option_active_edit' option.id %}" class="change-product {% if option.active == True %}change-product--success{% endif %}">
+                                                
+                                            </a>
+                                        </div>
+                                        
+                                        {% endfor %}
+                                </div>
+                                
+                                {% endif %}
+
                             {% endfor %}
                         
                         

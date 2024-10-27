@@ -51,3 +51,17 @@
     background-color: #fff;
     border-bottom: 1px solid #fff;
   }
+
+
+.product-options {
+  display: flex;
+  padding: 0 20px 0 20px;
+  margin-bottom: 10px;
+
+  // .product-options__item
+
+  &__item + &__item {
+    margin-left: 10px;
+  }
+}
+

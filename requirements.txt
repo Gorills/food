@@ -18,8 +18,8 @@ six==1.16.0
 sorl-thumbnail==12.8.0
 telepot==12.7
 transliterate==1.10.2
-typing_extensions==4.7.1
-urllib3==2.0.4
+typing_extensions
+urllib3
 whitenoise==6.5.0
 wrapt==1.15.0
 yarl==1.9.2
