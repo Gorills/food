@@ -20,20 +20,17 @@ months = {
 }
 
 def custom_round_time(current_time, interval):
-    # Correct rounding to the nearest interval
+    # Correct rounding to the nearest interval of 30 or 60 minutes
     current_datetime = datetime.strptime(current_time, "%H:%M") if isinstance(current_time, str) else current_time
-    discard = timedelta(minutes=current_datetime.minute % interval,
-                        seconds=current_datetime.second,
-                        microseconds=current_datetime.microsecond)
-    rounded_datetime = current_datetime - discard
+    rounded_minutes = (current_datetime.minute // interval) * interval
 
-    if discard != timedelta(0):
-        rounded_datetime += timedelta(minutes=interval)
+    if current_datetime.minute % interval != 0:
+        rounded_minutes += interval
+        if rounded_minutes >= 60:
+            current_datetime += timedelta(hours=1)
+            rounded_minutes = 0
 
-    # Ensure the minutes are correctly rounded
-    if rounded_datetime.minute % interval != 0:
-        rounded_datetime += timedelta(minutes=(interval - rounded_datetime.minute % interval))
-
+    rounded_datetime = current_datetime.replace(minute=rounded_minutes, second=0, microsecond=0)
     return rounded_datetime.time()
 
 def generate_time_intervals(start_datetime, end_datetime, interval, delay):
