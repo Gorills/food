@@ -37,6 +37,21 @@ def custom_round_time(current_time, interval):
 
     return rounded_datetime.time()
 
+def round_time_intervals(time_list, interval):
+    # Round all time intervals in the list to the nearest interval
+    rounded_list = []
+    for time_interval in time_list:
+        start_time_str, end_time_str = time_interval.split(' - ')
+        start_time = datetime.strptime(start_time_str, "%H:%M")
+        end_time = datetime.strptime(end_time_str, "%H:%M")
+        
+        # Round start and end times
+        rounded_start_time = custom_round_time(start_time, interval)
+        rounded_end_time = custom_round_time(end_time, interval)
+        
+        rounded_list.append(f'{rounded_start_time.strftime("%H:%M")} - {rounded_end_time.strftime("%H:%M")}')
+    return rounded_list
+
 def generate_time_intervals(start_datetime, end_datetime, interval, delay):
     time_list = []
     current_time_while = start_datetime + timedelta(minutes=delay)
@@ -46,7 +61,9 @@ def generate_time_intervals(start_datetime, end_datetime, interval, delay):
         end_time = current_time_while + timedelta(minutes=interval)
         time_list.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time.time().strftime("%H:%M")}')
         current_time_while = end_time
-    return time_list
+
+    # Round all time intervals to the nearest interval
+    return round_time_intervals(time_list, interval)
 
 def generate_now_intervals(current_time, delay, start_datetime, end_datetime, interval, count=0):
     current_datetime = current_time.time()
@@ -70,7 +87,8 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
         time_intervals_now.append(f'{start_time_str} - {end_time_str}')
         current_time_while = end_time
 
-    return time_intervals_now
+    # Round all time intervals to the nearest interval
+    return round_time_intervals(time_intervals_now, interval)
 
 def get_hours(request):
     workdays = WorkDay.objects.filter(active=True)
