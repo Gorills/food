@@ -20,25 +20,24 @@ months = {
 }
 
 def custom_round_time(current_time, interval):
+    # Correct rounding to the nearest interval
     current_datetime = datetime.strptime(current_time, "%H:%M") if isinstance(current_time, str) else current_time
-    minutes = current_datetime.minute
+    discard = timedelta(minutes=current_datetime.minute % interval,
+                        seconds=current_datetime.second,
+                        microseconds=current_datetime.microsecond)
+    rounded_datetime = current_datetime - discard
 
-    # Округление в большую сторону, если минуты не кратны интервалу
-    if minutes % interval != 0:
-        rounded_minutes = minutes + interval - (minutes % interval)
-        if interval == 60 and rounded_minutes == 60:
-            current_datetime += timedelta(hours=1)
-            rounded_minutes = 0
-        current_datetime = current_datetime.replace(minute=rounded_minutes % 60, hour=(current_datetime.hour + rounded_minutes // 60) % 24)
+    if discard != timedelta(0):
+        rounded_datetime += timedelta(minutes=interval)
 
-    rounded_time = current_datetime.time()
-    return rounded_time
+    return rounded_datetime.time()
 
 def generate_time_intervals(start_datetime, end_datetime, interval, delay):
     time_list = []
     current_time_while = start_datetime + timedelta(minutes=delay)
 
-    while current_time_while < end_datetime:
+    # Ensuring we stay within the end time boundary
+    while current_time_while + timedelta(minutes=interval) <= end_datetime:
         end_time = current_time_while + timedelta(minutes=interval)
         time_list.append(f'{current_time_while.time().strftime("%H:%M")} - {end_time.time().strftime("%H:%M")}')
         current_time_while = end_time
@@ -47,7 +46,7 @@ def generate_time_intervals(start_datetime, end_datetime, interval, delay):
 def generate_now_intervals(current_time, delay, start_datetime, end_datetime, interval, count=0):
     current_datetime = current_time.time()
 
-    # Начнем с текущего времени или старта рабочего дня в зависимости от того, что больше
+    # Determine if we start from the current time or the start of the working day
     if start_datetime.time() > current_datetime:
         now_start_time = start_datetime
     else:
@@ -57,29 +56,20 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
     time_intervals_now = []
     current_time_while = now_start_time
 
-    while current_time_while <= end_datetime:
+    # Ensure the intervals don't go beyond the end time boundary
+    while current_time_while + timedelta(minutes=interval) <= end_datetime:
         end_time = current_time_while + timedelta(minutes=interval)
         start_time_str = current_time_while.time().strftime('%H:%M')
         end_time_str = end_time.time().strftime('%H:%M')
 
-        if interval == 60:
-            if current_time_while >= end_datetime:
-                time_intervals_now.append(f'До {start_time_str}')
-            else:
-                time_intervals_now.append(f'{start_time_str} - {end_time_str}')
-        else:
-            if current_time_while >= end_datetime:
-                time_intervals_now.append(f'До {start_time_str}')
-            else:
-                time_intervals_now.append(f'{start_time_str} - {end_time_str}')
-
+        time_intervals_now.append(f'{start_time_str} - {end_time_str}')
         current_time_while = end_time
 
     return time_intervals_now
 
 def get_hours(request):
     workdays = WorkDay.objects.filter(active=True)
-    current_time = timezone.now().astimezone(pytz.timezone(TIME_ZONE))
+    current_time = timezone.localtime()
 
     try:
         shop_setup = ShopSetup.objects.get()
@@ -99,7 +89,7 @@ def get_hours(request):
     start_datetime = datetime.combine(datetime.today(), start)
     end_datetime = datetime.combine(datetime.today(), end)
 
-    # Если время заканчивается на следующий день
+    # Handle cases where end time is on the next day
     next_day_delivery = False
     if end < start:
         end_datetime += timedelta(days=1)
@@ -117,7 +107,7 @@ def get_hours(request):
 
         workday = workdays.filter(day=day_count_now).first()
 
-        # Если рабочего дня нет вообще, используем время из ShopSetup
+        # Use ShopSetup times if no specific workday is configured
         if not workday:
             start_delivery = datetime.combine(mod_date, start)
             end_delivery = datetime.combine(mod_date, end)
