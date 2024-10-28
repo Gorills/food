@@ -30,6 +30,10 @@ def custom_round_time(current_time, interval):
     if discard != timedelta(0):
         rounded_datetime += timedelta(minutes=interval)
 
+    # Ensure the minutes are correctly rounded
+    if rounded_datetime.minute % interval != 0:
+        rounded_datetime += timedelta(minutes=(interval - rounded_datetime.minute % interval))
+
     return rounded_datetime.time()
 
 def generate_time_intervals(start_datetime, end_datetime, interval, delay):
