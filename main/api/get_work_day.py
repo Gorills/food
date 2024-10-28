@@ -20,17 +20,13 @@ months = {
 }
 
 def custom_round_time(current_time, interval):
-    # Force rounding to the nearest interval of 30 or 60 minutes
+    # Force strict rounding to the nearest interval of 30 or 60 minutes
     current_datetime = datetime.strptime(current_time, "%H:%M") if isinstance(current_time, str) else current_time
     minutes = current_datetime.minute
 
-    # Round to nearest interval
+    # Strictly round to the nearest interval, always upwards
     if minutes % interval != 0:
-        if minutes % interval >= interval / 2:
-            rounded_minutes = ((minutes // interval) + 1) * interval
-        else:
-            rounded_minutes = (minutes // interval) * interval
-
+        rounded_minutes = ((minutes // interval) + 1) * interval
         if rounded_minutes >= 60:
             current_datetime += timedelta(hours=1)
             rounded_minutes = 0
