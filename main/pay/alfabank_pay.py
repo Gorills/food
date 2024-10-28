@@ -91,7 +91,8 @@ def create_payment(order, cart, request):
 
 try:
     site_name = BaseSettings.objects.get().name
-except BaseSettings.DoesNotExist:
+except Exception as e:
+    print(e)
     site_name = ''
 
 def get_status(pay_id):
