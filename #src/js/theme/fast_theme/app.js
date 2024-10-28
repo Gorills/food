@@ -1875,7 +1875,7 @@ $(document).on('click', '.add_to_cart', function(){
 
     addToCart(id, name, price, image, optionsIdString, type);
 
-    showTemporaryBlock(name)
+    
     
    
 });
@@ -2840,61 +2840,84 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 
 
 // Функция для добавления товара в корзину
+async function verifyProductPrice(itemId, userPrice, optionsIdArray) {
+    try {
+        const response = await fetch(`/api/v1/products/${itemId}/`);
+        if (!response.ok) {
+            throw new Error('Не удалось получить данные о товаре');
+        }
+        const productData = await response.json();
+        let serverPrice = parseFloat(productData.price);
 
+        // Учитываем только активные опции из списка optionsIdArray
+        if (productData.options && productData.options.length > 0) {
+            productData.options.forEach(option => {
+                if (optionsIdArray.includes(option.id) && option.active) {
+                    serverPrice += parseFloat(option.option_price);
+                }
+            });
+        }
+
+        return serverPrice === parseFloat(userPrice);
+    } catch (error) {
+        console.error('Ошибка проверки стоимости товара:', error);
+        return false;
+    }
+}
 
 async function addToCart(itemId, name, price, image, optionsIdString, type) {
+    let optionsIdArray = optionsIdString
+        .split(",")
+        .filter(optionId => optionId.trim() !== "")
+        .map(optionId => parseInt(optionId.trim(), 10));
+
+    // Проверяем стоимость товара с учетом выбранных опций
+    let isPriceVerified = await verifyProductPrice(itemId, price, optionsIdArray);
+
+    if (!isPriceVerified) {
+        console.error('Стоимость товара на сервере не совпадает с клиентской!');
+        
+        return; // Прекращаем выполнение, если цена не совпадает
+    }
+
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-
-    setLoyalCart()
-    
-   
-    let optionsIdArray = optionsIdString.split(",").filter(optionId => optionId.trim() !== "").map(optionId => parseInt(optionId.trim(), 10));
-
-
-    
+    setLoyalCart();
 
     let id = itemId;
-    let related = false
+    let related = false;
     if (type === 'product') {
         id += '000';
     } else if (type === 'combo') {
         id += '111';
     } else if (type === 'constructor') {
         id += '222';
-    } 
-    
+    }
+
     let optionsNameArray = [];
     if (optionsIdArray.length > 0) {
         id += optionsIdArray.join('');
         if (type === 'product') {
             try {
                 optionsNameArray = await getProductOptionsId(itemId, optionsIdArray);
-                
-
             } catch (error) {
                 console.error('Ошибка при получении настроек продукта:', error);
-                // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
             }
-
         } else if (type === 'combo') {
             try {
                 optionsNameArray = await getComboOptionsId(itemId, optionsIdArray);
-                
             } catch (error) {
                 console.error('Ошибка при получении настроек комбо:', error);
-                // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
             }
         } else if (type === 'constructor') {
             try {
                 optionsNameArray = await getConstructioOptionsId(itemId, optionsIdArray);
-                
             } catch (error) {
                 console.error('Ошибка при получении настроек конструктора:', error);
-                // Возможно, здесь нужно предпринять какие-то действия при возникновении ошибки
             }
         }
     }
+
     // Определите порядковый номер элемента в списке корзины
     let position = Object.keys(cart).length + 1;
 
@@ -2912,18 +2935,17 @@ async function addToCart(itemId, name, price, image, optionsIdString, type) {
         related: related,
         position: position // Добавляем порядковый номер в объект itemInfo
     };
-   
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    
+    showTemporaryBlock(name)
     fetchRelatedItems();
     updateAll();
     refreshBalls();
-    checkProducts()
-    
+    checkProducts();
 }
+
 
 
 // Пересчитать опции товаров
@@ -3402,16 +3424,24 @@ fetchRelatedItems();
 
 
 
+$(document).on('click', '.order__register-btn', function(e) {
+    e.preventDefault();  // Останавливаем стандартное действие кнопки
 
+    let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+    let phone = $('.order__input-login').val();
 
+    // Скрываем кнопку и добавляем лоадер и overlay в контейнер
+    let $button = $(this);
+    $button.prop('disabled', true).hide();  // Скрываем кнопку для предотвращения повторных нажатий
 
+    // Добавляем overlay с лоадером через JavaScript
+    let overlayHTML = `
+        <div class="order__register-overlay">
+            <div class="order__register-loader"></div>
+        </div>
+    `;
+    $('.order__register-wrapper').append(overlayHTML);  // Добавляем overlay с лоадером
 
-// login register
-$(document).on('click', '.order__register-btn' ,function(e){
-
-    let csrf = $('input[name="csrfmiddlewaretoken"]').val()
-    let phone = $('.order__input-login').val()
-   
     $.ajax({
         method: "POST",
         url: "/accounts/code/",
@@ -3419,9 +3449,9 @@ $(document).on('click', '.order__register-btn' ,function(e){
             csrfmiddlewaretoken: csrf,
             phone: phone
         }
-        })
-      .done(function( msg ) {
-
+    })
+    .done(function(msg) {
+        // Замена HTML содержимого после успешной отправки
         let innerHTML = `
         <div class="order__register-bottom">
             <input type="text" name="code" class="order__register-input" placeholder="Код подтверждения">
@@ -3431,68 +3461,52 @@ $(document).on('click', '.order__register-btn' ,function(e){
         <div class="order__register-bottom">
             <button type="button" class="order__register-btn order__register-btn--resend">Отправить еще раз</button>
         </div>
-        `
-        $('.order__register-wrapper').html(innerHTML)
+        `;
+        $('.order__register-wrapper').html(innerHTML);
 
-        
+        // Запуск обратного отсчета на кнопке "Отправить еще раз"
         $(".order__register-btn--resend").countdown(redirect, 120, "Повторная отправка через ");
-        
+    })
+    .fail(function() {
+        // В случае ошибки
+        alert('Произошла ошибка. Пожалуйста, попробуйте снова.');
+    })
+    .always(function() {
+        // Удаляем overlay и возвращаем кнопку
+        $('.order__register-overlay').remove();  // Удаляем overlay с лоадером
+        $button.prop('disabled', false).show();  // Показываем кнопку обратно
+    });
+});
 
-      });
-    
-})
 
-$(document).on('keyup', '.order__input-login' ,function(e){
-    let phone = $(this).val()
-    let min = phone.replace('_', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '').replace('+', '')
-    if (min.length == 13) {
-        // $('.user-login__btn').css({'display':'flex'})
-        // $(".get-sec").load(location.href + " .get-sec__inner");
 
+$(document).on('keyup', '.order__input-login', function(e) {
+    let phone = $(this).val().replace(/[^\d]/g, '');  // Удаляем все символы, кроме цифр
+    if (phone.length == 11) {
         let innerHTML = `
         <div class="order__register-text">
-            На номер <span id="login_phone_number">${phone}</span> будет отправлен
-            код подтверждения.
+            На номер <span id="login_phone_number">${phone}</span> будет отправлен код подтверждения.
         </div>
 
         <div class="order__register-bottom">
             <button type="button" class="order__register-btn order__register-btn--resend">Отправить</button>
         </div>
-        
-        `
-
-        $('.order__register-wrapper').html(innerHTML)
-        $('.order__register').addClass('order__register--active')
-
-        let secGet = $('.get-sec__inner').attr('data-timer')
-        // $('.id_phone-wrap--remove').remove()
-        
-        if (secGet != '') {
-            let sec = 120 - secGet
-            let nowData = $('.order__register-btn').text()
-            // console.log(sec)
-            // console.log(nowData)
-            if (sec > 0) {
-                if (nowData == 'Подтвердить') {
-                    $(".order__register-btn--resendbtn").countdown(redirect, sec, "Повторная отправка через ");
-                }
-            }
-        }
-
+        `;
+        $('.order__register-wrapper').html(innerHTML);
+        $('.order__register').addClass('order__register--active');
     } else {
-        $('.order__register').removeClass('order__register--active')
+        $('.order__register').removeClass('order__register--active');
     }
-})
+});
 
+$(document).on('click', '.order__register-btn--active', function(e) {
+    let csrf = $('input[name="csrfmiddlewaretoken"]').val();
+    let phone = $('.order__input-login').val();
+    let code = $('.order__register-input').val();
 
-$(document).on('click', '.order__register-btn--active' ,function(e){
-    
-    let csrf = $('input[name="csrfmiddlewaretoken"]').val()
-    let phone = $('.order__input-login').val()
-    let code = $('.order__register-input').val()
-   
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
-    
+
+    $(this).text('Подтверждение...').prop('disabled', true);
 
     $.ajax({
         method: "POST",
@@ -3503,25 +3517,18 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
             code: code,
             sms: 'True'
         }
-    }).done(function() {
-
-        
-        
-
-        // console.log(maxBallsPay())
-
+    })
+    .done(function() {
         getTotalPriceAfterDiscount();
 
         let order = JSON.parse(localStorage.getItem('order'));
-        order.user_phone = phone
+        order.user_phone = phone;
         localStorage.setItem('order', JSON.stringify(order));
 
-        
         fetch('/api/v1/get_user/')
             .then(response => response.json())
             .then(data => {
-                
-                set_data = {
+                let set_data = {
                     'cart_balls': data.cart_balls,
                     'percent_down': data.percent_down,
                     'percent_down_pickup': data.percent_down_pickup,
@@ -3530,59 +3537,41 @@ $(document).on('click', '.order__register-btn--active' ,function(e){
                     'balls_min_summ': data.balls_min_summ,
                     'exclude_combos': data.exclude_combos,
                     'exclude_sales': data.exclude_sales,
-                }
-                
+                };
                 localStorage.setItem('loyalCart', JSON.stringify(set_data));
                 maxBallsPay();
-
-                
             })
             .catch(error => console.error('Ошибка загрузки пользователя:', error));
 
-        
-        
-       
         $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
-        
-        
-        var existingElement = $('#balls');
-       
-
-        
-    }).fail(function() {
-        
-        $('.order__register-input').addClass('order__register-input--error')
-    });
-
-    
-})
-
-
-$(document).on('click', '.order__register-logout' ,function(e){
-
-    $.get("/logout/")
-    .done(function(  ) {
-
-        setLoyalCart();
-        maxBallsPay();
-        // console.log(maxBallsPay())
-        $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
-        let order = JSON.parse(localStorage.getItem('order'));
-        order.user_phone = ''
-        order.bonuses_pay = 0;
-        localStorage.setItem('order', JSON.stringify(order));
-        
-
-        $('.active_balls').remove();
-        $('#balls').html('')
-
-        
-        getTotalPriceAfterDiscount();
-        
 
     })
-    
-})
+    .fail(function() {
+        $('.order__register-input').addClass('order__register-input--error');
+    })
+    .always(function() {
+        $(this).text('Подтвердить').prop('disabled', false);
+    });
+});
+
+$(document).on('click', '.order__register-logout', function(e) {
+    $.get("/logout/")
+    .done(function() {
+        setLoyalCart();
+        maxBallsPay();
+        $('.order__input-phone-signup').load(location.href + " .order__input-phone-signup-refresh");
+        let order = JSON.parse(localStorage.getItem('order'));
+        order.user_phone = '';
+        order.bonuses_pay = 0;
+        localStorage.setItem('order', JSON.stringify(order));
+
+        $('.active_balls').remove();
+        $('#balls').html('');
+
+        getTotalPriceAfterDiscount();
+    });
+});
+
 
 
 
