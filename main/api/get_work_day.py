@@ -109,8 +109,8 @@ def get_hours(request):
         start = time(0, 0)
         end = time(23, 59)
 
-    start_datetime = datetime.combine(datetime.today(), start)
-    end_datetime = datetime.combine(datetime.today(), end)
+    start_datetime = timezone.make_aware(datetime.combine(datetime.today(), start), timezone.get_current_timezone())
+    end_datetime = timezone.make_aware(datetime.combine(datetime.today(), end), timezone.get_current_timezone())
 
     # Handle cases where end time is on the next day
     next_day_delivery = False
@@ -132,12 +132,16 @@ def get_hours(request):
 
         # Use ShopSetup times if no specific workday is configured
         if not workday:
-            start_delivery = datetime.combine(mod_date, start)
-            end_delivery = datetime.combine(mod_date, end)
+            start_delivery = timezone.make_aware(datetime.combine(mod_date, start), timezone.get_current_timezone())
+            end_delivery = timezone.make_aware(datetime.combine(mod_date, end), timezone.get_current_timezone())
             if next_day_delivery:
                 end_delivery += timedelta(days=1)
 
-            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
+            # Additional check to ensure end delivery is not exceeded for today
+            if count == 0 and current_time > end_delivery:
+                time_intervals_now = []
+            else:
+                time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
             time_intervals = generate_time_intervals(start_delivery, end_delivery, interval, delay)
 
             if count == 0 and time_intervals_now:
@@ -154,13 +158,17 @@ def get_hours(request):
             continue
 
         if workday and workday.active:
-            start_delivery = datetime.combine(mod_date, workday.start_delivery if workday else start)
-            end_delivery = datetime.combine(mod_date, workday.end_delivery if workday else end)
+            start_delivery = timezone.make_aware(datetime.combine(mod_date, workday.start_delivery if workday else start), timezone.get_current_timezone())
+            end_delivery = timezone.make_aware(datetime.combine(mod_date, workday.end_delivery if workday else end), timezone.get_current_timezone())
             if workday.end_delivery < workday.start_delivery:
                 end_delivery += timedelta(days=1)
                 next_day_delivery = True
             
-            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
+            # Additional check to ensure end delivery is not exceeded for today
+            if count == 0 and current_time > end_delivery:
+                time_intervals_now = []
+            else:
+                time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
             time_intervals = generate_time_intervals(start_delivery, end_delivery, interval, delay)
 
             if count == 0 and workday and workday.active and time_intervals_now:
