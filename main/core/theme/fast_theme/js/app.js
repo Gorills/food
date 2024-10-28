@@ -3735,375 +3735,267 @@ $(document).on('click', '.cookies__button', function(e) {
 
 
 
+let deliveryArea;
+let myMap;
 
-
-
-var deliveryArea;
-var myMap;
 ymaps.ready(init);
 
 function init() {
+    const suggestElement = $('#suggest');
+    const city = suggestElement.attr('data-city');
+    const zones = suggestElement.attr('data-zones');
+    const csrf = suggestElement.attr('data-csrf');
+    const flickerAPI = suggestElement.attr('data-file-zones');
+    const thirdPartyDelivery = suggestElement.attr('data-third-party-delivery') === 'true';
 
-    let city = $('#suggest').attr('data-city')
-    let zones = $('#suggest').attr('data-zones')
-    let csrf = $('#suggest').attr('data-csrf')
-    let flickerAPI = $('#suggest').attr('data-file-zones');
-    let datathirdPartyDdelivery = $('#suggest').attr('data-third-party-delivery');
-
-    
-    
-    if (zones != 'false') {
-        
-        let suggestView=new ymaps.SuggestView(
-            'suggest', {
-                provider: {
-                suggest: (function(request, options) {
-        
-                    return ymaps.suggest(request, {
-                        boundedBy: myMap.getBounds()
-                      });
-    
-                    })
-                }}
-    
-            );
-
-    } 
-
-    if (zones == 'false') {
-        
-        $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
-            $('#finaladress').val($('#suggest').val())
-        })
-    } else {
-        $(document).on('keyup','#suggest',function(e){
-            $('#suggest').css('border-color', 'red');
-            $('#finaladress').val('')
-        })
-
-        ymaps.geocode(city).then(function (res) {
-            myMap = new ymaps.Map('map', {
-                center: res.geoObjects.get(0).geometry.getCoordinates(),
-                zoom : 12,
-                controls: []
-
-            });
-
-
-            function getzones() {
-                
-                $.getJSON( flickerAPI, {
-                    tags: "mount rainier",
-                    tagmode: "any",
-                    format: "json"
-                })
-                .done(function( data ) {
-                    let count = 0
-                    $.each(data.deliverys, function(index, val) {
-                        
-                        if(datathirdPartyDdelivery == 'false') {
-                            freeArea = new ymaps.Polygon(
-                                [
-                                    val.coords
-                                ], {
-                                    hintContent: val.hintContent,
-                                    balloonContent: val.balloonContent,
-                                    balloonContentHeader: val.balloonContentHeader,
-                                    balloonContentBody: val.balloonContentBody,
-                                    balloonContentFooter: val.balloonContentFooter
-                                }, {
-                            
-                                fillColor: val.fillColor,
-                                strokeColor: val.strokeColor,
-                                opacity: val.opacity
-                            });
-                            myMap.geoObjects.add(freeArea);
-                            count+=1
-                        } else {
-                            freeArea = new ymaps.Polygon(
-                                [
-                                    val.coords
-                                ], {
-                                    hintContent: val.hintContent,
-                                    balloonContent: val.balloonContent,
-                                    balloonContentHeader: val.balloonContentHeader,
-                                   
-                                    balloonContentFooter: val.balloonContentFooter
-                                }, {
-                            
-                                fillColor: val.fillColor,
-                                strokeColor: val.strokeColor,
-                                opacity: val.opacity
-                            });
-                            myMap.geoObjects.add(freeArea);
-                            count+=1
-
-                        }
-
-                        
-                    })
-                });
-                
-            };
-            getzones()
-            $(document).on('click touchend', '.ymaps-2-1-79-suggest-item' ,function(e){
-                geocode();
-                getzones()
-            })
-            function showError(message) {
-                $('#suggest').addClass('suggest-error')
-                $('#addressError').text(message)
-                $('#addressError').show()
-            }
-            function geocode() {
-                // Забираем запрос из поля ввода.
-                myMap.geoObjects.removeAll()
-                let request = $('#suggest').val();
-                // Геокодируем введённые данные.
-                ymaps.geocode(request).then(function (res) {
-                    let obj = res.geoObjects.get(0),
-                        error, hint;
-                    
-                    
-                    if (obj) {
-                        // Об оценке точности ответа геокодера можно прочитать тут: https://tech.yandex.ru/maps/doc/geocoder/desc/reference/precision-docpage/
-                        switch (obj.properties.get('metaDataProperty.GeocoderMetaData.precision')) {
-                            case 'exact':
-                                break;
-                            case 'number':
-                            case 'near':
-                            case 'range':
-                                error = 'Уточните номер дома';
-                                hint = 'Уточните номер дома';
-                                break;
-                            case 'street':
-                                error = 'Уточните номер дома';
-                                hint = 'Уточните номер дома';
-                                break;
-                            case 'other':
-                            default:
-                                error = 'Уточните адрес';
-                                hint = 'Уточните адрес';
-                        }
-                    } else {
-                        error = 'Адрес не найден';
-                        hint = 'Уточните адрес';
-                    }
-    
-                    // Если геокодер возвращает пустой массив или неточный результат, то показываем ошибку.
-                    if (error) {
-                        showError(error)
-                        
-                    } else {
-                        // showResult(obj);
-                        
-                        let deliveryText = ''
-                        myMap.geoObjects.each(function (item) {
-                            if(item.geometry.getType() == "Polygon"){
-                                if (item.geometry.contains(obj.geometry._coordinates)) {
-
-                                    let suggestElement = $('#suggest');
-                                    let headerCartElement = $('#headerCart');
-                                    let cartInnerElement = $('.cart__inner');
-
-                                    
-                                    if (datathirdPartyDdelivery == 'true') {
-                                        
-                                        data_del = {
-                                            
-                                            dotaddress: suggestElement.val(),
-                                            csrfmiddlewaretoken: csrf
-                                        }
-
-                                        $.post("/delivery/check_price/", data_del, function(response) {
-                                            
-                                        
-                                        })
-                                        .done(function( response ) {
-                                            // Парсинг JSON-ответа
-                                            let price = parseInt(response.price);
-                                            
-                                            // console.log(response);
-                                            
-                                            
-
-                                            let deliveryText = item.properties._data.hintContent
-                                            
-                                            let deliveryFree = item.properties._data.balloonContentFooter
-                                            
-                                            let min_delivery = 0
-
-                                            if (deliveryFree.includes("НЕТ")) {
-                                                fd = 999999;
-                                                let matches = deliveryFree.match(/\d+/);
-                                                if (matches) {
-                                                    min_delivery = parseInt(matches[0]);
-                                                }
-                                            } else {
-                                                let matches = deliveryFree.match(/\d+/g);
-                                                if (matches && matches.length >= 2) {
-                                                    fd = parseInt(matches[0]);
-                                                    min_delivery = parseInt(matches[1]);
-                                                } else {
-                                                    fd = parseInt(matches[0]);
-                                                }
-                                            }
-                                            
-
-                                            
-        
-                                            
-
-                                            let data = JSON.parse(localStorage.getItem('deliveryPrice'));
-                                            let order = JSON.parse(localStorage.getItem('order'));
-
-                                            
-
-                                            data.price_delivery = price
-                                            data.free_delivery = fd
-                                            
-
-                                            order.address = suggestElement.val()
-                                            order.delivery_price = price
-        
-                                            if(min_delivery) {
-                                                let min_delivery_post = parseInt(item.properties._data.balloonContentFooter.match(/\d+/g)[1]);
-
-                                                data.min_delivery = min_delivery_post
-                                                $('#suggest').attr('data-min', min_delivery_post)
-                                            } 
-
-                                            localStorage.setItem('deliveryPrice', JSON.stringify(data));
-                                            localStorage.setItem('order', JSON.stringify(order));
-
-
-                                            
-                                            deliveryUpdate()
-                                            $('.show-map').removeClass('order__input--error')
-                                        })
-                                        
-
-                                    } else {
-
-                                        let deliveryText = item.properties._data.hintContent;
-                                        let deliveryPrice = item.properties._data.balloonContentBody;
-                                        let deliveryFree = item.properties._data.balloonContentFooter;
-                                        let sd = parseInt(deliveryPrice.match(/\d+/)[0]);
-                                        let min_delivery = 0;
-                                        let fd;
-
-                                        
-
-                                        if (deliveryFree.includes("НЕТ")) {
-                                            fd = 999999;
-                                            let matches = deliveryFree.match(/\d+/);
-                                            if (matches) {
-                                                min_delivery = parseInt(matches[0]);
-                                            }
-                                        } else {
-                                            let matches = deliveryFree.match(/\d+/g);
-                                            if (matches && matches.length >= 2) {
-                                                fd = parseInt(matches[0]);
-                                                min_delivery = parseInt(matches[1]);
-                                            } else {
-                                                fd = parseInt(matches[0]);
-                                            }
-                                        }
-
-                                        
-
-                                        let data = JSON.parse(localStorage.getItem('deliveryPrice'));
-                                        let order = JSON.parse(localStorage.getItem('order'));
-
-                                        data.price_delivery = sd;
-                                        data.free_delivery = fd;
-
-                                        order.address = suggestElement.val();
-                                        order.delivery_price = sd;
-
-                                        if (min_delivery) {
-                                            let min_delivery_post = min_delivery;
-
-                                            data.min_delivery = min_delivery_post;
-                                            $('#suggest').attr('data-min', min_delivery_post);
-                                        }
-
-                                        localStorage.setItem('deliveryPrice', JSON.stringify(data));
-                                        localStorage.setItem('order', JSON.stringify(order));
-                                        
-
-                                        deliveryUpdate();
-                                        $('.show-map').removeClass('order__input--error');
-
-                                    }
-                                    
-                                    
-
-    
-                                    myGeoObject = new ymaps.GeoObject({
-                                        // Описание геометрии.
-                                        geometry: {
-                                            type: "Point",
-                                            coordinates: obj.geometry._coordinates
-                                        },
-                                        // Свойства.
-                                        properties: {
-                                            iconContent: 'Я тут',
-                                        }
-                                    }, {
-                                        // Опции.
-                                        // Иконка метки будет растягиваться под размер ее содержимого.
-                                        preset: 'islands#blackStretchyIcon',
-                                        // Метку можно перемещать.
-                                        draggable: false
-                                    })
-                                    
-                                    myMap.geoObjects.removeAll()
-                                    getzones()
-                                    myMap.geoObjects.add(item)
-                                    myMap.geoObjects.add(myGeoObject)
-                                    myMap.setCenter(obj.geometry._coordinates);
-                                    myMap.setZoom(17);
-
-
-
-                                 
-                                    
-
-                                    
-
-                                    suggestElement.removeClass('suggest-error')
-                                    $('#addressError').text('')
-                                    $('#addressError').hide()
-                                    $('#finaladress').val($('#suggest').val())
-                                    suggestElement.css('border-color', 'green');
-                                    suggestElement.attr('data-value', $('#suggest').val());
-
-
-                                    
-                                    
-                                    
-    
-                                } else {
-                                    showError('Нет доставки')
-                                    $('#finaladress').val('')
-                                }
-    
-                            }
-    
-                        })
-                        
-                        
-                    }
-                }, function (e) {
-                    console.log(e.geometry._coordinates)
-                })
-    
+    if (zones !== 'false') {
+        new ymaps.SuggestView('suggest', {
+            provider: {
+                suggest: (request, options) => ymaps.suggest(request, { boundedBy: myMap.getBounds() }),
             }
         });
+    }
 
+    if (zones === 'false') {
+        $(document).on('click touchend', '.ymaps-2-1-79-suggest-item', () => {
+            $('#finaladress').val(suggestElement.val());
+        });
+    } else {
+        $(document).on('keyup', '#suggest', () => {
+            suggestElement.css('border-color', 'red');
+            $('#finaladress').val('');
+        });
+
+        ymaps.geocode(city).then(res => {
+            myMap = new ymaps.Map('map', {
+                center: res.geoObjects.get(0).geometry.getCoordinates(),
+                zoom: 12,
+                controls: []
+            });
+
+            getZones();
+            $(document).on('click touchend', '.ymaps-2-1-79-suggest-item', () => {
+                geocode();
+                getZones();
+            });
+        });
+    }
+
+    function getZones() {
+        $.getJSON(flickerAPI, { tags: "mount rainier", tagmode: "any", format: "json" })
+            .done(data => {
+                data.deliverys.forEach(val => {
+                    // Проверка наличия значений, которые важны для зоны
+                    if (!val.coords) {
+                        console.warn("Отсутствуют координаты для зоны:", val);
+                        return;
+                    }
+    
+                    // Создаем объект с параметрами стиля полигона для каждого отдельного полигона
+                    const areaStyleOptions = {
+                        fillColor: val.fillColor || '#00FF00', // Устанавливаем цвет заливки или значение по умолчанию
+                        strokeColor: val.strokeColor || '#0000FF', // Устанавливаем цвет границы или значение по умолчанию
+                        opacity: val.opacity || 0.5 // Устанавливаем прозрачность или значение по умолчанию
+                    };
+    
+                    // Создаем объект с информацией, отображаемой в балуне
+                    const areaOptions = {
+                        hintContent: val.hintContent || 'Зона доставки',
+                        balloonContent: val.balloonContent || 'Информация о доставке недоступна',
+                        balloonContentHeader: val.balloonContentHeader || 'Зона доставки',
+                        balloonContentFooter: val.balloonContentFooter || 'Информация о бесплатной доставке недоступна',
+                        balloonContentBody: val.balloonContentBody || 'Стоимость доставки не указана'
+                    };
+    
+                    // Логируем, чтобы убедиться в наличии необходимых данных
+                    console.log("Создание зоны с параметрами:", areaOptions);
+    
+                    // Создаем новый полигон с индивидуальными параметрами стиля
+                    const freeArea = new ymaps.Polygon([val.coords], areaOptions, areaStyleOptions);
+                    myMap.geoObjects.add(freeArea);
+                });
+            })
+            .fail(() => {
+                console.error("Ошибка загрузки данных для зон доставки. Проверьте ссылку на API или данные.");
+            });
+    }
+    
+
+    function showError(message) {
+        suggestElement.addClass('suggest-error');
+        $('#addressError').text(message).show();
+    }
+
+    function geocode() {
+        myMap.geoObjects.removeAll();
+        const request = suggestElement.val();
+
+        ymaps.geocode(request).then(res => {
+            const obj = res.geoObjects.get(0);
+            let error;
+
+            if (obj) {
+                const precision = obj.properties.get('metaDataProperty.GeocoderMetaData.precision');
+                if (precision !== 'exact') {
+                    error = 'Уточните номер дома';
+                }
+            } else {
+                error = 'Адрес не найден';
+            }
+
+            if (error) {
+                showError(error);
+            } else {
+                processGeocodeResult(obj);
+            }
+        }).catch(e => console.error(e));
+    }
+
+    function processGeocodeResult(obj) {
+        const objCoordinates = obj.geometry.getCoordinates();
+        
+        // Лог координат геокодера
+        console.log("Координаты введенного адреса:", objCoordinates);
+    
+        let foundDeliveryArea = false;
+    
+        myMap.geoObjects.each(item => {
+            if (item.geometry.getType() === "Polygon") {
+                // Лог координат полигона доставки
+                console.log("Проверка полигона:", item.geometry.getCoordinates());
+    
+                if (item.geometry.contains(objCoordinates)) {
+                    foundDeliveryArea = true;
+    
+                    if (thirdPartyDelivery) {
+                        processThirdPartyDelivery(item);
+                    } else {
+                        processDelivery(item);
+                    }
+    
+                    const myGeoObject = new ymaps.GeoObject({
+                        geometry: { type: "Point", coordinates: objCoordinates },
+                        properties: { iconContent: 'Я тут' }
+                    }, {
+                        preset: 'islands#blackStretchyIcon',
+                        draggable: false
+                    });
+    
+                    myMap.geoObjects.add(myGeoObject);
+                    myMap.setCenter(objCoordinates);
+                    myMap.setZoom(17);
+    
+                    suggestElement.removeClass('suggest-error').css('border-color', 'green').attr('data-value', suggestElement.val());
+                    $('#addressError').text('').hide();
+                    $('#finaladress').val(suggestElement.val());
+    
+                    return false; // Прекращаем обход, как только нашли подходящий полигон
+                }
+            }
+        });
+    
+        if (!foundDeliveryArea) {
+            showError('Нет доставки');
+            $('#finaladress').val('');
+        }
+    }
+
+    function processThirdPartyDelivery(item) {
+        const dataDel = {
+            dotaddress: suggestElement.val(),
+            csrfmiddlewaretoken: csrf
+        };
+
+        $.post("/delivery/check_price/", dataDel)
+            .done(response => {
+                const price = parseInt(response.price);
+                updateLocalStorage(price, item);
+                deliveryUpdate();
+                $('.show-map').removeClass('order__input--error');
+            });
+    }
+
+    function processDelivery(item) {
+        // Извлечение информации о стоимости доставки
+        const deliveryPriceText = item.properties._data.balloonContentBody;
+    
+        let sd = 0; // Стоимость доставки по умолчанию
+        if (typeof deliveryPriceText === 'string') {
+            const priceMatch = deliveryPriceText.match(/\d+/);
+            if (priceMatch) {
+                sd = parseInt(priceMatch[0]);
+            } else {
+                console.warn("Не удалось извлечь стоимость доставки из balloonContentBody.");
+            }
+        } else {
+            console.warn("balloonContentBody отсутствует или не является строкой.");
+        }
+    
+        // Извлечение информации о бесплатной доставке
+        const deliveryFreeText = item.properties._data.balloonContentFooter;
+        let fd = 999999; // Значение по умолчанию для бесплатной доставки
+        let minDelivery = 0;
+    
+        if (typeof deliveryFreeText === 'string') {
+            const matches = deliveryFreeText.match(/\d+/g);
+            if (matches && matches.length > 0) {
+                fd = parseInt(matches[0]);
+                if (matches.length > 1) {
+                    minDelivery = parseInt(matches[1]);
+                }
+            } else {
+                console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+            }
+        } else {
+            console.warn("balloonContentFooter отсутствует или не является строкой.");
+        }
+    
+        // Обновление данных в localStorage
+        const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
+        const order = JSON.parse(localStorage.getItem('order')) || {};
+    
+        data.price_delivery = sd; // Установка стоимости доставки
+        data.free_delivery = fd; // Установка порога для бесплатной доставки
+        order.address = suggestElement.val();
+        order.delivery_price = sd;
+    
+        if (minDelivery) {
+            data.min_delivery = minDelivery;
+            suggestElement.attr('data-min', minDelivery);
+        }
+    
+        localStorage.setItem('deliveryPrice', JSON.stringify(data));
+        localStorage.setItem('order', JSON.stringify(order));
+    
+        deliveryUpdate();
+        $('.show-map').removeClass('order__input--error');
+    }
+    
+
+    function updateLocalStorage(price, item) {
+        const deliveryFreeText = item.properties._data.balloonContentFooter;
+        const matches = deliveryFreeText.match(/\d+/g);
+        const fd = matches ? parseInt(matches[0]) : 999999;
+        const minDelivery = matches && matches.length > 1 ? parseInt(matches[1]) : 0;
+
+        const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
+        const order = JSON.parse(localStorage.getItem('order')) || {};
+
+        data.price_delivery = price;
+        data.free_delivery = fd;
+        order.address = suggestElement.val();
+        order.delivery_price = price;
+
+        if (minDelivery) {
+            data.min_delivery = minDelivery;
+            suggestElement.attr('data-min', minDelivery);
+        }
+
+        localStorage.setItem('deliveryPrice', JSON.stringify(data));
+        localStorage.setItem('order', JSON.stringify(order));
     }
 }
+
 
 
 
