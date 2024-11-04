@@ -24,8 +24,9 @@ except Exception as e:
     telegram_group = ''
 
 from orders.telegram import order_telegram, send_message
-
 from decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP
+import uuid
+from yookassa import Payment
 
 def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
@@ -60,13 +61,13 @@ def create_payment(order, cart, request):
             if Decimal(formatted_price) > 0:
                 i = {
                     "description": product.name,
-                    "quantity": int(item.quantity),
+                    "quantity": float(item.quantity),
                     "amount": {
                         "value": formatted_price,
                         "currency": "RUB"
                     },
                     "vat_code": Yookassa.objects.get().vat_code,
-                    "payment_mode": "full_payment",
+                    "payment_mode": "full_prepayment",
                     "payment_subject": "commodity"
                 }
                 
@@ -79,21 +80,27 @@ def create_payment(order, cart, request):
         if Decimal(formatted_delivery_price) > 0:
             delivery = {
                 "description": 'Доставка',
-                "quantity": 1,
+                "quantity": 1.000,
                 "amount": {
                     "value": formatted_delivery_price,
                     "currency": "RUB"
                 },
                 "vat_code": Yookassa.objects.get().vat_code,
-                "payment_mode": "full_payment",
-                "payment_subject": "commodity"
+                "payment_mode": "full_prepayment",
+                "payment_subject": "service"
             }
             items.append(delivery)
     
-    # Создаем объект платежа
+    # Проверяем, что итоговая сумма больше нуля
+    total_sum = Decimal(order.summ)
+    if total_sum <= 0:
+        raise ValueError("Итоговая сумма заказа должна быть больше нуля")
+    
+    # Создаем объект платежа с уникальным ключом идемпотентности
+    idempotence_key = str(uuid.uuid4())
     payment = Payment.create({
         "amount": {
-            "value": format_price(order.summ),
+            "value": format_price(total_sum),
             "currency": "RUB"
         },
         "confirmation": {
@@ -112,7 +119,7 @@ def create_payment(order, cart, request):
             },
             "items": items
         }
-    })
+    }, idempotence_key)
 
     # Формируем данные для возврата
     data = {
@@ -124,6 +131,9 @@ def create_payment(order, cart, request):
 
     # Печатаем данные для отладки (можно удалить в продакшене)
     print(data)
+    
+
+
     
     # Возвращаем данные
 
