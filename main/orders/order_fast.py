@@ -18,6 +18,7 @@ import json
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
+import traceback
 
 try:
     theme_address = ThemeSettings.objects.get().name
@@ -461,12 +462,8 @@ def order_create(request):
         else:
             return HttpResponse("This view only accepts POST requests.")
         
-
+    
 
     except Exception as e:
-        
-        # Проверяем, что e не None и приводим к строке
-        error_text = str(e) if e is not None else 'Неизвестная ошибка'
-        escaped_error_text = error_text.replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
-        error_message = f'Ошибка оформления заказа: {escaped_error_text}'
+        error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
