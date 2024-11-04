@@ -23,8 +23,9 @@ except Exception as e:
     telegram_bot = ''
     telegram_group = ''
 
-from orders.telegram import order_telegram
+from orders.telegram import order_telegram, send_message
 from decimal import Decimal, ROUND_DOWN
+
 
 def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
@@ -120,6 +121,11 @@ def create_payment(order, cart, request):
 
     # Печатаем данные для отладки (можно удалить в продакшене)
     print(data)
+    wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+    wo_telegram_group = '-1001850576262'
+
+    error_message = str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+    send_message(wo_elegram_bot, wo_telegram_group, error_message)
     
     # Возвращаем данные
     return data
