@@ -463,5 +463,6 @@ def order_create(request):
     except Exception as e:
         wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
         wo_telegram_group = '-1001850576262'
-        send_message(wo_elegram_bot, wo_telegram_group, f'{e}')
+        error_message = str(e).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
       
