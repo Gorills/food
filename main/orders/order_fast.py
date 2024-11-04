@@ -33,8 +33,6 @@ def sms_text(order_id, summ):
         text_standart = BaseSettings.objects.get().sms_text
     except:
         text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
-    else:
-        text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
 
     
     text = text_standart.replace('{order}', str(order_id)).replace('{summ}', str(summ))
