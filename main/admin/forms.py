@@ -1334,7 +1334,14 @@ class DopItemsForm(forms.ModelForm):
 class CouponForm(forms.ModelForm):
     class Meta:
         model = Coupon
-        fields = "__all__"
+        fields = [
+            'code',
+            'valid_from',
+            'valid_to',
+            'discount',
+            'active',
+            'promo_type',
+        ]
         labels = {
             'code': 'Код купона',
             'valid_from': 'Дата начала акции',

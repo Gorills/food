@@ -416,16 +416,16 @@ def dop_items(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
+from pytils.translit import slugify
 @api_view(['POST'])
 def check_promo(request):
-    coupon = request.data.get('promo')
+    slug = slugify(request.data.get('promo'))
     
     now = timezone.now()
 
     try:
         coupon = Coupon.objects.get(
-            code=coupon,
+            slug=slug,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True

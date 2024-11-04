@@ -628,16 +628,25 @@ def admin_promo(request):
 
     return render(request, 'marketing/coupons/promo.html', context)
 
-@check_user_rights(['add_propmo'])
-def promo_add(request):
 
+@check_user_rights(['add_promo'])
+def promo_add(request):
     if request.method == 'POST':
         form = CouponForm(request.POST)
         if form.is_valid():
-            form.save()
-        return redirect('admin_promo')
+            coupon = form.save(commit=False)  # Get an unsaved instance of the Coupon object
+            
+            # Generate the slug and assign it to the coupon instance
+            coupon.slug = slugify(coupon.code)
+            
+            # Save the coupon
+            coupon.save()
+            
+            return redirect('admin_promo')
 
-    form = CouponForm()
+    else:
+        form = CouponForm()  # Create a new instance of the form for GET request
+
     context = {
         'form': form
     }

@@ -4087,7 +4087,7 @@ $(document).ready(function() {
     }
 
     // Periodic re-check every minute for real-time updates
-    setInterval(checkCurrentTime, 60000); // Re-check every 60 seconds
+    setInterval(checkCurrentTime, 300000); // Re-check every 60 seconds
 });
 
 // User interaction: hide popup and update localStorage on button click
