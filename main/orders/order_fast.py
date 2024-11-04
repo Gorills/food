@@ -465,6 +465,8 @@ def order_create(request):
 
     except Exception as e:
         
-        error_message =f'Ошибка оформления заказа: {str(e).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')}'
+        error_text = str(e)
+        escaped_error_text = error_text.replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        error_message = f'Ошибка оформления заказа: {escaped_error_text}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
-      
+        
