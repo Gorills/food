@@ -24,25 +24,26 @@ except Exception as e:
     telegram_group = ''
 
 from orders.telegram import order_telegram
+from decimal import Decimal, ROUND_DOWN
+
+def format_price(price):
+    # Округляем до двух знаков после запятой, как это требуется платежной системой
+    return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_DOWN))
 
 def create_payment(order, cart, request):
-
     path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
     
     items = []
-
     
-
     phone = order.phone
-
     digits_only = ''.join(char for char in phone if char.isdigit())
     
     sale_percent = order.sale_percent
     
+    # Формируем список товаров
     for item in order.items.all():
-        
         if item.price != 0:
-
+            # Определяем, какой объект используется: product, combo или constructor
             if item.product:
                 product = item.product
             elif item.combo:
@@ -50,13 +51,15 @@ def create_payment(order, cart, request):
             elif item.constructor:
                 product = item.constructor
             
-            price = str(Decimal(item.price) - (Decimal(item.price/100) * sale_percent))
-
+            # Вычисляем и форматируем цену с учётом скидки
+            price = Decimal(item.price) * (1 - Decimal(sale_percent) / 100)
+            formatted_price = format_price(price)
+            
             i = {
                 "description": product.name,
                 "quantity": int(item.quantity),
                 "amount": {
-                    "value": price,
+                    "value": formatted_price,
                     "currency": "RUB"
                 },
                 "vat_code": Yookassa.objects.get().vat_code,
@@ -65,15 +68,16 @@ def create_payment(order, cart, request):
             }
             
             items.append(i)
-
     
-
+    # Добавляем стоимость доставки, если она есть
     if order.delivery_method == 'Доставка':
+        formatted_delivery_price = format_price(order.delivery_price)
+
         delivery = {
             "description": 'Доставка',
             "quantity": 1,
             "amount": {
-                "value": order.delivery_price,
+                "value": formatted_delivery_price,
                 "currency": "RUB"
             },
             "vat_code": Yookassa.objects.get().vat_code,
@@ -81,20 +85,21 @@ def create_payment(order, cart, request):
             "payment_subject": "commodity"
         }
         items.append(delivery)
-
+    
+    # Создаем объект платежа
     payment = Payment.create({
         "amount": {
-            "value": str(order.summ),
+            "value": format_price(order.summ),
             "currency": "RUB"
         },
         "confirmation": {
             "type": "redirect",
-            "return_url": path+"/orders/confirm/" + str(order.id)
+            "return_url": path + "/orders/confirm/" + str(order.id)
         },
         "capture": True,
         "description": "Заказ №" + str(order.id),
         "metadata": {
-        "order_id": str(order.id)
+            "order_id": str(order.id)
         }, 
         "receipt": {
             "customer": {
@@ -105,16 +110,16 @@ def create_payment(order, cart, request):
         }
     })
 
+    # Формируем данные для возврата
     data = {
         'id': payment.id,
         'order_id': order.id,
         'confirmation_url': payment.confirmation.confirmation_url,
         'path': path
-        
     }
 
+    # Печатаем данные для отладки (можно удалить в продакшене)
     print(data)
-    # order_telegram(telegram_bot, telegram_group, data)
+    
+    # Возвращаем данные
     return data
-
-
