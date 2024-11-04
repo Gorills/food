@@ -25,7 +25,8 @@ except:
     theme_address = 'sushi'
 
 
-
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
 
 def sms_text(order_id, summ):
 
@@ -39,7 +40,7 @@ def sms_text(order_id, summ):
     
     if text_get == False:
         text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
-        
+
     text = text_standart.replace('{order}', str(order_id)).replace('{summ}', str(summ))
     
     
@@ -463,8 +464,7 @@ def order_create(request):
 
 
     except Exception as e:
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
-        error_message = str(e).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        
+        error_message =f'Ошибка оформления заказа: {str(e).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
       
