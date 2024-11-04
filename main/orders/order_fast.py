@@ -30,20 +30,17 @@ wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
 wo_telegram_group = '-1001850576262'
 
 def sms_text(order_id, summ):
-
     try:
         text_standart = BaseSettings.objects.get().sms_text
-        text_get = True
-    except:
+        # Если текст не был задан, установить значение по умолчанию
+        if not text_standart:
+            text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
+    except BaseSettings.DoesNotExist:
+        # Если BaseSettings не найден, используем текст по умолчанию
         text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
-        text_get = False
-
     
-    if text_get == False:
-        text_standart = f'Ваш заказ принят. Ему присвоен № {order_id}.'
-
+    # Заменяем значения в строке
     text = text_standart.replace('{order}', str(order_id)).replace('{summ}', str(summ))
-    
     
     return text
 
