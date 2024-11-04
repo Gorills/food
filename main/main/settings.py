@@ -273,8 +273,8 @@ TEMPLATES = [
 ]
 
 
-from .settings_loader import get_debug
-DEBUG = get_debug
+from .local_settings import DEBUG
+DEBUG = DEBUG
     
 
 

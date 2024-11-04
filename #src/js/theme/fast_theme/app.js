@@ -3998,70 +3998,107 @@ function init() {
 
 
 
-
 // Рабочее время
-
-
 function checkCurrentTime() {
     var d = new Date();
     var currentTime = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    let day = d.getDay();
 
-    
-    let day = d.getDay()
-
-    if (d.getDay() == 0) {
-        day = 6
+    // Adjust for Sunday (0) to treat it as day 6
+    if (day === 0) {
+        day = 6;
     }
 
+    // Fetch work schedule based on current day
     fetch(`/api/v1/get_work_active/${day}/`)
         .then(response => response.json())
         .then(data => {
-            var startDelivery = data.start_delivery;
-            var endDelivery = data.end_delivery;
-            var startSecondDelivery = data.start_second_delivery;
-            var endSecondDelivery = data.end_second_delivery;
+            const startDelivery = data.start_delivery;
+            const endDelivery = data.end_delivery;
+            const startSecondDelivery = data.start_second_delivery;
+            const endSecondDelivery = data.end_second_delivery;
 
-            if ((currentTime >= startDelivery && currentTime <= endDelivery) || (currentTime >= startSecondDelivery && currentTime <= endSecondDelivery)) {
+            // Check if the current time is within delivery times
+            const isWithinDeliveryTime = 
+                (currentTime >= startDelivery && currentTime <= endDelivery) || 
+                (currentTime >= startSecondDelivery && currentTime <= endSecondDelivery);
+
+            // Store working hours in localStorage
+            const storedWorkTime = JSON.parse(localStorage.getItem('workTime'));
+            const workTime = {
+                startDelivery,
+                endDelivery,
+                startSecondDelivery,
+                endSecondDelivery,
+                is_open: storedWorkTime ? storedWorkTime.is_open : true
+            };
+
+            // Update work time in localStorage if there is a change
+            if (!storedWorkTime || 
+                storedWorkTime.startDelivery !== startDelivery || 
+                storedWorkTime.endDelivery !== endDelivery ||
+                storedWorkTime.startSecondDelivery !== startSecondDelivery ||
+                storedWorkTime.endSecondDelivery !== endSecondDelivery) {
                 
-                // Здесь можно выполнить какие-то действия, если текущее время попадает в один из диапазонов
+                localStorage.setItem('workTime', JSON.stringify(workTime));
+
+                // If work hours have changed, show the popup
+                showPopupWithCooldown();
+            }
+
+            // Show popup if the current time is not within delivery times
+            if (!isWithinDeliveryTime) {
+                showPopupWithCooldown();
             } else {
-
-                let workTime = JSON.parse(localStorage.getItem('workTime')) || {};
-
-                
-
-                if (!workTime.is_open) {
-                    $('.delivery-popup').removeClass('delivery-popup--active')
-                } else {
-                    $('.delivery-popup').addClass('delivery-popup--active')
-                }
-
-                
-                
-
-                
+                // Otherwise, hide the popup
+                $('.delivery-popup').removeClass('delivery-popup--active');
             }
         })
         .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
 }
 
+// Show popup with a cooldown of 60 seconds
+function showPopupWithCooldown() {
+    const lastPopupTime = localStorage.getItem('lastPopupTime');
+    const currentTime = new Date().getTime();
+
+    // Show the popup only if it hasn't been shown in the last 60 seconds
+    if (!lastPopupTime || currentTime - lastPopupTime >= 60000) {
+        $('.delivery-popup').addClass('delivery-popup--active');
+        localStorage.setItem('lastPopupTime', currentTime);
+    }
+}
+
+// Set initial state on document ready
 $(document).ready(function() {
+    // Set visit time on initial load
+    if (!localStorage.getItem('visitTime')) {
+        const visitTime = new Date().toISOString();
+        localStorage.setItem('visitTime', visitTime);
+    }
+
+    // Initial time check on load
     checkCurrentTime();
+
+    // Set default workTime if not set
     let workTime = JSON.parse(localStorage.getItem('workTime'));
     if (!workTime) {
-        localStorage.setItem('workTime', JSON.stringify({is_open: true}));
-    } 
-    
+        localStorage.setItem('workTime', JSON.stringify({ is_open: true }));
+    }
 
-
+    // Periodic re-check every minute for real-time updates
+    setInterval(checkCurrentTime, 60000); // Re-check every 60 seconds
 });
 
+// User interaction: hide popup and update localStorage on button click
 $('.delivery-popup__btn').click(function() {
-    localStorage.setItem('workTime', JSON.stringify({is_open: false}));
-    $('.delivery-popup').removeClass('delivery-popup--active')
-})
-
-
+    let workTime = JSON.parse(localStorage.getItem('workTime'));
+    if (workTime) {
+        workTime.is_open = false;
+        localStorage.setItem('workTime', JSON.stringify(workTime));
+    }
+    $('.delivery-popup').removeClass('delivery-popup--active');
+});
 
 
 
