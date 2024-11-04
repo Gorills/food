@@ -24,6 +24,9 @@ except Exception as e:
     telegram_group = ''
 
 from orders.telegram import order_telegram, send_message
+
+
+
 from decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP
 import uuid
 from yookassa import Payment
@@ -42,6 +45,7 @@ def create_payment(order, cart, request):
     
     sale_percent = order.sale_percent
     
+    total_items_sum = Decimal(0)
     # Формируем список товаров
     for item in order.items.all():
         if item.price != 0:
@@ -59,6 +63,7 @@ def create_payment(order, cart, request):
             
             # Проверяем, что цена больше нуля
             if Decimal(formatted_price) > 0:
+                total_items_sum += Decimal(formatted_price) * item.quantity
                 i = {
                     "description": product.name,
                     "quantity": float(item.quantity),
@@ -78,6 +83,7 @@ def create_payment(order, cart, request):
         formatted_delivery_price = format_price(order.delivery_price)
 
         if Decimal(formatted_delivery_price) > 0:
+            total_items_sum += Decimal(formatted_delivery_price)
             delivery = {
                 "description": 'Доставка',
                 "quantity": 1.000,
@@ -91,10 +97,15 @@ def create_payment(order, cart, request):
             }
             items.append(delivery)
     
-    # Проверяем, что итоговая сумма больше нуля
+    # Используем итоговую сумму заказа для коррекции сумм всех позиций
     total_sum = Decimal(order.summ)
-    if total_sum <= 0:
-        raise ValueError("Итоговая сумма заказа должна быть больше нуля")
+    if total_sum > 0 and total_items_sum != total_sum:
+        correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
+        for item in items:
+            item_amount = Decimal(item['amount']['value']) * correction_factor
+            item['amount']['value'] = format_price(item_amount)
+    else:
+        total_sum = format_price(total_items_sum)
     
     # Создаем объект платежа с уникальным ключом идемпотентности
     idempotence_key = str(uuid.uuid4())
@@ -132,7 +143,6 @@ def create_payment(order, cart, request):
     # Печатаем данные для отладки (можно удалить в продакшене)
     print(data)
     
-
 
     
     # Возвращаем данные
