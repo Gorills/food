@@ -75,9 +75,6 @@ if pay_name == 'paykeeper':
 if pay_name == 'tinkoff':
     from pay.tinkoff_pay import create_payment
 
-
-
-
 def order_create(request):
 
     try:
