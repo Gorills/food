@@ -465,8 +465,8 @@ def order_create(request):
 
     except Exception as e:
         
-        error_text = str(e)
+        # Проверяем, что e не None и приводим к строке
+        error_text = str(e) if e is not None else 'Неизвестная ошибка'
         escaped_error_text = error_text.replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
         error_message = f'Ошибка оформления заказа: {escaped_error_text}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
-        
