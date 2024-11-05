@@ -61,7 +61,7 @@ function fetchAndSaveSettings() {
             var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
 
 
-            console.log(storedSettingsJson)
+            // console.log(storedSettingsJson)
 
 
             // Вот тут пишем нужный код после обработки загрузки настроек.
@@ -3814,7 +3814,7 @@ function init() {
                     };
     
                     // Логируем, чтобы убедиться в наличии необходимых данных
-                    console.log("Создание зоны с параметрами:", areaOptions);
+                    // console.log("Создание зоны с параметрами:", areaOptions);
     
                     // Создаем новый полигон с индивидуальными параметрами стиля
                     const freeArea = new ymaps.Polygon([val.coords], areaOptions, areaStyleOptions);

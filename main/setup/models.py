@@ -309,9 +309,10 @@ class Fonts(SingletonModel):
 
     FONTS_CHOICES = (
         ('Roboto', 'Roboto'),
-       
         ('Certa', 'Certa'),
         ('Zombie', 'Zombie'),
+        ('Arial', 'Arial'),
+        ('Playfair', 'Playfair'),
 
     )
 
