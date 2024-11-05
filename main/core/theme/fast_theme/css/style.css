@@ -46,22 +46,22 @@ input::-webkit-inner-spin-button {
 }
 
 textarea {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--theme-font);
   color: var(--color-font);
 }
 
 textarea::placeholder {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--theme-font);
   color: var(--color-font);
 }
 
 input {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--theme-font);
   color: var(--color-font);
 }
 
 input::placeholder {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--theme-font);
   color: var(--color-font);
 }
 
