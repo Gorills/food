@@ -1257,39 +1257,49 @@ function getDopItems() {
 }
 
 
-function getPromoDiscount() {
-
+async function getPromoDiscount() {
     let order = JSON.parse(localStorage.getItem('order'));
     let deliveryType = localStorage.getItem("deliveryType"); 
-
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
     
-
-    let promo_type = order.promo_type
-    
-    let promo = order.promo
-
-    let promo_discount = order.promo_discount 
+    let promo_type = order.promo_type;
+    let promo = order.promo;
+    let promo_discount = order.promo_discount;
+    let discount = 0;
 
     if ((promo_discount != 0 && promo_type == 'all') || (promo_discount != 0 && promo_type == 'delivery' && deliveryType == '1') || (promo_discount != 0 && promo_type == 'pickup' && deliveryType == '0')) {
-        discount = order.promo_discount 
-        let order_summ = getTotalPrice()
-        discount = discount * order_summ / 100   
+        let order_summ = await getDiscountableTotalPrice(cart);
+        discount = promo_discount * order_summ / 100;
         discount = Math.round(discount);
 
-        $('#coupon_info').show()
-        $('#coupon').html(`${promo} <small>(Скидка ${discount }₽</small>)`)
-        $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`)
-
+        $('#coupon_info').show();
+        $('#coupon').html(`${promo} <small>(Скидка ${discount}₽</small>)`);
+        $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${discount}₽</small>)`);
     } else {
-        discount = 0
-        $('#coupon_info').hide()
+        $('#coupon_info').hide();
     }
 
-      
-    // console.log(discount);
-    // console.log(order);
-    
     return discount;
+}
+
+async function getDiscountableTotalPrice(cart) {
+    let total = 0;
+    for (let key in cart) {
+        if (cart.hasOwnProperty(key)) {
+            let item = cart[key];
+            let productId = item.itemId;
+            try {
+                let response = await fetch(`/api/v1/products/${productId}/`);
+                let productData = await response.json();
+                if (productData.old_price == null) {
+                    total += parseFloat(item.price) * item.quantity;
+                }
+            } catch (error) {
+                console.error(`Ошибка при получении данных о продукте ${productId}:`, error);
+            }
+        }
+    }
+    return total;
 }
 
 // getPromoDiscount()
@@ -3596,51 +3606,47 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 
-
-$(document).on('submit','.coupon-form',function(e){
+$(document).on('submit', '.coupon-form', async function(e) {
     e.preventDefault();
 
-    $form = $(this)
+    let $form = $(this);
 
-    $.ajax({
-        type: "POST",
-        url: '/api/v1/check_promo/',
-        data: $form.serialize(),
-        success: function(data) {
-            var order = JSON.parse(localStorage.getItem('order'));
-            var promo = data['promo']
-            var coupon = data['coupon']
-            var promo_type = data['type']
+    try {
+        let response = await $.ajax({
+            type: "POST",
+            url: '/api/v1/check_promo/',
+            data: $form.serialize()
+        });
 
-            if (promo) {
+        let order = JSON.parse(localStorage.getItem('order'));
+        let promo = response['promo'];
+        let coupon = response['coupon'];
+        let promo_type = response['type'];
 
-                order.promo = promo
-                order.promo_discount = coupon
-                order.promo_type = promo_type
-                localStorage.setItem('order', JSON.stringify(order));
+        if (promo) {
+            order.promo = promo;
+            order.promo_discount = coupon;
+            order.promo_type = promo_type;
+            localStorage.setItem('order', JSON.stringify(order));
 
-                $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`)
-
-                
-                
-            } else {
-
-                order.promo = ''
-                order.promo_discount = 0
-                localStorage.setItem('order', JSON.stringify(order));
-
-            }
-            // console.log(data)
-            // console.log(order)
-            updateAll();
-            
-            
+            $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`);
+        } else {
+            order.promo = '';
+            order.promo_discount = 0;
+            localStorage.setItem('order', JSON.stringify(order));
         }
-    });
-    
-    
 
+        // Теперь обновляем скидку
+        await getPromoDiscount();
+
+        // После обновления скидки вызываем updateAll
+        updateAll();
+
+    } catch (error) {
+        console.error('Ошибка при проверке промокода:', error);
+    }
 });
+
 
 
 
