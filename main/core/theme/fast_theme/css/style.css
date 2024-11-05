@@ -1745,9 +1745,12 @@ a {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  width: 80px;
-  height: 80px;
   object-fit: cover;
+  width: auto !important;
+  height: auto !important;
+  max-width: 80px;
+  /* или другой разумный предел */
+  max-height: 80px;
   max-height: fit-content;
 }
 
