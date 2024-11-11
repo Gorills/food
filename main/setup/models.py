@@ -315,6 +315,7 @@ class Fonts(SingletonModel):
         ('Zombie', 'Zombie'),
         ('Arial', 'Arial'),
         ('Playfair', 'Playfair'),
+        ('Nautilus Pompilius', 'Nautilus Pompilius'),
 
     )
 
