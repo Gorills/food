@@ -374,17 +374,17 @@
 
                     
                     <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                        <a class="header-bottom__link" itemprop="url" href="{% url "home" %}">Главная</a>
+                        <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% url "home" %}">Главная</a>
                         <meta itemprop="name" content="Главная" />
                     </li>
                     <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                        <a class="header-bottom__link" itemprop="url" href="{% url "catalog" %}">Меню</a>
+                        <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% url "catalog" %}">Меню</a>
                         <meta itemprop="name" content="Меню" />
                     </li>
                     {% for page in pages %}
                         {% if page.top_link == True %}
                             <li class="header-bottom__dropdown-item mobile-show" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                                <a class="header-bottom__link" itemprop="url" href="{{ page.get_absolute_url }}">{{ page.name }}</a>
+                                <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{{ page.get_absolute_url }}">{{ page.name }}</a>
                                 <meta itemprop="name" content="{{ page.name }}" />
                             </li>
                         {% endif %}
@@ -392,7 +392,7 @@
                     
                     {% if combos %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                            <a class="header-bottom__link" itemprop="url" href="{% url 'home' %}#combo">Комбо</a>
+                            <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% url 'home' %}#combo">Комбо</a>
                             <meta itemprop="name" content="Комбо" />
                         </li>
                     
@@ -401,7 +401,7 @@
                     {% for cat in categorys %}
                         {% if cat.top == True %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                            <a class="header-bottom__link" itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
+                            <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
                             <meta itemprop="name" content="{{ cat.name }}" />
                         </li>
                         {% endif %}

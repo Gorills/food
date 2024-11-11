@@ -1980,6 +1980,7 @@ class ColorsForm(forms.ModelForm):
             'danger',
             'warning',
             'info',
+            'font_size',
             'header_bg',
             'header_font',
             'phone_color',
@@ -2022,6 +2023,10 @@ class ColorsForm(forms.ModelForm):
             }),
             'phone_color': forms.TextInput(attrs={
                 'type': 'color'
+            }),
+            'font_size': forms.TextInput(attrs={
+                'type': 'text',
+                'class': 'input',
             }),
 
             'search_bg': forms.TextInput(attrs={

@@ -91,7 +91,7 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
     return round_time_intervals(time_intervals_now, interval)
 
 def get_hours(request):
-    workdays = WorkDay.objects.filter(active=True)
+    workdays = WorkDay.objects.all()
     current_time = timezone.localtime()
 
     try:
@@ -142,6 +142,28 @@ def get_hours(request):
 
             if count == 0 and time_intervals_now:
                 days.append({'while': 'Сегодня', 'times': ['Как можно скорее'] + time_intervals_now})
+            elif count == 1:
+                if next_day_delivery:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': time_intervals})
+                else:
+                    days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': ['Как можно скорее'] + time_intervals})
+            else:
+                days.append({'while': f'{day_now} {months[month_now]}', 'times': time_intervals})
+            
+            count += 1
+            continue
+
+        if not workday and workday.active == False:
+            start_delivery = datetime.combine(mod_date, start)
+            end_delivery = datetime.combine(mod_date, end)
+            if next_day_delivery:
+                end_delivery += timedelta(days=1)
+
+            time_intervals_now = generate_now_intervals(current_time, delay, start_delivery, end_delivery, interval, count)
+            time_intervals = generate_time_intervals(start_delivery, end_delivery, interval, delay)
+
+            if count == 0 and time_intervals_now:
+                continue
             elif count == 1:
                 if next_day_delivery:
                     days.append({'while': f'Завтра, {day_now} {months[month_now]}', 'times': time_intervals})

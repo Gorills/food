@@ -67,7 +67,7 @@
             <div class="product-list__weight product-list__weight-{{ constructor.id }}">{{ constructor.weight }}</div>
             {% endif %}
          
-            <div class="product-list__desc">
+            <div class="product-list__desc" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %}>
             {{ constructor.description }}
 
             </div>
@@ -346,7 +346,7 @@
                 </div>
 
                 {% if shop_setup.show_descrioption == True and product.short_description %}
-                <div class="product-list__desc">
+                <div class="product-list__desc" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %}>
                 {{ product.short_description }}
 
                 </div>

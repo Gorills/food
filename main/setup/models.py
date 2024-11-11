@@ -260,6 +260,8 @@ class Colors(SingletonModel):
     warning = models.CharField(max_length=50, default='#ffc107')
     info = models.CharField(max_length=50, default='#0dcaf0')
 
+    font_size = models.CharField(max_length=50, default='16px')
+
     header_bg = models.CharField(max_length=50, default='#ffffff')
     header_font = models.CharField(max_length=50, default='#222222')
 

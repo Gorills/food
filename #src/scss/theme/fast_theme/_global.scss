@@ -16,7 +16,7 @@ body {
     line-height: 1.6;
     font-family: var(--theme-font);
     
-    font-size: 16px;
+    font-size: --var(--font-size);
 
 }
 .body {
