@@ -476,9 +476,20 @@ class OrderViewList(generics.ListAPIView):
 
 class OrderSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-
-    queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        # Получаем значение text_to_pay_cart из ShopSetup
+        text_to_pay_cart = ShopSetup.objects.get().text_to_pay_cart
+
+        # Проверяем способ оплаты и фильтруем соответственно
+        queryset_paid = Order.objects.filter(pay_method=text_to_pay_cart, paid=True)
+        queryset_unpaid = Order.objects.exclude(pay_method=text_to_pay_cart)
+
+        # Объединяем два queryset
+        return queryset_paid | queryset_unpaid
+
+
 
     
 
