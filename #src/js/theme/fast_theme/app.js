@@ -2764,38 +2764,7 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
 
 
 function checkFirstDelivery(phone) {
-    fetch(`/api/v1/first_delivery/${phone}/`)
-        .then(response => response.json())
-        .then(data => {
-
-            var get_set = JSON.parse(localStorage.getItem('shopSettings'));
-            var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
-
-            
-            
-
-            if (data==true) {
-
-                get_del.first_delivery = get_set.first_delivery;
-                localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
-                
-
-            } else {
-                get_del.first_delivery = 0;
-                localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
-                
-            }
-
-            
-            var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
-            updateAll()
-            
-            // console.log(get_del)
-            
-
-
-        })
-        .catch(error => console.error('Ошибка загрузки:', error));
+    
 }
 
 
@@ -2815,7 +2784,38 @@ $(document).on('keyup', '#check_user_status' ,function(e){
 
         console.log(order)
         
-        checkFirstDelivery(phone)
+        fetch(`/api/v1/first_delivery/${phone}/`)
+            .then(response => response.json())
+            .then(data => {
+
+                var get_set = JSON.parse(localStorage.getItem('shopSettings'));
+                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+
+                
+                
+
+                if (data==true) {
+
+                    get_del.first_delivery = get_set.first_delivery;
+                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                    
+
+                } else {
+                    get_del.first_delivery = 0;
+                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                    
+                }
+
+                
+                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+                updateAll()
+                
+                // console.log(get_del)
+                
+
+
+            })
+            .catch(error => console.error('Ошибка загрузки:', error));
             
     
     }
