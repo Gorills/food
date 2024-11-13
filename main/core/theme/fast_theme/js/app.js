@@ -1,3 +1,8 @@
+window.addEventListener('popstate', function(event) {
+    location.reload();
+});
+
+
 
 function checkPriceCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
