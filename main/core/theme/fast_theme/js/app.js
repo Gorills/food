@@ -3939,21 +3939,6 @@ function init() {
         }
     }
 
-    function processThirdPartyDelivery(item) {
-        const dataDel = {
-            dotaddress: suggestElement.val(),
-            csrfmiddlewaretoken: csrf
-        };
-
-        $.post("/delivery/check_price/", dataDel)
-            .done(response => {
-                const price = parseInt(response.price);
-                updateLocalStorage(price, item);
-                deliveryUpdate();
-                $('.show-map').removeClass('order__input--error');
-            });
-    }
-
     function processDelivery(item) {
         // Извлечение информации о стоимости доставки
         const deliveryPriceText = item.properties._data.balloonContentBody;
@@ -3972,18 +3957,29 @@ function init() {
     
         // Извлечение информации о бесплатной доставке
         const deliveryFreeText = item.properties._data.balloonContentFooter;
-        let fd = 999999; // Значение по умолчанию для бесплатной доставки
-        let minDelivery = 0;
+        let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
+        let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
     
         if (typeof deliveryFreeText === 'string') {
-            const matches = deliveryFreeText.match(/\d+/g);
-            if (matches && matches.length > 0) {
-                fd = parseInt(matches[0]);
-                if (matches.length > 1) {
-                    minDelivery = parseInt(matches[1]);
+            // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
+            if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
+                const matches = deliveryFreeText.match(/\d+/g);
+                if (matches && matches.length > 0) {
+                    minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
+                } else {
+                    console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
                 }
             } else {
-                console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+                // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
+                const matches = deliveryFreeText.match(/\d+/g);
+                if (matches && matches.length > 0) {
+                    fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
+                    if (matches.length > 1) {
+                        minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
+                    }
+                } else {
+                    console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+                }
             }
         } else {
             console.warn("balloonContentFooter отсутствует или не является строкой.");
@@ -3993,15 +3989,15 @@ function init() {
         const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
         const order = JSON.parse(localStorage.getItem('order')) || {};
     
-        data.price_delivery = sd; // Установка стоимости доставки
-        data.free_delivery = fd; // Установка порога для бесплатной доставки
+        data.price_delivery = sd;       // Установка стоимости доставки
+        data.free_delivery = fd;        // Установка порога для бесплатной доставки
+        data.min_delivery = minDelivery; // Установка минимальной суммы для заказа
+    
         order.address = suggestElement.val();
         order.delivery_price = sd;
     
-        if (minDelivery) {
-            data.min_delivery = minDelivery;
-            suggestElement.attr('data-min', minDelivery);
-        }
+        // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
+        suggestElement.attr('data-min', minDelivery);
     
         localStorage.setItem('deliveryPrice', JSON.stringify(data));
         localStorage.setItem('order', JSON.stringify(order));
@@ -4010,29 +4006,75 @@ function init() {
         $('.show-map').removeClass('order__input--error');
     }
     
+    
+    
 
+    function processThirdPartyDelivery(item) {
+        const dataDel = {
+            dotaddress: suggestElement.val(),
+            csrfmiddlewaretoken: csrf
+        };
+    
+        $.post("/delivery/check_price/", dataDel)
+            .done(response => {
+                const price = parseInt(response.price);
+                updateLocalStorage(price, item);
+                deliveryUpdate();
+                $('.show-map').removeClass('order__input--error');
+            });
+    }
+    
     function updateLocalStorage(price, item) {
         const deliveryFreeText = item.properties._data.balloonContentFooter;
-        const matches = deliveryFreeText.match(/\d+/g);
-        const fd = matches ? parseInt(matches[0]) : 999999;
-        const minDelivery = matches && matches.length > 1 ? parseInt(matches[1]) : 0;
-
+        
+        let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
+        let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
+    
+        if (typeof deliveryFreeText === 'string') {
+            // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
+            if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
+                const matches = deliveryFreeText.match(/\d+/g);
+                if (matches && matches.length > 0) {
+                    minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
+                } else {
+                    console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
+                }
+            } else {
+                // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
+                const matches = deliveryFreeText.match(/\d+/g);
+                if (matches && matches.length > 0) {
+                    fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
+                    if (matches.length > 1) {
+                        minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
+                    }
+                } else {
+                    console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+                }
+            }
+        } else {
+            console.warn("balloonContentFooter отсутствует или не является строкой.");
+        }
+    
         const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
         const order = JSON.parse(localStorage.getItem('order')) || {};
-
-        data.price_delivery = price;
-        data.free_delivery = fd;
+    
+        data.price_delivery = price;       // Устанавливаем стоимость доставки
+        data.free_delivery = fd;           // Устанавливаем порог для бесплатной доставки
+        data.min_delivery = minDelivery;   // Устанавливаем минимальную сумму для заказа
+    
         order.address = suggestElement.val();
         order.delivery_price = price;
-
-        if (minDelivery) {
-            data.min_delivery = minDelivery;
-            suggestElement.attr('data-min', minDelivery);
-        }
-
+    
+        // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
+        suggestElement.attr('data-min', minDelivery);
+    
         localStorage.setItem('deliveryPrice', JSON.stringify(data));
         localStorage.setItem('order', JSON.stringify(order));
+    
+        deliveryUpdate();
+        $('.show-map').removeClass('order__input--error');
     }
+    
 }
 
 
