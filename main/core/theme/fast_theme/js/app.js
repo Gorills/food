@@ -2093,7 +2093,7 @@ $(document).on('click', '.order_create', function(e) {
                 updateAll()
                 getAllDiscount()
 
-                checkFirstDelivery(order.phone)
+                
 
                 if (confirmationUrl != '/?order=True') {
 
