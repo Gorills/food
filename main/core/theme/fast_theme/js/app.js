@@ -1105,6 +1105,7 @@ function getAllDiscount() {
     let sale_persent = 0;
 
     
+    
 
     // Округляем сумму скидки первой доставки
     first_delivery_summ = Math.floor(first_delivery_summ);
@@ -1998,6 +1999,21 @@ $(document).on('click', '.order__next', function(e) {
 });
 
 
+
+$(document).ready(function() {
+    // Получаем текущий URL и проверяем его на условие `/?order=True`
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('order') === 'True') {
+        // Очищаем localStorage для ключей 'order' и 'cart'
+        localStorage.removeItem('order');
+        localStorage.removeItem('cart');
+        
+        // Дополнительно можно обновить интерфейс, если требуется
+        console.log("Корзина и заказ очищены из localStorage");
+    }
+});
+
+
 $(document).on('click', '.order_create', function(e) {
     e.preventDefault();
     let order = localStorage.getItem('order') || {}; // Проверка на null
@@ -2065,29 +2081,39 @@ $(document).on('click', '.order_create', function(e) {
 
                 
 
-                // Обновление или удаление данных из localStorage
+                localStorage.setItem('lastOrder', JSON.stringify(data));
+                order.phone = '';
                 order.address = '';
+                order.name = '';
                 localStorage.setItem('order', JSON.stringify(order));
 
-                if (confirmationUrl != '/?order=True') {
-                    localStorage.setItem('lastOrder', JSON.stringify(data));
-                    setOrder()
-                    window.location.href = confirmationUrl;
-                    
+                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+                get_del.first_delivery = 0;
+                localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                updateAll()
+                getAllDiscount()
 
+                checkFirstDelivery(order.phone)
+
+                if (confirmationUrl != '/?order=True') {
+
+                    localStorage.removeItem('order');
+                    
+                    $('.order__load').removeClass('order__load--active')
+                    $('.order').removeClass('order--active')
+
+                    setOrder()
+                    setTimeout(() => {
+                        window.location.href = confirmationUrl;
+                    }, 100); // 100 мс задержки для завершения операций с localStorage
+                    
                 } else {
 
                     localStorage.removeItem('order');
                     localStorage.removeItem('cart');
-                    localStorage.removeItem('lastOrder');
-
                     
-
                     
-    
-                    localStorage.setItem('lastOrder', JSON.stringify(data));
                     
-    
                     $('.order__load').removeClass('order__load--active')
                     $('.odred-done').addClass('odred-done--active')
                     $('.order').removeClass('order--active')
@@ -2099,6 +2125,7 @@ $(document).on('click', '.order_create', function(e) {
                     updateAll()
                     updateDeliveryInfo()
 
+   
                 }
 
                 
@@ -2736,6 +2763,43 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
 
 
 
+function checkFirstDelivery(phone) {
+    fetch(`/api/v1/first_delivery/${phone}/`)
+        .then(response => response.json())
+        .then(data => {
+
+            var get_set = JSON.parse(localStorage.getItem('shopSettings'));
+            var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+
+            
+            
+
+            if (data==true) {
+
+                get_del.first_delivery = get_set.first_delivery;
+                localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                
+
+            } else {
+                get_del.first_delivery = 0;
+                localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                
+            }
+
+            
+            var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
+            updateAll()
+            
+            // console.log(get_del)
+            
+
+
+        })
+        .catch(error => console.error('Ошибка загрузки:', error));
+}
+
+
+
 // Проверка номера телефона на первый заказ
 
 $(document).on('keyup', '#check_user_status' ,function(e){
@@ -2749,40 +2813,9 @@ $(document).on('keyup', '#check_user_status' ,function(e){
         order.user_phone = phone;
         localStorage.setItem('order', JSON.stringify(order));
 
-
+        console.log(order)
         
-        fetch(`/api/v1/first_delivery/${phone}/`)
-            .then(response => response.json())
-            .then(data => {
-
-                var get_set = JSON.parse(localStorage.getItem('shopSettings'));
-                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
-
-                
-                
-
-                if (data==true) {
-
-                    get_del.first_delivery = get_set.first_delivery;
-                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
-                    
-
-                } else {
-                    get_del.first_delivery = 0;
-                    localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
-                  
-                }
-
-                
-                var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
-                updateAll()
-                
-                // console.log(get_del)
-              
-
-
-            })
-            .catch(error => console.error('Ошибка загрузки:', error));
+        checkFirstDelivery(phone)
             
     
     }
