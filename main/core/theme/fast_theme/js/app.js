@@ -2097,7 +2097,7 @@ $(document).on('click', '.order_create', function(e) {
 
                 if (confirmationUrl != '/?order=True') {
 
-                    localStorage.removeItem('order');
+                    
                     
                     $('.order__load').removeClass('order__load--active')
                     $('.order').removeClass('order--active')
