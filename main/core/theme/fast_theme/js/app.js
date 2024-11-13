@@ -2105,7 +2105,11 @@ $(document).on('click', '.order_create', function(e) {
                 var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
                 get_del.first_delivery = 0;
                 localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
+                
+                setOrder()
                 updateAll()
+                updateDeliveryInfo()
+
                 getAllDiscount()
 
                 checkFirstDelivery(order.phone)
