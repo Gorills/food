@@ -1,8 +1,3 @@
-window.addEventListener('popstate', function(event) {
-    location.reload();
-});
-
-
 
 function checkPriceCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
@@ -2084,16 +2079,6 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
-                let htmlInner = 
-                `<a href="#" class="btn btn--primary order__next">Далее</a>`
-
-                $('.order__next-wrap').html(htmlInner)
-                $('.order__body-wrap').show()
-                $('.order__pay-methods').hide()
-
-                $('.order .checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
-                $('.order .checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
-
                 
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
@@ -2105,11 +2090,7 @@ $(document).on('click', '.order_create', function(e) {
                 var get_del = JSON.parse(localStorage.getItem('deliveryPrice'));
                 get_del.first_delivery = 0;
                 localStorage.setItem('deliveryPrice', JSON.stringify(get_del));
-                
-                setOrder()
                 updateAll()
-                updateDeliveryInfo()
-
                 getAllDiscount()
 
                 checkFirstDelivery(order.phone)
@@ -2719,7 +2700,9 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
     let htmlInner = 
-    `<a href="#" class="btn btn--primary order__next">Далее</a>`
+    `
+  
+    <a href="#" class="btn btn--primary order__next">Далее</a>`
 
     $('.order__next-wrap').html(htmlInner)
     $('.order__body-wrap').show()
@@ -3957,72 +3940,72 @@ function init() {
     }
 
     function processDelivery(item) {
-        // Извлечение информации о стоимости доставки
-        const deliveryPriceText = item.properties._data.balloonContentBody;
-    
-        let sd = 0; // Стоимость доставки по умолчанию
-        if (typeof deliveryPriceText === 'string') {
-            const priceMatch = deliveryPriceText.match(/\d+/);
-            if (priceMatch) {
-                sd = parseInt(priceMatch[0]);
-            } else {
-                console.warn("Не удалось извлечь стоимость доставки из balloonContentBody.");
-            }
+    // Извлечение информации о стоимости доставки
+    const deliveryPriceText = item.properties._data.balloonContentBody;
+
+    let sd = 0; // Стоимость доставки по умолчанию
+    if (typeof deliveryPriceText === 'string') {
+        const priceMatch = deliveryPriceText.match(/\d+/);
+        if (priceMatch) {
+            sd = parseInt(priceMatch[0]);
         } else {
-            console.warn("balloonContentBody отсутствует или не является строкой.");
+            console.warn("Не удалось извлечь стоимость доставки из balloonContentBody.");
         }
-    
-        // Извлечение информации о бесплатной доставке
-        const deliveryFreeText = item.properties._data.balloonContentFooter;
-        let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
-        let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
-    
-        if (typeof deliveryFreeText === 'string') {
-            // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
-            if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
-                const matches = deliveryFreeText.match(/\d+/g);
-                if (matches && matches.length > 0) {
-                    minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
-                } else {
-                    console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
-                }
-            } else {
-                // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
-                const matches = deliveryFreeText.match(/\d+/g);
-                if (matches && matches.length > 0) {
-                    fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
-                    if (matches.length > 1) {
-                        minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
-                    }
-                } else {
-                    console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
-                }
-            }
-        } else {
-            console.warn("balloonContentFooter отсутствует или не является строкой.");
-        }
-    
-        // Обновление данных в localStorage
-        const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
-        const order = JSON.parse(localStorage.getItem('order')) || {};
-    
-        data.price_delivery = sd;       // Установка стоимости доставки
-        data.free_delivery = fd;        // Установка порога для бесплатной доставки
-        data.min_delivery = minDelivery; // Установка минимальной суммы для заказа
-    
-        order.address = suggestElement.val();
-        order.delivery_price = sd;
-    
-        // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
-        suggestElement.attr('data-min', minDelivery);
-    
-        localStorage.setItem('deliveryPrice', JSON.stringify(data));
-        localStorage.setItem('order', JSON.stringify(order));
-    
-        deliveryUpdate();
-        $('.show-map').removeClass('order__input--error');
+    } else {
+        console.warn("balloonContentBody отсутствует или не является строкой.");
     }
-    
+
+    // Извлечение информации о бесплатной доставке
+    const deliveryFreeText = item.properties._data.balloonContentFooter;
+    let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
+    let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
+
+    if (typeof deliveryFreeText === 'string') {
+        // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
+        if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
+            const matches = deliveryFreeText.match(/\d+/g);
+            if (matches && matches.length > 0) {
+                minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
+            } else {
+                console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
+            }
+        } else {
+            // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
+            const matches = deliveryFreeText.match(/\d+/g);
+            if (matches && matches.length > 0) {
+                fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
+                if (matches.length > 1) {
+                    minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
+                }
+            } else {
+                console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+            }
+        }
+    } else {
+        console.warn("balloonContentFooter отсутствует или не является строкой.");
+    }
+
+    // Обновление данных в localStorage
+    const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
+    const order = JSON.parse(localStorage.getItem('order')) || {};
+
+    data.price_delivery = sd;       // Установка стоимости доставки
+    data.free_delivery = fd;        // Установка порога для бесплатной доставки
+    data.min_delivery = minDelivery; // Установка минимальной суммы для заказа
+
+    order.address = suggestElement.val();
+    order.delivery_price = sd;
+
+    // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
+    suggestElement.attr('data-min', minDelivery);
+
+    localStorage.setItem('deliveryPrice', JSON.stringify(data));
+    localStorage.setItem('order', JSON.stringify(order));
+
+    deliveryUpdate();
+    $('.show-map').removeClass('order__input--error');
+}
+
     
     
 
