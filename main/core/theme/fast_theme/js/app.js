@@ -2084,6 +2084,16 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
+                let htmlInner = 
+                `<a href="#" class="btn btn--primary order__next">Далее</a>`
+
+                $('.order__next-wrap').html(htmlInner)
+                $('.order__body-wrap').show()
+                $('.order__pay-methods').hide()
+
+                $('.order .checkout__counter-item:nth-child(2)').removeClass('checkout__counter-item--active checkout__counter-item--line');
+                $('.order .checkout__counter-item:nth-child(1)').removeClass('checkout__counter-item--line');
+
                 
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
@@ -2705,9 +2715,7 @@ $(document).on('click','.odred-done__owerlay, .odred-done__ok, .odred-done__clos
 $(document).on('click', '.order__back', function(e) {
     e.preventDefault();
     let htmlInner = 
-    `
-  
-    <a href="#" class="btn btn--primary order__next">Далее</a>`
+    `<a href="#" class="btn btn--primary order__next">Далее</a>`
 
     $('.order__next-wrap').html(htmlInner)
     $('.order__body-wrap').show()
