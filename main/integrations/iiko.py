@@ -4,6 +4,10 @@ import requests
 
 from .models import Integrations
 
+from pytils.translit import slugify
+from django.core.files.base import ContentFile
+from shop.models import Category, OptionImage, OptionType, Product, ProductOption
+import json
 
 try:
     api_key = Integrations.objects.get(name='iiko').api_key
@@ -39,14 +43,11 @@ def organization():
 
     for org in response.json()['organizations']:
         org_list.append(org['id'])
-
+    
     return org_list
 
 # organization()
-from pytils.translit import slugify
-from django.core.files.base import ContentFile
-from shop.models import Category, OptionImage, OptionType, Product, ProductOption
-import json
+
 def load_menu(clean, product_clean):
 
     if product_clean:
@@ -64,6 +65,10 @@ def load_menu(clean, product_clean):
     headers = {"Authorization": f"Bearer {token()}"}
 
     response = requests.post(url, headers=headers)
+    # with open('menus.json', 'w', encoding='utf-8') as f:
+    #     json.dump(response.json(), f, ensure_ascii=False, indent=4)
+    
+
     menu = response.json()['externalMenus'][0]['id']
 
     
@@ -72,15 +77,22 @@ def load_menu(clean, product_clean):
 
     orgs = organization()
 
+    try:
+        priceCategoryId = response.json()['priceCategories'][0]['id']
+    except:
+        priceCategoryId = None
+
     data = {
         "externalMenuId": str(menu),
         "organizationIds": orgs,
+        "priceCategoryId": priceCategoryId
+        
     }
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
 
-    # with open(f'menu.json', 'w') as f:
-    #     json.dump(menu_response.json(), f)
+    # with open('menu.json', 'w', encoding='utf-8') as f:
+    #     json.dump(menu_response.json(), f, ensure_ascii=False, indent=4)
 
     for cat in menu_response.json()['itemCategories']:
         cat_name = cat['name']
@@ -111,6 +123,8 @@ def load_menu(clean, product_clean):
             item_options = product['itemSizes']
 
             weight = int(item_options[0]['portionWeightGrams'])
+            if weight == 0:
+                weight = None
             price = item_options[0]['prices'][0]['price']
             image = item_options[0]['buttonImageUrl']
             try:
