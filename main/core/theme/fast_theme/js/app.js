@@ -2763,6 +2763,10 @@ $(document).on('change', '.checkout__radio[name="checkoutpayment"]', function(e)
 
 
 
+function checkFirstDelivery(phone) {
+    
+}
+
 
 
 // Проверка номера телефона на первый заказ
@@ -4080,11 +4084,16 @@ function checkCurrentTime() {
     var d = new Date();
     var currentTime = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     let day = d.getDay();
-
+    
+    
     // Adjust for Sunday (0) to treat it as day 6
     if (day === 0) {
         day = 6;
+    } else {
+        day -= 1;
     }
+
+    console.log(day);
 
     // Fetch work schedule based on current day
     fetch(`/api/v1/get_work_active/${day}/`)
@@ -4097,11 +4106,12 @@ function checkCurrentTime() {
 
             // Check if the current time is within delivery times
             const isWithinDeliveryTime = 
-                (currentTime >= startDelivery && currentTime <= endDelivery) || 
-                (currentTime >= startSecondDelivery && currentTime <= endSecondDelivery);
+                (currentTime >= startDelivery && currentTime <= endDelivery);
 
             // Store working hours in localStorage
             const storedWorkTime = JSON.parse(localStorage.getItem('workTime'));
+            console.log(storedWorkTime);
+
             const workTime = {
                 startDelivery,
                 endDelivery,
@@ -4109,6 +4119,8 @@ function checkCurrentTime() {
                 endSecondDelivery,
                 is_open: storedWorkTime ? storedWorkTime.is_open : true
             };
+
+            console.log(workTime)
 
             // Update work time in localStorage if there is a change
             if (!storedWorkTime || 

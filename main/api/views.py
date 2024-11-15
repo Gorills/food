@@ -371,7 +371,8 @@ def get_work_active(request, day):
 
         
 
-
+    day = datetime.now().weekday()
+    print(day)
 
 
     data = {
