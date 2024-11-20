@@ -1,4 +1,8 @@
+from decimal import Decimal
 import requests
+import uuid
+
+from orders.models import Order
 
 # Create your views here.
 
@@ -46,9 +50,21 @@ def organization():
     
     return org_list
 
+
+def get_menu():
+    url = 'https://api-ru.iiko.services/api/2/menu'
+    headers = {"Authorization": f"Bearer {token()}"}
+    response = requests.post(url, headers=headers)
+
+    return response.json()
+
+
+
 # organization()
 
 def load_menu(clean, product_clean):
+
+    headers = {"Authorization": f"Bearer {token()}"}
 
     if product_clean:
         products = Product.objects.all()
@@ -59,17 +75,12 @@ def load_menu(clean, product_clean):
         categories.delete()
 
 
-    url = 'https://api-ru.iiko.services/api/2/menu'
-    
+    menu = get_menu()['externalMenus'][0]['id']
 
-    headers = {"Authorization": f"Bearer {token()}"}
-
-    response = requests.post(url, headers=headers)
-    # with open('menus.json', 'w', encoding='utf-8') as f:
-    #     json.dump(response.json(), f, ensure_ascii=False, indent=4)
-    
-
-    menu = response.json()['externalMenus'][0]['id']
+    try:
+        priceCategoryId = get_menu['priceCategories'][0]['id']
+    except:
+        priceCategoryId = None
 
     
 
@@ -77,10 +88,7 @@ def load_menu(clean, product_clean):
 
     orgs = organization()
 
-    try:
-        priceCategoryId = response.json()['priceCategories'][0]['id']
-    except:
-        priceCategoryId = None
+
 
     data = {
         "externalMenuId": str(menu),
@@ -241,3 +249,101 @@ def load_menu(clean, product_clean):
 
 
 # load_menu(False)
+
+
+
+def get_terminal_groups():
+
+    url = 'https://api-ru.iiko.services/api/1/terminal_groups'
+
+    headers = {"Authorization": f"Bearer {token()}"}
+
+    orgs = organization()
+
+    data = {
+        "organizationIds": orgs
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+
+
+    
+
+    return response.json()['terminalGroups'][0]['items'][0]['id']
+
+
+
+
+# Пример функции для создания нового заказа
+def create_iiko_order(order):
+    url = 'https://api-ru.iiko.services/api/1/order/create'
+    headers = {"Authorization": f"Bearer {token()}"}
+    orgs = organization()[0]
+    terminal_group = get_terminal_groups()
+
+    items = []
+
+    for item in order.items.all():
+        items.append({
+            "productId": item.product.external_id,
+            "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
+            "type": item.product.iiko_type,
+            "amount": item.quantity
+        })
+
+    # Генерация UUID для order.id
+    order_uuid = str(uuid.uuid4())
+    order.external_id = order_uuid
+    order.save()
+
+    items = []
+
+    for item in order.items.all():
+        items.append({
+            "productId": item.product.external_id,
+            "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
+            "type": item.product.iiko_type,
+            "amount": item.quantity
+        })
+
+    data = {
+        "event": "newOrder",
+        "organizationId": orgs,
+        "terminalGroupId": terminal_group,
+        "order": {
+            "id": order_uuid,  # Используем сгенерированный GUID
+            "customer": {
+                "name": order.name,
+                "phone": order.phone
+            },
+            "phone": order.phone,
+            "address": {
+                "street": order.address,
+                "apartment": order.flat
+            },
+            "fulfillmentType": "delivery",  # Указываем тип выполнения заказа
+            "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,  # Стоимость доставки, если она есть
+            "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
+            "items": items,
+            "notes": order.comment if hasattr(order, 'comment') else ""  # Комментарий к заказу, если есть
+        }
+    }
+
+    print(data)
+
+    response = requests.post(url, json=data, headers=headers)
+
+    if response.status_code == 200:
+        print("Order created successfully")
+        print(response.json())
+    else:
+        print(f"Failed to create order: {response.status_code}")
+        print(response.json())
+
+
+
+
+
+
+
+# create_iiko_order(Order.objects.get(id=509))

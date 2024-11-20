@@ -126,6 +126,7 @@ class Order(models.Model):
     summ = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     sale_percent = models.PositiveIntegerField(null=True, blank=True, default=0, verbose_name="Процент скидки")
     bonuses_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    external_id = models.CharField(max_length=250, null=True, blank=True, verbose_name='Внешний ID')
     
     STATUS_CLASS = (
         ('Новый', 'Новый'),
