@@ -37,6 +37,8 @@ from cart.cart import delivery_time_price
 
 # !!! All users !!!
 
+
+
 class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -45,6 +47,19 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
 class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Product.objects.filter(status=True)
     serializer_class = ProductSerializer
+
+
+
+@api_view(['GET'])
+def get_exclude_actions(request, pk):
+
+    product = Product.objects.get(id=pk)
+
+    data = {
+        'exclude': product.parent.exclude_actions
+    }
+
+    return Response(data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -32,6 +32,8 @@ urlpatterns = [
     path('dop_items/', views.dop_items, name='dop_items'),
     path('orderview/<int:order_id>/', views.OrderViewList.as_view(), name='orderview-list'),
     path('check_promo/', views.check_promo, name='check_promo'),
+    path('get_exclude_actions/<int:pk>/', views.get_exclude_actions, name='get_exclude_actions'),
+
    
    
 

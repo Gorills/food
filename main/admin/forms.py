@@ -1869,6 +1869,7 @@ class CategoryForm(forms.ModelForm):
             'image',
             'top',
             'home',
+            'exclude_actions',
             'resize',
             'font_color',
             'bg_color',
@@ -1894,6 +1895,7 @@ class CategoryForm(forms.ModelForm):
             'sort_order': 'Порядок сортировки',
             'status': 'Активная',
             'slug': 'SEO URL',
+            'exclude_actions': 'Исключить из скидок и бонусов',
             
             
         }

@@ -200,6 +200,8 @@ class Category(models.Model):
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
 
+    exclude_actions = models.BooleanField(default=False, verbose_name='Исключить из скидок и бонусов')
+
     def __str__(self):
         return self.name
     

@@ -964,17 +964,37 @@ function getTotalPriceToBallMath(exclude_combos) {
 }
 
 
+async function getExcludedTotal(cartItems) {
+    let total = 0;
+    for (let item of cartItems) {
+        try {
+            // Проверяем товар через API
+            let response = await fetch(`/api/v1/get_exclude_actions/${item.itemId}/`);
+            let result = await response.json();
+            console.log(result)
+
+            // Если товар НЕ исключен, добавляем его стоимость в расчет
+            if (result.exclude !== false) {
+                total += parseFloat(item.price) * item.quantity;
+            }
+        } catch (error) {
+            console.error(`Ошибка при проверке товара ${item.itemId}:`, error);
+        }
+    }
+    return total;
+}
 
 
 // считаем доступные баллы
-function maxBallsPay() {
+async function maxBallsPay() {
     
 
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
     let order = JSON.parse(localStorage.getItem('order'));
     let daliveryType = localStorage.getItem("deliveryType");
+    let cart = JSON.parse(localStorage.getItem('cart'));
 
-    // console.log(order)
+    console.log(cart)
     
     // console.log(daliveryType);
 
@@ -993,7 +1013,20 @@ function maxBallsPay() {
 
     let total_price = getTotalPriceToBallMath(exclude_combos);
 
+    let cartItems = Object.values(cart);
+    // Проверяем товары на исключение из акций
 
+        // Получаем сумму с учетом исключенных товаров
+    let total_excluded = 0;
+    try {
+        total_excluded = await getExcludedTotal(cartItems);
+        console.log(total_excluded);
+    } catch (error) {
+        console.error("Ошибка при расчете исключенных товаров:", error);
+        return 0; // Возвращаем 0, если произошла ошибка
+    }
+
+    total_price = total_price - total_excluded;
 
     
     let max_active_balls = 0;
@@ -1017,6 +1050,10 @@ function maxBallsPay() {
     if (max_active_balls < 0) {
         max_active_balls = 0;
     }
+
+
+
+
     max_active_balls = Math.floor(max_active_balls);
     // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
@@ -4093,7 +4130,7 @@ function checkCurrentTime() {
         day -= 1;
     }
 
-    console.log(day);
+    
 
     // Fetch work schedule based on current day
     fetch(`/api/v1/get_work_active/${day}/`)
@@ -4110,7 +4147,7 @@ function checkCurrentTime() {
 
             // Store working hours in localStorage
             const storedWorkTime = JSON.parse(localStorage.getItem('workTime'));
-            console.log(storedWorkTime);
+            // console.log(storedWorkTime);
 
             const workTime = {
                 startDelivery,
@@ -4120,7 +4157,7 @@ function checkCurrentTime() {
                 is_open: storedWorkTime ? storedWorkTime.is_open : true
             };
 
-            console.log(workTime)
+            // console.log(workTime)
 
             // Update work time in localStorage if there is a change
             if (!storedWorkTime || 
