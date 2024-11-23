@@ -3680,16 +3680,16 @@ $(document).on('submit', '.coupon-form', async function(e) {
     e.preventDefault();
 
     let $form = $(this);
+    let promoCode = $form.find('input[name="promo"]').val(); // Получаем значение промокода из формы
 
     try {
+        // GET-запрос с параметром промокода в строке запроса
         let response = await $.ajax({
-            type: "POST",
-            url: '/api/v1/check_promo/',
-            data: $form.serialize(),
-            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            type: "GET",
+            url: `/api/v1/check_promo/?promo=${encodeURIComponent(promoCode)}`, // Добавляем промокод в строку запроса
         });
 
-        let order = JSON.parse(localStorage.getItem('order'));
+        let order = JSON.parse(localStorage.getItem('order')) || {};
         let promo = response['promo'];
         let coupon = response['coupon'];
         let promo_type = response['type'];

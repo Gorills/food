@@ -436,35 +436,42 @@ def dop_items(request):
 
 
 
-from unidecode import unidecode
-@api_view(['POST'])
-def check_promo(request):
 
-    promo = request.data.get('promo')
-    slug = slugify(unidecode(promo))  
+@api_view(['GET'])
+def check_promo(request):
+    # Извлечение параметра 'promo' из строки запроса
+    promo = request.query_params.get('promo')
     
+    if not promo:
+        return Response({'message': 'Необходимо указать промокод'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Обработка промокода с помощью slugify
+    try:
+        slug = slugify(promo)
+    except Exception as e:
+        return Response({'message': 'Ошибка при обработке промокода', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     now = timezone.now()
 
     try:
         coupon = Coupon.objects.get(
-            code=promo,
+            slug=slug,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True
         )
-        print(coupon)
-    except Exception as e:
-        print(e)
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+    except Coupon.DoesNotExist:
+        # Отправка сообщения в Telegram, если купон не найден
+        wo_telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
         wo_telegram_group = '-1001850576262'
 
-        error_message = f"Купон {promo}/{slug} не найден: {e}"
-        send_message(wo_elegram_bot, wo_telegram_group, error_message)
+        error_message = f"Купон {promo} не найден"
+        send_message(wo_telegram_bot, wo_telegram_group, error_message)
         coupon = None
 
     if coupon:
         data = {
-            'message': 'Купон найден',
+            'message': 'Купон найден',
             'promo': coupon.code,
             'status': True,
             'coupon': coupon.discount,
@@ -472,7 +479,7 @@ def check_promo(request):
         }
     else:
         data = {
-            'message': 'Купон не найден',
+            'message': 'Купон не найден',
             'status': False,
             'coupon': 0
         }
