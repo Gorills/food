@@ -3685,7 +3685,8 @@ $(document).on('submit', '.coupon-form', async function(e) {
         let response = await $.ajax({
             type: "POST",
             url: '/api/v1/check_promo/',
-            data: $form.serialize()
+            data: $form.serialize(),
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         });
 
         let order = JSON.parse(localStorage.getItem('order'));

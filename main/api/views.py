@@ -435,10 +435,13 @@ def dop_items(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+from unidecode import unidecode
 @api_view(['POST'])
 def check_promo(request):
-    slug = slugify(request.data.get('promo'))
+    
     promo = request.data.get('promo')
+    slug = slugify(unidecode(promo))  
     
     now = timezone.now()
 
