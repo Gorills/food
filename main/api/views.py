@@ -436,12 +436,13 @@ from pytils.translit import slugify
 @api_view(['POST'])
 def check_promo(request):
     slug = slugify(request.data.get('promo'))
+    promo = request.data.get('promo')
     
     now = timezone.now()
 
     try:
         coupon = Coupon.objects.get(
-            slug=slug,
+            code=promo,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True

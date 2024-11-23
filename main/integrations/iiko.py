@@ -55,7 +55,7 @@ def get_menu():
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token()}"}
     response = requests.post(url, headers=headers)
-
+    
     return response.json()
 
 
@@ -74,28 +74,32 @@ def load_menu(clean, product_clean):
         categories = Category.objects.all()
         categories.delete()
 
+    get_menu_response = get_menu()
 
-    menu = get_menu()['externalMenus'][0]['id']
+    menu = get_menu_response['externalMenus'][0]['id']
 
     try:
-        priceCategoryId = get_menu['priceCategories'][0]['id']
+        priceCategoryId = get_menu_response['priceCategories'][0]['id']
     except:
         priceCategoryId = None
 
+    # print("menu", get_menu_response)
     
 
     url_menu_id = 'https://api-ru.iiko.services/api/2/menu/by_id'
 
     orgs = organization()
 
-
-
     data = {
         "externalMenuId": str(menu),
         "organizationIds": orgs,
-        "priceCategoryId": priceCategoryId
-        
     }
+
+    if priceCategoryId:
+        data['priceCategoryId'] = priceCategoryId
+
+
+    # print(data)
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
 
@@ -173,6 +177,7 @@ def load_menu(clean, product_clean):
 
             try:
                 response_pr_img = requests.get(image)
+                print(image)
                 image_name = image.split('/')[-1]
                 if response_pr_img.status_code == 200:
                     product_save.thumb.save(image_name, ContentFile(response_pr_img.content), save=True)
@@ -251,6 +256,26 @@ def load_menu(clean, product_clean):
 # load_menu(False)
 
 
+def get_order_types():
+
+    url = "https://api-ru.iiko.services/api/1/deliveries/order_types"
+
+    headers = {"Authorization": f"Bearer {token()}"}
+
+    orgs = organization()
+
+    data = {
+        "organizationIds": orgs
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    
+    return response.json()
+
+
+
+
+
 
 def get_terminal_groups():
 
@@ -298,6 +323,23 @@ def create_iiko_order(order):
 
     items = []
 
+    order_types = get_order_types()
+
+    delivery_method_map = {
+        "Доставка": "Доставка курьером",
+        "Самовывоз": "Доставка самовывоз"
+    }
+
+    # Поиск подходящего метода по названию
+    for order_type in order_types['orderTypes']:
+        for item in order_type['items']:
+            if item['name'] == delivery_method_map.get(order.delivery_method):
+                orderTypeId = item['id']
+                break
+        if orderTypeId:
+            orderTypeId = None
+            break
+
     for item in order.items.all():
         items.append({
             "productId": item.product.external_id,
@@ -314,7 +356,8 @@ def create_iiko_order(order):
             "id": order_uuid,  # Используем сгенерированный GUID
             "customer": {
                 "name": order.name,
-                "phone": order.phone
+                "phone": order.phone,
+                "type": "regular"
             },
             "phone": order.phone,
             "address": {
@@ -328,6 +371,9 @@ def create_iiko_order(order):
             "notes": order.comment if hasattr(order, 'comment') else ""  # Комментарий к заказу, если есть
         }
     }
+
+    if orderTypeId:
+        data['order']['orderTypeId'] = orderTypeId
 
     print(data)
 
@@ -346,4 +392,4 @@ def create_iiko_order(order):
 
 
 
-# create_iiko_order(Order.objects.get(id=509))
+# create_iiko_order(Order.objects.get(id=512))
