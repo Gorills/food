@@ -439,7 +439,7 @@ def dop_items(request):
 from unidecode import unidecode
 @api_view(['POST'])
 def check_promo(request):
-    
+
     promo = request.data.get('promo')
     slug = slugify(unidecode(promo))  
     
@@ -447,7 +447,7 @@ def check_promo(request):
 
     try:
         coupon = Coupon.objects.get(
-            slug=slug,
+            code=promo,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True
@@ -458,7 +458,7 @@ def check_promo(request):
         wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
         wo_telegram_group = '-1001850576262'
 
-        error_message = f"Купон {promo} не найден: {e}"
+        error_message = f"Купон {promo}/{slug} не найден: {e}"
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
         coupon = None
 
