@@ -462,11 +462,6 @@ def check_promo(request):
         )
     except Coupon.DoesNotExist:
         # Отправка сообщения в Telegram, если купон не найден
-        wo_telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
-
-        error_message = f"Купон {promo} не найден"
-        send_message(wo_telegram_bot, wo_telegram_group, error_message)
         coupon = None
 
     if coupon:
