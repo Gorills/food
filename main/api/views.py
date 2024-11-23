@@ -1,9 +1,12 @@
 from decimal import Decimal, ROUND_DOWN
+from orders.telegram import send_message
 from rest_framework import viewsets, mixins
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from pytils.translit import slugify
+
 from .serializers import BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, OrderViewSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
@@ -432,7 +435,6 @@ def dop_items(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-from pytils.translit import slugify
 @api_view(['POST'])
 def check_promo(request):
     slug = slugify(request.data.get('promo'))
@@ -442,7 +444,7 @@ def check_promo(request):
 
     try:
         coupon = Coupon.objects.get(
-            code=promo,
+            slug=slug,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True
@@ -450,6 +452,11 @@ def check_promo(request):
         print(coupon)
     except Exception as e:
         print(e)
+        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+        wo_telegram_group = '-1001850576262'
+
+        error_message = f"Купон {promo} не найден: {e}"
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
         coupon = None
 
     if coupon:
