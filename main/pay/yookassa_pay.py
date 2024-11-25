@@ -34,7 +34,6 @@ from yookassa import Payment
 def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
     return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
-
 def create_payment(order, cart, request):
     path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
     
@@ -46,6 +45,7 @@ def create_payment(order, cart, request):
     sale_percent = order.sale_percent
     
     total_items_sum = Decimal(0)
+    
     # Формируем список товаров
     for item in order.items.all():
         if item.price != 0:
@@ -101,9 +101,18 @@ def create_payment(order, cart, request):
     total_sum = Decimal(order.summ)
     if total_sum > 0 and total_items_sum != total_sum:
         correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
-        for item in items:
-            item_amount = Decimal(item['amount']['value']) * correction_factor
+        total_corrected_sum = Decimal(0)
+
+        # Применяем коррекцию ко всем позициям, кроме последней
+        for item in items[:-1]:
+            item_amount = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             item['amount']['value'] = format_price(item_amount)
+            total_corrected_sum += item_amount
+
+        # Корректируем последнюю позицию, чтобы итоговая сумма точно совпадала
+        last_item = items[-1]
+        last_item_amount = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        last_item['amount']['value'] = format_price(last_item_amount)
     else:
         total_sum = format_price(total_items_sum)
     
@@ -139,10 +148,6 @@ def create_payment(order, cart, request):
         'confirmation_url': payment.confirmation.confirmation_url,
         'path': path
     }
-
-    # Печатаем данные для отладки (можно удалить в продакшене)
-    # print(data)
-    
 
     
     # Возвращаем данные
