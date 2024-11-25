@@ -20,6 +20,6 @@ def send_sms(text, phone):
     if sms == True:
         # pass
 
-        print(text)
+        # print(text)
         
-        # result = requests.get(url)
+        result = requests.get(url)
