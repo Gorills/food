@@ -3711,6 +3711,16 @@ $(document).on('submit', '.coupon-form', async function(e) {
             order.promo = '';
             order.promo_discount = 0;
             localStorage.setItem('order', JSON.stringify(order));
+
+            $('.coupon-info').html('');
+            $('.coupon-form__input').addClass('order__input--error');
+            $('.coupon-form__input').val('').attr('placeholder', 'Неверный промокод');
+
+            setTimeout(function() {
+                $('.coupon-form__input').removeClass('order__input--error');
+                $('.coupon-form__input').val('').attr('placeholder', '');
+            }, 3000);
+
         }
 
         // Теперь обновляем скидку
