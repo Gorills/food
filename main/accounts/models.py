@@ -117,10 +117,33 @@ class LoyaltyCard(models.Model):
 
         
         if SUMM_LIST:
-            result = max([x for x in SUMM_LIST if x <= summ])
+            try:
+                result = max([x for x in SUMM_LIST if x <= summ])
+            except:
+                result = 0
             # Дополнительный код, использующий переменную result
         else:
             result=0
 
         card_status = LoyaltyCardStatus.objects.get(summ=result)
         return card_status
+    
+
+
+class LoyaltyCardHistory(models.Model):
+
+    order_id = models.CharField(max_length=50, verbose_name='Номер заказа', null=True, blank=True)
+    card = models.ForeignKey(LoyaltyCard, on_delete=models.CASCADE, related_name='history')
+    summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма покупок')
+    balls = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Количество баллов')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
+
+    TYPE_COICE = (
+        ('add', 'Добавление баллов'),
+        ('pay', 'Оплата баллами'),
+    )
+
+    operation_type = models.CharField(max_length=50, verbose_name='Тип операции', choices=TYPE_COICE, default='add')
+
+    def __str__(self):
+        return f'{self.card.user.phone} - {self.summ} - {self.balls} - {self.date} - {self.operation_type}'

@@ -971,7 +971,7 @@ async function getExcludedTotal(cartItems) {
             // Проверяем товар через API
             let response = await fetch(`/api/v1/get_exclude_actions/${item.itemId}/`);
             let result = await response.json();
-            console.log(result)
+            // console.log(result)
 
             // Если товар НЕ исключен, добавляем его стоимость в расчет
             if (result.exclude !== false) {
@@ -994,7 +994,7 @@ async function maxBallsPay() {
     let daliveryType = localStorage.getItem("deliveryType");
     let cart = JSON.parse(localStorage.getItem('cart'));
 
-    console.log(cart)
+    // console.log(cart)
     
     // console.log(daliveryType);
 
@@ -1099,16 +1099,22 @@ $(document).on('click','.active_balls', function(e) {
     $(this).remove();
 })
 
-$(document).on('click','#balls-pay', function(e) {
+$(document).on('click', '#balls-pay', async function(e) {
     e.preventDefault();
-    let max_active_balls = maxBallsPay();
+    
+    // Используем await, чтобы подождать результат
+    let max_active_balls = await maxBallsPay();
     let order = JSON.parse(localStorage.getItem('order'));
     order.bonuses_pay = max_active_balls;
     localStorage.setItem('order', JSON.stringify(order));
-    maxBallsPay()
+
+    console.log(max_active_balls);
+    console.log(order);
+
+    maxBallsPay();
     getTotalPriceAfterDiscount();
     // $('#balls').remove();
-})
+});
 
 $(document).on('click','#balls-refresh', function(e) {
     e.preventDefault();

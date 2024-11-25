@@ -172,7 +172,7 @@ class Order(models.Model):
 
     order_send_status = models.BooleanField(default=False, verbose_name="Отправлен в Телеграм")
 
-
+    is_balls_processed = models.BooleanField(default=False, verbose_name="Списание баллов")
     def order_views(self):
 
        

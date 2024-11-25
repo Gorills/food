@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
-from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
+from accounts.models import LoyaltyCard, LoyaltyCardHistory, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
 from integrations.models import Integrations
 from subdomains.models import Subdomain
 from delivery.models import Delivery
@@ -922,6 +922,8 @@ def order_view_all(request):
 from delivery.yandex_eda import yandex_create_order
 from orders.telegram import send_message
 
+from django.db import transaction
+
 @check_user_rights(['view_orders'])
 def order_status_change(request, pk):
     order = Order.objects.get(id=pk)
@@ -930,101 +932,72 @@ def order_status_change(request, pk):
 
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
-        
-        try:
-            
-            if form.is_valid():
-                status = form.cleaned_data['status']
 
+        if form.is_valid():
+            status = form.cleaned_data['status']
 
-                if status == 'Готов к доставке':
+            if loyalty_settings.active:
+                user = order.user_pr
+                card = LoyaltyCard.objects.get(user=user)
+                user_orders = Order.objects.filter(user_pr=user)
+                order_count = user_orders.count()
+                enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
+                balls_after_first_order = loyalty_settings.balls_after_first_order
+                first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
 
-                    
-                    yandex_create_order(order)
+                with transaction.atomic():
+                    if status == 'Готовится' and order_prev_status != 'Готовится' and not order.is_balls_processed:
+                        # Списание баллов
+                        card.balls = max(0, card.balls - order.bonuses_pay)
+                        card.save()
+                        LoyaltyCardHistory.objects.create(order_id=order.id, card=card, summ=order.summ, balls=order.bonuses_pay, operation_type='pay')
+                        order.is_balls_processed = True
 
-
-
-                if loyalty_settings.active == True:
-                    
-
-                    user = order.user_pr
-                    card = LoyaltyCard.objects.get(user=user)
-                    user_orders = Order.objects.filter(user_pr=user)
-
-                    card = LoyaltyCard.objects.get(user=user)
-
-                    
-                    order_count = user_orders.count()
-
-                    enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
-                    balls_after_first_order = loyalty_settings.balls_after_first_order
-                    first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
-                    send_sms_status = loyalty_settings.send_sms
-                    sms_text = loyalty_settings.sms_text
-                    balls_summ = 0
-
-
-
-                    if status == 'Выполнен':
-                        
+                    elif status == 'Выполнен' and order_prev_status != 'Выполнен' and order.is_balls_processed:
+                        # Начисление баллов за первый заказ или по статусу
+                        balls_summ = 0
                         if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                            card.balls = card.balls + balls_after_first_order
-                            card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
                             balls_summ = balls_after_first_order
+                        elif loyalty_settings.status_up:
+                            balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN)
 
+                        if balls_summ > 0:
+                            card.balls += balls_summ
+                            card.summ += Decimal(order.summ) - Decimal(order.delivery_price)
+                            LoyaltyCardHistory.objects.create(card=card, summ=order.summ, balls=balls_summ, operation_type='add')
+                            card.save()
+                        order.is_balls_processed = False
 
-                    
-                        else:
-                            if loyalty_settings.status_up == True:
-                                card.summ = Decimal(card.summ) + (Decimal(order.summ) - Decimal(order.delivery_price))
-                                card.balls = card.balls + (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
-                                balls_summ = (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                    elif status == 'Отказ' and order_prev_status == 'Выполнен' and not order.is_balls_processed:
+                        # Отмена начисления баллов
+                        history = LoyaltyCardHistory.objects.filter(order_id=order.id, card=card, operation_type='add').first()
+                        if history:
+                            card.balls -= history.balls
+                            card.summ -= history.summ
+                            # Проверка на отрицательные значения
+                            card.balls = max(0, card.balls)
+                            card.summ = max(0, card.summ)
 
+                            card.save()
+                            order.is_balls_processed = False
 
+                    elif status == 'Отказ' and order_prev_status == 'Готовится' and order.is_balls_processed:
+                        # Отмена списания баллов
+                        history = LoyaltyCardHistory.objects.filter(order_id=order.id, card=card, operation_type='pay').order_by('-date').first()
+                        if history:
+                            card.balls += history.balls
+                            card.summ -= history.summ
 
-                        if send_sms_status == True:
-                            try:
-                                site_name = BaseSettings.objects.get().name
-                            except:
-                                site_name = ''    
-                            
-                            if site_name:
-                                sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('{sitename}', site_name)
-                            else:
-                                sms_text = sms_text.replace('{balls}', str(balls_summ)).replace('- {sitename}', '')
-                            phone = order.phone
-                            if balls_summ != 0:
-                                send_sms(sms_text, phone)
-                            
+                            card.balls = max(0, card.balls)
+                            card.summ = max(0, card.summ)
+                            card.save()
+                            order.is_balls_processed = False
 
-                    if status == 'Отказ':
-                        
-                        if order_prev_status == 'Выполнен':
-                        
-                            if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
-                                card.balls = card.balls - balls_after_first_order
-                                card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                            else:
-                                if loyalty_settings.status_up == True:
-                                    card.summ = Decimal(card.summ) - (Decimal(order.summ) - Decimal(order.delivery_price))
-                                    card.balls = card.balls - (((Decimal(order.summ) - Decimal(order.delivery_price)) / 100) * card.status().percent_up).quantize(Decimal("1"), decimal.ROUND_DOWN) 
+                    order.save()
 
+            form.save()
+            return redirect('order_detail', order.id)
 
-                    card.save()
-
-                form.save()
-
-                return redirect('order_detail', order.id)
-            
-        
-        except Exception as e:
-            telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-            telegram_group = '-1002079435900'
-
-            send_message(telegram_bot, telegram_group, f'ОШИБКА при изменении статуса: {e}')
-            
-
-            print(e)
 
 
 @check_user_rights(['view_orders'])

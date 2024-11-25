@@ -121,28 +121,28 @@ def order_create(request):
                 bonuses_pay = 0
 
 
-            if bonuses_pay > 0:
-                if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
-                    user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+            # if bonuses_pay > 0:
+            #     if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
+            #         user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
 
-                    try:
+            #         try:
                     
-                        loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+            #             loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                     
-                    except:
-                        loyalty_card = LoyaltyCard.objects.create(
-                            user=user_profile,
-                            summ=Decimal('0.00')
-                            )
+            #         except:
+            #             loyalty_card = LoyaltyCard.objects.create(
+            #                 user=user_profile,
+            #                 summ=Decimal('0.00')
+            #                 )
 
-                    try:
-                        if bonuses_pay > 0:
-                            loyalty_card.balls = loyalty_card.balls - bonuses_pay
+            #         try:
+            #             if bonuses_pay > 0:
+            #                 loyalty_card.balls = loyalty_card.balls - bonuses_pay
 
-                    except:
-                        pass
+            #         except:
+            #             pass
                     
-                    loyalty_card.save()
+            #         loyalty_card.save()
 
 
             try:
@@ -177,6 +177,8 @@ def order_create(request):
                 
 
             )
+
+            
 
             try:
 
@@ -297,7 +299,8 @@ def order_create(request):
 
             order.user_pr = user_pr
             order.save()
-        
+
+            print("order.bonuses_pay to fast order", order.bonuses_pay)
             
             loyal_cart_settings = LoyaltyCardSettings.objects.get()
 
