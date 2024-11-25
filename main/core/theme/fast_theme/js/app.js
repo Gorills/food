@@ -1354,6 +1354,11 @@ function getTotalPriceAfterDiscount() {
         .then(([totalPrice, dopItemsSum, deliverySumm, allDiscount, getPromoDiscount]) => {
 
             let res = totalPrice + dopItemsSum + deliverySumm - allDiscount - getPromoDiscount;
+
+            if (res < 0) {
+                res = 0;
+            }
+
             document.getElementById("total_price_after_discount").innerText = res + '₽';
             let order = JSON.parse(localStorage.getItem('order'));
             order.summ = res;
