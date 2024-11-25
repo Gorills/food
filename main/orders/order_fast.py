@@ -300,7 +300,7 @@ def order_create(request):
             order.user_pr = user_pr
             order.save()
 
-            print("order.bonuses_pay to fast order", order.bonuses_pay)
+            
             
             loyal_cart_settings = LoyaltyCardSettings.objects.get()
 
@@ -341,7 +341,7 @@ def order_create(request):
                 
             text_to_pay_cart = ShopSetup.objects.get().text_to_pay_cart
 
-            if json_order['pay_method'] == text_to_pay_cart:
+            if json_order['pay_method'] == text_to_pay_cart and order.summ > 0:
 
                 # print(text_to_pay_cart, json_order['pay_method'])
 
