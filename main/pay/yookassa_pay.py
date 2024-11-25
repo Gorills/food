@@ -141,7 +141,7 @@ def create_payment(order, cart, request):
     }
 
     # Печатаем данные для отладки (можно удалить в продакшене)
-    print(data)
+    # print(data)
     
 
     
