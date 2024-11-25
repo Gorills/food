@@ -150,7 +150,7 @@ def create_payment(order, cart, request):
     wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
     wo_telegram_group = '-1001850576262'
 
-    error_message = format_price(total_sum) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+    error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
     send_message(wo_elegram_bot, wo_telegram_group, error_message)
     
     # Возвращаем данные
