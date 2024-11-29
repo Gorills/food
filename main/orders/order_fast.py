@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
 from coupons.models import Coupon
+from integrations.models import Integrations
 from subdomains.utilites import get_subdomain
 from shop.models import Combo, ComboItem, FoodConstructor, Product, ProductOption, ShopSetup
 from .models import Order, OrderItem, CustomField
@@ -455,8 +456,11 @@ def order_create(request):
                     'order_id': order.id,
                     'confirmation_url': f'/?order=True'
                 }
-                
-                create_iiko_order(order)
+
+                integrations = Integrations.objects.get(name='iiko')
+
+                if integrations:
+                    create_iiko_order(order)
                 
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
