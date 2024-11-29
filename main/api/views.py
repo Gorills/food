@@ -69,7 +69,7 @@ def send_sms_code(request):
         send_sms(text, phone)
 
         # Отправка SMS (заглушка)
-        print(f"Отправлен код {code} на номер {phone}")  # Реализуйте интеграцию с SMS-сервисом
+        # print(f"Отправлен код {code} на номер {phone}")  # Реализуйте интеграцию с SMS-сервисом
 
         return JsonResponse({"success": True, "message": "Code sent successfully"})
 
@@ -430,7 +430,7 @@ def get_user(request):
                 'balls_min_summ': 0,
                 'exclude_combos': False,
                 'exclude_sales': False,
-                
+
             }
             return Response(data, status=status.HTTP_200_OK)
 
