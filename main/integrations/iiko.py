@@ -308,7 +308,13 @@ def get_terminal_groups():
 
 def create_iiko_order(order, attempt=1):
 
-    integrations = Integrations.objects.get(name='iiko')
+    try:
+
+        integrations = Integrations.objects.get(name='iiko')
+
+    except:
+
+        integrations = None
 
     if not integrations:
         return
