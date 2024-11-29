@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
 import traceback
+from integrations.iiko import create_iiko_order
 
 try:
     theme_address = ThemeSettings.objects.get().name
@@ -426,27 +427,27 @@ def order_create(request):
                 # очистка корзины
                 
                 
-                # if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
-                #     user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
+                if LoyaltyCardSettings.objects.get().active == True and BaseSettings.objects.get().sms == True:
+                    user_profile = UserProfile.objects.get(id=request.session['user_profile_id'])
 
-                #     try:
+                    try:
                     
-                #         loyalty_card = LoyaltyCard.objects.get(user=user_profile)
+                        loyalty_card = LoyaltyCard.objects.get(user=user_profile)
                     
-                #     except:
-                #         loyalty_card = LoyaltyCard.objects.create(
-                #             user=user_profile,
-                #             summ=Decimal('0.00')
-                #             )
+                    except:
+                        loyalty_card = LoyaltyCard.objects.create(
+                            user=user_profile,
+                            summ=Decimal('0.00')
+                            )
 
-                #     try:
-                #         if order.bonuses_pay > 0:
-                #             loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
+                    try:
+                        if order.bonuses_pay > 0:
+                            loyalty_card.balls = loyalty_card.balls - order.bonuses_pay
 
-                #     except:
-                #         pass
+                    except:
+                        pass
                     
-                #     loyalty_card.save()
+                    loyalty_card.save()
 
                 # request.session['first_delivery'] = 0
 
@@ -454,6 +455,9 @@ def order_create(request):
                     'order_id': order.id,
                     'confirmation_url': f'/?order=True'
                 }
+                
+                create_iiko_order(order)
+                
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
             

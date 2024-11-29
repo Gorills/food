@@ -1,6 +1,8 @@
 from decimal import Decimal
 from django.shortcuts import render
 import requests
+
+from integrations.iiko import create_iiko_order
 from .models import PaymentSet, AlfaBank
 from orders.models import Order
 from shop.models import Product
@@ -134,6 +136,7 @@ def get_status(pay_id):
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
+            create_iiko_order(order)
         
 
         time.sleep(20)

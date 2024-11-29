@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, UserProfile
 import requests
+from integrations.iiko import create_iiko_order
 from subdomains.utilites import get_subdomain
 from shop.models import ComboItem, Product, ProductOption, ShopSetup
 from .models import Order, OrderItem
@@ -520,6 +521,7 @@ def order_webhook(request):
                 order_telegram(telegram_bot, telegram_group, order)
                 # yandex_create_order(order)
                 send_sms(sms_text(order.id, order.summ), order.phone)
+                create_iiko_order(order)
 
                 try:
 

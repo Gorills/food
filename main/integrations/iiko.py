@@ -1,12 +1,14 @@
 from decimal import Decimal
 import requests
 import uuid
-
+import threading
+import time
 from orders.models import Order
 
 # Create your views here.
 
 from .models import Integrations
+
 
 from pytils.translit import slugify
 from django.core.files.base import ContentFile
@@ -177,7 +179,7 @@ def load_menu(clean, product_clean):
 
             try:
                 response_pr_img = requests.get(image)
-                print(image)
+                
                 image_name = image.split('/')[-1]
                 if response_pr_img.status_code == 200:
                     product_save.thumb.save(image_name, ContentFile(response_pr_img.content), save=True)
@@ -247,7 +249,7 @@ def load_menu(clean, product_clean):
                     except Exception as e:
                         print(e)
 
-                    print(option_id, option_name, option_price, option_weight, option_image)
+                    
         i += 1
         
             
@@ -269,12 +271,14 @@ def get_order_types():
     }
 
     response = requests.post(url, json=data, headers=headers)
+
+    
     
     return response.json()
 
 
 
-
+# get_order_types()
 
 
 def get_terminal_groups():
@@ -299,97 +303,134 @@ def get_terminal_groups():
 
 
 
-# Пример функции для создания нового заказа
-def create_iiko_order(order):
-    url = 'https://api-ru.iiko.services/api/1/order/create'
+
+
+
+def create_iiko_order(order, attempt=1):
+
+    integrations = Integrations.objects.get(name='iiko')
+
+    if not integrations:
+        return
+
+    if attempt > 12:
+        print(f"Max attempts reached for order {order.id}. Giving up.")
+        return
+
+    url = 'https://api-ru.iiko.services/api/1/deliveries/create'
     headers = {"Authorization": f"Bearer {token()}"}
     orgs = organization()[0]
     terminal_group = get_terminal_groups()
 
-    items = []
-
-    for item in order.items.all():
-        items.append({
+    items = [
+        {
             "productId": item.product.external_id,
             "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
             "type": item.product.iiko_type,
             "amount": item.quantity
-        })
+        }
+        for item in order.items.all()
+    ]
 
-    # Генерация UUID для order.id
     order_uuid = str(uuid.uuid4())
     order.external_id = order_uuid
     order.save()
 
-    items = []
-
     order_types = get_order_types()
-
     delivery_method_map = {
         "Доставка": "Доставка курьером",
         "Самовывоз": "Доставка самовывоз"
     }
 
-    # Поиск подходящего метода по названию
-    for order_type in order_types['orderTypes']:
-        for item in order_type['items']:
-            if item['name'] == delivery_method_map.get(order.delivery_method):
-                orderTypeId = item['id']
-                break
-        if orderTypeId:
-            orderTypeId = None
-            break
-
-    for item in order.items.all():
-        items.append({
-            "productId": item.product.external_id,
-            "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
-            "type": item.product.iiko_type,
-            "amount": item.quantity
-        })
+    orderTypeId = next(
+        (
+            item['id']
+            for order_type in order_types['orderTypes']
+            for item in order_type['items']
+            if item['name'] == delivery_method_map.get(order.delivery_method)
+        ),
+        None
+    )
 
     data = {
-        "event": "newOrder",
         "organizationId": orgs,
         "terminalGroupId": terminal_group,
         "order": {
-            "id": order_uuid,  # Используем сгенерированный GUID
+            "id": order_uuid,
             "customer": {
                 "name": order.name,
                 "phone": order.phone,
                 "type": "regular"
             },
             "phone": order.phone,
-            "address": {
-                "street": order.address,
-                "apartment": order.flat
+            "deliveryPoint": {
+                "address": {
+                    "street": {"name": order.address},
+                    "house": order.flat,
+                    "flat": order.flat,
+                    "entrance": order.entrance,
+                    "floor": order.floor,
+                    "type": "legacy",
+                },
             },
-            "fulfillmentType": "delivery",  # Указываем тип выполнения заказа
-            "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,  # Стоимость доставки, если она есть
+            "fulfillmentType": "delivery",
+            "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,
             "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
             "items": items,
-            "notes": order.comment if hasattr(order, 'comment') else ""  # Комментарий к заказу, если есть
+            "orderTypeId": orderTypeId,
+            "comment": f"{order.time} / {order.comment}" if hasattr(order, 'comment') else "",
         }
     }
-
-    if orderTypeId:
-        data['order']['orderTypeId'] = orderTypeId
-
-    print(data)
 
     response = requests.post(url, json=data, headers=headers)
 
     if response.status_code == 200:
         print("Order created successfully")
-        print(response.json())
+        # Запускаем проверку статуса заказа в отдельном потоке
+        threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
     else:
         print(f"Failed to create order: {response.status_code}")
-        print(response.json())
+        # print(response.json())
+
+
+def check_order_status(order_id):
+    url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
+    headers = {"Authorization": f"Bearer {token()}"}
+    orgs = organization()[0]
+
+    data = {
+        "organizationId": orgs,
+        "orderIds": [order_id]
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to check order status: {response.status_code}")
+        # print(response.json())
+        return None
+
+
+def background_order_status_check(order, order_id, attempt):
+    max_duration = 3600  # Максимальное время проверки (в секундах)
+    delay = 30  # Задержка между проверками (в секундах)
+    start_time = time.time()
+
+    while time.time() - start_time < max_duration:
+        status_response = check_order_status(order_id)
+        if status_response and 'orders' in status_response and any(order['id'] == order_id for order in status_response['orders']):
+            print(f"Order {order_id} has been processed.")
+            return  # Завершаем проверку при успешном статусе
+        time.sleep(delay)
+
+    print(f"Order {order_id} status check timed out. Retrying order creation (Attempt {attempt + 1})...")
+    # Повторно отправляем заказ, увеличивая счетчик попыток
+    create_iiko_order(order, attempt + 1)
 
 
 
+# check_order_status("32a14a53-1fd2-4a3b-8e13-b7312be52948")
 
-
-
-
-# create_iiko_order(Order.objects.get(id=512))
+# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=536), "32a14a53-1fd2-4a3b-8e13-b7312be52948", 1)).start()
+# create_iiko_order(Order.objects.get(id=536))

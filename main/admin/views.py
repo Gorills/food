@@ -936,7 +936,7 @@ def order_status_change(request, pk):
         if form.is_valid():
             status = form.cleaned_data['status']
 
-            if loyalty_settings.active:
+            if loyalty_settings.active and order.pay_method == ShopSetup.objects.get().text_to_pay_cart:
                 user = order.user_pr
                 card = LoyaltyCard.objects.get(user=user)
                 user_orders = Order.objects.filter(user_pr=user)
