@@ -936,6 +936,8 @@ def order_status_change(request, pk):
         if form.is_valid():
             status = form.cleaned_data['status']
 
+            
+
             if loyalty_settings.active:
                 user = order.user_pr
                 card = LoyaltyCard.objects.get(user=user)
@@ -944,6 +946,10 @@ def order_status_change(request, pk):
                 enable_add_balls_after_first_order = loyalty_settings.enable_add_balls_after_first_order
                 balls_after_first_order = loyalty_settings.balls_after_first_order
                 first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
+
+                
+                order.is_balls_processed = True
+                order.save()
 
                 with transaction.atomic():
                     if order.pay_method == ShopSetup.objects.get().text_to_pay_cart:
@@ -957,6 +963,7 @@ def order_status_change(request, pk):
                     elif status == 'Выполнен' and order_prev_status != 'Выполнен' and order.is_balls_processed:
                         # Начисление баллов за первый заказ или по статусу
                         balls_summ = 0
+                        print(order_count, enable_add_balls_after_first_order, order.summ, first_order_summ_for_add_balls)
                         if order_count == 1 and enable_add_balls_after_first_order and order.summ >= first_order_summ_for_add_balls:
                             balls_summ = balls_after_first_order
                         elif loyalty_settings.status_up:
