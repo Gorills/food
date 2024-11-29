@@ -457,10 +457,8 @@ def order_create(request):
                     'confirmation_url': f'/?order=True'
                 }
 
-                integrations = Integrations.objects.get(name='iiko')
-
-                if integrations:
-                    create_iiko_order(order)
+               
+                create_iiko_order(order)
                 
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
