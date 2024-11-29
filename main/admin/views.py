@@ -936,7 +936,7 @@ def order_status_change(request, pk):
         if form.is_valid():
             status = form.cleaned_data['status']
 
-            if loyalty_settings.active and order.pay_method == ShopSetup.objects.get().text_to_pay_cart:
+            if loyalty_settings.active:
                 user = order.user_pr
                 card = LoyaltyCard.objects.get(user=user)
                 user_orders = Order.objects.filter(user_pr=user)
@@ -946,12 +946,13 @@ def order_status_change(request, pk):
                 first_order_summ_for_add_balls = loyalty_settings.first_order_summ_for_add_balls
 
                 with transaction.atomic():
-                    if status == 'Готовится' and order_prev_status != 'Готовится' and not order.is_balls_processed:
-                        # Списание баллов
-                        card.balls = max(0, card.balls - order.bonuses_pay)
-                        card.save()
-                        LoyaltyCardHistory.objects.create(order_id=order.id, card=card, summ=order.summ, balls=order.bonuses_pay, operation_type='pay')
-                        order.is_balls_processed = True
+                    if order.pay_method == ShopSetup.objects.get().text_to_pay_cart:
+                        if status == 'Готовится' and order_prev_status != 'Готовится' and not order.is_balls_processed:
+                            # Списание баллов
+                            card.balls = max(0, card.balls - order.bonuses_pay)
+                            card.save()
+                            LoyaltyCardHistory.objects.create(order_id=order.id, card=card, summ=order.summ, balls=order.bonuses_pay, operation_type='pay')
+                            order.is_balls_processed = True
 
                     elif status == 'Выполнен' and order_prev_status != 'Выполнен' and order.is_balls_processed:
                         # Начисление баллов за первый заказ или по статусу
