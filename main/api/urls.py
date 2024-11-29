@@ -33,7 +33,10 @@ urlpatterns = [
     path('orderview/<int:order_id>/', views.OrderViewList.as_view(), name='orderview-list'),
     path('check_promo/', views.check_promo, name='check_promo'),
     path('get_exclude_actions/<int:pk>/', views.get_exclude_actions, name='get_exclude_actions'),
-
+    path('send-sms-code/', views.send_sms_code, name='send_sms_code'),
+    path('verify-sms-code/', views.verify_sms_code, name='verify_sms_code'),
+    path('logout/', views.logout, name='logout'),
+    path('check-session/', views.check_session, name='check_session'),
    
    
 

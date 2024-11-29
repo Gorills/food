@@ -31,14 +31,124 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
 from cart.cart import delivery_time_price
+import random
 
-
-
-
-
+from django.core.cache import cache
+from django.http import JsonResponse
+import re
 
 
 # !!! All users !!!
+
+
+
+def normalize_phone(phone):
+    """Нормализует номер телефона для использования в качестве ключа кеша."""
+    return re.sub(r'[^\d+]', '', phone)  # Убираем все символы, кроме цифр и '+'
+
+
+
+def send_sms_code(request):
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body)
+        phone = data.get("phone")
+
+        if not phone:
+            return JsonResponse({"success": False, "message": "Phone number is required"}, status=400)
+
+        normalized_phone = normalize_phone(phone)  # Нормализуем номер телефона
+
+        # Генерация кода
+        code = random.randint(1000, 9999)
+
+        # Сохраняем код в кэш с TTL 5 минут
+        cache_key = f"sms_code_{normalized_phone}"
+        cache.set(cache_key, code, timeout=300)
+        text = 'Ваш код: ' + str(code)
+        send_sms(text, phone)
+
+        # Отправка SMS (заглушка)
+        print(f"Отправлен код {code} на номер {phone}")  # Реализуйте интеграцию с SMS-сервисом
+
+        return JsonResponse({"success": True, "message": "Code sent successfully"})
+
+    return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
+
+def add_loyalty_card(userprofile):
+    try:
+        card_active = LoyaltyCardSettings.objects.get().active
+    except:
+        card_active = False
+        
+    if card_active == True:            
+        try:
+            loyalty_card = LoyaltyCard.objects.get(user=userprofile)
+
+        except Exception as e:
+            summ = ShopSetup.objects.get().start_bonus
+            loyalty_card = LoyaltyCard(
+                user=userprofile,
+                summ=Decimal(0),
+                balls=Decimal(summ),
+                )
+            
+            loyalty_card.save()
+
+def verify_sms_code(request):
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body)
+        phone = data.get("phone")
+        code = data.get("code")
+
+        if not phone or not code:
+            return JsonResponse({"success": False, "message": "Phone and code are required"}, status=400)
+
+        normalized_phone = normalize_phone(phone)
+        # Получаем код из кэша
+        cached_code = cache.get(f"sms_code_{normalized_phone}")
+
+        if str(cached_code) == str(code):
+            try:
+                userprofile = UserProfile.objects.get(phone=phone)
+                userprofile.use_sms = True
+                userprofile.save()
+            except:
+                userprofile = UserProfile(phone=phone, use_sms = True)
+                userprofile.save()
+
+            add_loyalty_card(userprofile)
+            request.session['user_profile_id'] = userprofile.id
+
+            return JsonResponse({"success": True, "message": "Verification successful"})
+        else:
+            return JsonResponse({"success": False, "message": "Invalid code"}, status=401)
+
+    return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
+
+
+
+
+def check_session(request):
+    # Проверяем, есть ли у пользователя активная сессия
+    try:
+        request.session['user_profile_id']
+    except:
+        return JsonResponse({"isAuthenticated": False})
+    
+    id = request.session['user_profile_id']
+    user = UserProfile.objects.filter(id=id).first()
+    if user is None:
+        return JsonResponse({"isAuthenticated": False})
+    else:
+        return JsonResponse({"isAuthenticated": True})
+
+def logout(request):
+    if request.method == "GET":
+        request.session.flush()
+        return JsonResponse({"success": True, "message": "Logout successful"})
+    return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
 
 
 
@@ -304,9 +414,6 @@ def get_user(request):
                 'balls_min_summ': balls_min_summ,
                 'exclude_combos': exclude_combos,
                 'exclude_sales': exclude_sales,
-
-                
-
             }
 
         except Exception as e:
@@ -314,6 +421,16 @@ def get_user(request):
             data = {
                 'phone': user.phone,
                 'cart_status': False,
+                'cart_summ': 0,
+                'cart_balls': 0,
+                'percent_down': 0,
+                'percent_down_pickup': 0,
+                'percent_pay': 0,
+                'percent_pay_pickup': 0,
+                'balls_min_summ': 0,
+                'exclude_combos': False,
+                'exclude_sales': False,
+                
             }
             return Response(data, status=status.HTTP_200_OK)
 
