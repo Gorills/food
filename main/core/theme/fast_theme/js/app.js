@@ -1088,7 +1088,7 @@ async function maxBallsPay() {
     return max_active_balls
 
 }
-// maxBallsPay()
+maxBallsPay()
 // активировать баллы
 
 $(document).on('click','.active_balls', function(e) {
