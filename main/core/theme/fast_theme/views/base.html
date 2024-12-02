@@ -256,7 +256,19 @@
 
 
     <div id="windowLoader" class="window-loader">
+        {% if setup.logo_dark %}
+            <img 
+                src="{{ setup.get_logo.url }}" 
+                alt="{{ setup.name }}" 
+                title="{{ setup.name }}" 
+                style="{% if setup.logo_width %}width:{{ setup.logo_width }}px;{% endif %}{% if setup.logo_height %}min-height:{{ setup.logo_height }}px;{% endif %}" 
+                class="window-loader__logo">
+        {% else %}
+            <a href="{% url 'home' %}" class="window-loader__logo">{{ setup.name }}</a>
+        {% endif %} 
+
         <div class="spinner"></div>
+        
     </div>
     <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
     <script src="{% get_libs 'js/jquery.maskedinput.min.js' %}?v1.0.0"></script>
