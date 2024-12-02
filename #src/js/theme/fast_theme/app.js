@@ -1,19 +1,37 @@
 
+// Отображаем лоадер при использовании кэша
 window.onpageshow = function(event) {
     if (event.persisted) { // Проверяем, используется ли кэш
-        window.location.reload(); // Перезагрузка страницы
+        const loader = document.getElementById("windowLoader");
+        const content = document.getElementById("content");
+
+        // Показываем лоадер
+        loader.style.display = "flex";
+        content.style.display = "none";
+
+        // Убираем лоадер через небольшую задержку
+        setTimeout(() => {
+            loader.style.display = "none";
+            content.style.display = "block";
+        }, 1000); // Задержка 1 секунда, можно изменить
     }
 };
 
+// Отображаем лоадер при первой загрузке
 document.addEventListener("DOMContentLoaded", function () {
-    // Таймер для имитации загрузки
-    setTimeout(() => {
-      document.getElementById("windowLoader").style.display = "none"; // Скрыть лоадер
-      document.getElementById("content").style.display = "block"; // Показать контент
-    }, 1000); // Задержка в 2 секунды (можно убрать или настроить)
+    const loader = document.getElementById("windowLoader");
+    const content = document.getElementById("content");
 
-    
-  });
+    // Показываем лоадер
+    loader.style.display = "flex";
+    content.style.display = "none";
+
+    // Убираем лоадер через небольшую задержку
+    setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+    }, 1000); // Задержка 1 секунда, можно изменить
+});
 
 
 function checkPriceCart() {
