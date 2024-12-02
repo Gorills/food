@@ -2117,7 +2117,7 @@ $(document).on('click', '.order_create', function(e) {
 
     updateAll()
 
-    console.log(order)
+    // console.log(order)
 
     let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
@@ -2179,7 +2179,7 @@ $(document).on('click', '.order_create', function(e) {
 
                 let last_order = JSON.parse(localStorage.getItem('lastOrder'));
 
-                
+
                 order.name = '';
                 localStorage.setItem('order', JSON.stringify(order));
 
@@ -2457,7 +2457,7 @@ async function getLastOrder() {
         let pay_method = data['pay_method'];
         let status_paid = data['paid'];
 
-        console.log(text_to_pay_cart, pay_method, status_paid);
+        // console.log(text_to_pay_cart, pay_method, status_paid);
 
         if ((text_to_pay_cart == pay_method) && status_paid) {
             show_order_set = true;
@@ -2468,7 +2468,7 @@ async function getLastOrder() {
             show_order_set = false;
         }
 
-        console.log('last_order', last_order);
+        // console.log('last_order', last_order);
         last_order.show = show_order_set;
         last_order.pay_method = pay_method;
 
@@ -2481,7 +2481,7 @@ async function getLastOrder() {
     
 
     if(last_order && pathname.indexOf('/?order=True') > -1) {
-        console.log('show_order_set_1', show_order_set);
+        // console.log('show_order_set_1', show_order_set);
 
         if (show_order_set) {
 
@@ -2753,7 +2753,7 @@ async function getLastOrder() {
             
             $('#orderDone').html(dataHtml)
             
-            console.log(last_order.show)
+            // console.log(last_order.show)
 
             if(last_order.show == true) {
                 $('.odred-done').addClass('odred-done--active')

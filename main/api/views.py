@@ -544,7 +544,11 @@ def get_order_status(request, pk):
         'status': order.status,
         'pay_method': order.pay_method,
         'text_to_pay_cart': text_to_pay_cart,
-        'paid': order.paid
+        'paid': order.paid,
+        'address': order.address,
+        'delivery_method': order.delivery_method,
+        'delivery_price': order.delivery_price,
+
     }
 
     return Response(data, status=status.HTTP_200_OK)
