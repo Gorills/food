@@ -179,7 +179,7 @@ function setLoyalCart() {
 
 
     let loyalCart = JSON.parse(localStorage.getItem('loyalCart'));
-    console.log(loyalCart)
+    // console.log(loyalCart)
     
 }
 
@@ -1027,7 +1027,7 @@ async function maxBallsPay() {
     let total_excluded = 0;
     try {
         total_excluded = await getExcludedTotal(cartItems);
-        console.log(total_excluded);
+        // console.log(total_excluded);
     } catch (error) {
         console.error("Ошибка при расчете исключенных товаров:", error);
         return 0; // Возвращаем 0, если произошла ошибка
@@ -1115,8 +1115,8 @@ $(document).on('click', '#balls-pay', async function(e) {
     order.bonuses_pay = max_active_balls;
     localStorage.setItem('order', JSON.stringify(order));
 
-    console.log(max_active_balls);
-    console.log(order);
+    // console.log(max_active_balls);
+    // console.log(order);
 
     maxBallsPay();
     getTotalPriceAfterDiscount();
@@ -1600,7 +1600,7 @@ $(document).on('click', '.order__times-drop-day', function(e){
     let order = JSON.parse(localStorage.getItem('order')) || {}; // Проверка на null
     order.day = day;
 
-    console.log(order)
+    // console.log(order)
     
     localStorage.setItem('order', JSON.stringify(order)); // Сохранение обновленного объекта
     setOrder();
@@ -2837,7 +2837,7 @@ $(document).on('keyup', '#check_user_status' ,function(e){
         order.user_phone = phone;
         localStorage.setItem('order', JSON.stringify(order));
 
-        console.log(order)
+        // console.log(order)
         
         fetch(`/api/v1/first_delivery/${phone}/`)
             .then(response => response.json())
@@ -3967,7 +3967,7 @@ function init() {
         myMap.geoObjects.each(item => {
             if (item.geometry.getType() === "Polygon") {
                 // Лог координат полигона доставки
-                console.log("Проверка полигона:", item.geometry.getCoordinates());
+                // console.log("Проверка полигона:", item.geometry.getCoordinates());
     
                 if (item.geometry.contains(objCoordinates)) {
                     foundDeliveryArea = true;

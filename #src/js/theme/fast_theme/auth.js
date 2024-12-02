@@ -204,7 +204,7 @@ $(document).ready(function () {
                 if (!response.isAuthenticated) {
                     // Если пользователь не аутентифицирован, очищаем localStorage
                     order = JSON.parse(localStorage.getItem('order'));
-                    console.log(order);
+                    // console.log(order);
                     order.phone = '';
                     localStorage.setItem('order', JSON.stringify(order));
 
