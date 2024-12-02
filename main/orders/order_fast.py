@@ -471,5 +471,10 @@ def order_create(request):
     
 
     except Exception as e:
+        summ = Decimal(json_order['summ'])
+
+        error_message = f'Сумма в заказе: {summ}'
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
+
         error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
