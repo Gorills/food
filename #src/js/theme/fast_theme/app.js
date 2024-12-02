@@ -9,6 +9,8 @@ window.onpageshow = function(event) {
         loader.style.display = "flex";
         content.style.display = "none";
 
+        updateAll()
+
         // Убираем лоадер через небольшую задержку
         setTimeout(() => {
             loader.style.display = "none";
