@@ -211,7 +211,7 @@ def first_delivery(request, number):
 
     
 
-    orders = Order.objects.filter(phone=normal_number).count()
+    orders = Order.objects.filter(phone=normal_number, status='Выполнен').count()
     
 
     if orders == 0:
