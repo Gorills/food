@@ -2179,8 +2179,7 @@ $(document).on('click', '.order_create', function(e) {
 
                 let last_order = JSON.parse(localStorage.getItem('lastOrder'));
 
-                order.phone = '';
-                order.address = '';
+                
                 order.name = '';
                 localStorage.setItem('order', JSON.stringify(order));
 
