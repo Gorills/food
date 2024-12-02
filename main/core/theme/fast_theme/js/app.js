@@ -5,6 +5,16 @@ window.onpageshow = function(event) {
     }
 };
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Таймер для имитации загрузки
+    setTimeout(() => {
+      document.getElementById("windowLoader").style.display = "none"; // Скрыть лоадер
+      document.getElementById("content").style.display = "block"; // Показать контент
+    }, 1000); // Задержка в 2 секунды (можно убрать или настроить)
+
+    
+  });
+
 
 function checkPriceCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
