@@ -1,4 +1,11 @@
 
+window.onpageshow = function(event) {
+    if (event.persisted) { // Проверяем, используется ли кэш
+        window.location.reload(); // Перезагрузка страницы
+    }
+};
+
+
 function checkPriceCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
