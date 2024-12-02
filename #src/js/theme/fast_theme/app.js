@@ -1031,6 +1031,13 @@ async function maxBallsPay() {
     let daliveryType = localStorage.getItem("deliveryType");
     let cart = JSON.parse(localStorage.getItem('cart'));
 
+
+    // Проверка: если корзина пуста, сразу возвращаем 0
+    if (!cart || Object.keys(cart).length === 0) {
+        $('#balls').html(''); // Очищаем контейнер для баллов
+        return 0;
+    }
+
     // console.log(cart)
     
     // console.log(daliveryType);
@@ -2169,6 +2176,9 @@ $(document).on('click', '.order_create', function(e) {
                 
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
+
+                let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+
                 order.phone = '';
                 order.address = '';
                 order.name = '';
@@ -2184,7 +2194,8 @@ $(document).on('click', '.order_create', function(e) {
 
                 if (confirmationUrl != '/?order=True') {
 
-                    
+                    last_order.show = false;
+                    localStorage.setItem('lastOrder', JSON.stringify(last_order));
                     
                     $('.order__load').removeClass('order__load--active')
                     $('.order').removeClass('order--active')
@@ -2195,6 +2206,9 @@ $(document).on('click', '.order_create', function(e) {
                     }, 100); // 100 мс задержки для завершения операций с localStorage
                     
                 } else {
+
+                    last_order.show = true;
+                    localStorage.setItem('lastOrder', JSON.stringify(last_order));
 
                     localStorage.removeItem('order');
                     localStorage.removeItem('cart');
@@ -2211,6 +2225,9 @@ $(document).on('click', '.order_create', function(e) {
                     setOrder()
                     updateAll()
                     updateDeliveryInfo()
+
+
+                    window.location.href = confirmationUrl;
 
    
                 }
@@ -2411,64 +2428,63 @@ jQuery(document).ready(function () {
 
 
 
-function getLastOrder() {
+async function getLastOrder() {
     var pathname = window.location.href; 
-    var origin   = window.location.origin;
+    var origin = window.location.origin;
 
+    let order = $('#orderDone').attr('data-order') || {};
+    let data_title = $('#orderDone').attr('data-title');
+    let data_text = $('#orderDone').attr('data-text');
 
-    let order = $('#orderDone').attr('data-order')
-    let data_title = $('#orderDone').attr('data-title')
-    let data_text = $('#orderDone').attr('data-text')
+    let last_order = JSON.parse(localStorage.getItem('lastOrder')) || null;
+    if (!last_order) {
+        console.error('Нет данных о последнем заказе');
+        return;
+    }
 
+    let show_order_set = last_order.show;
     
 
-    let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-    res = pathname.replace(origin, '')
-    
-    
-    let pay_method = last_order.pay_method
-    let show_order_set = last_order.show
+    let url = `/api/v1/get_order_status/${last_order.order_id}/`;
 
-    let is_site = pay_method.indexOf('сайт') > -1
-
-    
-
-    if(last_order || res.indexOf('/?order=True') > -1) {
-        
-        let show_last_order = true
-        if (res.indexOf('/?order=True') > -1) {
-            show_last_order = true
-
-        } 
-        if(is_site && !(res.indexOf('/?order=True') > -1)) {
-            show_last_order = false
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
 
-        if (!show_order_set) {
-            show_last_order = false
+        const data = await response.json();
+        let text_to_pay_cart = data['text_to_pay_cart'];
+        let pay_method = data['pay_method'];
+        let status_paid = data['paid'];
+
+        console.log(text_to_pay_cart, pay_method, status_paid);
+
+        if ((text_to_pay_cart == pay_method) && status_paid) {
+            show_order_set = true;
+            console.log('show_order_set_0', show_order_set);
+        } else if (text_to_pay_cart != pay_method) {
+            show_order_set = true;
+        } else {
+            show_order_set = false;
         }
 
-        // console.log(last_order)
-        // console.log(show_last_order, is_site)
+        console.log('last_order', last_order);
+        last_order.show = show_order_set;
+        last_order.pay_method = pay_method;
+
+        localStorage.setItem('lastOrder', JSON.stringify(last_order));
         
-        
-        if (show_last_order) {
-            // // Преобразуем объект в строку JSON-формата
-            // let jsonString = JSON.stringify(order);
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
 
-            // // Заменяем символы в строке
-            // jsonString = jsonString.replace(/'/g, '"'); 
-            // let newStr = jsonString.slice(1, -1);
+    
 
+    if(last_order && pathname.indexOf('/?order=True') > -1) {
+        console.log('show_order_set_1', show_order_set);
 
-            // // Преобразуем строку JSON-формата обратно в объект
-            // let newObj = JSON.parse(newStr);
-
-        
-            // dataLayer.push(newObj)
-
-
-            
+        if (show_order_set) {
 
 
             let order_delivery_items = ''
@@ -2737,10 +2753,13 @@ function getLastOrder() {
 
             
             $('#orderDone').html(dataHtml)
+            
+            console.log(last_order.show)
 
             if(last_order.show == true) {
                 $('.odred-done').addClass('odred-done--active')
                 $('body').addClass('body');
+                
             } else {
                 $('.odred-done').removeClass('odred-done--active')
                 $('body').removeClass('body');

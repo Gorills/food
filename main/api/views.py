@@ -537,9 +537,14 @@ def get_order_status(request, pk):
         status_list = [status_value for status_key, status_value in order.STATUS_CLASS_DELIVERY if status_value != 'Готов к выдаче' and status_value != 'Доставка' and status_value != 'Доставлен' and status_value != 'Готов к доставке' and status_value != 'Отказ' and status_value != 'Выполнен']
     
 
+    text_to_pay_cart = ShopSetup.objects.get().text_to_pay_cart
+
     data = {
         'status_list': status_list,
-        'status': order.status
+        'status': order.status,
+        'pay_method': order.pay_method,
+        'text_to_pay_cart': text_to_pay_cart,
+        'paid': order.paid
     }
 
     return Response(data, status=status.HTTP_200_OK)
