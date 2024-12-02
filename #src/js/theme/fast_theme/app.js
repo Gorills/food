@@ -2107,7 +2107,9 @@ $(document).on('click', '.order_create', function(e) {
 
     $('.order__load').addClass('order__load--active')
 
-    // console.log(order)
+    updateAll()
+
+    console.log(order)
 
     let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
