@@ -471,7 +471,7 @@ def order_create(request):
     
 
     except Exception as e:
-        summ = Decimal(json_order['summ'])
+        summ = json_order['summ']
 
         error_message2 = f'Сумма в заказе: {summ}'
         
