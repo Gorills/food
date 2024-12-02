@@ -1349,14 +1349,15 @@ async function getPromoDiscount() {
     let order = JSON.parse(localStorage.getItem('order'));
     let deliveryType = localStorage.getItem("deliveryType"); 
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
-    
+    let cartItems = Object.values(cart);
+
     let promo_type = order.promo_type;
     let promo = order.promo;
     let promo_discount = order.promo_discount;
     let discount = 0;
 
     if ((promo_discount != 0 && promo_type == 'all') || (promo_discount != 0 && promo_type == 'delivery' && deliveryType == '1') || (promo_discount != 0 && promo_type == 'pickup' && deliveryType == '0')) {
-        let order_summ = await getDiscountableTotalPrice(cart);
+        let order_summ = await getDiscountableTotalPrice(cart) - await getExcludedTotal(cartItems);
         discount = promo_discount * order_summ / 100;
         discount = Math.round(discount);
 
