@@ -9,12 +9,13 @@ window.onpageshow = function(event) {
         loader.style.display = "flex";
         content.style.display = "none";
 
-        updateAll()
+        
 
         // Убираем лоадер через небольшую задержку
         setTimeout(() => {
             loader.style.display = "none";
             content.style.display = "block";
+            updateAll()
         }, 1000); // Задержка 1 секунда, можно изменить
     }
 };
