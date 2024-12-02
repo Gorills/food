@@ -9,16 +9,14 @@ window.onpageshow = function(event) {
         loader.style.display = "flex";
         content.style.display = "none";
 
-        
-
-        // Убираем лоадер через небольшую задержку
+        // Устанавливаем короткую задержку перед перезагрузкой страницы
         setTimeout(() => {
-            loader.style.display = "none";
-            content.style.display = "block";
-            updateAll()
-        }, 1000); // Задержка 1 секунда, можно изменить
+            loader.style.display = "flex";
+            window.location.reload(); // Принудительная перезагрузка страницы
+        }, 1000); // Задержка 1 секунда для отображения лоадера перед перезагрузкой
     }
 };
+
 
 // Отображаем лоадер при первой загрузке
 document.addEventListener("DOMContentLoaded", function () {
