@@ -12,6 +12,7 @@ window.onpageshow = function(event) {
         // Устанавливаем короткую задержку перед перезагрузкой страницы
         setTimeout(() => {
             loader.style.display = "flex";
+            getTotalPriceAfterDiscount();
             window.location.reload(); // Принудительная перезагрузка страницы
         }, 1000); // Задержка 1 секунда для отображения лоадера перед перезагрузкой
     }
