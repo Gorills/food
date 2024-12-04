@@ -1103,25 +1103,28 @@ async function maxBallsPay() {
     
     // console.log(max_active_balls,order_balls)
     let innerHtml = '';
-    if (max_active_balls > 0 && order_balls == 0) {
-        innerHtml = `
-        <div class="order__info-item" >
-            <p>Баллов на счету:</p>
-            <div>${balls}₽</div>
-        </div>
-        <div class="order__info-item">
-            <p><small>Списать ${max_active_balls} суммы покупки баллами?</small></p>
-            <div><a href="#" id="balls-pay" class="order__info-link">Списать баллы</a></div>
-        </div>
-        `
-    } else if(order_balls > 0) {
-        innerHtml = `
-        <div class="order__info-item" >
-            <p>Баллов на счету:</p>
-            <div>${balls}₽ (-${order_balls}) <div><a href="#" id="balls-refresh" class="order__info-link">Отменить</a></div></div>
-        </div>
-       
-        `
+    if (order.promo_discount <= 0) {
+        
+        if (max_active_balls > 0 && order_balls == 0) {
+            innerHtml = `
+            <div class="order__info-item" >
+                <p>Баллов на счету:</p>
+                <div>${balls}₽</div>
+            </div>
+            <div class="order__info-item">
+                <p><small>Списать ${max_active_balls} суммы покупки баллами?</small></p>
+                <div><a href="#" id="balls-pay" class="order__info-link">Списать баллы</a></div>
+            </div>
+            `
+        } else if(order_balls > 0) {
+            innerHtml = `
+            <div class="order__info-item" >
+                <p>Баллов на счету:</p>
+                <div>${balls}₽ (-${order_balls}) <div><a href="#" id="balls-refresh" class="order__info-link">Отменить</a></div></div>
+            </div>
+        
+            `
+        }
     }
     
 
@@ -1144,19 +1147,31 @@ $(document).on('click','.active_balls', function(e) {
 })
 
 $(document).on('click', '#balls-pay', async function(e) {
+
+    
+
+
     e.preventDefault();
     
     // Используем await, чтобы подождать результат
     let max_active_balls = await maxBallsPay();
     let order = JSON.parse(localStorage.getItem('order'));
-    order.bonuses_pay = max_active_balls;
-    localStorage.setItem('order', JSON.stringify(order));
 
-    // console.log(max_active_balls);
-    // console.log(order);
+    if (order.promo_discount > 0) {
+        $(this).text('Уже используется промокод');
+        return;
+    } else {
+        order.bonuses_pay = max_active_balls;
+        localStorage.setItem('order', JSON.stringify(order));
+    
+        // console.log(max_active_balls);
+        // console.log(order);
+    
+        maxBallsPay();
+        getTotalPriceAfterDiscount();
+    }
 
-    maxBallsPay();
-    getTotalPriceAfterDiscount();
+    
     // $('#balls').remove();
 });
 
@@ -3750,6 +3765,18 @@ $(document).on('submit', '.coupon-form', async function(e) {
 
     let $form = $(this);
     let promoCode = $form.find('input[name="promo"]').val(); // Получаем значение промокода из формы
+
+    let order = JSON.parse(localStorage.getItem('order'));
+
+    console.log(order);
+
+    if (order.bonuses_pay > 0) {
+
+        $('.coupon-form__input').addClass('order__input--error');
+        $('.coupon-form__input').val('').attr('placeholder', 'В заказе уже используются баллы');
+
+        return;
+    }
 
     try {
         // GET-запрос с параметром промокода в строке запроса
