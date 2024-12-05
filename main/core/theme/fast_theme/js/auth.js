@@ -116,6 +116,10 @@ $(document).ready(function () {
 
                         
                 });
+
+                let order = JSON.parse(localStorage.getItem('order'));
+                order.user_phone = phone;
+                localStorage.setItem('order', JSON.stringify(order));
     
             },
             error: function (xhr) {

@@ -2072,16 +2072,22 @@ $(document).on('click', '.order__next', function(e) {
     // Переменная для отслеживания пустых полей
     let hasEmptyFields = hasEmptyFieldsCheck();
 
-    // Если есть пустые поля, выводим сообщение или выполняем действие
-    if (hasEmptyFields) {
+    let order = JSON.parse(localStorage.getItem('order'));
+
+    console.log(order)
+
+    if (order.user_phone == '' || order.user_phone == null || order.user_phone == undefined || hasEmptyFields) {
+        
+        
+        $('#phone-wrap').load(location.href + " #phone-wrap__refresh");
+
         // Здесь можно выполнить действие, например, показать сообщение об ошибке или что-то еще
         $('.order__next').text('Заполните обязательные поля');
         $('.order__next').addClass('order__next--error');
 
         $('.order__pay-methods').hide()
         $('.order__body-wrap').show()
-
-
+        
     } else {
 
         let htmlInner = 
