@@ -936,6 +936,9 @@ def order_status_change(request, pk):
         if form.is_valid():
             status = form.cleaned_data['status']
 
+
+            if status == 'Готов к доставке' and order_prev_status != 'Готов к доставке':
+                yandex_create_order(order)
             
 
             if loyalty_settings.active:
