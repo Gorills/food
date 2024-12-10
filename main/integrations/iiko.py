@@ -301,7 +301,13 @@ def get_terminal_groups():
     return response.json()['terminalGroups'][0]['items'][0]['id']
 
 
+import re
 
+def extract_digits_from_end(input_string):
+    match = re.search(r'\d+$', input_string)
+    if match:
+        return match.group()
+    return None
 
 
 
@@ -355,6 +361,17 @@ def create_iiko_order(order, attempt=1):
         None
     )
 
+    deliveryPoint = {
+        "address": {
+            "street": {"name": order.address},
+            "house": extract_digits_from_end(order.address),
+            "flat": order.flat,
+            "entrance": order.entrance,
+            "floor": order.floor,
+            "type": "legacy",
+        },
+    }
+
     data = {
         "organizationId": orgs,
         "terminalGroupId": terminal_group,
@@ -366,16 +383,6 @@ def create_iiko_order(order, attempt=1):
                 "type": "regular"
             },
             "phone": order.phone,
-            "deliveryPoint": {
-                "address": {
-                    "street": {"name": order.address},
-                    "house": order.flat,
-                    "flat": order.flat,
-                    "entrance": order.entrance,
-                    "floor": order.floor,
-                    "type": "legacy",
-                },
-            },
             "fulfillmentType": "delivery",
             "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,
             "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
@@ -385,10 +392,15 @@ def create_iiko_order(order, attempt=1):
         }
     }
 
+
+    if order.delivery_method == "Доставка":
+        data['order']['deliveryPoint'] = deliveryPoint
+
     response = requests.post(url, json=data, headers=headers)
 
     if response.status_code == 200:
         print("Order created successfully")
+        # print(response.json())
         # Запускаем проверку статуса заказа в отдельном потоке
         threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
     else:
@@ -408,6 +420,7 @@ def check_order_status(order_id):
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
+        # print(response.json())
         return response.json()
     else:
         print(f"Failed to check order status: {response.status_code}")
@@ -433,7 +446,7 @@ def background_order_status_check(order, order_id, attempt):
 
 
 
-# check_order_status("32a14a53-1fd2-4a3b-8e13-b7312be52948")
+# check_order_status("750a6c1e-4b05-41d7-9aa0-3fc4f887a094")
 
-# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=536), "32a14a53-1fd2-4a3b-8e13-b7312be52948", 1)).start()
-# create_iiko_order(Order.objects.get(id=536))
+# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=578), "8f99da27-4320-402a-83aa-c825d642931d", 1)).start()
+# create_iiko_order(Order.objects.get(id=582))
