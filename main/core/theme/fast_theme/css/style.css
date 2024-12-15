@@ -6828,6 +6828,10 @@ td.product-thumbnail img {
   width: 80px;
   object-fit: contain;
   margin-bottom: 20px;
+  color: var(--color-header-font);
+  white-space: nowrap;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 /* Анимация спиннера */
