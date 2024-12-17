@@ -2195,7 +2195,7 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
-                
+                console.log('pay_description', order.pay_description)
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
 
