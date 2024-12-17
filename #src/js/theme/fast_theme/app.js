@@ -2195,7 +2195,7 @@ $(document).on('click', '.order_create', function(e) {
                     
                 }
 
-                console.log('pay_description', order.pay_description)
+                
 
                 localStorage.setItem('lastOrder', JSON.stringify(data));
 
@@ -2462,8 +2462,6 @@ async function getLastOrder() {
         console.error('Нет данных о последнем заказе');
         return;
     }
-
-    console.log('last_order', last_order);
 
     let show_order_set = last_order.show;
     
