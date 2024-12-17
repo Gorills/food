@@ -2463,6 +2463,8 @@ async function getLastOrder() {
         return;
     }
 
+    console.log('last_order', last_order);
+
     let show_order_set = last_order.show;
     
 
