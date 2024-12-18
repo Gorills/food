@@ -227,7 +227,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
         else:
             referer_url = ''
 
-        print("referer_url", referer_url)
+        
 
         if order.delivery_method == 'Доставка':
             message = f'''
