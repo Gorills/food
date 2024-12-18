@@ -26,7 +26,28 @@ from threading import Lock
 lock = Lock()
 
 
-def order_telegram(telegram_bot, telegram_group, order):
+def escape_markdown(text):
+    """
+    Экранирует специальные символы Markdown.
+    """
+    import re
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", text)
+
+
+def escape_markdown_url(url):
+    """
+    Экранирует символы Markdown в URL.
+    """
+    import re
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", url)
+
+
+
+def order_telegram(telegram_bot, telegram_group, order, request=None):
+
+   
 
     with lock:
         if order.order_send_status:
@@ -197,9 +218,18 @@ def order_telegram(telegram_bot, telegram_group, order):
 
         # Форматирование даты в нужный вам формат
         formatted_date = order_created_local.strftime("%d.%m.%Y %H:%M:%S")
-        
+
+        if request:
+            url = request.META.get('HTTP_REFERER', '').replace('http://', 'https://')
+
+            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({url}admin/order_detail/{order.id}/)'
+
+        else:
+            referer_url = ''
+
+        print("referer_url", referer_url)
+
         if order.delivery_method == 'Доставка':
-            
             message = f'''
 *ЗАКАЗ №: {order.id}*
 
@@ -221,6 +251,9 @@ def order_telegram(telegram_bot, telegram_group, order):
 *Адрес:*
 Время доставки: {time}
 Улица: {order.address}{entrance}{floor}{flat}{address_comment}
+
+{referer_url}
+
 '''
         else:
             message = f'''
@@ -243,6 +276,9 @@ def order_telegram(telegram_bot, telegram_group, order):
 *Адрес:*
 Время самовывоза: {time}
 Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
+
+{referer_url}
+
 '''
 
         try:

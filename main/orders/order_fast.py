@@ -415,7 +415,7 @@ def order_create(request):
 
 
             else:
-                order_telegram(telegram_bot, telegram_group, order)
+                order_telegram(telegram_bot, telegram_group, order, request)
 
                 try:
                     send_order_email(order)

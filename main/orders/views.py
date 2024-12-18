@@ -249,7 +249,7 @@ def order_create(request):
                     info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
                     
                     if info_to_order_anyway:
-                        order_telegram(telegram_bot, telegram_group, order)
+                        order_telegram(telegram_bot, telegram_group, order, request)
 
 
                     if pay_name == 'yookassa':
@@ -306,7 +306,7 @@ def order_create(request):
 
 
                 else:
-                    order_telegram(telegram_bot, telegram_group, order)
+                    order_telegram(telegram_bot, telegram_group, order, request)
 
                     try:
                         send_order_email(order)
@@ -455,7 +455,7 @@ def order_confirm(request, pk):
                 order.paid = True
                 order.save()
 
-                order_telegram(telegram_bot, telegram_group, order)
+                order_telegram(telegram_bot, telegram_group, order, request)
                 
                 # send_sms(sms_text(order.id, order.summ), order.phone)
 
@@ -518,7 +518,7 @@ def order_webhook(request):
                 order.paid = True
                 order.save()
 
-                order_telegram(telegram_bot, telegram_group, order)
+                order_telegram(telegram_bot, telegram_group, order, request)
                 # yandex_create_order(order)
                 send_sms(sms_text(order.id, order.summ), order.phone)
                 create_iiko_order(order)
@@ -552,7 +552,7 @@ def order_webhook(request):
 
                 return HttpResponse(status=200)
         except Exception as e:
-            order_telegram(telegram_bot, telegram_group, e)
+            order_telegram(request, telegram_bot, telegram_group, e)
             logger.info(e)
             return HttpResponse(status=200)
 
@@ -581,7 +581,7 @@ def alpha_check(request, pk):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order)
+        order_telegram(telegram_bot, telegram_group, order, request)
 
     return redirect('admin_order')
 
@@ -680,7 +680,7 @@ def paykeeper_success(request):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order)
+        order_telegram(telegram_bot, telegram_group, order, request)
         # yandex_create_order(order)
         send_sms(sms_text(order.id, order.summ), order.phone)
 
@@ -712,7 +712,7 @@ def tinkoff_success(request, pk):
     order = Order.objects.get(id=pk)
     order.paid = True
     order.save()
-    order_telegram(telegram_bot, telegram_group, order)
+    order_telegram(telegram_bot, telegram_group, order, request)
     # yandex_create_order(order)
     send_sms(sms_text(order.id, order.summ), order.phone)
     
