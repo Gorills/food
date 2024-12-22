@@ -136,7 +136,7 @@ def get_status(pay_id):
             order.paid = True
             order.save()
             order_telegram(telegram_bot, telegram_group, order)
-            create_iiko_order(order)
+            # create_iiko_order(order)
         
 
         time.sleep(20)

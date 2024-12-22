@@ -458,7 +458,7 @@ def order_create(request):
                 }
 
                
-                create_iiko_order(order)
+                # create_iiko_order(order)
                 
 
                 return JsonResponse(data, status=status.HTTP_200_OK)
