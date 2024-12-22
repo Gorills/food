@@ -513,11 +513,14 @@ def get_work_active(request, day):
     server_time = current_time.time()
     is_active = False  # По умолчанию считаем, что время не попадает в интервал
 
-    if start_delivery <= server_time <= end_delivery:
-        is_active = True
-    elif start_second_delivery and end_second_delivery and start_second_delivery <= server_time <= end_second_delivery:
-        is_active = True
-
+    try:
+        if start_delivery <= server_time <= end_delivery:
+            is_active = True
+        elif start_second_delivery and end_second_delivery and start_second_delivery <= server_time <= end_second_delivery:
+            is_active = True
+            
+    except:
+        is_active = False
 
     work_day = False
 
