@@ -196,6 +196,41 @@ def check_price(request):
 # check_price('Ростов-на-Дону, улица Мадояна, 32')
     
 
+def check_yandex_status(order):
+
+
+    url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/claims/info'
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Accept-Language": "ru",
+    }
+
+
+    params = {
+        "claim_id": order.delivery_id
+    }
+
+    
+
+    response = requests.post(url, headers=headers, params=params)
+    
+    try:
+        order.external_delivery_status = response.json()['status']
+        order.save()
+    except:
+        pass
+
+
+    return response
+
+
+
+
+
+# check_yandex_status(Order.objects.get(id=604))
+
+
 
 from orders.telegram import send_message
 def yandex_create_order(order):
@@ -233,18 +268,9 @@ def yandex_create_order(order):
             
         
         order_address = {
-                        
-                        
             "city": city,
-            
             "coordinates": get_geo(order.address),
             "country": 'Россия',
-        
-            
-        
-        
-            
-            
             "fullname": order.address,
             
         }
@@ -276,9 +302,7 @@ def yandex_create_order(order):
         
         data = {
             "auto_accept": auto_accept,
-            # "callback_properties": {
-            #     "callback_url": f'{get_protocol(request)}://{request.META["HTTP_HOST"]}/delivery/check_order/'
-            # },
+       
             "client_requirements": {
                 
             
@@ -359,67 +383,19 @@ def yandex_create_order(order):
                     "visit_order": 2
                     }
             ],
-            # "same_day_data": {
-            #     "delivery_interval": {
-            #         "from": string,
-            #         "to": string
-            #     }
-            # },
+     
             
             "skip_act": True,
             "skip_client_notify": False,
             "skip_door_to_door": False,
-            # 'due': get_due(),
+   
             "skip_emergency_notify": False
             }
         
 
         
 
-        # order_time_list = order.time.split('/')
-        
 
-        # monthes = {
-        #     'января': 1, 'февраля': 2, 'марта': 3, 'апреля': 4,
-        #     'мая': 5, 'июня': 6, 'июля': 7, 'августа': 8,
-        #     'сентября': 9, 'октября': 10, 'ноября': 11, 'декабря': 12
-        # }
-
-        # if order_time_list[0] != 'Как можно скорее':
-
-        #     times = order_time_list[0].split('-')
-        #     data['same_day_data'] = {
-        #         "delivery_interval": {
-        #             "from": times[0],
-        #             "to": times[1]
-        #         }
-        #     }
-            
-        #     if order_time_list[1].replace(' ', '') == 'Сегодня':
-        #         day = datetime.datetime.now().day
-        #         month = datetime.datetime.now().month
-        #         year_number = datetime.datetime.now().year
-        #         now_date = datetime.datetime(year_number, month, int(day))
-        #         result = now_date.strftime("%d.%m.%Y")
-        #         data['due'] = result
-
-        #     else:
-        #         day, month = str(order_time_list[1].replace('Завтра, ', '')).split()
-        #         month_number = monthes[month.lower()]
-        #         year_number = datetime.datetime.now().year
-
-        #         now_date = datetime.datetime(year_number, month_number, int(day))
-        #         result = now_date.strftime("%d.%m.%Y")
-        #         data['due'] = result
-                
-
-        
-
-        # if order_time_list[1].replace(' ', '') != 'Сегодня':
-        #     data['due'] = order_time_list[1].replace('Завтра, ', '')
-            
-        
-        # print(data)
         url = f'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/claims/create?request_id={order.id}'
 
         headers = {
@@ -429,16 +405,23 @@ def yandex_create_order(order):
 
         response = requests.post(url, json=data, headers=headers)
 
+        try:
+            order.delivery_id = response.json()['id']
+            order.delivery_send_status = True
+            order.save()
+
+            check_yandex_status(order)
+
+        except Exception as e:
+            print(e)
+
+
         
     except Exception as e:
 
         telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
         telegram_group = '-1002079435900'
-
         send_message(telegram_bot, telegram_group, f'ОШИБКА: {e}')
-        
-
-        print(e)
 
 
 # yandex_create_order(Order.objects.get(id=49))

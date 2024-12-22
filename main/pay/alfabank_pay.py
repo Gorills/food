@@ -11,7 +11,7 @@ import threading
 import time
 from setup.models import BaseSettings
 from orders.telegram import order_telegram, send_message
-from delivery.yandex_eda import yandex_create_order
+
 from subdomains.utilites import get_protocol
 
 

@@ -1,6 +1,7 @@
 from decimal import Decimal
 import logging
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 from itertools import product
 from multiprocessing import context
@@ -855,6 +856,12 @@ def card_delete(request, pk):
 @check_user_rights(['view_orders'])
 def admin_order(request):
     
+    delivery = Delivery.objects.filter(active=True).first()
+    if not delivery:
+        delivery = False
+    else:
+        delivery = True
+
 
     def get_queryset():
         # Получаем значение text_to_pay_cart из ShopSetup
@@ -869,6 +876,11 @@ def admin_order(request):
 
     orders = get_queryset().order_by('-created')
 
+    paginator = Paginator(orders, 15)
+    page = request.GET.get('page')  
+
+    orders_pag = paginator.get_page(page)
+
     pay = PaymentSet.objects.filter(status=True, name='alfabank').first()
     try:
         sound = SoundSettings.objects.get()
@@ -877,9 +889,10 @@ def admin_order(request):
 
     
     context = {
-        'orders': orders,
+        'orders': orders_pag,
         'pay': pay,
-        'sound': sound.sound
+        'sound': sound.sound,
+        'delivery': delivery
         
     }
 
@@ -919,10 +932,27 @@ def order_view_all(request):
 
     return redirect('admin_order')
 
-from delivery.yandex_eda import yandex_create_order
+from delivery.yandex_eda import check_yandex_status, yandex_create_order
 from orders.telegram import send_message
 
 from django.db import transaction
+
+@check_user_rights(['view_orders'])
+def order_send_to_delivery(request, pk):
+    order = Order.objects.get(id=pk)
+    
+    yandex_create_order(order)
+
+    return redirect('admin_order')
+
+
+def order_check_delivery(request, pk):
+    order = Order.objects.get(id=pk)
+    check_yandex_status(order)
+
+    return redirect('admin_order')
+
+
 
 @check_user_rights(['view_orders'])
 def order_status_change(request, pk):
@@ -937,8 +967,8 @@ def order_status_change(request, pk):
             status = form.cleaned_data['status']
 
 
-            if status == 'Готов к доставке' and order_prev_status != 'Готов к доставке':
-                yandex_create_order(order)
+            # if status == 'Готов к доставке' and order_prev_status != 'Готов к доставке':
+            #     yandex_create_order(order)
             
 
             if loyalty_settings.active:

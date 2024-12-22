@@ -481,6 +481,44 @@ label span {
   border-color: #ff7583;
 }
 
+.send {
+  display: flex;
+  align-items: center;
+  line-height: 0.6;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  color: #333;
+  border-radius: 0.25rem;
+  background-color: #efd158;
+  border-color: #efd158;
+  padding: 10px;
+}
+
+.send--done {
+  color: #333;
+  background-color: #00cd67;
+  border-color: #00cd67;
+}
+
+.send--done:hover {
+  color: #fff;
+  background-color: #008442;
+  border-color: #008442;
+}
+
+.send svg {
+  width: 100%;
+  height: 100%;
+  fill: #333;
+}
+
+.send:hover {
+  color: #fff;
+  background-color: #e5b805;
+  border-color: #e5b805;
+}
+
 .info {
   font-weight: 900;
   display: flex;
@@ -1238,6 +1276,7 @@ label span {
   justify-content: center;
   border-width: 6px;
   text-align: center;
+  margin-right: 10px;
 }
 
 .responsive-table .col__stock--warn {
@@ -1299,6 +1338,28 @@ label span {
   gap: 5px;
   text-align: center;
   justify-content: center;
+}
+
+.order-delivery-status {
+  display: flex;
+  align-items: center;
+  flex-direction: column !important;
+  gap: 5px;
+}
+
+.order-delivery-status div {
+  display: flex;
+  align-items: center;
+}
+
+.order-delivery-status svg {
+  width: 15px !important;
+  height: 15px !important;
+  margin-left: 5px;
+}
+
+.order-delivery-status a {
+  display: block;
 }
 
 .popup-add {
@@ -2203,6 +2264,66 @@ label span {
 .menu-btn_active span:after {
   transform: rotate(45deg);
   width: 20px;
+}
+
+.pagination {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.pagination .active {
+  width: 45px;
+  height: 45px;
+  line-height: 42px;
+  text-align: center;
+  border: 2px solid #ebebeb;
+  font-size: 12px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  background-color: #884FFB;
+  color: #fff;
+}
+
+.pagination svg {
+  height: 20px;
+}
+
+.pagination svg path {
+  fill: #a9a9a9;
+}
+
+.pagination li {
+  display: inline-block;
+}
+
+.pagination li a {
+  color: var(--color-font);
+  display: flex;
+  width: 45px;
+  height: 45px;
+  line-height: 42px;
+  text-align: center;
+  border: 2px solid #ebebeb;
+  font-size: 12px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination li + li {
+  margin-left: 15px;
+}
+
+.pagination .active a {
+  border-color: #000;
+}
+
+.pagination .dots {
+  border: none;
 }
 
 @media screen and (max-width: 768px) {

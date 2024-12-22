@@ -172,6 +172,10 @@ class Order(models.Model):
 
     order_send_status = models.BooleanField(default=False, verbose_name="Отправлен в Телеграм")
 
+    delivery_id = models.CharField(max_length=450, verbose_name="ID доставки", null=True, blank=True)
+    delivery_send_status = models.BooleanField(default=False, verbose_name="Отправлен в службу доставки")
+    external_delivery_status = models.CharField(max_length=450, verbose_name="Статус доставки", default="new")
+
     is_balls_processed = models.BooleanField(default=False, verbose_name="Списание баллов")
     def order_views(self):
 

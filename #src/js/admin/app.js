@@ -1003,10 +1003,17 @@ function showNotification(order_id) {
   }
 }
 
+function get(name){
+  if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+     return decodeURIComponent(name[1]);
+}
+
+
+
 // Обработчик события для кнопки показа уведомления
 $(document).ready(function() {
   // Функция для обращения к API и получения списка заказов
-  if (window.location.pathname === '/admin/admin_order/') {
+  if (window.location.pathname === '/admin/admin_order/' && get('page') === '1') {
     function fetchOrders() {
         $.ajax({
             url: '/api/v1/orders/',

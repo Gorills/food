@@ -13,7 +13,7 @@ from accounts.models import UserProfile
 from django.middleware import csrf
 from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
-from delivery.yandex_eda import yandex_create_order
+
 
 
 try:
@@ -313,7 +313,7 @@ def order_create(request):
                     except Exception as e:
                         pass
                         
-                    # yandex_create_order(order)
+                    
                     send_sms(sms_text(order.id, order.summ), phone)
                     
                     # очистка корзины
@@ -519,7 +519,7 @@ def order_webhook(request):
                 order.save()
 
                 order_telegram(telegram_bot, telegram_group, order, request)
-                # yandex_create_order(order)
+                
                 send_sms(sms_text(order.id, order.summ), order.phone)
                 create_iiko_order(order)
 
@@ -681,7 +681,7 @@ def paykeeper_success(request):
         order.save()
 
         order_telegram(telegram_bot, telegram_group, order, request)
-        # yandex_create_order(order)
+        
         send_sms(sms_text(order.id, order.summ), order.phone)
 
         return redirect(f'/?order=True&id={order.id}')
@@ -713,7 +713,7 @@ def tinkoff_success(request, pk):
     order.paid = True
     order.save()
     order_telegram(telegram_bot, telegram_group, order, request)
-    # yandex_create_order(order)
+    
     send_sms(sms_text(order.id, order.summ), order.phone)
     
     return redirect(f'/?order=True&id={order.id}')

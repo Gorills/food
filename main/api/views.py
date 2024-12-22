@@ -672,8 +672,10 @@ class OrderSet(viewsets.ModelViewSet):
         queryset_paid = Order.objects.filter(pay_method=text_to_pay_cart, paid=True)
         queryset_unpaid = Order.objects.exclude(pay_method=text_to_pay_cart)
 
+        result = queryset_paid | queryset_unpaid
+
         # Объединяем два queryset
-        return queryset_paid | queryset_unpaid
+        return result[:15]
 
 
 
