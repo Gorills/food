@@ -4243,31 +4243,35 @@ function checkCurrentTime() {
         day -= 1;
     }
 
-    
+    console.log(day)
 
     // Fetch work schedule based on current day
     fetch(`/api/v1/get_work_active/${day}/`)
         .then(response => response.json())
         .then(data => {
-            const startDelivery = data.start_delivery;
-            const endDelivery = data.end_delivery;
-            const startSecondDelivery = data.start_second_delivery;
-            const endSecondDelivery = data.end_second_delivery;
+            let startDelivery = data.start_delivery;
+            let endDelivery = data.end_delivery;
+            let startSecondDelivery = data.start_second_delivery;
+            let endSecondDelivery = data.end_second_delivery;
+            let serverTime = data.time;
+            let work_day = data.work_day;
+            let is_active = data.is_active;
+            
 
             // Check if the current time is within delivery times
-            const isWithinDeliveryTime = 
+            let isWithinDeliveryTime = 
                 (currentTime >= startDelivery && currentTime <= endDelivery);
 
             // Store working hours in localStorage
-            const storedWorkTime = JSON.parse(localStorage.getItem('workTime'));
+            let storedWorkTime = JSON.parse(localStorage.getItem('workTime'));
             // console.log(storedWorkTime);
 
-            const workTime = {
+            let workTime = {
                 startDelivery,
                 endDelivery,
                 startSecondDelivery,
                 endSecondDelivery,
-                is_open: storedWorkTime ? storedWorkTime.is_open : true
+                is_open: is_active
             };
 
             // console.log(workTime)
@@ -4286,7 +4290,7 @@ function checkCurrentTime() {
             }
 
             // Show popup if the current time is not within delivery times
-            if (!isWithinDeliveryTime) {
+            if (!work_day || !is_active) {
                 showPopupWithCooldown();
             } else {
                 // Otherwise, hide the popup

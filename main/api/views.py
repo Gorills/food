@@ -507,7 +507,31 @@ def get_work_active(request, day):
         
 
     day = datetime.now().weekday()
-    print(day)
+    
+
+    # Проверяем, попадает ли текущее время в любой из интервалов доставки
+    server_time = current_time.time()
+    is_active = False  # По умолчанию считаем, что время не попадает в интервал
+
+    if start_delivery <= server_time <= end_delivery:
+        is_active = True
+    elif start_second_delivery and end_second_delivery and start_second_delivery <= server_time <= end_second_delivery:
+        is_active = True
+
+
+    work_day = False
+
+    try: 
+        WorkDay.objects.get(day=day, active=True).active
+        work_day = True
+    except:
+        work_day = False
+     
+    try: 
+        WorkDay.objects.get(day=day, active=False).active
+        work_day = False
+    except:
+        work_day = True
 
 
     data = {
@@ -517,6 +541,10 @@ def get_work_active(request, day):
 
         'start_second_delivery': start_second_delivery,
         'end_second_delivery': end_second_delivery,
+        'day': day,
+        'server_time': server_time,
+        'is_active': is_active,
+        'work_day': work_day
     }
 
 
