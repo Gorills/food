@@ -22,6 +22,9 @@ from rest_framework import status
 import traceback
 from integrations.iiko import create_iiko_order
 
+import logging
+logger = logging.getLogger(__name__)
+
 try:
     theme_address = ThemeSettings.objects.get().name
 except:
@@ -471,5 +474,6 @@ def order_create(request):
     
 
     except Exception as e:
+        logger.info(e)
         error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)

@@ -6,11 +6,11 @@ import telepot
 from setup.models import BaseSettings
 from shop.models import ShopSetup
 from datetime import datetime
+from urllib.parse import urlparse
 
-from datetime import datetime
 import pytz
 from main.local_settings import TIME_ZONE 
-
+import traceback
 
 
 
@@ -220,9 +220,12 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
         formatted_date = order_created_local.strftime("%d.%m.%Y %H:%M:%S")
 
         if request:
+            
             url = request.META.get('HTTP_REFERER', '').replace('http://', 'https://')
+            domain = urlparse(url).netloc
+            
 
-            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({url}admin/order_detail/{order.id}/)'
+            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({domain}admin/order_detail/{order.id}/)'
 
         else:
             referer_url = ''
@@ -293,6 +296,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
             
 
         except Exception as e:
-            send_message(telegram_bot, telegram_group, e)
+            error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
+            send_message(telegram_bot_work, telegram_bot_work, error_message)
 
         
