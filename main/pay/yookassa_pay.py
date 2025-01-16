@@ -102,29 +102,48 @@ def create_payment(order, cart, request):
             correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
             total_corrected_sum = Decimal(0)
 
+            # Первая корректировка
             for item in items[:-1]:
-                # Корректируем цену за единицу
                 corrected_unit_price = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                 item['amount']['value'] = format_price(corrected_unit_price)
 
-                # Считаем общую сумму для текущей позиции
                 item_total = corrected_unit_price * Decimal(item['quantity'])
                 total_corrected_sum += item_total
 
-            # Последняя позиция
+            # Последняя позиция после первой корректировки
             last_item = items[-1]
             last_item_total = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-            # Пересчитываем цену за единицу последней позиции
             corrected_last_unit_price = (last_item_total / Decimal(last_item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             last_item['amount']['value'] = format_price(corrected_last_unit_price)
 
-            # Проверяем итоговую сумму
+            # Проверяем итоговую сумму после первой корректировки
+            recalculated_total = sum(Decimal(item['amount']['value']) * Decimal(item['quantity']) for item in items)
+
+            # Вторая корректировка, если суммы не совпадают
+            if recalculated_total != total_sum:
+                total_corrected_sum = Decimal(0)
+
+                # Перераспределение разницы
+                diff = total_sum - recalculated_total
+                step_correction = (diff / len(items)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+                for item in items[:-1]:
+                    corrected_unit_price = (Decimal(item['amount']['value']) + step_correction / Decimal(item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                    item['amount']['value'] = format_price(corrected_unit_price)
+
+                    item_total = corrected_unit_price * Decimal(item['quantity'])
+                    total_corrected_sum += item_total
+
+                # Корректировка последнего элемента
+                last_item = items[-1]
+                last_item_total = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                corrected_last_unit_price = (last_item_total / Decimal(last_item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                last_item['amount']['value'] = format_price(corrected_last_unit_price)
+
+            # Проверка окончательной суммы
             final_total = sum(Decimal(item['amount']['value']) * Decimal(item['quantity']) for item in items)
             if final_total != total_sum:
-                raise ValueError(f"Ошибка корректировки: итоговая сумма {final_total} не совпадает с {total_sum}")
-
-
+                raise ValueError(f"Ошибка двойной корректировки: итоговая сумма {final_total} не совпадает с {total_sum}")
 
 
 
