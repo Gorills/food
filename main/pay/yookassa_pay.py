@@ -31,6 +31,9 @@ from decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP
 import uuid
 from yookassa import Payment
 
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
+
 
 def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
@@ -147,9 +150,6 @@ def create_payment(order, cart, request):
 
 
 
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
-
         error_message = str(format_price(total_sum) + " //// " + str(total_items_sum)) + " //// " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
@@ -194,8 +194,7 @@ def create_payment(order, cart, request):
         return data
 
     except Exception as e:
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
+        
 
         error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`') + " / " + str(e)
         send_message(wo_elegram_bot, wo_telegram_group, error_message)

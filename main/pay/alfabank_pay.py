@@ -15,8 +15,7 @@ from orders.telegram import order_telegram, send_message
 from subdomains.utilites import get_protocol
 
 
-wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-wo_telegram_group = '-1001850576262'
+
 
             
 
@@ -67,6 +66,7 @@ def create_payment(order, cart, request):
         'amount': dec_to_cop(order.summ),
         'returnUrl': returnUrl,
         'failUrl': failUrl,
+        'dynamicCallbackUrl': f'{get_protocol(request)}://' + request.META['HTTP_HOST'] + '/orders/alfabank_callback/',
         "cartItems": json.dumps(items)  # Сериализуем items в строку JSON
     }
 
@@ -94,7 +94,7 @@ def create_payment(order, cart, request):
 try:
     site_name = BaseSettings.objects.get().name
 except Exception as e:
-    print(e)
+    
     site_name = ''
 
 def get_status(pay_id):

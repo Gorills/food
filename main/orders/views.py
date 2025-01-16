@@ -604,6 +604,42 @@ def order_success(request):
 
 
 
+from django.http import JsonResponse
+
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
+
+@csrf_exempt
+def alfabank_callback(request):
+    """
+    Обработка callback-уведомлений от банка
+    """
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    # Получение параметров из запроса
+    md_order = request.GET.get('mdOrder')
+    order_number = request.GET.get('orderNumber')
+    operation = request.GET.get('operation')
+    status = request.GET.get('status')
+    callback_creation_date = request.GET.get('callbackCreationDate')
+
+    # Проверка обязательных параметров
+    if not all([md_order, order_number, operation, status, callback_creation_date]):
+        return JsonResponse({'error': 'Missing required parameters'}, status=400)
+
+    error_message = f'Error: {order_number} {operation} {status}'
+    send_message(wo_elegram_bot, wo_telegram_group, error_message)
+
+    # try:
+    #     order = Order.objects.get(order_number=order_number)
+    #     order.status = status
+    #     order.save()
+    # except Order.DoesNotExist:
+    #     return JsonResponse({'error': 'Order not found'}, status=404)
+
+    # # Возвращаем успешный ответ
+    return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
 
 
 def paykeeper_error(request):

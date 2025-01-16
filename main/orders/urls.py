@@ -26,6 +26,7 @@ if pay_name == 'yookassa':
 if pay_name == 'alfabank':
     urlpatterns.append(path('error/', views.order_error, name='order_error')) 
     urlpatterns.append(path('success/', views.order_success, name='order_success')) 
+    urlpatterns.append(path('alfabank_callback/', views.alfabank_callback, name='alfabank_callback')) 
 
 if pay_name == 'paykeeper':
     urlpatterns.append(path('paykeeper/fail/', views.paykeeper_error, name='paykeeper_error')) 
