@@ -99,26 +99,22 @@ def create_payment(order, cart, request):
                 }
                 items.append(delivery)
         
-        # Используем итоговую сумму заказа для коррекции сумм всех позиций
+
+        # Коррекция сумм позиций
         total_sum = Decimal(order.summ)
         if total_sum > 0 and total_items_sum != total_sum:
             correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
             total_corrected_sum = Decimal(0)
 
-            # Применяем коррекцию ко всем позициям, кроме последней
             for item in items[:-1]:
                 item_amount = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                 item['amount']['value'] = format_price(item_amount)
                 total_corrected_sum += item_amount
 
-            # Корректируем последнюю позицию, чтобы итоговая сумма точно совпадала
             last_item = items[-1]
             last_item_amount = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             last_item['amount']['value'] = format_price(last_item_amount)
-        else:
-            total_sum = format_price(total_items_sum)
-
-        
+            
         
         # Создаем объект платежа с уникальным ключом идемпотентности
         idempotence_key = str(uuid.uuid4())
@@ -153,37 +149,14 @@ def create_payment(order, cart, request):
             'path': path
         }
 
+        
         # Возвращаем данные
-
-        send_data = {
-            "amount": {
-                "value": format_price(total_sum),
-                "currency": "RUB"
-            },
-            "confirmation": {
-                "type": "redirect",
-                "return_url": path + "/orders/confirm/" + str(order.id)
-            },
-            "capture": True,
-            "description": "Заказ №" + str(order.id),
-            "metadata": {
-                "order_id": str(order.id)
-            }, 
-            "receipt": {
-                "customer": {
-                    "full_name": order.name,
-                    "phone": str(digits_only)
-                },
-                "items": items
-            }
-        }
 
         wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
         wo_telegram_group = '-1001850576262'
 
-        error_message = str(format_price(total_sum)) + " / " + str(send_data).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
-        
         
         # Возвращаем данные
         return data
