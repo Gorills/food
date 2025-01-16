@@ -95,20 +95,27 @@ def create_payment(order, cart, request):
                 }
                 items.append(delivery)
 
-        # Коррекция сумм позиций
         total_sum = Decimal(order.summ)
         if total_sum > 0 and total_items_sum != total_sum:
             correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
             total_corrected_sum = Decimal(0)
 
             for item in items[:-1]:
-                item_amount = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                item['amount']['value'] = format_price(item_amount)
-                total_corrected_sum += item_amount
+                # Скорректированная цена единицы товара
+                corrected_unit_price = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                item['amount']['value'] = format_price(corrected_unit_price)
+                
+                # Считаем общую сумму для текущей позиции
+                item_total = corrected_unit_price * Decimal(item['quantity'])
+                total_corrected_sum += item_total
 
+            # Последняя позиция
             last_item = items[-1]
-            last_item_amount = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-            last_item['amount']['value'] = format_price(last_item_amount)
+            last_item_total = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            
+            # Рассчитываем цену единицы для последней позиции
+            corrected_last_unit_price = (last_item_total / Decimal(last_item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            last_item['amount']['value'] = format_price(corrected_last_unit_price)
 
 
 
