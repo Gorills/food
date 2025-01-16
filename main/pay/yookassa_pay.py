@@ -35,40 +35,36 @@ def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
     return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
 def create_payment(order, cart, request):
-
     try:
         path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
         
         items = []
-        
         phone = order.phone
         digits_only = ''.join(char for char in phone if char.isdigit())
-        
         sale_percent = order.sale_percent
-        
         total_items_sum = Decimal(0)
-        
+
         # Формируем список товаров
         for item in order.items.all():
             if item.price != 0:
-                # Определяем, какой объект используется: product, combo или constructor
                 if item.product:
                     product = item.product
                 elif item.combo:
                     product = item.combo
                 elif item.constructor:
                     product = item.constructor
-                
+                else:
+                    continue
+
                 # Вычисляем и форматируем цену с учётом скидки
                 price = Decimal(item.price) * (1 - Decimal(sale_percent) / 100)
                 formatted_price = format_price(price)
-                
-                # Проверяем, что цена больше нуля
+
                 if Decimal(formatted_price) > 0:
-                    total_items_sum += Decimal(formatted_price) * item.quantity
+                    total_items_sum += Decimal(formatted_price) * Decimal(item.quantity)
                     i = {
                         "description": product.name,
-                        "quantity": float(item.quantity),
+                        "quantity": int(item.quantity),  # Количество должно быть целым числом
                         "amount": {
                             "value": formatted_price,
                             "currency": "RUB"
@@ -77,10 +73,9 @@ def create_payment(order, cart, request):
                         "payment_mode": "full_prepayment",
                         "payment_subject": "commodity"
                     }
-                    
                     items.append(i)
-        
-        # Добавляем стоимость доставки, если она есть и больше нуля
+
+        # Добавляем стоимость доставки, если она есть
         if order.delivery_method == 'Доставка' and order.delivery_price > 0:
             formatted_delivery_price = format_price(order.delivery_price)
 
@@ -88,7 +83,7 @@ def create_payment(order, cart, request):
                 total_items_sum += Decimal(formatted_delivery_price)
                 delivery = {
                     "description": 'Доставка',
-                    "quantity": 1.000,
+                    "quantity": 1,
                     "amount": {
                         "value": formatted_delivery_price,
                         "currency": "RUB"
@@ -98,7 +93,6 @@ def create_payment(order, cart, request):
                     "payment_subject": "service"
                 }
                 items.append(delivery)
-        
 
         # Коррекция сумм позиций
         total_sum = Decimal(order.summ)
@@ -114,9 +108,8 @@ def create_payment(order, cart, request):
             last_item = items[-1]
             last_item_amount = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             last_item['amount']['value'] = format_price(last_item_amount)
-            
-        
-        # Создаем объект платежа с уникальным ключом идемпотентности
+
+        # Создание платежа
         idempotence_key = str(uuid.uuid4())
         payment = Payment.create({
             "amount": {
@@ -125,13 +118,13 @@ def create_payment(order, cart, request):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": path + "/orders/confirm/" + str(order.id)
+                "return_url": path + f"/orders/confirm/{order.id}"
             },
             "capture": True,
-            "description": "Заказ №" + str(order.id),
+            "description": f"Заказ №{order.id}",
             "metadata": {
                 "order_id": str(order.id)
-            }, 
+            },
             "receipt": {
                 "customer": {
                     "full_name": order.name,
