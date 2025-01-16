@@ -615,6 +615,8 @@ def alfabank_callback(request):
     Обработка callback-уведомлений от банка
     """
     if request.method != 'GET':
+        error_message = 'Invalid request method'
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
     # Получение параметров из запроса
