@@ -33,69 +33,115 @@ from yookassa import Payment
 
 
 def format_price(price):
-    return "{:.2f}".format(float(price))
-
-
-
+    # Округляем до двух знаков после запятой, как это требуется платежной системой
+    return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
 def create_payment(order, cart, request):
     try:
         path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
+        
         items = []
         phone = order.phone
         digits_only = ''.join(char for char in phone if char.isdigit())
         sale_percent = order.sale_percent
         total_items_sum = Decimal(0)
 
+        # Формируем список товаров
         for item in order.items.all():
             if item.price != 0:
-                product = item.product or item.combo or item.constructor
+                if item.product:
+                    product = item.product
+                elif item.combo:
+                    product = item.combo
+                elif item.constructor:
+                    product = item.constructor
+                else:
+                    continue
+
+                # Вычисляем и форматируем цену с учётом скидки
                 price = Decimal(item.price) * (1 - Decimal(sale_percent) / 100)
                 formatted_price = format_price(price)
 
                 if Decimal(formatted_price) > 0:
                     total_items_sum += Decimal(formatted_price) * Decimal(item.quantity)
-                    items.append({
+                    i = {
                         "description": product.name,
-                        "quantity": int(item.quantity),
-                        "amount": {"value": formatted_price, "currency": "RUB"},
+                        "quantity": int(item.quantity),  # Количество должно быть целым числом
+                        "amount": {
+                            "value": formatted_price,
+                            "currency": "RUB"
+                        },
                         "vat_code": Yookassa.objects.get().vat_code,
                         "payment_mode": "full_prepayment",
-                        "payment_subject": "commodity",
-                    })
+                        "payment_subject": "commodity"
+                    }
+                    items.append(i)
 
+        # Добавляем стоимость доставки, если она есть
         if order.delivery_method == 'Доставка' and order.delivery_price > 0:
             formatted_delivery_price = format_price(order.delivery_price)
+
             if Decimal(formatted_delivery_price) > 0:
                 total_items_sum += Decimal(formatted_delivery_price)
-                items.append({
+                delivery = {
                     "description": 'Доставка',
                     "quantity": 1,
-                    "amount": {"value": formatted_delivery_price, "currency": "RUB"},
+                    "amount": {
+                        "value": formatted_delivery_price,
+                        "currency": "RUB"
+                    },
                     "vat_code": Yookassa.objects.get().vat_code,
                     "payment_mode": "full_prepayment",
-                    "payment_subject": "service",
-                })
+                    "payment_subject": "service"
+                }
+                items.append(delivery)
 
+        # Коррекция сумм позиций
         total_sum = Decimal(order.summ)
-        if total_items_sum != total_sum:
+        if total_sum > 0 and total_items_sum != total_sum:
             correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
             total_corrected_sum = Decimal(0)
+
             for item in items[:-1]:
                 item_amount = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
                 item['amount']['value'] = format_price(item_amount)
                 total_corrected_sum += item_amount
+
             last_item = items[-1]
             last_item_amount = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             last_item['amount']['value'] = format_price(last_item_amount)
 
+
+
+
+        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+        wo_telegram_group = '-1001850576262'
+
+        error_message = str(format_price(total_sum) + " //// " + str(total_items_sum)) + " //// " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
+
+        # Создание платежа
         idempotence_key = str(uuid.uuid4())
         payment = Payment.create({
-            "amount": {"value": format_price(total_sum), "currency": "RUB"},
-            "confirmation": {"type": "redirect", "return_url": path + f"/orders/confirm/{order.id}"},
+            "amount": {
+                "value": format_price(total_sum),
+                "currency": "RUB"
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": path + f"/orders/confirm/{order.id}"
+            },
             "capture": True,
             "description": f"Заказ №{order.id}",
-            "metadata": {"order_id": str(order.id)},
-            "receipt": {"customer": {"full_name": order.name, "phone": digits_only}, "items": items},
+            "metadata": {
+                "order_id": str(order.id)
+            },
+            "receipt": {
+                "customer": {
+                    "full_name": order.name,
+                    "phone": str(digits_only)
+                },
+                "items": items
+            }
         }, idempotence_key)
 
         # Формируем данные для возврата
@@ -109,11 +155,6 @@ def create_payment(order, cart, request):
         
         # Возвращаем данные
 
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
-
-        error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
-        send_message(wo_elegram_bot, wo_telegram_group, error_message)
         
         # Возвращаем данные
         return data
