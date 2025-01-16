@@ -15,7 +15,8 @@ from orders.telegram import order_telegram, send_message
 from subdomains.utilites import get_protocol
 
 
-
+wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+wo_telegram_group = '-1001850576262'
 
             
 
