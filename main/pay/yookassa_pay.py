@@ -117,6 +117,14 @@ def create_payment(order, cart, request):
             last_item['amount']['value'] = format_price(last_item_amount)
         else:
             total_sum = format_price(total_items_sum)
+
+        # Возвращаем данные
+
+        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+        wo_telegram_group = '-1001850576262'
+
+        error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
         
         # Создаем объект платежа с уникальным ключом идемпотентности
         idempotence_key = str(uuid.uuid4())
@@ -152,13 +160,7 @@ def create_payment(order, cart, request):
         }
 
         
-        # Возвращаем данные
-
-        wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-        wo_telegram_group = '-1001850576262'
-
-        error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
-        send_message(wo_elegram_bot, wo_telegram_group, error_message)
+        
         
         # Возвращаем данные
         return data
