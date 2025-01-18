@@ -48,5 +48,6 @@ main/csv_upload
 **/db.json
 
 **/result.geojson
+**/menu.json
 main/core/rest_framework
 core/rest_framework

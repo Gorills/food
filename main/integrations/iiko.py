@@ -105,8 +105,8 @@ def load_menu(clean, product_clean):
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
 
-    # with open('menu.json', 'w', encoding='utf-8') as f:
-    #     json.dump(menu_response.json(), f, ensure_ascii=False, indent=4)
+    with open('menu.json', 'w', encoding='utf-8') as f:
+        json.dump(menu_response.json(), f, ensure_ascii=False, indent=4)
 
     for cat in menu_response.json()['itemCategories']:
         cat_name = cat['name']
@@ -137,9 +137,19 @@ def load_menu(clean, product_clean):
             item_options = product['itemSizes']
 
             weight = int(item_options[0]['portionWeightGrams'])
+
             if weight == 0:
                 weight = None
-            price = item_options[0]['prices'][0]['price']
+
+            try:
+                price = item_options[0]['prices'][0]['price']
+            except (IndexError, KeyError, TypeError):
+                price = 0
+
+            if price is None:
+                print(f"Warning: Skipping product {product_name} due to missing price.")
+                continue  # Пропустить продукт без цены
+
             image = item_options[0]['buttonImageUrl']
             try:
                 product_save = Product.objects.get(
