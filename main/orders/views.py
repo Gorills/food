@@ -521,7 +521,7 @@ def order_webhook(request):
                 order_telegram(telegram_bot, telegram_group, order, request)
                 
                 send_sms(sms_text(order.id, order.summ), order.phone)
-                create_iiko_order(order)
+                # create_iiko_order(order)
 
                 try:
 
