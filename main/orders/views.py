@@ -614,10 +614,10 @@ def alfabank_callback(request):
     """
     Обработка callback-уведомлений от банка
     """
-    if request.method != 'GET':
-        error_message = 'Invalid request method'
-        send_message(wo_elegram_bot, wo_telegram_group, error_message)
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    # if request.method != 'GET':
+    #     error_message = 'Invalid request method'
+    #     send_message(wo_elegram_bot, wo_telegram_group, error_message)
+    #     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
     # Получение параметров из запроса
     md_order = request.GET.get('mdOrder')
@@ -633,12 +633,15 @@ def alfabank_callback(request):
     error_message = f'Error: {order_number} {operation} {status}'
     send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
-    # try:
-    #     order = Order.objects.get(order_number=order_number)
-    #     order.status = status
-    #     order.save()
-    # except Order.DoesNotExist:
-    #     return JsonResponse({'error': 'Order not found'}, status=404)
+    try:
+        order = Order.objects.get(payment_id=md_order)
+        order.paid = True
+        order.save()
+        
+        order_telegram(telegram_bot, telegram_group, order)
+
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
 
     # # Возвращаем успешный ответ
     return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
