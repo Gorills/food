@@ -637,7 +637,7 @@ def alfabank_callback(request):
     send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
     try:
-        if status == 1:
+        if status == 1 or status == '1':
             order = Order.objects.get(payment_id=md_order)
             order.paid = True
             order.save()
