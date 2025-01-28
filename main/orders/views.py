@@ -627,18 +627,22 @@ def alfabank_callback(request):
     callback_creation_date = request.GET.get('callbackCreationDate')
 
     # Проверка обязательных параметров
-    if not all([md_order, order_number, operation, status, callback_creation_date]):
-        return JsonResponse({'error': 'Missing required parameters'}, status=400)
+    # if not all([md_order, order_number, operation, status, callback_creation_date]):
+
+    #     error_message = f'Error: {order_number} {operation} {status}'
+
+    #     return JsonResponse({'error': 'Missing required parameters'}, status=400)
 
     error_message = f'Error: {order_number} {operation} {status}'
     send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
     try:
-        order = Order.objects.get(payment_id=md_order)
-        order.paid = True
-        order.save()
-        
-        order_telegram(telegram_bot, telegram_group, order)
+        if status == 1:
+            order = Order.objects.get(payment_id=md_order)
+            order.paid = True
+            order.save()
+            
+            order_telegram(telegram_bot, telegram_group, order)
 
     except Order.DoesNotExist:
         return JsonResponse({'error': 'Order not found'}, status=404)
