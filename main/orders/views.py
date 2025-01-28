@@ -614,41 +614,62 @@ def alfabank_callback(request):
     """
     Обработка callback-уведомлений от банка
     """
-    # if request.method != 'GET':
-    #     error_message = 'Invalid request method'
-    #     send_message(wo_elegram_bot, wo_telegram_group, error_message)
-    #     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-    # Получение параметров из запроса
-    md_order = request.GET.get('mdOrder')
-    order_number = request.GET.get('orderNumber')
-    operation = request.GET.get('operation')
-    status = request.GET.get('status')
-    callback_creation_date = request.GET.get('callbackCreationDate')
+    if request.method != 'POST':
+        # Получение параметров из запроса
+        md_order = request.GET.get('mdOrder')
+        order_number = request.GET.get('orderNumber')
+        operation = request.GET.get('operation')
+        status = request.GET.get('status')
+        callback_creation_date = request.GET.get('callbackCreationDate')
 
-    # Проверка обязательных параметров
-    # if not all([md_order, order_number, operation, status, callback_creation_date]):
+        error_message = f'Error: {order_number} {operation} {status}'
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
-    #     error_message = f'Error: {order_number} {operation} {status}'
+        try:
+            if status == 1 or status == '1':
+                order = Order.objects.get(payment_id=md_order)
+                order.paid = True
+                order.save()
+                
+                order_telegram(telegram_bot, telegram_group, order)
 
-    #     return JsonResponse({'error': 'Missing required parameters'}, status=400)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Order not found'}, status=404)
 
-    error_message = f'Error: {order_number} {operation} {status}'
-    send_message(wo_elegram_bot, wo_telegram_group, error_message)
+        # # Возвращаем успешный ответ
+        return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
+    
+    else:
+        try:
+            data = json.loads(request.body)  # Читаем JSON из тела запроса
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    try:
-        if status == 1 or status == '1':
-            order = Order.objects.get(payment_id=md_order)
-            order.paid = True
-            order.save()
-            
-            order_telegram(telegram_bot, telegram_group, order)
+        # Получение параметров из запроса
+        md_order = data.get('mdOrder')
+        order_number = data.get('orderNumber')
+        operation = data.get('operation')
+        status = data.get('status')
+        callback_creation_date = data.get('callbackCreationDate')
 
-    except Order.DoesNotExist:
-        return JsonResponse({'error': 'Order not found'}, status=404)
+        error_message = f'Error: {order_number} {operation} {status}'
+        send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
-    # # Возвращаем успешный ответ
-    return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
+        try:
+            if str(status) == '1':  # Приводим к строке для надежности
+                order = Order.objects.get(payment_id=md_order)
+                order.paid = True
+                order.save()
+
+                order_telegram(telegram_bot, telegram_group, order)
+
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+        return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
+
+
 
 
 def paykeeper_error(request):
