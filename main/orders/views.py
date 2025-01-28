@@ -632,13 +632,16 @@ def alfabank_callback(request):
                 order.paid = True
                 order.save()
                 
+
                 order_telegram(telegram_bot, telegram_group, order)
+
+                return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
 
         except Order.DoesNotExist:
             return JsonResponse({'error': 'Order not found'}, status=404)
 
-        # # Возвращаем успешный ответ
-        return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
+        
+        
     
     else:
         try:
@@ -663,11 +666,12 @@ def alfabank_callback(request):
                 order.save()
 
                 order_telegram(telegram_bot, telegram_group, order)
+                return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
 
         except Order.DoesNotExist:
             return JsonResponse({'error': 'Order not found'}, status=404)
 
-        return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
+        
 
 
 
