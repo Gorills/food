@@ -259,18 +259,19 @@ def get_shop_settings(request):
             in_pay_delivery = False
         else:
             in_pay_delivery = True
-       
-        pay_methods_arr.append({
-            'name': 'Картой при получении',
-            'in_pay_delivery': in_pay_delivery,
-            'in_pay_pickup': True
-        })
 
-        pay_methods_arr.append({
-            'name': 'Наличными при получении',
-            'in_pay_delivery': in_pay_delivery,
-            'in_pay_pickup': True
-        })
+        if not settings.only_pay_with_pickup:
+            pay_methods_arr.append({
+                'name': 'Картой при получении',
+                'in_pay_delivery': in_pay_delivery,
+                'in_pay_pickup': True
+            })
+
+            pay_methods_arr.append({
+                'name': 'Наличными при получении',
+                'in_pay_delivery': in_pay_delivery,
+                'in_pay_pickup': True
+            })
 
     if pay_online:
         pay_methods_arr.append({

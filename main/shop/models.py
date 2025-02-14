@@ -28,6 +28,8 @@ class ShopSetup(SingletonModel):
     interval = models.PositiveIntegerField(default=30, verbose_name='Интервалы по времени доставки в минутах')
 
     only_pay_with_delivery = models.BooleanField(default=False, verbose_name='Доставка только при оплате онлайн')
+    only_pay_with_pickup = models.BooleanField(default=False, verbose_name='Самовывоз только при оплате онлайн')
+    
     text_to_pay_cart = models.CharField(max_length=250, verbose_name='Текст для оплаты в корзине', null=True, blank=True, default='Картой на сайте')
     info_to_order_anyway = models.BooleanField(default=False, verbose_name='Отправлять информацию о заказе в телеграм, даже если оплата не прошла')
     zones_delivery = models.BooleanField(default=False, verbose_name='Включить зоны доставки')
