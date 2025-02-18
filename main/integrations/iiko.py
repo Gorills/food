@@ -306,9 +306,13 @@ def get_terminal_groups():
     response = requests.post(url, json=data, headers=headers)
 
 
-    
+    print(response.json())
 
     return response.json()['terminalGroups'][0]['items'][0]['id']
+
+
+
+# get_terminal_groups()
 
 
 import re
@@ -339,7 +343,8 @@ def create_iiko_order(order, attempt=1):
     url = 'https://api-ru.iiko.services/api/1/deliveries/create'
     headers = {"Authorization": f"Bearer {token()}"}
     orgs = organization()[0]
-    terminal_group = get_terminal_groups()
+    
+    
 
     items = [
         {
@@ -384,7 +389,6 @@ def create_iiko_order(order, attempt=1):
 
     data = {
         "organizationId": orgs,
-        "terminalGroupId": terminal_group,
         "order": {
             "id": order_uuid,
             "customer": {
@@ -401,6 +405,12 @@ def create_iiko_order(order, attempt=1):
             "comment": f"{order.time} / {order.comment}" if hasattr(order, 'comment') else "",
         }
     }
+
+    try:
+        terminal_group = get_terminal_groups()
+        data['terminalGroupId'] = terminal_group
+    except:
+        pass
 
 
     if order.delivery_method == "Доставка":
