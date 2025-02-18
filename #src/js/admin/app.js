@@ -1013,8 +1013,9 @@ function get(name){
 // Обработчик события для кнопки показа уведомления
 $(document).ready(function() {
   // Функция для обращения к API и получения списка заказов
-  if (window.location.pathname === '/admin/admin_order/' && get('page') === '1') {
+  if (window.location.pathname === '/admin/admin_order/' ) {
     function fetchOrders() {
+        
         $.ajax({
             url: '/api/v1/orders/',
             type: 'GET',
@@ -1027,6 +1028,7 @@ $(document).ready(function() {
                         showNotification(order.id);
                         $(".page__refresh").load(location.href + " .page");
                     }
+                    
                 });
             },
             error: function(xhr, status, error) {
@@ -1034,7 +1036,7 @@ $(document).ready(function() {
             }
         });
     }
-
+    
     // Функция для показа уведомления о новом заказе
   
 
