@@ -35,13 +35,15 @@ wo_elegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
 wo_telegram_group = '-1001850576262'
 
 
+from decimal import Decimal, ROUND_DOWN
+
 def format_price(price):
-    # Округляем до двух знаков после запятой, как это требуется платежной системой
-    return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
+    """Форматирует цену так, чтобы всегда были две нули после запятой"""
+    return f"{price.quantize(Decimal('1'), rounding=ROUND_DOWN)}.00"
+
 def create_payment(order, cart, request):
     try:
         path = f'{get_protocol(request)}://' + request.META['HTTP_HOST']
-        
         items = []
         phone = order.phone
         digits_only = ''.join(char for char in phone if char.isdigit())
@@ -60,7 +62,7 @@ def create_payment(order, cart, request):
                 else:
                     continue
 
-                # Вычисляем и форматируем цену с учётом скидки
+                # Вычисляем цену с учетом скидки и округляем вниз
                 price = Decimal(item.price) * (1 - Decimal(sale_percent) / 100)
                 formatted_price = format_price(price)
 
@@ -68,9 +70,9 @@ def create_payment(order, cart, request):
                     total_items_sum += Decimal(formatted_price) * Decimal(item.quantity)
                     i = {
                         "description": product.name,
-                        "quantity": int(item.quantity),  # Количество должно быть целым числом
+                        "quantity": int(item.quantity),
                         "amount": {
-                            "value": formatted_price,
+                            "value": formatted_price,  # Цена всегда с .00
                             "currency": "RUB"
                         },
                         "vat_code": Yookassa.objects.get().vat_code,
@@ -89,7 +91,7 @@ def create_payment(order, cart, request):
                     "description": 'Доставка',
                     "quantity": 1,
                     "amount": {
-                        "value": formatted_delivery_price,
+                        "value": formatted_delivery_price,  # Цена всегда с .00
                         "currency": "RUB"
                     },
                     "vat_code": Yookassa.objects.get().vat_code,
@@ -98,66 +100,32 @@ def create_payment(order, cart, request):
                 }
                 items.append(delivery)
 
-
         total_sum = Decimal(order.summ)
 
         if total_sum > 0 and total_items_sum != total_sum:
-            correction_factor = total_sum / total_items_sum if total_items_sum > 0 else 1
-            total_corrected_sum = Decimal(0)
+            difference = total_sum - total_items_sum  # Разница между рассчитанной и реальной суммой
 
-            # Первая корректировка
-            for item in items[:-1]:
-                corrected_unit_price = (Decimal(item['amount']['value']) * correction_factor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                item['amount']['value'] = format_price(corrected_unit_price)
-
-                item_total = corrected_unit_price * Decimal(item['quantity'])
-                total_corrected_sum += item_total
-
-            # Последняя позиция после первой корректировки
-            last_item = items[-1]
-            last_item_total = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-            corrected_last_unit_price = (last_item_total / Decimal(last_item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-            last_item['amount']['value'] = format_price(corrected_last_unit_price)
-
-            # Проверяем итоговую сумму после первой корректировки
-            recalculated_total = sum(Decimal(item['amount']['value']) * Decimal(item['quantity']) for item in items)
-
-            # Вторая корректировка, если суммы не совпадают
-            if recalculated_total != total_sum:
-                total_corrected_sum = Decimal(0)
-
-                # Перераспределение разницы
-                diff = total_sum - recalculated_total
-                step_correction = (diff / len(items)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-                for item in items[:-1]:
-                    corrected_unit_price = (Decimal(item['amount']['value']) + step_correction / Decimal(item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                    item['amount']['value'] = format_price(corrected_unit_price)
-
-                    item_total = corrected_unit_price * Decimal(item['quantity'])
-                    total_corrected_sum += item_total
-
-                # Корректировка последнего элемента
+            # Корректируем последнюю позицию
+            if items:
                 last_item = items[-1]
-                last_item_total = (total_sum - total_corrected_sum).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                corrected_last_unit_price = (last_item_total / Decimal(last_item['quantity'])).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                last_item_total = Decimal(last_item['amount']['value']) * Decimal(last_item['quantity']) + difference
+                corrected_last_unit_price = last_item_total / Decimal(last_item['quantity'])
                 last_item['amount']['value'] = format_price(corrected_last_unit_price)
 
             # Проверка окончательной суммы
             final_total = sum(Decimal(item['amount']['value']) * Decimal(item['quantity']) for item in items)
             if final_total != total_sum:
-                raise ValueError(f"Ошибка двойной корректировки: итоговая сумма {final_total} не совпадает с {total_sum}")
+                raise ValueError(f"Ошибка корректировки: итоговая сумма {final_total} не совпадает с {total_sum}")
 
-
-
-        error_message = str(format_price(total_sum) + " //// " + str(total_items_sum)) + " //// " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
+        # Отправка отладочного сообщения
+        error_message = f"{format_price(total_sum)} //// {total_items_sum} //// {items}".replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
 
         # Создание платежа
         idempotence_key = str(uuid.uuid4())
         payment = Payment.create({
             "amount": {
-                "value": format_price(total_sum),
+                "value": format_price(total_sum),  # Цена всегда с .00
                 "currency": "RUB"
             },
             "confirmation": {
@@ -178,24 +146,14 @@ def create_payment(order, cart, request):
             }
         }, idempotence_key)
 
-        # Формируем данные для возврата
-        data = {
+        # Возвращаем данные
+        return {
             'id': payment.id,
             'order_id': order.id,
             'confirmation_url': payment.confirmation.confirmation_url,
             'path': path
         }
 
-        
-        # Возвращаем данные
-
-        
-        # Возвращаем данные
-        return data
-
     except Exception as e:
-        
-
-        error_message = str(format_price(total_sum)) + " / " + str(items).replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`') + " / " + str(e)
+        error_message = f"{format_price(total_sum)} / {items} / {e}".replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('`', '\\`')
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
-        
