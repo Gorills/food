@@ -25,12 +25,13 @@ telegram_group_work = '-1001850576262'
 from threading import Lock
 lock = Lock()
 
+import re
 
 def escape_markdown(text):
     """
     Экранирует специальные символы Markdown.
     """
-    import re
+    
     escape_chars = r'_*[]()~`>#+-=|{}.!'
     return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", text)
 
@@ -40,7 +41,7 @@ def escape_markdown_url(url):
     Экранирует символы Markdown в URL.
     """
     import re
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    escape_chars = r'_*[]()~>#+-=|{}.!'
     return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", url)
 
 
@@ -223,13 +224,16 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
             
             url = request.META.get('HTTP_REFERER', '').replace('http://', 'https://')
             domain = urlparse(url).netloc
-            
+            domain = str(domain).replace('www.', '').replace('https://', '').replace('http://', '')
 
-            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({domain}/admin/order_detail/{order.id}/)'
+            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта](https://{domain}/admin/order_detail/{order.id}/)'
+
 
         else:
             referer_url = ''
 
+
+        print(referer_url)
         
 
         if order.delivery_method == 'Доставка':
