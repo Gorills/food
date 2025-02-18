@@ -49,18 +49,23 @@ def organization():
 
     for org in response.json()['organizations']:
         org_list.append(org['id'])
+
+
     
     return org_list
+
+
 
 
 def get_menu():
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token()}"}
     response = requests.post(url, headers=headers)
-    
+        
+
     return response.json()
 
-
+# get_menu()
 
 # organization()
 
@@ -282,7 +287,7 @@ def get_order_types():
 
     response = requests.post(url, json=data, headers=headers)
 
-    
+    # print(response.json())
     
     return response.json()
 
@@ -466,7 +471,7 @@ def background_order_status_check(order, order_id, attempt):
 
 
 
-# check_order_status("750a6c1e-4b05-41d7-9aa0-3fc4f887a094")
+# check_order_status("dedddb59-a96b-4ff1-8bbc-7d78917e88ab")
 
-# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=578), "8f99da27-4320-402a-83aa-c825d642931d", 1)).start()
-# create_iiko_order(Order.objects.get(id=582))
+# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=578), "220fb0f7-e88d-4ce3-8f04-05385efc3b35", 1)).start()
+# create_iiko_order(Order.objects.get(id=613))
