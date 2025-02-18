@@ -37,9 +37,9 @@ wo_telegram_group = '-1001850576262'
 
 def format_price(price):
     # Округляем до двух знаков после запятой, как это требуется платежной системой
-    # return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
+    return str(Decimal(price).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
 
-    return f"{price.quantize(Decimal('1'), rounding=ROUND_HALF_UP)}.00"
+    # return f"{price.quantize(Decimal('1'), rounding=ROUND_HALF_UP)}.00"
 
 
 
