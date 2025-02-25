@@ -445,11 +445,11 @@ def check_order_status(order_id):
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        # print(response.json())
+        print(response.json())
         return response.json()
     else:
         print(f"Failed to check order status: {response.status_code}")
-        # print(response.json())
+        print(response.json())
         return None
 
 
@@ -471,7 +471,7 @@ def background_order_status_check(order, order_id, attempt):
 
 
 
-# check_order_status("dedddb59-a96b-4ff1-8bbc-7d78917e88ab")
+# check_order_status("4e7c4e67-1981-4539-9a8e-1632bdc250cc")
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=578), "220fb0f7-e88d-4ce3-8f04-05385efc3b35", 1)).start()
 # create_iiko_order(Order.objects.get(id=613))

@@ -226,7 +226,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
             domain = urlparse(url).netloc
             domain = str(domain).replace('www.', '').replace('https://', '').replace('http://', '')
 
-            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта](https://{domain}/admin/order_detail/{order.id}/)'
+            referer_url = f'Ссылка на заказ: https://{domain}/admin/order_detail/{order.id}/'
 
 
         else:
