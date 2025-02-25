@@ -904,6 +904,12 @@ def order_detail(request, pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
 
+    delivery = Delivery.objects.filter(active=True).first()
+    if not delivery:
+        delivery = False
+    else:
+        delivery = True
+
     user = request.user
 
     try:
@@ -914,6 +920,7 @@ def order_detail(request, pk):
     context = {
         'order': order,
         'form': form,
+        'delivery': delivery
     }
 
 
