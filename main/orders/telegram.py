@@ -24,7 +24,7 @@ telegram_group_work = '-1001850576262'
 
 from threading import Lock
 lock = Lock()
-
+from urllib.parse import quote
 import re
 
 def escape_markdown(text):
@@ -38,9 +38,8 @@ def escape_markdown(text):
 
 def escape_markdown_url(url):
     """
-    Экранирует символы Markdown в URL.
+    Экранирует специальные символы Markdown в URL.
     """
-    import re
     escape_chars = r'_*[]()~>#+-=|{}.!'
     return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", url)
 
@@ -226,7 +225,11 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
             domain = urlparse(url).netloc
             domain = str(domain).replace('www.', '').replace('https://', '').replace('http://', '')
 
-            referer_url = f'Ссылка на заказ: https://{domain}/admin/order_detail/{order.id}/'
+            safe_url = quote(f"https://{domain}/admin/order_detail/{order.id}/", safe=':/')
+            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({safe_url})'
+
+
+            
 
 
         else:
