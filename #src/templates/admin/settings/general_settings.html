@@ -40,17 +40,155 @@
 
     
 
-        <form action="." class="form" method="post" enctype="multipart/form-data">
-        
-            {% csrf_token %}
-            <h3 class="form__title">Основные настройки</h3>
-
-            {{ form.as_p }}
-            {{ form.media }}
-            
-
-            <button class="btn btn--primary">Сохранить</button>
-        </form>
+    <form method="post">
+        {% csrf_token %}
+    
+        <div class="block">
+            <h3>Информация о компании</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.company_info %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Контактная информация</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.contact_info %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Настройки SMS</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.sms_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Настройки геолокации</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.geo_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Настройки заказа</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.order_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Адрес и местоположение</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.address_info %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Социальные сети</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.social_links %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Настройки SEO</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.seo_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Контент</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.text_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block">
+            <h3>Настройки дизайна</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.design_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="block block--dop">
+            <h3>Дополнительные настройки</h3>
+            {% for field in form %}
+                {% if field.name in form.grouped_fields.other_settings %}
+                    <div class="field-wrapper">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <button type="submit" class="btn btn--primary">Сохранить</button>
+    </form>
+    
     
 
     {% comment %}<div class="page__wrap">

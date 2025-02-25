@@ -924,3 +924,85 @@ label {
         
     }
 }
+
+
+.block {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    &--dop {
+        .field-wrapper {
+            display: flex;
+        }
+    }
+    .image-widget {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #fafafa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // max-width: 300px;
+        margin-bottom: 20px;
+    }
+    
+    .image-preview-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .image-preview-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .image-preview {
+        max-height: 100px;
+        max-width: 100px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 5px;
+        background-color: white;
+    }
+    
+    .image-options {
+        margin-top: 5px;
+    }
+    
+    .delete-label {
+        font-size: 14px;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .image-upload-container {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+    
+    input[type="file"] {
+        display: block;
+        margin: 5px auto;
+        padding: 6px;
+        font-size: 14px;
+    }
+    
+    
+}
+
+
+

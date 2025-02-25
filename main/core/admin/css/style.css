@@ -832,6 +832,81 @@ label span {
   display: block;
 }
 
+.block {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.block h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.block--dop .field-wrapper {
+  display: flex;
+}
+
+.block .image-widget {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.block .image-preview-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.block .image-preview-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.block .image-preview {
+  max-height: 100px;
+  max-width: 100px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  background-color: white;
+}
+
+.block .image-options {
+  margin-top: 5px;
+}
+
+.block .delete-label {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.block .image-upload-container {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.block input[type=file] {
+  display: block;
+  margin: 5px auto;
+  padding: 6px;
+  font-size: 14px;
+}
+
 .sidebar {
   width: 270px;
   background-color: #fff;

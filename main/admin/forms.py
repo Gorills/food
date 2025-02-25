@@ -2236,323 +2236,158 @@ class EmailSettingsForm(forms.ModelForm):
 
 
 
+from django.forms.widgets import ClearableFileInput
+from django.utils.safestring import mark_safe
+
+class ImagePreviewWidget(ClearableFileInput):
+    """
+    Виджет для предпросмотра изображения с возможностью загрузки нового файла.
+    """
+
+    def render(self, name, value, attrs=None, renderer=None):
+        """
+        Отображает текущее изображение, если оно есть, и поле загрузки нового файла.
+        """
+        attrs = attrs or {}
+        file_input = super().render(name, value, attrs, renderer)
+
+        preview_html = ""
+        if value and hasattr(value, "url"):
+            preview_html = f"""
+                <div class="image-preview-wrapper">
+                    <div class="image-preview-box">
+                        <img src="{value.url}" class="image-preview">
+                        
+                    </div>
+                </div>
+            """
+
+        file_input_html = f"""
+            <div class="image-upload-container">
+                {file_input}
+            </div>
+        """
+
+        return mark_safe(f'<div class="image-widget">{preview_html}{file_input_html}</div>')
+
+
+
 class SetupForm(forms.ModelForm):
     text = forms.CharField(label='Текст на главной странице', required=False, widget=CKEditorUploadingWidget())
+
     class Meta:
         model = BaseSettings
         fields = [
-            'name',
-            'ur_name',
-            'ur_address',
-            'inn',
-            'kpp',
-            'ogrn',
-            'okpo',
-            'phone',
-            'phone_desc',
-            'email',
-            'email_for_order',
-            'telegram_bot',
-            'telegram_group',
-            'sms_pilot_apikey',
-            'sms_text',
-            'order_done_title',
-            'order_done_text',
-            
-            'city',
-            'address',
-            'site_link',
-            'site_desc',
-            'vk',
-            'vk_desc',
-            'whatsapp',
-            'whatsapp_desc',
-            'telegram',
-            'telegram_desc',
-            'viber',
-            'viber_desc',
-            'ok',
-            'ok_desc',
-            'instagram',
-            'instagram_desc',
-            'meta_title',
-            'meta_description',
-            'meta_keywords',
-            'meta_h1',
-            'text',
-            'social_image',
-            
-            'logo_dark',
-            'logo_height',
-            'logo_width',
-            'image_compression',
-            'icon_ico',
-            'icon_png',
-            'icon_svg',
-            'pay_image',
-            'theme_color',
-            'active',
-            'hide_razrab_link',
-            'sms',
-            'debugging_mode',
-
-
+            'name', 'ur_name', 'ur_address', 'inn', 'kpp', 'ogrn', 'okpo',
+            'phone', 'phone_desc', 'email', 'email_for_order', 'telegram_bot', 'telegram_group',
+            'sms_pilot_apikey', 'sms_text', 'api_geo', 'api_geocoder',
+            'order_done_title', 'order_done_text', 'city', 'address', 'site_link', 'site_desc',
+            'vk', 'vk_desc', 'whatsapp', 'whatsapp_desc', 'telegram', 'telegram_desc',
+            'viber', 'viber_desc', 'ok', 'ok_desc', 'instagram', 'instagram_desc',
+            'meta_title', 'meta_description', 'meta_keywords', 'meta_h1', 'text', 'social_image',
+            'logo_dark', 'logo_height', 'logo_width', 'image_compression', 'icon_ico', 'icon_png', 'icon_svg',
+            'pay_image', 'theme_color', 'active', 'hide_razrab_link', 'sms', 'debugging_mode'
         ]
-        widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Название сайта',
-                
-            }),
-            'ur_name': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Юридическое название',
-            }),
-            'ur_address': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Юридическое адрес',
-            }),
-            'inn': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'ИНН',
-            }),
-            'kpp': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'КПП',
-            }),
-            'ogrn': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'ОГРН',
-            }),
-            'okpo': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'ОКПО',
-            }),
-            'vk': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на VK',
-                
-            }),
-            'whatsapp': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на WhatsApp',
-                
-            }),
-            'telegram': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на Telegram',
-                
-            }),
-            'viber': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на Viber',
-                
-            }),
-            'ok': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на OK',
-                
-            }),
-            'instagram': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на Instagram',
-            }),
-            'site_link': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ссылка на сайт',
-                
-            }),
-            'phone_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание телефона',
-            }),
-            'site_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание сайта',
-                
-            }),
-            'vk_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание VK',
-                
-            }),
-            'whatsapp_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание WhatsApp',
-                
-            }),
-            'telegram_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание Telegram',
-                
-            }),
-            'viber_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание Viber',
-                
-            }),
-            'ok_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание OK',
-                
-            }),
-            'instagram_desc': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Описание Instagram',
-                
-            }),
 
-
-            'phone': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Телефон',
-                
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'input',
-                'placeholder': 'Email для клиентов'
-            }),
-            'telegram_bot': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Телеграм бот TOKEN'
-            }),
-            'telegram_group': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Группа в телеграме'
-            }),
-            'email_for_order': forms.EmailInput(attrs={
-                'class': 'input',
-                'placeholder': 'Email для заявок'
-            }),
-            'copy_year': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Год копирайта',
-                
-            }),
-            'city': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Город',
-                
-            }),
-            'copy': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Копирайт',
-                
-            }),
-            'address': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Адрес',
-                
-            }),
-            'meta_h1': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Заголовок H1',
-                
-            }),
-            'meta_title': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Мета заголовок',
-                
-            }),
-            'meta_description': forms.Textarea(attrs={
-                'class': 'input',
-                'placeholder': 'Мета описание',
-                
-            }),
-            'meta_keywords': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ключевые слова',
-                
-            }),
-            'time_zone': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ключевые слова',
-                
-            }),
-            'theme_color': forms.TextInput(attrs={
-                
-                'placeholder': 'Основной цвет',
-                'type': 'color'
-                
-            }),
-           'sms_pilot_apikey': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Ключевые слова',
-                
-            }),
-            'sms_text': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Текст сообщения. Например: Поступил заказ на сумму {summ}. Номер заказа {order}',
-                
-            }),
-            'order_done_title': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Заголовок',
-            }),
-            'order_done_text': forms.TextInput(attrs={
-                'class': 'input',
-                'placeholder': 'Текст',
-            }),
-            'logo_height': forms.TextInput(attrs={
-                'class': 'input',
-            }),
-            'logo_width': forms.TextInput(attrs={
-                'class': 'input',
-            }),
-            'image_compression': forms.NumberInput(attrs={
-                'class': 'input',
-                'min': 1,
-                'max': 10
-
-            }),
-           
-           
-        }
         labels = {
-            'name': 'Название сайта',
-            'ur_name': 'Юридическое название',
-            'ur_address': 'Юридический адрес',
-            'inn': 'ИНН',
-            'kpp': 'КПП',
-            'ogrn': 'ОГРН',
-            'okpo': 'ОКПО',
-            'phone': 'Телефон',
-            'email': 'Email для клиентов',
-            'email_for_order': 'Email для заявок',
-            'telegram_bot': 'Телеграм бот TOKEN',
-            'telegram_group': 'Группа в телеграм',
-            'sms_pilot_apikey': 'API ключ от smspilot.ru',
-            'sms_text': 'Текст сообщения при оформлении заказа (Зарегистрируйте шаблон на сайте https://smspilot.ru/. Сообщение будет отправляться только после регистрации шаблона. В тексте сообщения используйте {order}, для указания номера заказа, {summ} для указания суммы)',
+            "name": "Название сайта",
+            "ur_name": "Юридическое название",
+            "ur_address": "Юридический адрес",
+            "inn": "ИНН",
+            "kpp": "КПП",
+            "ogrn": "ОГРН",
+            "okpo": "ОКПО",
+            "phone": "Телефон",
+            "phone_desc": "Описание телефона",
+            "email": "Email для клиентов",
+            "email_for_order": "Email для заявок",
+            "telegram_bot": "Телеграм-бот (TOKEN)",
+            "telegram_group": "Группа в Телеграме",
+            "sms_pilot_apikey": "API ключ SMS Pilot",
+            "sms_text": "Текст SMS при заказе",
             
-            'order_done_title': 'Заголовок в сообщении об оформлении заказа',
-            'order_done_text': 'Текст в сообщении об оформлении заказа',
-            
-            'copy_year': 'Год копирайта',
-            'copy': 'Копирайт',
-            'city': 'Город',
-            'address': 'Адрес',
-            'time_zone': 'Часовой пояс',
-
-            
-            'meta_h1': 'Заголовок H1',
-            'meta_title': 'Мета заголовок',
-            'meta_description': 'Мета описание',
-            'meta_keywords': 'Ключевые слова',
-            'social_image': 'Изображение для соц.сетей',
-            'logo_dark': 'Логотип в шапке',
-            'logo_height': 'Высота логотипа (по умолчанию 60px)',
-            'logo_width': 'Ширина логотипа',
-            'logo_light': 'Логотип в подвале',
-            'image_compression': 'Улучшить качество изображений в Х раз',
-            
-            'icon_ico': 'Иконка .ico',
-            'icon_png': 'Иконка .png',
-            'icon_svg': 'Иконка .svg',
-            'pay_image': 'Изображение банков',
-            'theme_color': 'Основной цвет',
-            
-            'active': 'Разрешить индексацию',
-            'sms': 'Разрешить отправку смс сообщений для регистрации и подтверждения заказов',
-            'debugging_mode': 'Режим разработки (вывод текстовой информации об ошибках)',
-           
+            "order_done_title": "Заголовок при успешном заказе",
+            "order_done_text": "Текст при успешном заказе",
+            "city": "Город",
+            "address": "Адрес",
+            "site_link": "Ссылка на сайт",
+            "site_desc": "Описание сайта",
+            "vk": "Ссылка на VK",
+            "vk_desc": "Описание VK",
+            "whatsapp": "Ссылка на WhatsApp",
+            "whatsapp_desc": "Описание WhatsApp",
+            "telegram": "Ссылка на Telegram",
+            "telegram_desc": "Описание Telegram",
+            "viber": "Ссылка на Viber",
+            "viber_desc": "Описание Viber",
+            "ok": "Ссылка на Одноклассники",
+            "ok_desc": "Описание Одноклассники",
+            "instagram": "Ссылка на Instagram",
+            "instagram_desc": "Описание Instagram",
+            "meta_title": "Мета-заголовок",
+            "meta_description": "Мета-описание",
+            "meta_keywords": "Мета-ключевые слова",
+            "meta_h1": "Заголовок H1",
+            "text": "Текст на главной странице",
+            "social_image": "Изображение для соцсетей",
+            "logo_dark": "Логотип (темный)",
+            "logo_height": "Высота логотипа",
+            "logo_width": "Ширина логотипа",
+            "image_compression": "Степень сжатия изображений",
+            "icon_ico": "Иконка (.ico)",
+            "icon_png": "Иконка (.png)",
+            "icon_svg": "Иконка (.svg)",
+            "pay_image": "Изображение способов оплаты",
+            "theme_color": "Цветовая тема",
+            "active": "Разрешить индексацию",
+            "hide_razrab_link": "Скрыть ссылку на разработчика",
+            "sms": "Разрешить SMS-уведомления",
+            "debugging_mode": "Режим отладки"
         }
+
+        widgets = {
+            'social_image': ImagePreviewWidget(),
+            'logo_dark': ImagePreviewWidget(),
+            'icon_ico': ImagePreviewWidget(),
+            'icon_png': ImagePreviewWidget(),
+            'icon_svg': ImagePreviewWidget(),
+            'pay_image': ImagePreviewWidget(),
+            'theme_color': forms.TextInput(attrs={
+               
+                'placeholder': 'Цвет текста (не обязательно)',
+                'type': 'color'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Группируем поля по секциям
+        self.grouped_fields = {
+            "company_info": ["name", "ur_name", "ur_address", "inn", "kpp", "ogrn", "okpo"],
+            "contact_info": ["phone", "phone_desc", "email", "email_for_order", "telegram_bot", "telegram_group"],
+            "sms_settings": ["sms_pilot_apikey", "sms_text"],
+            "geo_settings": ["api_geo", "api_geocoder"],
+            "order_settings": ["order_done_title", "order_done_text"],
+            "address_info": ["city", "address"],
+            "site_info": ["site_link", "site_desc"],
+            "social_links": [
+                "vk", "vk_desc", "whatsapp", "whatsapp_desc", "telegram", "telegram_desc",
+                "viber", "viber_desc", "ok", "ok_desc", "instagram", "instagram_desc"
+            ],
+            "seo_settings": ["meta_title", "meta_description", "meta_keywords", "meta_h1"],
+            "text_settings": ["text"],
+            "design_settings": [
+                "logo_dark", "logo_height", "logo_width", "image_compression",
+                "icon_ico", "icon_png", "icon_svg", "pay_image", "social_image", "theme_color"
+            ],
+            "other_settings": ["active", "hide_razrab_link", "sms", "debugging_mode"]
+        }
+
+        # Добавляем CSS-классы для каждой группы
+        for group, fields in self.grouped_fields.items():
+            for field in fields:
+                if field in self.fields:
+                    widget = self.fields[field].widget
+                    if not isinstance(widget, forms.CheckboxInput):  # Исключаем чекбоксы
+                        widget.attrs.update({"class": f"input {group}"})
