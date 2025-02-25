@@ -43,7 +43,7 @@
     <form method="post">
         {% csrf_token %}
     
-        <div class="block">
+        <div class="block-form">
             <h3>Информация о компании</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.company_info %}
@@ -56,7 +56,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Контактная информация</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.contact_info %}
@@ -69,7 +69,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Настройки SMS</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.sms_settings %}
@@ -82,7 +82,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Настройки геолокации</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.geo_settings %}
@@ -95,7 +95,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Настройки заказа</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.order_settings %}
@@ -108,7 +108,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Адрес и местоположение</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.address_info %}
@@ -121,7 +121,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Социальные сети</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.social_links %}
@@ -134,7 +134,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Настройки SEO</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.seo_settings %}
@@ -147,7 +147,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Контент</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.text_settings %}
@@ -160,7 +160,7 @@
             {% endfor %}
         </div>
     
-        <div class="block">
+        <div class="block-form">
             <h3>Настройки дизайна</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.design_settings %}
@@ -173,7 +173,7 @@
             {% endfor %}
         </div>
     
-        <div class="block block--dop">
+        <div class="block-form block--dop">
             <h3>Дополнительные настройки</h3>
             {% for field in form %}
                 {% if field.name in form.grouped_fields.other_settings %}
