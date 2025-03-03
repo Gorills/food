@@ -1,4 +1,5 @@
 from decimal import Decimal, ROUND_DOWN
+from actions.models import Action
 from orders.telegram import send_message
 from rest_framework import viewsets, mixins
 from rest_framework import status
@@ -7,7 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from pytils.translit import slugify
 
-from .serializers import BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, OrderViewSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
+from .serializers import ActionSerializer, BaseSettingsSerializer, ComboSerializer, DopItemsSerializer, FoodConstructorSerializer, OrderSerializer, OrderViewSerializer, ShopSetupSerializer, CategorySerializer, ProductSerializer
 
 from accounts.models import UserProfile, LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus
 from blog.models import BlogSetup, BlogCategory, Post, PostBlock
@@ -160,6 +161,13 @@ class CategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
 class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Product.objects.filter(status=True)
     serializer_class = ProductSerializer
+
+
+@api_view(['GET'])
+def actions(request):
+    actions = Action.objects.filter(active=True)
+    serializer = ActionSerializer(actions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

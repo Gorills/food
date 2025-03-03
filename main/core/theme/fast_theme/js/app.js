@@ -490,7 +490,8 @@ function updateDeliveryType() {
         document.getElementById("check-delivery").style.display = 'flex';
         
     }
-    retrieveFromLocalStorage()
+    retrieveFromLocalStorage();
+    
     
   }
 
@@ -502,6 +503,7 @@ function updateDeliveryType() {
     localStorage.setItem("deliveryType", deliveryType);
     retrieveFromLocalStorage();
     updateAll()
+    checkActionsProducts();
   }
   
   function retrieveFromLocalStorage() {
@@ -522,6 +524,7 @@ function updateDeliveryType() {
       localStorage.setItem('order', JSON.stringify(order));
   
       updateDeliveryInfo(deliveryTypeText)
+      checkActionsProducts();
     } 
   
   
@@ -1102,8 +1105,11 @@ async function maxBallsPay() {
     // console.log(total_price, percent_pay_pickup, percent_pay, balls, max_active_balls);
     
     // console.log(max_active_balls,order_balls)
+    let actionRestrictions = JSON.parse(localStorage.getItem('actionRestrictions')) || {};
+
+
     let innerHtml = '';
-    if (order.promo_discount <= 0) {
+    if (order.promo_discount <= 0 && actionRestrictions.block_balls != true) {
         
         if (max_active_balls > 0 && order_balls == 0) {
             innerHtml = `
@@ -3108,12 +3114,14 @@ async function addToCart(itemId, name, price, image, optionsIdString, type) {
 
     cart[id] = itemInfo;
     localStorage.setItem('cart', JSON.stringify(cart));
+    console.log('Товар добавлен в корзину:', itemInfo);
 
     showTemporaryBlock(name)
     fetchRelatedItems();
     updateAll();
     refreshBalls();
     checkProducts();
+    checkActionsProducts();
 }
 
 
@@ -3195,6 +3203,189 @@ $(document).on('click', '.cart__item-option', function() {
     }
     
 });
+
+
+
+async function checkActionsProducts() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    console.log("📦 Корзина:", cart);
+
+    const deliveryType = parseInt(localStorage.getItem("deliveryType")) || 0;
+    console.log("🚚 Тип доставки:", deliveryType === 0 ? "Самовывоз" : "Доставка");
+
+    try {
+        let response = await fetch('/api/v1/actions/');
+        if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
+        
+        let actions = await response.json();
+        console.log("🔥 Полученные акции:", actions);
+
+        // Фильтруем акции по типу доставки
+        const filteredActions = actions.filter(action => 
+            (deliveryType === 0 && action.active_in_pickup) || 
+            (deliveryType === 1 && action.active_in_delivery)
+        );
+        console.log("🔥 Активные акции для текущего типа доставки:", filteredActions);
+
+        let giftItems = JSON.parse(localStorage.getItem('giftItems')) || [];
+        console.log("🎁 Начальные подарки:", giftItems);
+
+        // Обрабатываем акции типа "summ" отдельно
+        const summActions = filteredActions.filter(action => action.action_type === "summ");
+        const appliedSummGiftId = await checkSummActions(summActions, cart, giftItems);
+
+        // Обрабатываем остальные акции (например, "plus") и собираем применённые подарки
+        const appliedPlusGiftIds = [];
+        for (const action of filteredActions) {
+            if (action.action_type === "plus") {
+                const appliedGiftId = await checkPlusAction(action, cart, giftItems);
+                if (appliedGiftId) appliedPlusGiftIds.push(appliedGiftId);
+            }
+        }
+
+        // Удаляем подарки, которые больше не соответствуют активным акциям
+        const validGiftIds = filteredActions.map(action => action.gift_product);
+        giftItems = giftItems.filter(gift => validGiftIds.includes(gift.id));
+
+        // Собираем ID всех применённых подарков
+        const appliedGiftIds = [];
+        if (appliedSummGiftId) appliedGiftIds.push(appliedSummGiftId);
+        appliedPlusGiftIds.forEach(id => appliedGiftIds.push(id));
+
+        // Проверяем блокировку только для акций, которые реально применены
+        const appliedActions = filteredActions.filter(action => appliedGiftIds.includes(action.gift_product));
+        const actionRestrictions = {
+            block_balls: appliedActions.some(action => action.block_balls),
+            block_discount: appliedActions.some(action => action.block_discount)
+        };
+        console.log("🔒 Ограничения акций (только для применённых):", actionRestrictions);
+        localStorage.setItem('actionRestrictions', JSON.stringify(actionRestrictions));
+
+        console.log("🎁 Подарки после обработки:", giftItems);
+        localStorage.setItem('giftItems', JSON.stringify(giftItems));
+
+        const giftsContainer = document.getElementById('gifts');
+        if (!giftsContainer) {
+            console.error("🚨 Элемент #gifts не найден в DOM");
+            return;
+        }
+
+        giftsContainer.innerHTML = '';
+
+        if (giftItems.length === 0) {
+            document.getElementById('giftsTitle').hidden = true;
+        } else {
+            document.getElementById('giftsTitle').hidden = false;
+            giftItems.forEach(gift => {
+                const giftElement = document.createElement('li');
+                giftElement.classList.add('cart__item');
+                giftElement.innerHTML = `
+                    <div class="cart__item-info">
+                        <img src="${gift.image}" alt="${gift.name}" class="cart__item-image">
+                        <div class="cart__item-details">
+                            <h4 class="cart__item-name">${gift.name}</h4>
+                        </div>
+                    </div>
+                `;
+                giftsContainer.appendChild(giftElement);
+            });
+        }
+
+    } catch (error) {
+        console.error("🚨 Ошибка загрузки акций:", error);
+    }
+}
+
+async function checkSummActions(summActions, cart, giftItems) {
+    let totalSum = Object.values(cart).reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
+    console.log(`🛒 Сумма корзины: ${totalSum}`);
+
+    if (summActions.length === 0) return null;
+
+    const applicableAction = summActions
+        .filter(action => totalSum >= action.summ)
+        .sort((a, b) => b.summ - a.summ)[0];
+
+    const summGiftIds = summActions.map(action => action.gift_product);
+
+    if (applicableAction) {
+        console.log(`🛒 Применяем акцию SUMM (нужно: ${applicableAction.summ}, подарок: ${applicableAction.gift_product})`);
+        
+        giftItems
+            .filter(gift => summGiftIds.includes(gift.id) && gift.id !== applicableAction.gift_product)
+            .forEach(gift => {
+                console.log(`❌ Удаляем неподходящий подарок от акции SUMM (ID: ${gift.id})`);
+                removeGiftProductFromGiftItems(gift.id, giftItems);
+            });
+
+        if (!giftItems.some(item => item.id === applicableAction.gift_product)) {
+            await addGiftProductToGiftItems(applicableAction.gift_product, giftItems);
+        }
+        return applicableAction.gift_product; // Возвращаем ID применённого подарка
+    } else {
+        giftItems
+            .filter(gift => summGiftIds.includes(gift.id))
+            .forEach(gift => {
+                console.log(`❌ Удаляем подарок от акции SUMM (ID: ${gift.id}), сумма не достигнута`);
+                removeGiftProductFromGiftItems(gift.id, giftItems);
+            });
+        return null;
+    }
+}
+
+async function checkPlusAction(action, cart, giftItems) {
+    let cartProductIds = Object.values(cart).map(item => parseInt(item.itemId));
+    console.log(`🛒 Проверяем акцию PLUS (нужно: ${JSON.stringify(action.product)}, в корзине: ${JSON.stringify(cartProductIds)})`);
+
+    let allProductsInCart = action.product.every(productId => cartProductIds.includes(parseInt(productId)));
+    if (allProductsInCart) {
+        if (!giftItems.some(item => item.id === action.gift_product)) {
+            await addGiftProductToGiftItems(action.gift_product, giftItems);
+        }
+        return action.gift_product; // Возвращаем ID применённого подарка
+    } else {
+        if (giftItems.some(item => item.id === action.gift_product)) {
+            removeGiftProductFromGiftItems(action.gift_product, giftItems);
+        }
+        return null;
+    }
+}
+
+async function addGiftProductToGiftItems(giftProductId, giftItems) {
+    if (!giftItems.some(item => item.id === giftProductId)) {
+        let response = await fetch('/api/v1/products/' + giftProductId + '/');
+        if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
+        
+        let product = await response.json();
+        let itemInfo = {
+            id: giftProductId,
+            itemId: giftProductId,
+            type: "gift",
+            name: product.name,
+            price: parseFloat(product.price),
+            image: product.thumb,
+            quantity: 1,
+        };
+        giftItems.push(itemInfo);
+        console.log(`🎁 Подарок (ID ${giftProductId}) добавлен.`);
+    }
+}
+
+function removeGiftProductFromGiftItems(giftProductId, giftItems) {
+    const index = giftItems.findIndex(item => item.id === giftProductId);
+    if (index !== -1) {
+        giftItems.splice(index, 1);
+        console.log(`❌ Подарок (ID ${giftProductId}) удален.`);
+    }
+}
+
+checkActionsProducts();
+
+
+
+
+
+
 
 
 
@@ -3458,7 +3649,9 @@ function minusFromCart(itemId) {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
     refreshBalls();
-    checkProducts()
+    checkProducts();
+    checkActionsProducts();
+
 }
 
 function plusFromCart(itemId) {
@@ -3469,7 +3662,8 @@ function plusFromCart(itemId) {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll()
     refreshBalls();
-    checkProducts()
+    checkProducts();
+    checkActionsProducts();
 }
 
 $(document).on('click','.cart__plusminus', function(e) {
@@ -3493,6 +3687,7 @@ function removeFromCart() {
     document.getElementById('cart__related-row').style.display = 'none';
     updateAll();
     refreshBalls();
+    checkActionsProducts();
     
 }
 
@@ -3510,6 +3705,7 @@ $(document).on('click','.cart__remove', function(e) {
     updateAll()
     refreshBalls();
     checkProducts();
+    checkActionsProducts();
 })
 
 // Функция для очистки корзины
@@ -3521,7 +3717,7 @@ function clearCart() {
     
     displayCart();
     getTotalCount();
-
+    checkActionsProducts();
     let order = JSON.parse(localStorage.getItem('order'));
 
     $('.order__input').each(function() {
@@ -3774,12 +3970,31 @@ $(document).on('submit', '.coupon-form', async function(e) {
 
     let order = JSON.parse(localStorage.getItem('order'));
 
-    console.log(order);
+    
 
+    let actionRestrictions = JSON.parse(localStorage.getItem('actionRestrictions')) || {};
+
+
+    if (actionRestrictions.block_discount == true) {
+
+        $('.coupon-form__input').addClass('order__input--error');
+        $('.coupon-form__input').val('').attr('placeholder', 'Скидка временно заблокирована');
+
+        order.promo = '';
+        order.promo_discount = 0;
+        localStorage.setItem('order', JSON.stringify(order));
+        updateAll();
+
+        return;
+    }
     if (order.bonuses_pay > 0) {
 
         $('.coupon-form__input').addClass('order__input--error');
         $('.coupon-form__input').val('').attr('placeholder', 'В заказе уже используются баллы');
+        order.promo = '';
+        order.promo_discount = 0;
+        localStorage.setItem('order', JSON.stringify(order));
+        updateAll();
 
         return;
     }

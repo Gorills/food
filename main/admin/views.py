@@ -9,11 +9,12 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import ActionForm, AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardHistory, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
 from integrations.models import Integrations
+from actions.models import Action
 from subdomains.models import Subdomain
 from delivery.models import Delivery
 
@@ -619,6 +620,70 @@ def font_settings(request):
 
 
 # !!! МАРКЕТИНГ !!!
+# Акции
+@check_user_rights(['add_propmo'])
+def admin_actions(request):
+
+    actions = Action.objects.all()
+
+    context = {
+        'actions': actions
+    }
+
+
+
+    return render(request, 'marketing/actions/actions.html', context)
+
+
+
+@check_user_rights(['add_propmo'])
+def add_action(request):
+
+    form = ActionForm()
+
+    if request.method == 'POST':
+        form = ActionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_actions')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/actions/add_action.html', context)
+
+
+@check_user_rights(['add_propmo'])
+def edit_action(request, pk):
+    action = Action.objects.get(id=pk)
+    form = ActionForm(instance=action)
+
+    if request.method == 'POST':
+        form = ActionForm(request.POST, instance=action)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_actions')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'marketing/actions/add_action.html', context)
+
+
+@check_user_rights(['add_propmo'])
+def delete_action(request, pk):
+
+    action = Action.objects.get(id=pk)
+    action.delete()
+
+    return redirect('admin_actions')
+
+
+
+
+
 # Промокоды
 @check_user_rights(['add_propmo'])
 def admin_promo(request):

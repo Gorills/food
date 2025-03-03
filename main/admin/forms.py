@@ -7,6 +7,7 @@ from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserRigts
+from actions.models import Action
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from pay.models import PaymentSet, Tinkoff, Yookassa, AlfaBank, PayKeeper
 from integrations.models import Integrations
@@ -14,6 +15,50 @@ from delivery.models import Delivery
 from django.contrib.auth.models import User
 
 
+
+
+class ActionForm(forms.ModelForm):
+    class Meta:
+        model = Action
+        fields = '__all__'
+        widgets = {
+            "title": forms.TextInput(attrs={
+                'class': 'input',
+            }),
+           
+            'action_type': forms.Select(attrs={
+                'class': 'input',
+            }),
+            "summ": forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            "summ_gift": forms.NumberInput(attrs={
+                'class': 'input',
+            }),
+            "gift_product": forms.Select(attrs={
+                'class': 'input',
+            }),
+            "active_in_pickup": forms.CheckboxInput(attrs={
+                
+            }),
+            "active_in_delivery": forms.CheckboxInput(attrs={
+                
+            }),
+            "active": forms.CheckboxInput(attrs={
+                
+            }),
+            "start_date": forms.DateInput(attrs={
+                'class': 'input',
+                'type': 'date',
+            }),
+            "end_date": forms.DateInput(attrs={
+                'class': 'input',
+                'type': 'date',
+
+            }),
+
+
+        }
 
 
 class SoundSettingsForm(forms.ModelForm):

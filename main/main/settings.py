@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'sms',
     'subdomains',
     'qr_menu',
+    'actions',
     
 
     

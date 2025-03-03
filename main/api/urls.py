@@ -37,6 +37,7 @@ urlpatterns = [
     path('verify-sms-code/', views.verify_sms_code, name='verify_sms_code'),
     path('logout/', views.logout, name='logout'),
     path('check-session/', views.check_session, name='check_session'),
+    path('actions/', views.actions, name='actions'),
    
    
 

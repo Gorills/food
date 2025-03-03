@@ -8,6 +8,7 @@ from pay.models import PaymentSet, Yookassa, AlfaBank, PayKeeper, Tinkoff
 from setup.models import BaseSettings, CustomCode, ThemeSettings, Colors
 from shop.models import ConstructorCategory, FoodConstructor, Ingridients, ShopSetup, PickupAreas, PayMethod, Category, Product, ProductImage, OptionType, ProductOption, OptionImage, AutoFieldOptions, CharGroup, CharName, ProductChar, Combo, ComboItem 
 from subdomains.models import Subdomain
+from actions.models import Action
 
 from shop.models import DopItems
 
@@ -17,6 +18,11 @@ from shop.models import DopItems
 
 # Home page
 
+
+class ActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        fields = '__all__'
 
 
 class DopItemsSerializer(serializers.ModelSerializer):

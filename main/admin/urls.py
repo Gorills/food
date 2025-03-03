@@ -89,6 +89,13 @@ urlpatterns = [
     path('delete_reviews/<int:pk>/', views.delete_reviews, name='delete_reviews'),
 
 
+    # actions
+    path('admin_actions/', views.admin_actions, name='admin_actions'),
+    path('add_action/', views.add_action, name='add_action'),
+    path('edit_action/<int:pk>/', views.edit_action, name='edit_action'),
+    path('delete_action/<int:pk>/', views.delete_action, name='delete_action'),
+
+
     # CSV UPLOAD
     path('csv_upload/', views.csv_upload, name='csv_upload'),
     

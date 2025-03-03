@@ -1610,6 +1610,31 @@ a {
   font-weight: 400;
 }
 
+.cart #gifts {
+  display: flex;
+  align-items: flex-start;
+}
+
+.cart #gifts img {
+  width: 100px;
+  height: 100px;
+  margin-right: 0;
+}
+
+.cart #gifts .cart__item-info {
+  min-width: fit-content;
+  max-width: 100px;
+  text-align: center;
+}
+
+.cart #gifts .cart__item + .cart__item {
+  margin-left: 10px;
+}
+
+.cart #giftsTitle {
+  margin-bottom: 0;
+}
+
 .cart--active {
   display: block;
 }
