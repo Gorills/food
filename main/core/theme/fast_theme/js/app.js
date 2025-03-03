@@ -3209,6 +3209,10 @@ $(document).on('click', '.cart__item-option', function() {
 
 
 
+
+
+
+
 async function checkActionsProducts() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     console.log("📦 Корзина:", cart);
@@ -3231,21 +3235,33 @@ async function checkActionsProducts() {
         console.log("🔥 Активные акции для текущего типа доставки:", filteredActions);
 
         let giftItems = JSON.parse(localStorage.getItem('giftItems')) || [];
+        if (!Array.isArray(giftItems)) {
+            console.error("🚨 giftItems не является массивом, сбрасываем на пустой массив:", giftItems);
+            giftItems = [];
+        }
         console.log("🎁 Начальные подарки:", giftItems);
 
-        // Обрабатываем акции типа "summ" отдельно
+        // Инициализируем order с actions как массивом, если его нет
+        let order = JSON.parse(localStorage.getItem('order')) || { actions: [] };
+        if (!Array.isArray(order.actions)) {
+            console.error("🚨 order.actions не является массивом, сбрасываем на пустой массив:", order.actions);
+            order.actions = [];
+        }
+        console.log("📋 Начальный заказ:", order);
+
+        // Обрабатываем акции типа "summ"
         const summActions = filteredActions.filter(action => action.action_type === "summ");
-        const appliedSummGiftId = await checkSummActions(summActions, cart, giftItems);
+        const appliedSummGiftId = await checkSummActions(summActions, cart, giftItems, order);
 
         // Обрабатываем акции типа "cats"
         const catsActions = filteredActions.filter(action => action.action_type === "cats");
-        const appliedCatsGiftId = await checkCatsActions(catsActions, cart, giftItems);
+        const appliedCatsGiftId = await checkCatsActions(catsActions, cart, giftItems, order);
 
-        // Обрабатываем остальные акции (например, "plus") и собираем применённые подарки
+        // Обрабатываем акции типа "plus"
         const appliedPlusGiftIds = [];
         for (const action of filteredActions) {
             if (action.action_type === "plus") {
-                const appliedGiftId = await checkPlusAction(action, cart, giftItems);
+                const appliedGiftId = await checkPlusAction(action, cart, giftItems, order);
                 if (appliedGiftId) appliedPlusGiftIds.push(appliedGiftId);
             }
         }
@@ -3253,6 +3269,7 @@ async function checkActionsProducts() {
         // Удаляем подарки, которые больше не соответствуют активным акциям
         const validGiftIds = filteredActions.map(action => action.gift_product);
         giftItems = giftItems.filter(gift => validGiftIds.includes(gift.id));
+        order.actions = order.actions.filter(action => validGiftIds.includes(action.gift_product));
 
         // Собираем ID всех применённых подарков
         const appliedGiftIds = [];
@@ -3260,7 +3277,7 @@ async function checkActionsProducts() {
         if (appliedCatsGiftId) appliedGiftIds.push(appliedCatsGiftId);
         appliedPlusGiftIds.forEach(id => appliedGiftIds.push(id));
 
-        // Проверяем блокировку только для акций, которые реально применены
+        // Проверяем блокировку только для применённых акций
         const appliedActions = filteredActions.filter(action => appliedGiftIds.includes(action.gift_product));
         const actionRestrictions = {
             block_balls: appliedActions.some(action => action.block_balls),
@@ -3271,6 +3288,8 @@ async function checkActionsProducts() {
 
         console.log("🎁 Подарки после обработки:", giftItems);
         localStorage.setItem('giftItems', JSON.stringify(giftItems));
+        console.log("📋 Заказ после обработки:", order);
+        localStorage.setItem('order', JSON.stringify(order));
 
         const giftsContainer = document.getElementById('gifts');
         if (!giftsContainer) {
@@ -3304,12 +3323,9 @@ async function checkActionsProducts() {
     }
 }
 
-
-// Новая функция для обработки акций типа "cats"
-async function checkCatsActions(catsActions, cart, giftItems) {
+async function checkCatsActions(catsActions, cart, giftItems, order) {
     if (catsActions.length === 0) return null;
 
-    // Группируем товары в корзине по категориям
     const categoryCounts = {};
     Object.values(cart).forEach(item => {
         const categoryId = parseInt(item.parent);
@@ -3317,11 +3333,9 @@ async function checkCatsActions(catsActions, cart, giftItems) {
     });
     console.log("🛒 Количество товаров по категориям:", categoryCounts);
 
-    // Обрабатываем акции "cats" для каждой категории отдельно
     const appliedGiftIds = [];
     const catsGiftIdsByCategory = {};
 
-    // Собираем все gift_product для каждой категории
     catsActions.forEach(action => {
         const category = action.category;
         if (!catsGiftIdsByCategory[category]) {
@@ -3334,45 +3348,41 @@ async function checkCatsActions(catsActions, cart, giftItems) {
         const categoryCount = categoryCounts[category] || 0;
         console.log(`🛒 Категория ${category}: ${categoryCount} товаров`);
 
-        // Фильтруем акции для текущей категории
         const categoryActions = catsActions.filter(action => action.category === parseInt(category));
         const applicableAction = categoryActions
             .filter(action => categoryCount >= action.pruduct_numbers)
-            .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0]; // Максимальное количество товаров
+            .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0];
 
         const categoryGiftIds = categoryActions.map(action => action.gift_product);
 
         if (applicableAction) {
             console.log(`🛒 Применяем акцию CATS для категории ${category} (нужно: ${applicableAction.pruduct_numbers}, подарок: ${applicableAction.gift_product})`);
             
-            // Удаляем неподходящие подарки от других акций этой категории
             giftItems
                 .filter(gift => categoryGiftIds.includes(gift.id) && gift.id !== applicableAction.gift_product)
                 .forEach(gift => {
                     console.log(`❌ Удаляем неподходящий подарок от акции CATS (ID: ${gift.id})`);
-                    removeGiftProductFromGiftItems(gift.id, giftItems);
+                    removeGiftProductFromGiftItems(gift.id, giftItems, order);
                 });
 
-            // Добавляем подарок от подходящей акции
             if (!giftItems.some(item => item.id === applicableAction.gift_product)) {
-                await addGiftProductToGiftItems(applicableAction.gift_product, giftItems);
+                await addGiftProductToGiftItems(applicableAction.gift_product, giftItems, order);
             }
             appliedGiftIds.push(applicableAction.gift_product);
         } else {
-            // Удаляем все подарки от акций этой категории, если условие не выполнено
             giftItems
                 .filter(gift => categoryGiftIds.includes(gift.id))
                 .forEach(gift => {
                     console.log(`❌ Удаляем подарок от акции CATS (ID: ${gift.id}), количество не достигнуто`);
-                    removeGiftProductFromGiftItems(gift.id, giftItems);
+                    removeGiftProductFromGiftItems(gift.id, giftItems, order);
                 });
         }
     }
 
-    return appliedGiftIds.length > 0 ? appliedGiftIds[0] : null; // Возвращаем первый применённый подарок (если нужен только один)
+    return appliedGiftIds.length > 0 ? appliedGiftIds[0] : null;
 }
 
-async function checkSummActions(summActions, cart, giftItems) {
+async function checkSummActions(summActions, cart, giftItems, order) {
     let totalSum = Object.values(cart).reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
     console.log(`🛒 Сумма корзины: ${totalSum}`);
 
@@ -3391,43 +3401,52 @@ async function checkSummActions(summActions, cart, giftItems) {
             .filter(gift => summGiftIds.includes(gift.id) && gift.id !== applicableAction.gift_product)
             .forEach(gift => {
                 console.log(`❌ Удаляем неподходящий подарок от акции SUMM (ID: ${gift.id})`);
-                removeGiftProductFromGiftItems(gift.id, giftItems);
+                removeGiftProductFromGiftItems(gift.id, giftItems, order);
             });
 
         if (!giftItems.some(item => item.id === applicableAction.gift_product)) {
-            await addGiftProductToGiftItems(applicableAction.gift_product, giftItems);
+            await addGiftProductToGiftItems(applicableAction.gift_product, giftItems, order);
         }
-        return applicableAction.gift_product; // Возвращаем ID применённого подарка
+        return applicableAction.gift_product;
     } else {
         giftItems
             .filter(gift => summGiftIds.includes(gift.id))
             .forEach(gift => {
                 console.log(`❌ Удаляем подарок от акции SUMM (ID: ${gift.id}), сумма не достигнута`);
-                removeGiftProductFromGiftItems(gift.id, giftItems);
+                removeGiftProductFromGiftItems(gift.id, giftItems, order);
             });
         return null;
     }
 }
 
-async function checkPlusAction(action, cart, giftItems) {
+async function checkPlusAction(action, cart, giftItems, order) {
     let cartProductIds = Object.values(cart).map(item => parseInt(item.itemId));
     console.log(`🛒 Проверяем акцию PLUS (нужно: ${JSON.stringify(action.product)}, в корзине: ${JSON.stringify(cartProductIds)})`);
 
     let allProductsInCart = action.product.every(productId => cartProductIds.includes(parseInt(productId)));
     if (allProductsInCart) {
         if (!giftItems.some(item => item.id === action.gift_product)) {
-            await addGiftProductToGiftItems(action.gift_product, giftItems);
+            await addGiftProductToGiftItems(action.gift_product, giftItems, order);
         }
-        return action.gift_product; // Возвращаем ID применённого подарка
+        return action.gift_product;
     } else {
         if (giftItems.some(item => item.id === action.gift_product)) {
-            removeGiftProductFromGiftItems(action.gift_product, giftItems);
+            removeGiftProductFromGiftItems(action.gift_product, giftItems, order);
         }
         return null;
     }
 }
 
-async function addGiftProductToGiftItems(giftProductId, giftItems) {
+async function addGiftProductToGiftItems(giftProductId, giftItems, order) {
+    if (!Array.isArray(giftItems)) {
+        console.error("🚨 giftItems не является массивом в addGiftProductToGiftItems:", giftItems);
+        giftItems = [];
+    }
+    if (!order || !Array.isArray(order.actions)) {
+        console.error("🚨 order или order.actions некорректны в addGiftProductToGiftItems:", order);
+        order = { actions: [] };
+    }
+
     if (!giftItems.some(item => item.id === giftProductId)) {
         let response = await fetch('/api/v1/products/' + giftProductId + '/');
         if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
@@ -3443,23 +3462,42 @@ async function addGiftProductToGiftItems(giftProductId, giftItems) {
             quantity: 1,
         };
         giftItems.push(itemInfo);
-        console.log(`🎁 Подарок (ID ${giftProductId}) добавлен.`);
+
+        if (!order.actions.some(action => action.gift_product === giftProductId)) {
+            order.actions.push({
+                gift_product: giftProductId,
+                name: product.name
+            });
+        }
+        
+        console.log(`🎁 Подарок (ID ${giftProductId}) добавлен в giftItems и order.`);
     }
 }
 
-function removeGiftProductFromGiftItems(giftProductId, giftItems) {
-    const index = giftItems.findIndex(item => item.id === giftProductId);
-    if (index !== -1) {
-        giftItems.splice(index, 1);
-        console.log(`❌ Подарок (ID ${giftProductId}) удален.`);
+function removeGiftProductFromGiftItems(giftProductId, giftItems, order) {
+    if (!Array.isArray(giftItems)) {
+        console.error("🚨 giftItems не является массивом в removeGiftProductFromGiftItems:", giftItems);
+        return;
+    }
+    if (!order || !Array.isArray(order.actions)) {
+        console.error("🚨 order или order.actions некорректны в removeGiftProductFromGiftItems:", order);
+        return;
+    }
+
+    const giftIndex = giftItems.findIndex(item => item.id === giftProductId);
+    if (giftIndex !== -1) {
+        giftItems.splice(giftIndex, 1);
+        console.log(`❌ Подарок (ID ${giftProductId}) удален из giftItems.`);
+    }
+
+    const orderIndex = order.actions.findIndex(action => action.gift_product === giftProductId);
+    if (orderIndex !== -1) {
+        order.actions.splice(orderIndex, 1);
+        console.log(`❌ Подарок (ID ${giftProductId}) удален из order.actions.`);
     }
 }
 
 checkActionsProducts();
-
-
-
-
 
 
 

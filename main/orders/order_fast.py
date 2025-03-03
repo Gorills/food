@@ -149,6 +149,20 @@ def order_create(request):
                     
             #         loyalty_card.save()
 
+            order_conmment = json_order['order_conmment']
+
+            order_actions = json_order['actions']
+
+            if order_actions:
+                action_str = "Товары в подарок: "
+                for action in order_actions:
+                    action_str += action["name"] + ', '
+
+                action_str = action_str[:-2]
+                if order_conmment:
+                    order_conmment += '; ' + action_str
+                else:
+                    order_conmment = action_str
 
             try:
                 coupon = Coupon.objects.get(code=json_order['promo'])
@@ -172,7 +186,7 @@ def order_create(request):
                 pay_change = pay_change,
                 delivery_method = json_order['delivery_method'],
                 delivery_price = Decimal(json_order['delivery_price']),
-                order_conmment = json_order['order_conmment'],
+                order_conmment = order_conmment,
                 summ = Decimal(json_order['summ']),
                 paid = False,
                 sale_percent = json_order['sale_percent'],
