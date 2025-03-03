@@ -165,7 +165,8 @@ class ProductViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
 @api_view(['GET'])
 def actions(request):
-    actions = Action.objects.filter(active=True)
+    # Фильтруем только активные акции
+    actions = [action for action in Action.objects.filter(active=True) if action.is_active_today()]
     serializer = ActionSerializer(actions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

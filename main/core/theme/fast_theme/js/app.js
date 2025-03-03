@@ -1990,7 +1990,7 @@ $(document).on('click', '.add_to_cart', function(){
     let price = $button.parent('.btn-wrap').attr('data-price');
     let name = $button.parent('.btn-wrap').attr('data-name');
     let image = $button.parent('.btn-wrap').attr('data-image');
-
+    let parentId = $button.parent('.btn-wrap').attr('data-parent-id');
     
     
     let parent = $button.closest('.product-list__item');
@@ -1998,7 +1998,7 @@ $(document).on('click', '.add_to_cart', function(){
         $('.product-options-popup').removeClass('product-options-popup--active')
     }
 
-    addToCart(id, name, price, image, optionsIdString, type);
+    addToCart(id, parentId, name, price, image, optionsIdString, type);
 
     
     
@@ -2014,9 +2014,11 @@ $(document).on('click','.combo-popup__btn',function(){
     let price = $button.parent('.btn-wrap').attr('data-price');
     let name = $button.parent('.btn-wrap').attr('data-name');
     let image = $button.parent('.btn-wrap').attr('data-image');
+    let parentId = $button.parent('.btn-wrap').attr('data-parent-id');
+
 
     if ($(this).hasClass('combo-popup__btn--active')) {
-        addToCart(id, name, price, image, optionsIdString, type);
+        addToCart(id, parentId, name, price, image, optionsIdString, type);
         
 
     } else {
@@ -3041,7 +3043,7 @@ async function verifyProductPrice(itemId, userPrice, optionsIdArray) {
     }
 }
 
-async function addToCart(itemId, name, price, image, optionsIdString, type) {
+async function addToCart(itemId, parentId, name, price, image, optionsIdString, type) {
     let optionsIdArray = optionsIdString
         .split(",")
         .filter(optionId => optionId.trim() !== "")
@@ -3101,6 +3103,7 @@ async function addToCart(itemId, name, price, image, optionsIdString, type) {
     let itemInfo = {
         id: id,
         itemId: itemId,
+        parent: parentId,
         type: type,
         name: name,
         price: parseFloat(price),
@@ -3234,6 +3237,10 @@ async function checkActionsProducts() {
         const summActions = filteredActions.filter(action => action.action_type === "summ");
         const appliedSummGiftId = await checkSummActions(summActions, cart, giftItems);
 
+        // Обрабатываем акции типа "cats"
+        const catsActions = filteredActions.filter(action => action.action_type === "cats");
+        const appliedCatsGiftId = await checkCatsActions(catsActions, cart, giftItems);
+
         // Обрабатываем остальные акции (например, "plus") и собираем применённые подарки
         const appliedPlusGiftIds = [];
         for (const action of filteredActions) {
@@ -3250,6 +3257,7 @@ async function checkActionsProducts() {
         // Собираем ID всех применённых подарков
         const appliedGiftIds = [];
         if (appliedSummGiftId) appliedGiftIds.push(appliedSummGiftId);
+        if (appliedCatsGiftId) appliedGiftIds.push(appliedCatsGiftId);
         appliedPlusGiftIds.forEach(id => appliedGiftIds.push(id));
 
         // Проверяем блокировку только для акций, которые реально применены
@@ -3294,6 +3302,74 @@ async function checkActionsProducts() {
     } catch (error) {
         console.error("🚨 Ошибка загрузки акций:", error);
     }
+}
+
+
+// Новая функция для обработки акций типа "cats"
+async function checkCatsActions(catsActions, cart, giftItems) {
+    if (catsActions.length === 0) return null;
+
+    // Группируем товары в корзине по категориям
+    const categoryCounts = {};
+    Object.values(cart).forEach(item => {
+        const categoryId = parseInt(item.parent);
+        categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + item.quantity;
+    });
+    console.log("🛒 Количество товаров по категориям:", categoryCounts);
+
+    // Обрабатываем акции "cats" для каждой категории отдельно
+    const appliedGiftIds = [];
+    const catsGiftIdsByCategory = {};
+
+    // Собираем все gift_product для каждой категории
+    catsActions.forEach(action => {
+        const category = action.category;
+        if (!catsGiftIdsByCategory[category]) {
+            catsGiftIdsByCategory[category] = [];
+        }
+        catsGiftIdsByCategory[category].push(action.gift_product);
+    });
+
+    for (const category of Object.keys(catsGiftIdsByCategory)) {
+        const categoryCount = categoryCounts[category] || 0;
+        console.log(`🛒 Категория ${category}: ${categoryCount} товаров`);
+
+        // Фильтруем акции для текущей категории
+        const categoryActions = catsActions.filter(action => action.category === parseInt(category));
+        const applicableAction = categoryActions
+            .filter(action => categoryCount >= action.pruduct_numbers)
+            .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0]; // Максимальное количество товаров
+
+        const categoryGiftIds = categoryActions.map(action => action.gift_product);
+
+        if (applicableAction) {
+            console.log(`🛒 Применяем акцию CATS для категории ${category} (нужно: ${applicableAction.pruduct_numbers}, подарок: ${applicableAction.gift_product})`);
+            
+            // Удаляем неподходящие подарки от других акций этой категории
+            giftItems
+                .filter(gift => categoryGiftIds.includes(gift.id) && gift.id !== applicableAction.gift_product)
+                .forEach(gift => {
+                    console.log(`❌ Удаляем неподходящий подарок от акции CATS (ID: ${gift.id})`);
+                    removeGiftProductFromGiftItems(gift.id, giftItems);
+                });
+
+            // Добавляем подарок от подходящей акции
+            if (!giftItems.some(item => item.id === applicableAction.gift_product)) {
+                await addGiftProductToGiftItems(applicableAction.gift_product, giftItems);
+            }
+            appliedGiftIds.push(applicableAction.gift_product);
+        } else {
+            // Удаляем все подарки от акций этой категории, если условие не выполнено
+            giftItems
+                .filter(gift => categoryGiftIds.includes(gift.id))
+                .forEach(gift => {
+                    console.log(`❌ Удаляем подарок от акции CATS (ID: ${gift.id}), количество не достигнуто`);
+                    removeGiftProductFromGiftItems(gift.id, giftItems);
+                });
+        }
+    }
+
+    return appliedGiftIds.length > 0 ? appliedGiftIds[0] : null; // Возвращаем первый применённый подарок (если нужен только один)
 }
 
 async function checkSummActions(summActions, cart, giftItems) {

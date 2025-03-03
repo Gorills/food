@@ -182,7 +182,7 @@
                         
                         {% comment %} <a href="#" class="constructor-popup__btn" data-price="" data-id="{{ constructor.id }}" data-csrf="{{ csrf_token }}"></a> {% endcomment %}
                     
-                        <div class="btn-wrap" data-quantity="1" data-cart-id="{{constructor.id}}" data-type="constructor" data-name="{{constructor.name}}" data-price="{{constructor.price}}" data-optionsid="" data-image="{{ constructor.get_thumb_mini }}">
+                        <div class="btn-wrap" data-parent-id="{{ constructor.parent.id }}" data-quantity="1" data-cart-id="{{constructor.id}}" data-type="constructor" data-name="{{constructor.name}}" data-price="{{constructor.price}}" data-optionsid="" data-image="{{ constructor.get_thumb_mini }}">
                             <div class="btn-wrap__count"></div>
                             <div class="btn-wrap__svg"></div>
                             <button class="btn btn--primary add_to_cart constructor-popup__btn">Добавить в корзину за <span class="constructor-popup__price">350</span> ₽</button>
@@ -397,7 +397,7 @@
                 {% endif %}
             </div>
 
-            <div class="btn-wrap" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{ product.get_price_after_sale | floatformat:0 }}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
+            <div class="btn-wrap" data-parent-id="{{ product.parent.id }}" data-quantity="1" data-cart-id="{{product.id}}" data-type="product" data-name="{{product.name}}" data-price="{{ product.get_price_after_sale | floatformat:0 }}" data-optionsid="{% if product.get_first_select %}{% for option in product.get_first_select %}{% if forloop.counter == 1 %}{{ option.id }}{% endif %}{% endfor %}{% endif %}" data-image="{{ product.get_thumb_mini }}">
                 <div class="btn-wrap__count"></div>
                 <div class="btn-wrap__svg"></div>
                 <button class="btn btn--primary add_to_cart">{{ shop_setup.cart_btn_text }}</button>

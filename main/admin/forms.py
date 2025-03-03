@@ -18,6 +18,17 @@ from django.contrib.auth.models import User
 
 
 class ActionForm(forms.ModelForm):
+    # Добавляем поле для выбора дней недели
+    working_days = forms.MultipleChoiceField(
+        choices=Action.DAYS_OF_WEEK,
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'checkbox-inline',  # Можно настроить стили
+        }),
+        required=False,  # Необязательное поле
+        label='Дни работы акции',
+        help_text='Выберите дни недели, когда акция активна'
+    )
+
     class Meta:
         model = Action
         fields = '__all__'
@@ -25,27 +36,23 @@ class ActionForm(forms.ModelForm):
             "title": forms.TextInput(attrs={
                 'class': 'input',
             }),
-           
             'action_type': forms.Select(attrs={
                 'class': 'input',
             }),
             "summ": forms.NumberInput(attrs={
                 'class': 'input',
             }),
-            "summ_gift": forms.NumberInput(attrs={
-                'class': 'input',
-            }),
             "gift_product": forms.Select(attrs={
                 'class': 'input',
             }),
             "active_in_pickup": forms.CheckboxInput(attrs={
-                
+                'class': 'checkbox',
             }),
             "active_in_delivery": forms.CheckboxInput(attrs={
-                
+                'class': 'checkbox',
             }),
             "active": forms.CheckboxInput(attrs={
-                
+                'class': 'checkbox',
             }),
             "start_date": forms.DateInput(attrs={
                 'class': 'input',
@@ -54,12 +61,32 @@ class ActionForm(forms.ModelForm):
             "end_date": forms.DateInput(attrs={
                 'class': 'input',
                 'type': 'date',
-
             }),
-
-
+            "product": forms.SelectMultiple(attrs={
+                'class': 'input',
+            }),
+            "block_balls": forms.CheckboxInput(attrs={
+                'class': 'checkbox',
+            }),
+            "block_discount": forms.CheckboxInput(attrs={
+                'class': 'checkbox',
+            }),
+            "pruduct_numbers": forms.NumberInput(attrs={
+                'class': 'input',
+            }),
         }
 
+    def clean_working_days(self):
+        """Преобразуем выбранные значения в список чисел для JSONField"""
+        data = self.cleaned_data['working_days']
+        # Преобразуем строки в числа, так как JSONField ожидает список чисел
+        return [int(day) for day in data] if data else []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Если редактируем существующий объект, преобразуем числа обратно в строки для формы
+        if self.instance.pk and self.instance.working_days:
+            self.fields['working_days'].initial = [str(day) for day in self.instance.working_days]
 
 class SoundSettingsForm(forms.ModelForm):
     class Meta:
