@@ -1617,6 +1617,7 @@ a {
 
 .cart #gifts img {
   width: 100px;
+  max-width: 100px;
   margin-right: 0;
 }
 

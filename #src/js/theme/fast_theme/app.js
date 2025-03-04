@@ -3287,6 +3287,8 @@ async function checkActionsProducts() {
             block_discount: appliedActions.some(action => action.block_discount)
         };
         
+        
+
         localStorage.setItem('actionRestrictions', JSON.stringify(actionRestrictions));
 
         
@@ -3320,6 +3322,8 @@ async function checkActionsProducts() {
                 giftsContainer.appendChild(giftElement);
             });
         }
+
+        maxBallsPay()
 
     } catch (error) {
         console.error("🚨 Ошибка загрузки акций:", error);
