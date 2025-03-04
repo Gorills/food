@@ -3250,7 +3250,7 @@ async function checkActionsProducts() {
             
             order.order_comment = "";
         }
-        console.log("📋 Начальный заказ:", order);
+        
 
         // Обрабатываем акции типа "summ"
         const summActions = filteredActions.filter(action => action.action_type === "summ");
@@ -3326,24 +3326,42 @@ async function checkActionsProducts() {
     }
 }
 
+
+
+
+
+
 async function checkCatsActions(catsActions, cart, giftItems, order) {
     if (catsActions.length === 0) return null;
 
-    // Подсчитываем количество товаров по категориям
+    // Подсчитываем количество товаров по категориям с учётом опций
     const categoryCounts = {};
-    Object.values(cart).forEach(item => {
-        const categoryId = parseInt(item.parent);
-        categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + item.quantity;
-    });
-    
-
-    // Подсчитываем максимальное количество одного товара в каждой категории
     const maxItemCounts = {};
+
     Object.values(cart).forEach(item => {
         const categoryId = parseInt(item.parent);
-        maxItemCounts[categoryId] = Math.max(maxItemCounts[categoryId] || 0, item.quantity);
+        const quantity = item.quantity || 1;
+
+        // Если опции не учитываются или их нет
+        if (!item.options_name || item.options_name.length === 0) {
+            categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + quantity;
+            maxItemCounts[categoryId] = Math.max(maxItemCounts[categoryId] || 0, quantity);
+        } else {
+            // Учитываем только опции с "option_class": "select" и сравниваем по option_value
+            const selectOptions = item.options_name
+                .filter(opt => opt.type && opt.type.option_class === "select")
+                .map(opt => opt.option_value) // Используем только option_value
+                .sort() // Сортируем для консистентности
+                .join("|");
+
+            // Ключ для группировки: категория + значения опций
+            const key = `${categoryId}:${selectOptions || "no-options"}`;
+            categoryCounts[key] = (categoryCounts[key] || 0) + quantity;
+            maxItemCounts[key] = Math.max(maxItemCounts[key] || 0, quantity);
+        }
     });
-    
+    console.log("🛒 Количество товаров по категориям (с учётом опций):", categoryCounts);
+    console.log("🛒 Максимальное количество одного товара по категориям (с учётом опций):", maxItemCounts);
 
     const appliedGiftIds = [];
     const catsGiftIdsByCategory = {};
@@ -3357,22 +3375,44 @@ async function checkCatsActions(catsActions, cart, giftItems, order) {
     });
 
     for (const category of Object.keys(catsGiftIdsByCategory)) {
-        const categoryCount = categoryCounts[category] || 0;
-        const maxSingleItemCount = maxItemCounts[category] || 0;
-        
         const categoryActions = catsActions.filter(action => action.category === parseInt(category));
-        const applicableAction = categoryActions
-            .filter(action => categoryCount >= action.pruduct_numbers || maxSingleItemCount >= action.pruduct_numbers)
-            .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0];
-
         const categoryGiftIds = categoryActions.map(action => action.gift_product);
 
+        // Проверяем акции с учётом consider_options
+        let applicableAction = null;
+        if (categoryActions.some(action => action.consider_options)) {
+            // Для акций с consider_options учитываем группы с опциями
+            const categoryKeys = Object.keys(categoryCounts).filter(key => key.startsWith(`${category}:`));
+            let maxCount = 0;
+            let maxSingleCount = 0;
+
+            categoryKeys.forEach(key => {
+                maxCount = Math.max(maxCount, categoryCounts[key]);
+                maxSingleCount = Math.max(maxSingleCount, maxItemCounts[key]);
+            });
+
+            applicableAction = categoryActions
+                .filter(action => action.consider_options && (maxCount >= action.pruduct_numbers || maxSingleCount >= action.pruduct_numbers))
+                .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0];
+        }
+
+        // Если не найдена акция с consider_options или все акции без consider_options
+        if (!applicableAction) {
+            const categoryCount = categoryCounts[category] || 0;
+            const maxSingleItemCount = maxItemCounts[category] || 0;
+
+            applicableAction = categoryActions
+                .filter(action => !action.consider_options && (categoryCount >= action.pruduct_numbers || maxSingleItemCount >= action.pruduct_numbers))
+                .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0];
+        }
+
         if (applicableAction) {
-           
+            console.log(`🛒 Применяем акцию CATS для категории ${category} (нужно: ${applicableAction.pruduct_numbers}, подарок: ${applicableAction.gift_product}, consider_options: ${applicableAction.consider_options})`);
+            
             giftItems
                 .filter(gift => categoryGiftIds.includes(gift.id) && gift.id !== applicableAction.gift_product)
                 .forEach(gift => {
-                    
+                    console.log(`❌ Удаляем неподходящий подарок от акции CATS (ID: ${gift.id})`);
                     removeGiftProductFromGiftItems(gift.id, giftItems, order);
                 });
 
@@ -3384,7 +3424,7 @@ async function checkCatsActions(catsActions, cart, giftItems, order) {
             giftItems
                 .filter(gift => categoryGiftIds.includes(gift.id))
                 .forEach(gift => {
-                    
+                    console.log(`❌ Удаляем подарок от акции CATS (ID: ${gift.id}), количество не достигнуто`);
                     removeGiftProductFromGiftItems(gift.id, giftItems, order);
                 });
         }
@@ -3517,6 +3557,7 @@ checkActionsProducts();
 function displayCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
+    // console.log(cart)
     // Преобразуем объект корзины в массив
     let cartArray = Object.values(cart);
 

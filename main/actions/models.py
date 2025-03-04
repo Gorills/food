@@ -51,6 +51,7 @@ class Action(models.Model):
     active_in_delivery = models.BooleanField(default=False, verbose_name='Активна в доставке')
     block_balls = models.BooleanField(default=False, verbose_name='Заблокировать баллы')
     block_discount = models.BooleanField(default=False, verbose_name='Заблокировать скидки')
+    consider_options = models.BooleanField(default=False, verbose_name='Учитывать опции')
 
     active = models.BooleanField(default=False, verbose_name='Активна')
     start_date = models.DateField(verbose_name='Начало акции', blank=True, null=True)
