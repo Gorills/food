@@ -45,7 +45,7 @@ def catalog(request):
         max_price = max_filter
 
 
-    product_list = Product.objects.filter(status=True, related=False, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
+    product_list = Product.objects.filter(status=True, related=False, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by('sort_order').order_by(*sort)
     # product_list = Product.objects.filter(status=True, price__gte=min_price, price__lte=max_price).order_by(*sort)
 
     
@@ -93,31 +93,27 @@ def category_detail(request, slug):
     page_number = request.GET.get('page')
 
     category = get_object_or_404(Category, slug=slug)
-    
-    if category.status == True:
-        try:
 
+    if category.status:
+        try:
             products_list = Product.objects.filter(status=True, stock__gt=0, related=False, parent=category)
-            
+
             min_filter = products_list.order_by('price').first().price
             max_filter = products_list.order_by('-price').first().price
         except:
             products_list = []
-            
             min_filter = 0
             max_filter = 0
-            
-        try:
-            min_price = request.GET['min_price']
-        except:
-            min_price = min_filter
-        try:
-            max_price = request.GET['max_price']
-        except:
-            max_price = max_filter
 
+        min_price = request.GET.get('min_price', min_filter)
+        max_price = request.GET.get('max_price', max_filter)
 
-        products_all = Product.objects.filter(status=True, parent=category, price__gte=min_price, price__lte=max_price).exclude(stock=0).order_by(*sort)
+        # Если `sort` пустой, используем ['sort_order'] по умолчанию
+        sort_fields = sort if sort else ['sort_order']
+
+        products_all = Product.objects.filter(
+            status=True, parent=category, price__gte=min_price, price__lte=max_price
+        ).exclude(stock=0).order_by(*sort_fields)
 
         if limit:
             paginator = Paginator(products_all, *limit)
