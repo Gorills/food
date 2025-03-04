@@ -3212,7 +3212,6 @@ $(document).on('click', '.cart__item-option', function() {
 
 
 
-
 async function checkActionsProducts() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     console.log("📦 Корзина:", cart);
@@ -3241,11 +3240,15 @@ async function checkActionsProducts() {
         }
         console.log("🎁 Начальные подарки:", giftItems);
 
-        // Инициализируем order с actions как массивом, если его нет
-        let order = JSON.parse(localStorage.getItem('order')) || { actions: [] };
+        // Инициализируем order с actions и order_comment
+        let order = JSON.parse(localStorage.getItem('order')) || { actions: [], order_comment: "" };
         if (!Array.isArray(order.actions)) {
             console.error("🚨 order.actions не является массивом, сбрасываем на пустой массив:", order.actions);
             order.actions = [];
+        }
+        if (typeof order.order_comment !== 'string') {
+            console.error("🚨 order.order_comment не строка, сбрасываем на пустую строку:", order.order_comment);
+            order.order_comment = "";
         }
         console.log("📋 Начальный заказ:", order);
 
@@ -3285,6 +3288,19 @@ async function checkActionsProducts() {
         };
         console.log("🔒 Ограничения акций (только для применённых):", actionRestrictions);
         localStorage.setItem('actionRestrictions', JSON.stringify(actionRestrictions));
+
+        // Обновляем order_comment на основе подарков в order.actions
+        const giftsString = order.actions.map(action => action.name).join("; ");
+        if (giftsString) {
+            if (order.order_comment) {
+                order.order_comment = `${order.order_comment}; Подарки: ${giftsString}`;
+            } else {
+                order.order_comment = `Подарки: ${giftsString}`;
+            }
+        } else {
+            order.order_comment = order.order_comment.split("; Подарки:")[0].trim();
+        }
+        console.log("📝 Обновлённый order_comment:", order.order_comment);
 
         console.log("🎁 Подарки после обработки:", giftItems);
         localStorage.setItem('giftItems', JSON.stringify(giftItems));
@@ -3326,12 +3342,21 @@ async function checkActionsProducts() {
 async function checkCatsActions(catsActions, cart, giftItems, order) {
     if (catsActions.length === 0) return null;
 
+    // Подсчитываем количество товаров по категориям
     const categoryCounts = {};
     Object.values(cart).forEach(item => {
         const categoryId = parseInt(item.parent);
         categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + item.quantity;
     });
     console.log("🛒 Количество товаров по категориям:", categoryCounts);
+
+    // Подсчитываем максимальное количество одного товара в каждой категории
+    const maxItemCounts = {};
+    Object.values(cart).forEach(item => {
+        const categoryId = parseInt(item.parent);
+        maxItemCounts[categoryId] = Math.max(maxItemCounts[categoryId] || 0, item.quantity);
+    });
+    console.log("🛒 Максимальное количество одного товара по категориям:", maxItemCounts);
 
     const appliedGiftIds = [];
     const catsGiftIdsByCategory = {};
@@ -3346,11 +3371,12 @@ async function checkCatsActions(catsActions, cart, giftItems, order) {
 
     for (const category of Object.keys(catsGiftIdsByCategory)) {
         const categoryCount = categoryCounts[category] || 0;
-        console.log(`🛒 Категория ${category}: ${categoryCount} товаров`);
+        const maxSingleItemCount = maxItemCounts[category] || 0;
+        console.log(`🛒 Категория ${category}: Всего ${categoryCount} товаров, максимум одного товара ${maxSingleItemCount}`);
 
         const categoryActions = catsActions.filter(action => action.category === parseInt(category));
         const applicableAction = categoryActions
-            .filter(action => categoryCount >= action.pruduct_numbers)
+            .filter(action => categoryCount >= action.pruduct_numbers || maxSingleItemCount >= action.pruduct_numbers)
             .sort((a, b) => b.pruduct_numbers - a.pruduct_numbers)[0];
 
         const categoryGiftIds = categoryActions.map(action => action.gift_product);
@@ -3444,7 +3470,7 @@ async function addGiftProductToGiftItems(giftProductId, giftItems, order) {
     }
     if (!order || !Array.isArray(order.actions)) {
         console.error("🚨 order или order.actions некорректны в addGiftProductToGiftItems:", order);
-        order = { actions: [] };
+        order = { actions: [], order_comment: "" };
     }
 
     if (!giftItems.some(item => item.id === giftProductId)) {
@@ -3498,8 +3524,6 @@ function removeGiftProductFromGiftItems(giftProductId, giftItems, order) {
 }
 
 checkActionsProducts();
-
-
 
 
 
