@@ -104,6 +104,11 @@
         max-width: var(--slider-text-width);
         line-height: 1;
         height: fit-content;
+
+        @media screen and (max-width: 480px) {
+            
+            max-width: var(--slider-text-width-mobile);
+        }
         
         &--bg {
             // background-color: rgba(255, 255, 255, 0.7);
@@ -111,6 +116,10 @@
             // bottom: 0;
             // left: 0;
             // right: 0;
+            @media screen and (max-width: 480px) {
+                padding: 20px 10px;
+
+            }   
         }
     }
 

@@ -1004,6 +1004,10 @@ class SliderSetupForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Значение',
             }),
+            'text_max_width_mob': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Значение',
+            }),
         }
 
 

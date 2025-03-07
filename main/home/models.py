@@ -20,7 +20,7 @@ class SliderSetup(SingletonModel):
     desc_size = models.CharField(max_length=250, default=24, verbose_name='Размер шрифта описания')
     desc_size_mob = models.CharField(max_length=250, default=18, verbose_name='Размер шрифта описания для мобильного')
     text_max_width = models.CharField(max_length=250, default=700, verbose_name='Максимальная ширина текста')
-
+    text_max_width_mob = models.CharField(max_length=250, default=300, verbose_name='Максимальная ширина текста для мобильного')
 
     FONTS_CHOICES = (
         ('Roboto', 'Roboto'),

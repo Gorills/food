@@ -7593,6 +7593,14 @@ td.product-thumbnail img {
     overflow: hidden;
   }
 
+  .sl__wrap {
+    max-width: var(--slider-text-width-mobile);
+  }
+
+  .sl__wrap--bg {
+    padding: 20px 10px;
+  }
+
   .sl__title {
     font-size: var(--slider-title-mobile) !important;
     line-height: 1;
