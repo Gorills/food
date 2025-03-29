@@ -76,7 +76,7 @@ class ProductSerializer(serializers.ModelSerializer):
     options = ProductOptionSerializer(many=True, read_only=True)
     chars = ProductCharSerializer(many=True, read_only=True)
     
-    
+    price = serializers.SerializerMethodField()
     class Meta:
         model = Product
         fields = [
@@ -113,6 +113,9 @@ class ProductSerializer(serializers.ModelSerializer):
             'options',
             'parent',
         ]
+
+    def get_price(self, obj):
+        return obj.get_price_after_sale()
 
 
 class CategorySerializer(serializers.ModelSerializer):

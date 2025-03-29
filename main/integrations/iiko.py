@@ -141,7 +141,12 @@ def load_menu(clean, product_clean):
 
             item_options = product['itemSizes']
 
-            weight = int(item_options[0]['portionWeightGrams'])
+            try:
+                weight = int(item_options[0]['portionWeightGrams'])
+            except (IndexError, KeyError, TypeError):
+                weight = None
+
+            
 
             if weight == 0:
                 weight = None
@@ -154,8 +159,11 @@ def load_menu(clean, product_clean):
             if price is None:
                 print(f"Warning: Skipping product {product_name} due to missing price.")
                 continue  # Пропустить продукт без цены
-
-            image = item_options[0]['buttonImageUrl']
+            
+            try:
+                image = item_options[0]['buttonImageUrl']
+            except (IndexError, KeyError, TypeError):
+                image = None
             try:
                 product_save = Product.objects.get(
                     external_id=product_id

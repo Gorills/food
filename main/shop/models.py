@@ -305,122 +305,34 @@ import datetime
 
 import time
 
+
 def check_time(product_sale):
-    now_day = datetime.datetime.now().strftime('%Y-%m-%d')
-    day = datetime.datetime.strptime(now_day, '%Y-%m-%d')
-    now_get = datetime.datetime.now().strftime('%H:%M:%S')
-    now = datetime.datetime.strptime(now_get, '%H:%M:%S')
-
-    try: 
-        date_start = datetime.datetime.strptime(str(product_sale.date_start), '%Y-%m-%d')
-    except:
-        date_start = None
+    """
+    Проверяет, активна ли скидка с учетом даты, времени и дня недели
+    """
+    from datetime import datetime
     
-    try:
-        date_end = datetime.datetime.strptime(str(product_sale.date_end), '%Y-%m-%d')
-    except:
-        date_end = None
-
-    if date_start and date_end:
-        if date_start <= day <= date_end:
-            try:
-                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
-            except:
-                start = None
-            try:
-                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
-            except:
-                end = None
-
-            if start and end:
-                if start <= now <= end:
-                    return True
-                else:
-                    return False
-            elif start and not end:
-                if start <= now:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
+    current_datetime = datetime.now()
+    current_date = current_datetime.date()
+    current_time = current_datetime.time()
+    current_day = current_datetime.weekday()  # 0 - понедельник, 6 - воскресенье
+    
+    # Проверка даты
+    if product_sale.date_start and current_date < product_sale.date_start:
+        return False
+    if product_sale.date_end and current_date > product_sale.date_end:
+        return False
+    
+    # Проверка времени
+    if product_sale.time_start and product_sale.time_end:
+        if current_time < product_sale.time_start or current_time > product_sale.time_end:
             return False
-
-    elif date_start and not date_end:
-        if date_start <= day:
-            try:
-                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
-            except:
-                start = None
-            try:
-                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
-            except:
-                end = None
-
-            if start and end:
-                if start <= now <= end:
-                    return True
-                else:
-                    return False
-            elif start and not end:
-                if start <= now:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-        
-    elif not date_start and date_end:
-        if date_end >= day:
-            try:
-                start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
-            except:
-                start = None
-            try:
-                end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
-            except:
-                end = None
-
-            if start and end:
-                if start <= now <= end:
-                    return True
-                else:
-                    return False
-            elif start and not end:
-                if start <= now:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-        
-    else:
-        try:
-            start = datetime.datetime.strptime(str(product_sale.time_start), '%H:%M:%S')
-        except:
-            start = None
-        try:
-            end = datetime.datetime.strptime(str(product_sale.time_end), '%H:%M:%S')
-        except:
-            end = None
-
-        if start and end:
-            if start <= now <= end:
-                return True
-            else:
-                return False
-        elif start and not end:
-            if start <= now:
-                return True
-            else:
-                return False
-        else:
-            return False
+    
+    # Проверка дня недели, если он указан
+    if product_sale.day is not None and current_day != product_sale.day:
+        return False
+    
+    return True
 
 
 class Product(models.Model):
@@ -587,54 +499,60 @@ class Product(models.Model):
             return('')
     
     def get_sale(self):
+        """
+        Возвращает процент скидки для товара
+        """
+        product_sale = ProductSale.objects.filter(
+            Q(categorys=self.parent) | Q(products=self)
+        ).prefetch_related('categorys', 'products').first()
 
-        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).prefetch_related('categorys', 'products').first()
-
-        
         if not product_sale:
+            # Если нет специальной скидки, вычисляем из old_price и price
             try:
-                old = self.old_price
-                new = self.price
-                razn = old - new
-                persent = (razn/old)*100
-                return persent
+                if self.old_price and self.price and self.old_price > self.price:
+                    discount = ((self.old_price - self.price) / self.old_price) * 100
+                    return round(discount, 2)
+                return None
             except:
                 return None
         
-        else:
-
-            get_time = check_time(product_sale)
-            
-            if get_time:
-                return product_sale.percent
-            else:
-                try:
-                    old = self.old_price
-                    new = self.price
-                    razn = old - new
-                    persent = (razn/old)*100
-                    return persent
-                except:
-                    return None
+        # Проверяем, активна ли скидка с учетом всех параметров
+        if check_time(product_sale):
+            return product_sale.percent
+        
+        # Если скидка не активна, пытаемся вычислить из старой и новой цены
+        try:
+            if self.old_price and self.price and self.old_price > self.price:
+                discount = ((self.old_price - self.price) / self.old_price) * 100
+                return round(discount, 2)
+            return None
+        except:
+            return None
         
 
-    
     def get_price_after_sale(self):
+        """
+        Возвращает цену с учетом активной скидки
+        """
+        product_sale = ProductSale.objects.filter(
+            Q(categorys=self.parent) | Q(products=self)
+        ).prefetch_related('categorys', 'products').first()
 
-        get_sale = self.get_sale()
-        
-        product_sale = ProductSale.objects.filter(Q(categorys=self.parent) | Q(products=self)).prefetch_related('categorys', 'products').first()
+        # Базовая цена без скидки
+        final_price = self.price
 
-        if not product_sale or not get_sale:
-            return self.price
+        if product_sale and check_time(product_sale):
+            percent = product_sale.percent
+            rounding_up = product_sale.rounding_up
+            
+            # Вычисляем цену со скидкой
+            discounted_price = self.price - (self.price * percent / 100)
+            if rounding_up:
+                final_price = math.ceil(discounted_price)
+            else:
+                final_price = discounted_price
 
-        percent = product_sale.percent
-        rounding_up = product_sale.rounding_up
-
-        if rounding_up:
-            return math.ceil(self.price - (self.price * percent / 100))
-        else:
-            return self.price - (self.price * percent / 100)
+        return final_price
 
         
 
@@ -993,7 +911,19 @@ class ProductSale(models.Model):
     date_end = models.DateField(null=True, blank=True, verbose_name='Дата окончания акции')
     time_start = models.TimeField(null=True, blank=True, verbose_name='Время начала действия скидки', default='00:00')
     time_end = models.TimeField(null=True, blank=True, verbose_name='Время окончания действия скидки', default='23:59')
+    
+    DAY_CLASS = (
+       (0, 'Понедельник'),
+       (1, 'Вторник'),
+       (2, 'Среда'),
+       (3, 'Четверг'),
+       (4, 'Пятница'),
+       (5, 'Суббота'),
+       (6, 'Воскресенье'),
+    )
 
+
+    day = models.PositiveIntegerField(null=True, blank=True, verbose_name='День недели', choices=DAY_CLASS)
     percent = models.PositiveIntegerField(verbose_name='Процент скидки')
     rounding_up = models.BooleanField(default=True, verbose_name='Округление цены в большую сторону')
 
