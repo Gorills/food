@@ -308,7 +308,8 @@ import time
 
 def check_time(product_sale):
     """
-    Проверяет, активна ли скидка с учетом даты, времени и дня недели
+    Проверяет, активна ли скидка с учетом даты, времени и дня недели.
+    Если день недели не указан (None), скидка действует каждый день.
     """
     from datetime import datetime
     
@@ -328,7 +329,8 @@ def check_time(product_sale):
         if current_time < product_sale.time_start or current_time > product_sale.time_end:
             return False
     
-    # Проверка дня недели, если он указан
+    # Проверка дня недели: если day указан, проверяем совпадение
+    # Если day не указан (None), пропускаем проверку - скидка действует каждый день
     if product_sale.day is not None and current_day != product_sale.day:
         return False
     
