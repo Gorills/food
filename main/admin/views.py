@@ -9,7 +9,7 @@ from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from admin.forms import ActionForm, AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
+from admin.forms import ActionForm, AutoFieldOptionsForm, ComboForm, ConstructorCategoryForm, CustomCodeForm, DeliveryForm, DeliveryTimePriceForm, DopItemsForm, FontForm, FoodConstructorForm, ImageForm, IngridientsForm, IntegrationsForm, LoyaltyCardForm, LoyaltyCardSettingsForm, LoyaltyCardStatusForm, OrderStatusForm, PageItemForm, ProductSaleForm, RelatedProductsForm, CouponForm, CategoryForm, CharGroupForm, CharNameForm, ColorsForm, OptionTypeForm, AlfaBankForm, PayKeeperForm, PaymentForm, PickupAreasForm, PostBlockForm, ProductCharForm, ProductForm, ManufacturerForm, ProductImageForm, ProductOptionForm, RecaptchaSettingsForm, ReviewsForm, SetupForm, EmailSettingsForm, ShopSetupForm, SoundSettingsForm, SubdomainsForm, TableForm, ThemeSettingsForm, BlogCategoryForm, PostForm, SliderSetupForm, SliderForm, PageForm, OrderForm, BlogSetupForm, TinkoffForm, UserForm, UserRightsForm, WorksdayForm, YookassaForm, PayMethodForm
 from coupons.models import Coupon
 from home.models import Page, PageItem, PlaceImages, Slider, SliderSetup, Reviews
 from accounts.models import LoyaltyCard, LoyaltyCardHistory, LoyaltyCardSettings, LoyaltyCardStatus, UserProfile, UserRigts
@@ -19,7 +19,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order, OrderStatus, OrderView
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, Table, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, SoundSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -1351,6 +1351,46 @@ def add_zone(request):
         'form': form
     }
     return render(request, 'shop/zones/add_zone.html', context)
+
+
+@check_user_rights(['change_shop_settings'])
+def add_table(request):
+    if request.method == 'POST':
+        form = TableForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('qr_menu')
+        else:
+            return render(request, 'shop/zones/add_table.html', {'form':form})
+    form = TableForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/zones/add_table.html', context)
+
+
+@check_user_rights(['change_shop_settings'])
+def edit_table(request, pk):
+    table = Table.objects.get(id=pk)
+    if request.method == 'POST':
+        form = TableForm(request.POST, request.FILES, instance=table)
+        if form.is_valid():
+            form.save()
+            return redirect('qr_menu')
+        else:
+            return render(request, 'shop/zones/add_table.html', {'form':form})
+    form = TableForm(instance=table)
+    context = {
+        'form': form
+    }
+    return render(request, 'shop/zones/add_table.html', context)
+
+
+@check_user_rights(['change_shop_settings'])
+def delete_table(request, pk):
+    table = Table.objects.get(id=pk)
+    table.delete()
+    return redirect('qr_menu')
 
 
 @check_user_rights(['change_shop_settings'])

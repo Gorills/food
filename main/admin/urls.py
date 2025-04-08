@@ -108,6 +108,11 @@ urlpatterns = [
     path('edit_zone/<int:pk>/', views.edit_zone, name='edit_zone'),
     path('delete_zone/<int:pk>/', views.delete_zone, name='delete_zone'),
 
+    # tables
+    path('add_table/', views.add_table, name='add_table'),
+    path('edit_table/<int:pk>/', views.edit_table, name='edit_table'),
+    path('delete_table/<int:pk>/', views.delete_table, name='delete_table'),
+
 
     # district setup
     path('district_setup/', views.district_setup, name='district_setup'),

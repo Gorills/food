@@ -8,6 +8,9 @@ from setup.models import BaseSettings
 from subdomains.models import Subdomain
 from sorl.thumbnail import get_thumbnail
 from main.transliterate_filename import transliterate_file
+import qrcode
+from io import BytesIO
+from django.core.files import File
 
 # Create your models here.
 
@@ -142,6 +145,13 @@ class PickupAreas(models.Model):
     phone = models.CharField(max_length=18, null=True, blank=True, verbose_name='Телефон (не обязательно)')
     city = models.ForeignKey(Subdomain, on_delete=models.CASCADE, verbose_name='Город', null=True, blank=True)
 
+    api_key = models.CharField(max_length=50, verbose_name='Ключ API (iiko)', null=True, blank=True)
+    webhook_uri = models.CharField(max_length=50, null=True, blank=True, verbose_name='Хендлер (не обязательно)')
+    webhook_token = models.CharField(max_length=64, null=True, blank=True, verbose_name='Токен (не обязательно)')
+
+    qr_code = models.ImageField(upload_to='qrcodes', verbose_name='QR-код', null=True, blank=True)
+
+
     def __str__(self):
         return self.name
 
@@ -153,6 +163,24 @@ class PickupAreas(models.Model):
             res = '899999999'
 
         return res
+    
+    
+
+
+
+
+class Table(models.Model):
+    area = models.ForeignKey(PickupAreas, on_delete=models.CASCADE, verbose_name='Филиал', related_name='tables')
+    name = models.CharField(max_length=250, verbose_name='Номер стола')
+    description = models.TextField(null=True, blank=True, verbose_name='Описание стола')
+
+    qr_code = models.ImageField(upload_to='qrcodes', verbose_name='QR-код', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+
+
 
 
 class PayMethod(models.Model):
@@ -337,7 +365,13 @@ def check_time(product_sale):
     return True
 
 
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 class Product(models.Model):
+
+    pickup_area = models.ForeignKey(PickupAreas, on_delete=models.SET_NULL, null=True, blank=True)
+
     external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     # Выводить в меню и других списках
     name = models.CharField(max_length=350, verbose_name='Название')
@@ -468,6 +502,29 @@ class Product(models.Model):
 
         return res
     
+    def get_thumb_cart(self):
+        res = None
+        
+        try:
+            res = get_thumbnail(self.thumb, '80x80', crop='center', format="WEBP", quality=100)
+
+            res = res.url
+        except Exception as e:
+            res = '/core/libs/no-image.webp'
+             
+
+        return res
+    
+    def get_qr(self):
+      
+        try:
+            res = get_thumbnail(self.thumb, '250x250', crop='center', format="WEBP", quality=100)
+            res = res.url
+        except:
+            res = '/core/libs/no-image.webp'
+        return res
+
+    
     def get_thumb_maxi(self):
         res = None
         setup = ShopSetup.objects.get()
@@ -591,7 +648,38 @@ class Product(models.Model):
             return select_option
         except:
             return None
+        
 
+    def get_all_options_qr(self):
+        try:
+            # Получаем все активные опции продукта
+            select_option = self.options.filter(active=True)
+
+            # Получаем все типы опций, связанные с активными опциями
+            option_types = OptionType.objects.filter(
+                t_options__in=select_option
+            ).distinct()
+
+            # Преобразуем в список словарей
+            result = []
+            for opt_type in option_types:
+                options = select_option.filter(type=opt_type, active=True)
+                if options.exists():  # Проверяем, есть ли опции для этого типа
+                    result.append({
+                        'id': opt_type.id,
+                        'name': opt_type.name,
+                        'option_class': opt_type.option_class,
+                        'options': [{
+                            'id': opt.id,
+                            'option_value': opt.option_value,
+                            'option_price': float(opt.option_price or 0)
+                        } for opt in options]
+                    })
+            # Возвращаем JSON-строку
+            return json.dumps(result, cls=DjangoJSONEncoder)
+        except Exception as e:
+            print(f"Error in get_all_options_qr: {e}")
+            return json.dumps([])
     def get_all_options(self):
 
         try:

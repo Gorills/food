@@ -3,7 +3,7 @@ from coupons.models import Coupon
 from subdomains.models import Subdomain
 from orders.models import Order, OrderStatus 
 from setup.models import BaseSettings, Colors, RecaptchaSettings, EmailSettings, ThemeSettings, CustomCode, Fonts, SoundSettings
-from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
+from shop.models import AutoFieldOptions, Category, Combo, Product, Manufacturer, OptionType, CharGroup, CharName, ProductChar, ProductOption, ProductImage, ProductSale, ShopSetup, DopItems, PickupAreas, Table, PayMethod, WorkDay, FoodConstructor, ConstructorCategory, Ingridients, DeliveryTimePrice
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
 from home.models import PlaceImages, SliderSetup, Slider, Page, Reviews, PageItem
 from accounts.models import LoyaltyCard, LoyaltyCardSettings, LoyaltyCardStatus, UserRigts
@@ -726,6 +726,24 @@ class PayMethodForm(forms.ModelForm):
 
 
 # Зоны самовывоза
+
+class TableForm(forms.ModelForm):
+    class Meta:
+        model = Table
+        fields = '__all__'
+        
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'description': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'area': forms.Select(attrs={
+                'class': 'input',   
+            }),
+        }
+
 
 class PickupAreasForm(forms.ModelForm):
     class Meta:
@@ -1731,6 +1749,7 @@ class ProductForm(forms.ModelForm):
             'nutritional_value',
             'product_manufacturer',
             'parent',
+            'pickup_area',
             'product_connect',
             'parent_add',
             'thumb',
@@ -1773,6 +1792,7 @@ class ProductForm(forms.ModelForm):
 
             'product_manufacturer': 'Производитель',
             'parent': 'Категория',
+            'pickup_area': 'Пункт самовывоза',
             'parent_add': 'Добавить категорию',
             'product_connect': 'Связанные товары',
             'thumb': 'Изображение товара (превью)',
@@ -1900,6 +1920,10 @@ class ProductForm(forms.ModelForm):
             'product_connect': forms.SelectMultiple(attrs={
                 'class': 'input',
                 'placeholder': 'Связанные товары',
+            }),
+            'pickup_area': forms.Select(attrs={
+                'class': 'input',
+                'placeholder': 'Точка самовывоза',
             }),
             
             'parent_add': forms.SelectMultiple(attrs={

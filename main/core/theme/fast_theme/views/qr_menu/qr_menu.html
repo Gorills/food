@@ -1,0 +1,87 @@
+{% extends 'qr_menu/qr_base.html' %}
+{% load thumbnail %}
+{% block title %}{% endblock %}
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
+{% block canonical %}{% endblock %}
+{% block og:title %}{% endblock %}
+{% block og:description %}{% endblock %}
+{% block og:url %}{% endblock %}
+{% block twitter:title %}{% endblock %}
+{% block twitter:description %}{% endblock %}
+
+{% block og:image %}{% endblock %}
+{% block og:image:secure_url %}{% endblock %}
+{% block twitter:image %}{% endblock %}
+
+
+
+
+{% block body %}
+{% load static %}
+
+<div class="qr-areas">
+
+    <div class="container">
+        
+
+       
+            <div class="qr-areas__inner">
+
+                <div class="qr-areas__row">
+                    {% for area in areas %}
+
+                    <div class="qr-areas__item">
+                            <a href="{% url "edit_zone" area.pk %}">{{ area.name }}</a>
+                            
+                            <a href="{% url "add_table" %}">+ Добавить стол</a>
+                            {% if not area.qr_code %}
+                                <a href="{% url "generate_area_qr" area.pk %}">Сгенерировать QR</a>
+                            {% endif %}
+
+                            
+
+                            {% if area.qr_code %}
+                                <a href="{{ area.qr_code.url }}" target="_blanl">Скачать QR</a>
+                                <a href="{% url 'area_menu' area.pk %}" target="_blanl">Перейти к меню</a>
+                            {% endif %}
+                        </div>
+
+                        <div class="qr-areas__tables">
+                            {% for table in area.tables.all %}
+        
+                                <div class="qr-areas__table">
+                                    <a href="{% url "edit_table" table.pk %}">Стол: {{ table.name }}</a>
+        
+                                    {% if not table.qr_code %}
+                                    <a href="{% url "generate_table_qr" table.pk %}">Сгенерировать QR</a>
+                                
+                                    {% endif %}
+                                    {% if table.qr_code %}
+                                        <a href="{{ table.qr_code.url }}" target="_blanl">Скачать QR</a>
+                                        <a href="{% url 'table_menu' table.pk %}" target="_blanl">Перейти к меню</a>
+                                        
+                                    {% endif %}
+                                </div>
+                                
+                            
+                            {% endfor %}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                
+            </div>
+
+           
+
+
+
+       
+    </div>
+</div>
+
+{% endblock %}

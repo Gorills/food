@@ -1,0 +1,151 @@
+{% extends 'qr_menu/qr_base.html' %}
+{% load thumbnail %}
+{% block title %}{% endblock %}
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
+{% block canonical %}{% endblock %}
+{% block og:title %}{% endblock %}
+{% block og:description %}{% endblock %}
+{% block og:url %}{% endblock %}
+{% block twitter:title %}{% endblock %}
+{% block twitter:description %}{% endblock %}
+
+{% block og:image %}{% endblock %}
+{% block og:image:secure_url %}{% endblock %}
+{% block twitter:image %}{% endblock %}
+
+
+
+
+{% block body %}
+{% load static %}
+
+
+<div class="qr-products">
+    <div class="container">
+        <div class="qr-products__inner">
+            <div class="qr-products__top">
+                {% for cat in categories_with_products.keys %}
+                    <a href="#{{ cat.id }}" class="qr-products__cat {% if forloop.counter == 1 %}qr-products__cat--active{% endif %}">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+            
+            
+            <div class="qr-products__list">
+                {% for cat, products in categories_with_products.items %}
+                    <p class="qr-products__title" id="{{ cat.id }}">{{ cat.name }}</p>
+                    <div class="qr-products__row">
+                        {% for product in products %}
+                            <div class="qr-products__item">
+                                <div class="qr-products__item-left">
+                                    <div class="qr-products__item-top">
+                                        <p class="qr-products__item-title">{{ product.name }}</p>
+                                        <p class="qr-products__item-desc">{{ product.short_description|default:'' }}</p>
+                                    </div>
+            
+                                    <div class="qr-products__item-bottom">
+                                        <p class="qr-products__price">{{ product.price }} ₽</p>
+            
+                                        {% if table %}
+                                            <a href="#" 
+                                               class="qr-products__btn" 
+                                               data-product-id="{{ product.id }}" 
+                                               data-product-name="{{ product.name }}" 
+                                               data-product-price="{{ product.price }}"
+                                               data-product-image="{{ product.get_thumb_cart }}"
+                                               data-options='{{ product.get_all_options_qr|safe|default:"[]" }}'>+</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+            
+                                <div class="qr-products__item-right">
+                                    <img 
+                                        loading="lazy" 
+                                        src="{{ product.get_qr }}" 
+                                        alt="{{ product.name }}" 
+                                        title="{{ product.name }}" 
+                                        class="qr-products__thumb qr-products__thumb-{{ product.id }}"
+                                    >
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+
+<!-- Модальное окно для модификаторов (вынесено за пределы цикла) -->
+<div id="modifiers-modal" style="display: none;">
+    <div class="modal-content">
+        <h3>Выберите модификаторы</h3>
+        <div class="modifiers-list" id="modifiers-list">
+            <!-- Модификаторы будут добавляться динамически через JS -->
+        </div>
+
+        <div class="confirm-modifiers">
+            <button id="confirm-modifiers" class="confirm-modifiers__add">Добавить в корзину</button>
+            <button id="close-modal" class="confirm-modifiers__close">Отмена</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div id="cart" class="qr-cart">
+
+
+    <div class="qr-cart__closer">
+        <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.85522 5.93945L13.1531 14.0505M13.1531 14.0505L20.451 22.1616M13.1531 14.0505L20.451 5.93945M13.1531 14.0505L5.85522 22.1616" stroke="#333333" stroke-width="1.8766" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+    </div>
+
+    <div class="qr-cart__inner">
+
+        <h3>ВАШ ЗАКАЗ</h3>
+        <div id="cart-items" class="qr-cart__items">
+            <!-- Сюда будут рендериться товары -->
+        </div>
+
+        <div class="qr-cart__total-wrap">
+            <div id="cart-total" class="qr-cart__total">Итого: 0₽</div>
+            <button id="clear-cart" class="qr-cart__clear">Очистить корзину</button>
+        </div>
+        <br>
+
+
+        <div class="qr-cart__bottom">
+            {% if table %}
+            <a href="{% url "oficiant_call" table.pk %}" class="qr-header_call">
+
+                <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.10745 2.67414C9.98414 2.24187 10.9649 2 12 2C15.7274 2 18.7491 5.13623 18.7491 9.00497V9.70957C18.7491 10.5552 18.9903 11.3818 19.4422 12.0854L20.5496 13.8095C21.5612 15.3843 20.789 17.5249 19.0296 18.0229C14.4273 19.3257 9.57274 19.3257 4.97036 18.0229C3.21105 17.5249 2.43882 15.3843 3.45036 13.8095L4.5578 12.0854C5.00972 11.3818 5.25087 10.5552 5.25087 9.70957V9.00497C5.25087 7.93058 5.48391 6.91269 5.90039 6.00277" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C12.2445 22 12.4847 21.9827 12.7192 21.9492M16.5 19C16.2329 19.7126 15.781 20.3428 15.1985 20.8393" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Вызвать официанта
+            </a>
+            {% endif %}
+            <a href="" class="qr-header_call">
+
+                            
+                <?xml version="1.0" encoding="utf-8"?>
+                <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                <svg width="800px" height="800px" viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M359.8 368.7c-83.5 37-150 103.4-187.1 186.9-5.6 12.6 0.1 27.3 12.7 32.9 3.3 1.5 6.7 2.2 10.1 2.2 9.6 0 18.7-5.5 22.8-14.8 32.1-72.2 89.5-129.6 161.7-161.6 12.6-5.6 18.3-20.3 12.7-32.9-5.5-12.6-20.3-18.3-32.9-12.7z m214.6-108.5c7.2-11.8 11.6-25.5 11.6-40.3 0-42.8-34.7-77.4-77.4-77.4-42.8 0-77.4 34.7-77.4 77.4 0 14.8 4.4 28.6 11.6 40.3-216.7 31.9-383.5 219-383.5 444.4v54.1c0 13.8 11.2 25 25 25H933c13.8 0 25-11.2 25-25v-54.1c-0.1-225.4-167-412.4-383.6-444.4zM908 733.7H109.2v-29.1c0-220.2 179.2-399.3 399.4-399.3S908 484.4 908 704.6v29.1z m24.9 100.2H84.2c-13.8 0-25 11.2-25 25s11.2 25 25 25h848.7c13.8 0 25-11.2 25-25s-11.2-25-25-25z" fill="#FCA128" /></svg>
+                Оформить заказ
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

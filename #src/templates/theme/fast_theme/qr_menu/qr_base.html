@@ -1,0 +1,240 @@
+{% load recaptcha3 %}{% load theme_static %}{% load thumbnail %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- base -->
+    <title> {% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <meta name="keywords" content="{% block keywords %}{% endblock %}" />
+    <link rel="canonical" href="{{ site }}{% block canonical %}{% endblock %}" />
+    <meta name="theme-color" content="{{ setup.theme_color }}">
+    <link rel="manifest" href="{% url 'manifest_json' %}">
+    {% if setup.active == True %}<meta name="robots" content="index,follow" />{% else %}<meta name="robots" content="noindex,nofollow" />{% endif %}
+    <!-- base -->
+    <!-- og -->
+    <meta property="og:site_name" content="{{ setup.name }}" /> 
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{% block og:title %}{% endblock %}" />
+    <meta property="og:description" content="{% block og:description %}{% endblock %}" />
+    <meta property="og:url" content="{{ site }}{% block og:url %}{% endblock %}" />
+    <meta property="og:image" content="{% block og:image %}{% endblock %}" />
+    <meta property="og:image:secure_url" content="{% block og:image:secure_url %}{% endblock %}" />
+    <meta property="og:image:width" content="537" />
+    <meta property="og:image:height" content="240" />
+    <!-- og -->
+    <!-- twitter -->
+    <meta name="twitter:image" content="{% block twitter:image %}{% endblock %}" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{% block twitter:title %}{% endblock %}"  />
+    <meta name="twitter:description" content="{% block twitter:description %}{% endblock %}" />
+    <!-- twitter -->
+    <!-- icons -->
+    <link rel="shortcut icon" href="{% if setup.icon_ico %}{{ setup.icon_ico.url }}{% endif %}" type="image/x-icon" />
+    <link rel="icon" href="{% if setup.icon_svg %}{{ setup.icon_svg.url }}{% endif %}">
+    <link rel="apple-touch-icon" href="{% if setup.icon_png %}{{ setup.icon_png.url }}{% endif %}" />
+    {% thumbnail setup.icon_png "57x57" format="PNG" as im %}<link rel="apple-touch-icon" sizes="57x57" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "72x72" format="PNG" as im %}<link rel="apple-touch-icon" sizes="72x72" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "76x76" format="PNG" as im %}<link rel="apple-touch-icon" sizes="76x76" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "114x114" format="PNG" as im %}<link rel="apple-touch-icon" sizes="114x114" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "120x120" format="PNG" as im %}<link rel="apple-touch-icon" sizes="120x120" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "144x144" format="PNG" as im %}<link rel="apple-touch-icon" sizes="144x144" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "152x152" format="PNG" as im %}<link rel="apple-touch-icon" sizes="152x152" href="{{ im.url }}" />{% endthumbnail %}
+    {% thumbnail setup.icon_png "180x180" format="PNG" as im %}<link rel="apple-touch-icon" sizes="180x180" href="{{ im.url }}" />{% endthumbnail %}
+    <!-- icons -->
+    
+    {% comment %} Fonts {% endcomment %}
+    {% if font.name == "Roboto" %}
+        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+    {% elif font.name == "Certa" %}
+        <link href="{% get_static 'css/fonts/certa.css' %}" rel="stylesheet">
+    {% elif font.name == 'Zombie' %}
+        <link href="{% get_static 'css/fonts/zombie.css' %}" rel="stylesheet">
+    {% elif font.name == 'Arial' %}
+        <link href="{% get_static 'css/fonts/arial.css' %}" rel="stylesheet">
+    {% elif font.name == 'Playfair' %}
+        <link href="{% get_static 'css/fonts/playfair.css' %}" rel="stylesheet">
+    {% elif font.name == 'Nautilus Pompilius' %}
+        <link href="{% get_static 'css/fonts/nautilus.css' %}" rel="stylesheet">
+    {% endif %}
+
+    {% if slider_setup.font == "Roboto" %}
+        <link href="{% get_static 'css/fonts/roboto.css' %}" rel="stylesheet">
+    {% elif slider_setup.font == "Certa" %}
+        <link href="{% get_static 'css/fonts/certa.css' %}" rel="stylesheet">
+    {% elif slider_setup.font == "Zombie" %}
+        <link href="{% get_static 'css/fonts/zombie.css' %}" rel="stylesheet">
+    {% endif %}
+
+    <style>
+        :root {
+
+            --theme-font: "{{ font.name }}", sans-serif;
+            --font-size: {{ colors.font_size }};
+            --color-primary: {{ colors.primary }};
+            --color-primary-light: {{ colors.primary }};
+            --color-primary-dark: {{ colors.primary }};
+
+
+            --color-secondary: {{ colors.secondary}};
+            --color-success: {{ colors.success }};
+            --color-danger: {{ colors.danger }};
+            --color-warning: {{ colors.warning }};
+            --color-info: {{ colors.info }};
+
+            --color-header: {{ colors.header_bg }};
+            --color-header-font: {{ colors.header_font }};
+
+            --color-phone: {{ colors.phone_color }};
+            {% if colors.phone_decorations %}
+            --color-phone-decorations: underline;
+            {% else %}
+            --color-phone-decorations: none;
+            {% endif %}
+            
+
+            --color-footer: {{ colors.footer_color }};
+            --color-footer-font: {{ colors.footer_font }};
+
+            --color-cart-border: {{ colors.cart_border }};
+            --color-cart-font: {{ colors.cart_fonts_color }};
+            --color-cart-bg: {{ colors.cart_bg }};
+
+            --color-search: {{ colors.search_bg }};
+            --color-search-font: {{ colors.search_font }};
+
+            --color-mobile-menu: {{ colors.mobile_menu_bg }};
+            --color-mobile-menu-font: {{ colors.mobile_menu_font }};
+
+            --color-btn-bg: {{ colors.bg_btn }};
+            --color-btn-border: {{ colors.border_btn }};
+            --color-btn-font: {{ colors.color_btn }};
+            --color-btn-font-light: {{ colors.color_btn_light }};
+
+            --color-body: {{ colors.body_bg }};
+            --color-body-light: {{ colors.body_bg_light }};
+            --color-font-light: {{ colors.body_font_light }};
+            --color-gray: {{ colors.gray }};
+
+            --color-font: {{ colors.body_font }};
+            --color-font-light: #999999;
+            --color-font-gray: #666666;
+            --color-font-dark: {{ colors.info }};
+
+
+            --color-bg-lightest: #f6f6f6;
+            --color-bg-light: #e9e4d6;
+            --color-bg: {{ colors.info }};
+            --color-bg-dark: #000;
+
+            --color-product-card: {{ colors.product_card_bg }};
+            --color-product-card-font: {{ colors.product_card_font }};
+            --color-catalog: {{ colors.catalog_bg }};
+
+            --logo-height: {{ setup.logo_height }}px;
+            {% if setup.logo_width %}
+            --logo-width: {{ setup.logo_width }}px;
+            {% endif %}
+
+            --slider-height: {{ slider_setup.height }}px;
+            --slider-height-mobile: {{ slider_setup.height_mob }}px;
+            --slider-font: "{{ slider_setup.font }}", sans-serif;
+
+            --slider-title-desctop: {{ slider_setup.title_size }}px;
+            --slider-title-mobile: {{ slider_setup.title_size_mob }}px;
+            --slider-text-desctop: {{ slider_setup.desc_size }}px;
+            --slider-text-mobile: {{ slider_setup.desc_size_mob }}px;
+            --slider-text-width: {{ slider_setup.text_max_width }}px;
+            --slider-text-width-mobile: {{ slider_setup.text_max_width_mob }}px;
+
+            
+        }
+    </style>
+
+    <link href="{% get_libs 'owl/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% get_static 'css/style.css' %}?v{% now "H:i:s" %}" rel="stylesheet">
+    
+
+    
+</head>
+
+
+    
+    
+    
+<body {% if colors.bg_image %}style="background-image: url({{ colors.bg_image.url }});" class="body-bg"{% endif %}>
+
+   
+    
+
+    <header class="qr-header">
+        <div class="container">
+            <div class="qr-header__inner">
+                {% if setup.logo_dark %}
+                    
+                    
+                    <img src="{{ setup.get_logo.url }}" 
+                        alt="{{ setup.name }}" 
+                        title="{{ setup.name }}" 
+                        class="qr-header__logo">
+
+                    
+                {% else %}
+                    <div class="qr-header__logo">{{ setup.name }}</div>
+                {% endif %}
+    
+
+                {% if table %}
+                <a href="{% url "oficiant_call" table.pk %}" class="qr-header_call">
+
+                    <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.10745 2.67414C9.98414 2.24187 10.9649 2 12 2C15.7274 2 18.7491 5.13623 18.7491 9.00497V9.70957C18.7491 10.5552 18.9903 11.3818 19.4422 12.0854L20.5496 13.8095C21.5612 15.3843 20.789 17.5249 19.0296 18.0229C14.4273 19.3257 9.57274 19.3257 4.97036 18.0229C3.21105 17.5249 2.43882 15.3843 3.45036 13.8095L4.5578 12.0854C5.00972 11.3818 5.25087 10.5552 5.25087 9.70957V9.00497C5.25087 7.93058 5.48391 6.91269 5.90039 6.00277" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C12.2445 22 12.4847 21.9827 12.7192 21.9492M16.5 19C16.2329 19.7126 15.781 20.3428 15.1985 20.8393" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Вызвать официанта
+                </a>
+
+                <div class="cart-btn">
+                    <p id="cart-total-btn" class="cart-btn__total">Заказ / 0 ₽</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </header>
+    
+    
+
+
+    <div class="content-qr">
+        <div class="content__inner">
+            {% block body %}
+                {% block content %}
+                {% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+
+    
+   
+    
+
+
+    
+    <script src="{% get_libs 'js/jquery.min.js' %}?v1.0.0"></script>
+    <script src="{% get_libs 'js/jquery.maskedinput.min.js' %}?v1.0.0"></script>
+    <script src="{% get_libs 'owl/owl.carousel.min.js' %}?v1.0.0"></script>
+   
+    <script src="{% get_static 'js/qr.js' %}?v{% now "H:i:s" %}"></script>
+
+        
+    {% recaptcha_init %}
+    {% recaptcha_ready action_name='homepage' %}
+</body>
+</html>
+

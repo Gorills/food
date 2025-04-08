@@ -239,6 +239,11 @@
         </div>
         <div id="product-content-3">
             <p>
+                {{ form.pickup_area.label_tag }}
+                {{ form.pickup_area }}
+                {{ form.pickup_area.errors }}
+            </p>
+            <p>
                 <span class="required">*</span> {{ form.parent.label_tag }}
                 {{ form.parent }}
                 {{ form.parent.errors }}
