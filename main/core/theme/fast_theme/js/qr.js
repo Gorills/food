@@ -221,6 +221,36 @@ $(document).ready(function() {
             }
             $('#cart-total').text(`Итого: ${this.getTotal()}₽`);
             $('#cart-total-btn').text(`Заказ / ${this.getTotal()} ₽`);
+
+            
+        },
+
+        // Отправка корзины на сервер
+        sendCartToServer: function(tableId) {
+            const cartData = this.items; // Получаем текущие элементы корзины
+            if (cartData.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+
+            $.ajax({
+                url: '/qr_menu/order/', // URL endpoint
+                type: 'POST',
+                data: JSON.stringify(cartData), // Преобразуем корзину в JSON
+                contentType: 'application/json', // Указываем тип данных
+                success: function(response) {
+                    console.log('Корзина успешно отправлена:', response);
+                    // Можно добавить очистку корзины после успешной отправки
+                    qr_cart.clearCart();
+                    alert('Заказ успешно оформлен!');
+                    // Перенаправление, если нужно
+                    window.location.href = '/qr_menu/order/success/'+tableId+'/'; // Пример
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка при отправке корзины:', error);
+                    alert('Произошла ошибка при оформлении заказа.');
+                }
+            });
         },
 
         // Привязка событий
@@ -271,6 +301,13 @@ $(document).ready(function() {
             // Очистка корзины
             $(document).on('click', '#clear-cart', function() {
                 self.clearCart();
+            });
+
+            // Обработчик для кнопки "Оформить заказ"
+            $(document).on('click', '.qr-header_call', function(e) {
+                e.preventDefault(); // Предотвращаем переход по ссылке
+                const tableId = $(this).data('table-id');
+                self.sendCartToServer(tableId); // Отправляем корзину
             });
         }
     };

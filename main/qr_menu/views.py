@@ -167,3 +167,77 @@ def oficiant_call(request, pk):
     return redirect('table_menu', pk=table.id)
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt  # Отключаем CSRF для POST-запроса (для простоты, в продакшене используйте токен)
+def order(request):
+    if request.method == 'POST':
+        try:
+            # Получаем JSON из тела запроса
+            cart_data = json.loads(request.body)
+            print("Полученные данные корзины:", cart_data)  # Для отладки
+
+            # Пример структуры cart_data:
+            # [
+            #     {"id": "1", "name": "Пицца", "price": 500, "quantity": 2, "modifiers": [{"id": "mod1", "name": "Соус", "price": 15}], "image": "/path/to/image.webp"},
+            #     {"id": "2", "name": "Салат", "price": 300, "quantity": 1, "modifiers": [], "image": "/path/to/image2.webp"}
+            # ]
+
+            # Обработка данных корзины
+            total = 0
+            order_items = []
+
+            for item in cart_data:
+                product_id = item['id']
+                name = item['name']
+                price = float(item['price'])
+                quantity = int(item['quantity'])
+                modifiers = item['modifiers']
+                image = item.get('image', '')  # Может быть пустым
+
+                # Подсчет стоимости модификаторов
+                modifiers_total = sum(float(mod['price']) for mod in modifiers)
+                item_total = (price + modifiers_total) * quantity
+                total += item_total
+
+                # Формируем данные для заказа (можно сохранить в БД)
+                order_items.append({
+                    'product_id': product_id,
+                    'name': name,
+                    'price': price,
+                    'quantity': quantity,
+                    'modifiers': modifiers,
+                    'image': image,
+                    'item_total': item_total
+                })
+
+            # Здесь можно сохранить заказ в базу данных
+            # Например:
+            # order = Order.objects.create(total=total)
+            # for item in order_items:
+            #     OrderItem.objects.create(order=order, product_id=item['product_id'], quantity=item['quantity'], ...)
+
+            # Возвращаем успешный ответ
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Заказ успешно получен',
+                'total': total,
+                'items': order_items
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Некорректный JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Метод не поддерживается'}, status=405)
+    
+
+
+def order_success(request, pk):
+
+    table = Table.objects.get(id=pk)
+    
+    return redirect('table_menu', pk=table.id)
