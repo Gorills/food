@@ -13,7 +13,7 @@ urlpatterns = [
 
     path('oficiant_call/<int:pk>/', views.oficiant_call, name='oficiant_call'),
 
-    path('order/', views.order, name='qr_order'),
+    path('order/<int:pk>/', views.order, name='qr_order'),
     path('order/success/<int:pk>/', views.order_success, name='order_success'),
 
 ]

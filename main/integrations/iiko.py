@@ -12,11 +12,15 @@ from .models import Integrations
 
 from pytils.translit import slugify
 from django.core.files.base import ContentFile
-from shop.models import Category, OptionImage, OptionType, Product, ProductOption
+from shop.models import Category, OptionImage, OptionType, Product, ProductOption, PickupAreas
 import json
 
 try:
     api_key = Integrations.objects.get(name='iiko').api_key
+    try:
+        picup_area = PickupAreas.objects.get(api_key=api_key)
+    except:
+        picup_area = None
 except:
     pass
 
@@ -139,6 +143,7 @@ def load_menu(clean, product_clean):
             product_id = product['itemId']
             product_description = product['description']
 
+
             item_options = product['itemSizes']
 
             try:
@@ -155,6 +160,8 @@ def load_menu(clean, product_clean):
                 price = item_options[0]['prices'][0]['price']
             except (IndexError, KeyError, TypeError):
                 price = 0
+
+            
 
             if price is None:
                 print(f"Warning: Skipping product {product_name} due to missing price.")
@@ -174,6 +181,7 @@ def load_menu(clean, product_clean):
                 product_save.price = price
                 product_save.short_description=product_description
                 product_save.iiko_type = product['orderItemType']
+                product_save.pickup_area = picup_area
                 product_save.save()
 
             except:
@@ -186,6 +194,7 @@ def load_menu(clean, product_clean):
                         parent=cat_save,
                         short_description=product_description,
                         iiko_type=product['orderItemType'],
+                        pickup_area=picup_area,
                         weight=weight
                     )
                 except:
@@ -196,6 +205,7 @@ def load_menu(clean, product_clean):
                         price=price,
                         parent=cat_save,
                         short_description=product_description,
+                        pickup_area=picup_area,
                         iiko_type=product['orderItemType']
                     )
 
@@ -339,107 +349,119 @@ def extract_digits_from_end(input_string):
 
 
 
+
+
+
+
+
+
 def create_iiko_order(order, attempt=1):
 
     try:
-        integrations = Integrations.objects.get(name='iiko')
-    except:
-        integrations = None
 
-    if not integrations:
-        return
+        try:
+            integrations = Integrations.objects.get(name='iiko')
+        except:
+            integrations = None
 
-    if attempt > 12:
-        print(f"Max attempts reached for order {order.id}. Giving up.")
-        return
+        if not integrations:
+            return
 
-    url = 'https://api-ru.iiko.services/api/1/deliveries/create'
-    headers = {"Authorization": f"Bearer {token()}"}
-    orgs = organization()[0]
-    
-    
+        if attempt > 12:
+            print(f"Max attempts reached for order {order.id}. Giving up.")
+            return
 
-    items = [
-        {
-            "productId": item.product.external_id,
-            "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
-            "type": item.product.iiko_type,
-            "amount": item.quantity
+        url = 'https://api-ru.iiko.services/api/1/deliveries/create'
+        headers = {"Authorization": f"Bearer {token()}"}
+        orgs = organization()[0]
+        
+        
+
+        items = [
+            {
+                "productId": item.product.external_id,
+                "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
+                "type": item.product.iiko_type,
+                "amount": item.quantity
+            }
+            for item in order.items.all()
+        ]
+
+        order_uuid = str(uuid.uuid4())
+        order.external_id = order_uuid
+        order.save()
+
+        order_types = get_order_types()
+        delivery_method_map = {
+            "Доставка": "Доставка курьером",
+            "Самовывоз": "Доставка самовывоз"
         }
-        for item in order.items.all()
-    ]
 
-    order_uuid = str(uuid.uuid4())
-    order.external_id = order_uuid
-    order.save()
+        orderTypeId = next(
+            (
+                item['id']
+                for order_type in order_types['orderTypes']
+                for item in order_type['items']
+                if item['name'] == delivery_method_map.get(order.delivery_method)
+            ),
+            None
+        )
 
-    order_types = get_order_types()
-    delivery_method_map = {
-        "Доставка": "Доставка курьером",
-        "Самовывоз": "Доставка самовывоз"
-    }
-
-    orderTypeId = next(
-        (
-            item['id']
-            for order_type in order_types['orderTypes']
-            for item in order_type['items']
-            if item['name'] == delivery_method_map.get(order.delivery_method)
-        ),
-        None
-    )
-
-    deliveryPoint = {
-        "address": {
-            "street": {"name": order.address},
-            "house": extract_digits_from_end(order.address),
-            "flat": order.flat,
-            "entrance": order.entrance,
-            "floor": order.floor,
-            "type": "legacy",
-        },
-    }
-
-    data = {
-        "organizationId": orgs,
-        "order": {
-            "id": order_uuid,
-            "customer": {
-                "name": order.name,
-                "phone": order.phone,
-                "type": "regular"
+        deliveryPoint = {
+            "address": {
+                "street": {"name": order.address},
+                "house": extract_digits_from_end(order.address),
+                "flat": order.flat,
+                "entrance": order.entrance,
+                "floor": order.floor,
+                "type": "legacy",
             },
-            "phone": order.phone,
-            "fulfillmentType": "delivery",
-            "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,
-            "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
-            "items": items,
-            "orderTypeId": orderTypeId,
-            "comment": f"{order.time} / {order.comment}" if hasattr(order, 'comment') else "",
         }
-    }
 
-    try:
-        terminal_group = get_terminal_groups()
-        data['terminalGroupId'] = terminal_group
-    except:
-        pass
+        data = {
+            "organizationId": orgs,
+            "order": {
+                "id": order_uuid,
+                "customer": {
+                    "name": order.name,
+                    "phone": order.phone,
+                    "type": "regular"
+                },
+                "phone": order.phone,
+                "fulfillmentType": "delivery",
+                "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,
+                "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
+                "items": items,
+                "orderTypeId": orderTypeId,
+                "comment": f"{order.time} / {order.comment}" if hasattr(order, 'comment') else "",
+            }
+        }
+
+        try:
+            terminal_group = get_terminal_groups()
+            data['terminalGroupId'] = terminal_group
+        except:
+            pass
 
 
-    if order.delivery_method == "Доставка":
-        data['order']['deliveryPoint'] = deliveryPoint
+        if order.delivery_method == "Доставка":
+            data['order']['deliveryPoint'] = deliveryPoint
 
-    response = requests.post(url, json=data, headers=headers)
+        # print(data)
 
-    if response.status_code == 200:
-        print("Order created successfully")
-        # print(response.json())
-        # Запускаем проверку статуса заказа в отдельном потоке
-        threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
-    else:
-        print(f"Failed to create order: {response.status_code}")
-        # print(response.json())
+        response = requests.post(url, json=data, headers=headers)
 
+        if response.status_code == 200:
+            print("Order created successfully")
+            print(response.json())
+            # Запускаем проверку статуса заказа в отдельном потоке
+            threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
+        else:
+            print(f"Failed to create order: {response.status_code}")
+            print(response.json())
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
 def check_order_status(order_id):
     url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
@@ -479,7 +501,7 @@ def background_order_status_check(order, order_id, attempt):
 
 
 
-# check_order_status("4e7c4e67-1981-4539-9a8e-1632bdc250cc")
+check_order_status("596082be-78b7-433e-ab55-f061152173c8")
 
-# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=578), "220fb0f7-e88d-4ce3-8f04-05385efc3b35", 1)).start()
-# create_iiko_order(Order.objects.get(id=613))
+# threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
+# create_iiko_order(Order.objects.get(id=641))

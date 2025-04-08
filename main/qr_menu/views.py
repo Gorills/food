@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from integrations.iiko import create_iiko_order
+from orders.models import Order, OrderItem
 from setup.models import BaseSettings
 from shop.models import Category, PickupAreas, Product, Table
 # Create your views here.
@@ -172,54 +174,55 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 @csrf_exempt  # Отключаем CSRF для POST-запроса (для простоты, в продакшене используйте токен)
-def order(request):
+def order(request, pk):
+
+
     if request.method == 'POST':
         try:
             # Получаем JSON из тела запроса
             cart_data = json.loads(request.body)
-            print("Полученные данные корзины:", cart_data)  # Для отладки
+            pickup_area = Table.objects.get(id=pk).area
 
-            # Пример структуры cart_data:
-            # [
-            #     {"id": "1", "name": "Пицца", "price": 500, "quantity": 2, "modifiers": [{"id": "mod1", "name": "Соус", "price": 15}], "image": "/path/to/image.webp"},
-            #     {"id": "2", "name": "Салат", "price": 300, "quantity": 1, "modifiers": [], "image": "/path/to/image2.webp"}
-            # ]
+            order = Order.objects.create(
+                phone='+79999999999',
+                name='Имя',
+                address=pickup_area.address,
+                table=pk,
+                delivery_method="Самовывоз",
+                order_conmment="Заказ из QR-меню. Стол No " + str(pk),
+            )
 
             # Обработка данных корзины
             total = 0
             order_items = []
 
             for item in cart_data:
+
+                
                 product_id = item['id']
-                name = item['name']
                 price = float(item['price'])
                 quantity = int(item['quantity'])
                 modifiers = item['modifiers']
-                image = item.get('image', '')  # Может быть пустым
+                
 
                 # Подсчет стоимости модификаторов
                 modifiers_total = sum(float(mod['price']) for mod in modifiers)
                 item_total = (price + modifiers_total) * quantity
                 total += item_total
+                product = Product.objects.get(id=product_id)
 
-                # Формируем данные для заказа (можно сохранить в БД)
-                order_items.append({
-                    'product_id': product_id,
-                    'name': name,
-                    'price': price,
-                    'quantity': quantity,
-                    'modifiers': modifiers,
-                    'image': image,
-                    'item_total': item_total
-                })
+                order_item = OrderItem(
+                    order = order,
+                    product = product,
+                    price = float(item['price']),
+                    quantity = int(item['quantity']),
 
-            # Здесь можно сохранить заказ в базу данных
-            # Например:
-            # order = Order.objects.create(total=total)
-            # for item in order_items:
-            #     OrderItem.objects.create(order=order, product_id=item['product_id'], quantity=item['quantity'], ...)
+                )
+                order_item.save()
 
-            # Возвращаем успешный ответ
+                
+            create_iiko_order(order)
+           
             return JsonResponse({
                 'status': 'success',
                 'message': 'Заказ успешно получен',
@@ -239,5 +242,5 @@ def order(request):
 def order_success(request, pk):
 
     table = Table.objects.get(id=pk)
-    
+
     return redirect('table_menu', pk=table.id)

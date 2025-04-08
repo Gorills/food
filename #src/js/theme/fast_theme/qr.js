@@ -234,7 +234,7 @@ $(document).ready(function() {
             }
 
             $.ajax({
-                url: '/qr_menu/order/', // URL endpoint
+                url: '/qr_menu/order/'+tableId+'/', // URL endpoint
                 type: 'POST',
                 data: JSON.stringify(cartData), // Преобразуем корзину в JSON
                 contentType: 'application/json', // Указываем тип данных
