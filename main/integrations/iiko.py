@@ -501,7 +501,7 @@ def background_order_status_check(order, order_id, attempt):
 
 
 
-check_order_status("596082be-78b7-433e-ab55-f061152173c8")
+# check_order_status("596082be-78b7-433e-ab55-f061152173c8")
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
 # create_iiko_order(Order.objects.get(id=641))
