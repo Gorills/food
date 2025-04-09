@@ -3646,9 +3646,23 @@ def catalogs_synch(request):
         else:
             product_status = False
 
+        
+        # Получаем уникальные api_key
+        unique_api_keys = PickupAreas.objects.filter(api_key__isnull=False).values_list('api_key', flat=True).distinct()
+        # Выбираем по одному PickupAreas для каждого api_key (например, первый по id)
+        pickup_areas = []
+        for api_key in unique_api_keys:
+            # Берем первый объект с данным api_key
+            area = PickupAreas.objects.filter(api_key=api_key).order_by('id').first()
+            if area:
+                pickup_areas.append(area)
+        # Преобразуем список в QuerySet, если нужно
+        pickup_areas = PickupAreas.objects.filter(id__in=[area.id for area in pickup_areas])
 
+        for area in pickup_areas:
+            load_menu(status_clean, product_status, area)
       
-        load_menu(status_clean, product_status)
+        
       
         
 

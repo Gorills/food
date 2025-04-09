@@ -8,7 +8,7 @@ from admin.views import check_user_rights
 import qrcode
 from io import BytesIO
 from django.core.files import File
-from orders.telegram import send_message
+from orders.telegram import order_telegram, send_message
 
 
 try:
@@ -96,7 +96,7 @@ def generate_table_qr(request, pk):
 from django.db import models
 def area_menu(request, pk):
     area = PickupAreas.objects.get(id=pk)
-    products = area.product_set.all()
+    products = area.products.all()
 
     # Получаем уникальные категории
     categories_set = set()
@@ -128,7 +128,7 @@ def table_menu(request, pk):
 
     table = Table.objects.get(id=pk)
     area = table.area
-    products = area.product_set.all()
+    products = area.products.all()
     
 
     # Получаем уникальные категории
@@ -162,8 +162,13 @@ def table_menu(request, pk):
 def oficiant_call(request, pk):
     table = Table.objects.get(id=pk)
 
+    if table.area.telegram_group:
+        tg_group = table.area.telegram_group
+    else:
+        tg_group = telegram_group
 
-    send_message(telegram_bot, telegram_group, f'Вызов официанта от стола {table.name} / {table.area.name}')
+
+    send_message(telegram_bot, tg_group, f'Вызов официанта от стола {table.name} / {table.area.name}')
 
 
     return redirect('table_menu', pk=table.id)
@@ -181,13 +186,15 @@ def order(request, pk):
         try:
             # Получаем JSON из тела запроса
             cart_data = json.loads(request.body)
-            pickup_area = Table.objects.get(id=pk).area
+            table = Table.objects.get(id=pk)
+            pickup_area = table.area
 
             order = Order.objects.create(
                 phone='+79999999999',
                 name='Имя',
                 address=pickup_area.address,
-                table=pk,
+                table=table.name,
+                table_object=table,
                 delivery_method="Самовывоз",
                 order_conmment="Заказ из QR-меню. Стол No " + str(pk),
             )
@@ -218,10 +225,21 @@ def order(request, pk):
                     quantity = int(item['quantity']),
 
                 )
+                order_items.append(order_item)
                 order_item.save()
 
-                
-            create_iiko_order(order)
+             # create_iiko_order(order)
+
+
+            message = f"**Заказ из QR-меню для стола {Table.objects.get(id=pk).name}**\n\n"
+            for item in order_items:
+                message += f"**{item.product.name}** - {item.quantity} шт.\n"
+            
+            if table.area.telegram_group:
+                telegram_group = table.area.telegram_group
+           
+            send_message(telegram_bot, telegram_group, message)
+
            
             return JsonResponse({
                 'status': 'success',

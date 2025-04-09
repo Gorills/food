@@ -7,7 +7,7 @@ from accounts.models import UserProfile
 from django.contrib.auth.models import User
 
 # Create your models here.
-from shop.models import Combo, Product, ProductOption, Ingridients, FoodConstructor
+from shop.models import Combo, Product, ProductOption, Ingridients, FoodConstructor, Table
 
 
 
@@ -177,6 +177,7 @@ class Order(models.Model):
     external_delivery_status = models.CharField(max_length=450, verbose_name="Статус доставки", default="new")
 
     table = models.CharField(max_length=450, verbose_name="Номер стола", null=True, blank=True)
+    table_object = models.ForeignKey(Table, on_delete=models.CASCADE, verbose_name="Стол", null=True, blank=True)
     is_balls_processed = models.BooleanField(default=False, verbose_name="Списание баллов")
     def order_views(self):
 

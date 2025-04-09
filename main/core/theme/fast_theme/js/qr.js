@@ -304,7 +304,7 @@ $(document).ready(function() {
             });
 
             // Обработчик для кнопки "Оформить заказ"
-            $(document).on('click', '.qr-header_call', function(e) {
+            $(document).on('click', '.qr-header_order', function(e) {
                 e.preventDefault(); // Предотвращаем переход по ссылке
                 const tableId = $(this).data('table-id');
                 self.sendCartToServer(tableId); // Отправляем корзину

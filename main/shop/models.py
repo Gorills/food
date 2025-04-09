@@ -149,7 +149,10 @@ class PickupAreas(models.Model):
     webhook_uri = models.CharField(max_length=50, null=True, blank=True, verbose_name='Хендлер (не обязательно)')
     webhook_token = models.CharField(max_length=64, null=True, blank=True, verbose_name='Токен (не обязательно)')
 
+    telegram_group = models.CharField(max_length=50, null=True, blank=True, verbose_name='Группа в Telegram (не обязательно)')
+
     qr_code = models.ImageField(upload_to='qrcodes', verbose_name='QR-код', null=True, blank=True)
+    show_in_site = models.BooleanField(default=True, verbose_name='Показывать на сайте')
 
 
     def __str__(self):
@@ -370,7 +373,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 class Product(models.Model):
 
-    pickup_area = models.ForeignKey(PickupAreas, on_delete=models.SET_NULL, null=True, blank=True)
+    pickup_areas = models.ManyToManyField(PickupAreas, blank=True, related_name='products')
 
     external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
     # Выводить в меню и других списках

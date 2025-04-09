@@ -73,20 +73,22 @@ def get_menu():
 
 # organization()
 
-def load_menu(clean, product_clean):
+def load_menu(clean, product_clean, area=None):
+    # Получаем все PickupAreas, связанные с api_key, если area передано
+    if area:
+        pickup_areas = PickupAreas.objects.filter(api_key=area.api_key)
+    else:
+        pickup_areas = PickupAreas.objects.all()  # Или оставьте None, если не нужно привязывать без area
 
     headers = {"Authorization": f"Bearer {token()}"}
 
     if product_clean:
-        products = Product.objects.all()
-        products.delete()
+        Product.objects.all().delete()
 
     if clean:
-        categories = Category.objects.all()
-        categories.delete()
+        Category.objects.all().delete()
 
     get_menu_response = get_menu()
-
     menu = get_menu_response['externalMenus'][0]['id']
 
     try:
@@ -94,11 +96,7 @@ def load_menu(clean, product_clean):
     except:
         priceCategoryId = None
 
-    # print("menu", get_menu_response)
-    
-
     url_menu_id = 'https://api-ru.iiko.services/api/2/menu/by_id'
-
     orgs = organization()
 
     data = {
@@ -108,9 +106,6 @@ def load_menu(clean, product_clean):
 
     if priceCategoryId:
         data['priceCategoryId'] = priceCategoryId
-
-
-    # print(data)
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
 
@@ -127,22 +122,17 @@ def load_menu(clean, product_clean):
                 external_id=cat_id,
                 name=cat_name,
                 slug=cat_slug,
-                top = True
-
+                top=True
             )
         except:
-            cat_save = Category.objects.get(
-                external_id=cat_id
-            )
+            cat_save = Category.objects.get(external_id=cat_id)
+
         i = 0
         for product in cat['items']:
-
-            
             product_name = product['name']
             product_slug = slugify(product_name)
             product_id = product['itemId']
             product_description = product['description']
-
 
             item_options = product['itemSizes']
 
@@ -150,8 +140,6 @@ def load_menu(clean, product_clean):
                 weight = int(item_options[0]['portionWeightGrams'])
             except (IndexError, KeyError, TypeError):
                 weight = None
-
-            
 
             if weight == 0:
                 weight = None
@@ -161,88 +149,77 @@ def load_menu(clean, product_clean):
             except (IndexError, KeyError, TypeError):
                 price = 0
 
-            
-
             if price is None:
                 print(f"Warning: Skipping product {product_name} due to missing price.")
-                continue  # Пропустить продукт без цены
-            
+                continue
+
             try:
                 image = item_options[0]['buttonImageUrl']
             except (IndexError, KeyError, TypeError):
                 image = None
+
+            # Проверяем, существует ли продукт
             try:
-                product_save = Product.objects.get(
-                    external_id=product_id
-                )
+                product_save = Product.objects.get(external_id=product_id)
                 product_save.weight = weight
                 product_save.name = product_name
                 product_save.slug = product_slug
                 product_save.price = price
-                product_save.short_description=product_description
+                product_save.short_description = product_description
                 product_save.iiko_type = product['orderItemType']
-                product_save.pickup_area = picup_area
                 product_save.save()
-
             except:
                 try:
                     product_save = Product.objects.create(
                         external_id=product_id,
                         name=product_name,
-                        slug=product_slug, 
+                        slug=product_slug,
                         price=price,
                         parent=cat_save,
                         short_description=product_description,
                         iiko_type=product['orderItemType'],
-                        pickup_area=picup_area,
                         weight=weight
                     )
                 except:
                     product_save = Product.objects.create(
                         external_id=product_id,
                         name=product_name,
-                        slug=product_slug+str(i), 
+                        slug=product_slug + str(i),
                         price=price,
                         parent=cat_save,
                         short_description=product_description,
-                        pickup_area=picup_area,
-                        iiko_type=product['orderItemType']
+                        iiko_type=product['orderItemType'],
+                        weight=weight
                     )
 
+            # Привязываем PickupAreas через ManyToMany
+            if pickup_areas:
+                product_save.pickup_areas.set(pickup_areas)  # Привязываем все подходящие PickupAreas
 
+            # Обработка изображения
             try:
                 response_pr_img = requests.get(image)
-                
                 image_name = image.split('/')[-1]
                 if response_pr_img.status_code == 200:
                     product_save.thumb.save(image_name, ContentFile(response_pr_img.content), save=True)
-
             except:
                 pass
 
-            
             item_count = len(item_options)
 
-            
-            
             if item_count > 1:
                 options_old = product_save.options.all()
                 options_old.delete()
 
                 for option in item_options:
-
-                
                     option_id = option['sizeId']
                     option_name = option['sizeName']
                     option_price = option['prices'][0]['price']
                     option_weight = option['portionWeightGrams']
                     option_image = option['buttonImageUrl']
 
-                    
-                    
                     if option_price == price:
                         option_price = 0
-
                     else:
                         option_price = int(option_price) - int(price)
 
@@ -251,17 +228,13 @@ def load_menu(clean, product_clean):
                     except:
                         option_type = OptionType.objects.create(option_class='select', name='Размер')
 
-                    
                     option_save = ProductOption.objects.create(
-                        
                         parent=product_save,
                         option_value=option_name,
                         option_price=option_price,
                         option_weight=option_weight,
                         type=option_type
-
                     )
-
 
                     try:
                         op_image = OptionImage.objects.filter(parent=option_save)
@@ -271,20 +244,12 @@ def load_menu(clean, product_clean):
                         op_image_name = image.split('/')[-1]
 
                         if response_op_image.status_code == 200:
-
-                            op_image = OptionImage.objects.create(
-                                parent=option_save,
-                                
-                            )
-
+                            op_image = OptionImage.objects.create(parent=option_save)
                             op_image.src.save(op_image_name, ContentFile(response_op_image.content), save=True)
-
                     except Exception as e:
                         print(e)
 
-                    
-        i += 1
-        
+            i += 1
             
 
 
@@ -329,7 +294,7 @@ def get_terminal_groups():
     response = requests.post(url, json=data, headers=headers)
 
 
-    # print(response.json())
+    print(response.json())
 
     return response.json()['terminalGroups'][0]['items'][0]['id']
 
@@ -453,12 +418,12 @@ def create_iiko_order(order, attempt=1):
 
         if response.status_code == 200:
             print("Order created successfully")
-            print(response.json())
+            # print(response.json())
             # Запускаем проверку статуса заказа в отдельном потоке
             threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
         else:
             print(f"Failed to create order: {response.status_code}")
-            print(response.json())
+            # print(response.json())
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
@@ -475,11 +440,11 @@ def check_order_status(order_id):
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        print(response.json())
+        # print(response.json())
         return response.json()
     else:
         print(f"Failed to check order status: {response.status_code}")
-        print(response.json())
+        # print(response.json())
         return None
 
 

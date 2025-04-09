@@ -774,6 +774,19 @@ class PickupAreasForm(forms.ModelForm):
             'city': forms.Select(attrs={
                 'class': 'input',
             }),
+            'api_key': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'webhook_uri': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'webhook_token': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'telegram_group': forms.TextInput(attrs={
+                'class': 'input',
+            })
+
         }
 
 
@@ -1749,7 +1762,7 @@ class ProductForm(forms.ModelForm):
             'nutritional_value',
             'product_manufacturer',
             'parent',
-            'pickup_area',
+            'pickup_areas',
             'product_connect',
             'parent_add',
             'thumb',
@@ -1792,7 +1805,7 @@ class ProductForm(forms.ModelForm):
 
             'product_manufacturer': 'Производитель',
             'parent': 'Категория',
-            'pickup_area': 'Пункт самовывоза',
+            'pickup_areas': 'Пункт самовывоза',
             'parent_add': 'Добавить категорию',
             'product_connect': 'Связанные товары',
             'thumb': 'Изображение товара (превью)',
@@ -1921,7 +1934,7 @@ class ProductForm(forms.ModelForm):
                 'class': 'input',
                 'placeholder': 'Связанные товары',
             }),
-            'pickup_area': forms.Select(attrs={
+            'pickup_areas': forms.Select(attrs={
                 'class': 'input',
                 'placeholder': 'Точка самовывоза',
             }),

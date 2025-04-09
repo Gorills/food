@@ -239,7 +239,7 @@ def get_shop_settings(request):
     general_settings = BaseSettings.objects.first()
     settings = ShopSetup.objects.first()
     pay_methods = PayMethod.objects.all()
-    pickup_areas = PickupAreas.objects.all()
+    pickup_areas = PickupAreas.objects.filter(show_in_site=True)
     try:
         pay = PaymentSet.objects.first().status
         if pay:
