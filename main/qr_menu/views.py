@@ -177,18 +177,30 @@ def oficiant_call(request, pk):
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
+
+
+# Настройка логгера
+logger = logging.getLogger(__name__)
+
 
 @csrf_exempt  # Отключаем CSRF для POST-запроса (для простоты, в продакшене используйте токен)
 def order(request, pk):
-
-
     if request.method == 'POST':
         try:
+            logger.info(f"Получен запрос для стола с ID {pk}")
+            
             # Получаем JSON из тела запроса
             cart_data = json.loads(request.body)
-            table = Table.objects.get(id=pk)
-            pickup_area = table.area
+            # logger.debug(f"Данные корзины: {cart_data}")
 
+            # Проверяем существование стола
+            table = Table.objects.get(id=pk)
+            logger.info(f"Найден стол: {table.name}")
+            pickup_area = table.area
+            logger.info(f"Pickup area: {pickup_area.address}")
+
+            # Создаем заказ
             order = Order.objects.create(
                 phone='+79999999999',
                 name='Имя',
@@ -198,61 +210,81 @@ def order(request, pk):
                 delivery_method="Самовывоз",
                 order_conmment="Заказ из QR-меню. Стол No " + str(pk),
             )
+            logger.info(f"Создан заказ с ID {order.id}")
 
             # Обработка данных корзины
             total = 0
             order_items = []
 
             for item in cart_data:
-
-                
                 product_id = item['id']
                 price = float(item['price'])
                 quantity = int(item['quantity'])
                 modifiers = item['modifiers']
                 
+                # logger.debug(f"Обработка товара: id={product_id}, price={price}, quantity={quantity}, modifiers={modifiers}")
 
                 # Подсчет стоимости модификаторов
                 modifiers_total = sum(float(mod['price']) for mod in modifiers)
                 item_total = (price + modifiers_total) * quantity
                 total += item_total
+
+                # Проверяем существование продукта
                 product = Product.objects.get(id=product_id)
+                logger.info(f"Найден продукт: {product.name}")
 
+                # Создаем элемент заказа
                 order_item = OrderItem(
-                    order = order,
-                    product = product,
-                    price = float(item['price']),
-                    quantity = int(item['quantity']),
-
+                    order=order,
+                    product=product,
+                    price=float(item['price']),
+                    quantity=int(item['quantity']),
                 )
                 order_items.append(order_item)
                 order_item.save()
+                # logger.debug(f"Сохранен элемент заказа: {order_item.id}")
 
-             # create_iiko_order(order)
-
-
-            message = f"**Заказ из QR-меню для стола {Table.objects.get(id=pk).name}**\n\n"
+            # Формируем сообщение для Telegram
+            message = f"**Заказ из QR-меню для стола No{table.name}**\n\n"
             for item in order_items:
                 message += f"**{item.product.name}** - {item.quantity} шт.\n"
-            
+            # logger.debug(f"Сообщение для Telegram: {message}")
+
+            # Отправка сообщения в Telegram
             if table.area.telegram_group:
                 telegram_group = table.area.telegram_group
-           
+                logger.info(f"Отправка сообщения в группу: {telegram_group}")
+                
+            else:
+                logger.warning("Telegram-группа не указана для этой зоны самовывоза")
+
             send_message(telegram_bot, telegram_group, message)
 
-           
+            # Успешный ответ
             return JsonResponse({
                 'status': 'success',
                 'message': 'Заказ успешно получен',
                 'total': total,
-                'items': order_items
+                'items': len(order_items)  # Возвращаем количество элементов вместо списка объектов
             })
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            # logger.error(f"Ошибка декодирования JSON: {str(e)}")
             return JsonResponse({'status': 'error', 'message': 'Некорректный JSON'}, status=400)
+        except Table.DoesNotExist:
+            # logger.error(f"Стол с ID {pk} не найден")
+            return JsonResponse({'status': 'error', 'message': f"Стол с ID {pk} не найден"}, status=404)
+        except Product.DoesNotExist as e:
+            # logger.error(f"Продукт не найден: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': f"Продукт с ID не найден"}, status=404)
+        except KeyError as e:
+            # logger.error(f"Отсутствует ключ в данных корзины: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': f"Отсутствует поле {str(e)} в данных корзины"}, status=400)
         except Exception as e:
+            # logger.error(f"Неизвестная ошибка: {str(e)}", exc_info=True)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
+        logger.warning(f"Метод {request.method} не поддерживается")
         return JsonResponse({'status': 'error', 'message': 'Метод не поддерживается'}, status=405)
     
 
