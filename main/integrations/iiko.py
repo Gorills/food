@@ -294,7 +294,7 @@ def get_terminal_groups():
     response = requests.post(url, json=data, headers=headers)
 
 
-    print(response.json())
+    # print(response.json())
 
     return response.json()['terminalGroups'][0]['items'][0]['id']
 
