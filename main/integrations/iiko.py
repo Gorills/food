@@ -88,7 +88,7 @@ def get_menu(api_key):
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     response = requests.post(url, headers=headers)
-    print(response.json())
+    
     return response.json()
 
 
@@ -147,7 +147,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
     # Обработка категорий
     for cat in menu_json['itemCategories']:
         cat_name = cat['name']
-        print(cat_name)
+    
         cat_id = cat['id']
         # Генерируем базовый slug
         cat_slug_base = slugify(cat_name)
@@ -397,7 +397,7 @@ def check_order_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        print(response.json())
+        
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
