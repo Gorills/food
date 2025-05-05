@@ -197,7 +197,8 @@ class PayMethod(models.Model):
 
 
 class Category(models.Model):
-    external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
+    external_id = models.CharField(max_length=250, null=True, blank=True)
+    pickup_areas = models.ManyToManyField(PickupAreas, blank=True, related_name='categories')
     name = models.CharField(max_length=350)
     description = models.TextField(null=True, blank=True)
     short_description = models.TextField(null=True, blank=True)
@@ -234,6 +235,7 @@ class Category(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
 
     exclude_actions = models.BooleanField(default=False, verbose_name='Исключить из скидок и бонусов')
+    show_in_site = models.BooleanField(default=True, verbose_name='Показывать категорию на сайте')
 
     def __str__(self):
         return self.name
@@ -243,7 +245,7 @@ class Category(models.Model):
 
         products = self.products.filter(status=True, stock__gt=0)
         childrens = Category.objects.filter(parent=self)
-        children_products = Product.objects.filter(parent__in=childrens, status=True)
+        children_products = Product.objects.filter(parent__in=childrens, status=True, show_in_site=True)
 
 
         products_add = self.products_add.filter(status=True, stock__gt=0)
@@ -257,7 +259,9 @@ class Category(models.Model):
 
     def all_products(self):
 
-        products = self.products.filter(stock__gt=0)
+        # в админке
+
+        products = self.products.all()
         childrens = Category.objects.filter(parent=self)
         
 
@@ -295,6 +299,10 @@ class Category(models.Model):
       
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
+        indexes = [
+            models.Index(fields=['external_id', 'slug']),
+        ]
     
 
 
@@ -480,6 +488,7 @@ class Product(models.Model):
     
     # iiko
     iiko_type = models.CharField(max_length=200, null=True, blank=True, default='Dish')
+    show_in_site = models.BooleanField(default=True, verbose_name="Показать товар на сайте")
 
 
 
@@ -755,6 +764,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+        indexes = [
+            models.Index(fields=['external_id', 'slug']),
+        ]
 
 
 class ProductImage(models.Model):

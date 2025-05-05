@@ -1982,7 +1982,7 @@ class CategoryForm(forms.ModelForm):
             'image',
             'top',
             'home',
-            'exclude_actions',
+            
             'resize',
             'font_color',
             'bg_color',
@@ -1990,6 +1990,9 @@ class CategoryForm(forms.ModelForm):
             'sort_order',
             'status',
             'slug',
+            'exclude_actions',
+            'show_in_site'
+
         ]
         labels = {
             

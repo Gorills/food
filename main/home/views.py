@@ -213,7 +213,7 @@ def home(request):
 
 
     order_get = request.GET.getlist('order')
-    home_cats = Category.objects.filter(home=True, status=True).order_by('sort_order')
+    home_cats = Category.objects.filter(home=True, show_in_site=True, status=True).order_by('sort_order')
 
 
 
@@ -224,7 +224,7 @@ def home(request):
     
 
     # Получить все товары
-    all_products = Product.objects.all()
+    all_products = Product.objects.filter(status=True).exclude(stock=0)
 
     # Фильтровать товары с ненулевой скидкой
     sale_products_list = []

@@ -245,7 +245,8 @@ def order(request, pk):
                 # logger.debug(f"Сохранен элемент заказа: {order_item.id}")
 
 
-            create_iiko_order(order)
+            pickup_area = order.table_object.area if order.table_object else None
+            create_iiko_order(order, pickup_area=pickup_area)
 
             # Формируем сообщение для Telegram
             message = f"**Заказ из QR-меню для стола No{table.name}**\n\n"

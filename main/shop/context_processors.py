@@ -5,10 +5,10 @@ import pytz
 from .models import Category, Product, ShopSetup, PickupAreas, PayMethod, Combo, WorkDay
 
 def categorys(request):
-    return {'categorys': Category.objects.filter(status=True).order_by('sort_order')}
+    return {'categorys': Category.objects.filter(status=True, show_in_site=True).order_by('sort_order')}
 
 def categorys_top(request):
-    return {'categorys_top': Category.objects.filter(status=True, top=True).order_by('sort_order')}
+    return {'categorys_top': Category.objects.filter(status=True, top=True, show_in_site=True).order_by('sort_order')}
 
 def combos(request):
     return {'combos': Combo.objects.all()}

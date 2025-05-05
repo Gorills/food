@@ -3630,43 +3630,22 @@ def delete_integration(request, pk):
 from integrations.iiko import load_menu
 @check_user_rights(['add_integrations'])
 def catalogs_synch(request):
-
+    """Синхронизация каталогов для всех уникальных api_key."""
     if request.method == 'POST':
+        clean_categories = request.POST.get('clean') == 'on'
+        clean_products = request.POST.get('product_clean') == 'on'
 
-        clean = request.POST.get('clean')
-        product_clean = request.POST.get('product_clean')
-
-        if clean == 'on':
-            status_clean = True
-        else:
-            status_clean = False
-
-        if product_clean == 'on':
-            product_status = True
-        else:
-            product_status = False
-
-        
-        # Получаем уникальные api_key
+        # Получаем уникальные api_key и соответствующие PickupAreas
         unique_api_keys = PickupAreas.objects.filter(api_key__isnull=False).values_list('api_key', flat=True).distinct()
-        # Выбираем по одному PickupAreas для каждого api_key (например, первый по id)
-        pickup_areas = []
         for api_key in unique_api_keys:
-            # Берем первый объект с данным api_key
             area = PickupAreas.objects.filter(api_key=api_key).order_by('id').first()
             if area:
-                pickup_areas.append(area)
-        # Преобразуем список в QuerySet, если нужно
-        pickup_areas = PickupAreas.objects.filter(id__in=[area.id for area in pickup_areas])
-
-        for area in pickup_areas:
-            load_menu(status_clean, product_status, area)
-      
-        
-      
-        
+                load_menu(clean_categories, clean_products, area)
 
         return redirect('integration')
+
+    return redirect('integration')
+
 
 @check_user_rights(['add_integrations'])
 def synch_cron(request):

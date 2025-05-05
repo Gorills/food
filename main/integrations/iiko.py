@@ -6,7 +6,7 @@ import time
 from orders.models import Order
 
 # Create your views here.
-
+import logging
 from .models import Integrations
 
 
@@ -15,218 +15,240 @@ from django.core.files.base import ContentFile
 from shop.models import Category, OptionImage, OptionType, Product, ProductOption, PickupAreas
 import json
 
-try:
-    api_key = Integrations.objects.get(name='iiko').api_key
-    try:
-        picup_area = PickupAreas.objects.get(api_key=api_key)
-    except:
-        picup_area = None
-except:
-    pass
+
+logger = logging.getLogger(__name__)
 
 
-
-
-def token():
+def token(api_key):
+    """Получение токена авторизации для iiko API."""
     url = 'https://api-ru.iiko.services/api/1/access_token'
-    data = {
-        'apiLogin': api_key
-    }
+    data = {'apiLogin': api_key}
     response = requests.post(url, json=data)
-
     return response.json()['token']
+    
 
-
-# token()
-
-
-def organization():
+def organization(api_key):
+    """Получение списка организаций из iiko."""
     url = 'https://api-ru.iiko.services/api/1/organizations'
-    headers = {"Authorization": f"Bearer {token()}"}
-    data = {
-        'apiLogin': api_key
-    }
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+    data = {'apiLogin': api_key}
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        return [org['id'] for org in response.json()['organizations']]
+    except Exception as e:
+        logger.error(f"Failed to get organizations for api_key {api_key}: {e}")
+        raise
+
+def get_order_types(pickup_area=None):
+    """Получение типов заказов из iiko с учетом PickupAreas."""
+    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+    url = "https://api-ru.iiko.services/api/1/deliveries/order_types"
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+    orgs = organization(api_key)
     
-    response = requests.post(url, json=data, headers=headers)
+    data = {"organizationIds": orgs}
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        logger.error(f"Failed to get order types for api_key {api_key}: {e}")
+        raise
 
-    org_list = []
-
-    for org in response.json()['organizations']:
-        org_list.append(org['id'])
-
-
+def get_terminal_groups(pickup_area=None):
+    """Получение ID группы терминалов из iiko с учетом PickupAreas."""
+    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+    url = 'https://api-ru.iiko.services/api/1/terminal_groups'
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+    orgs = organization(api_key)
     
-    return org_list
+    data = {"organizationIds": orgs}
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        terminal_groups = response.json()['terminalGroups']
+        if terminal_groups and terminal_groups[0]['items']:
+            return terminal_groups[0]['items'][0]['id']
+        raise ValueError("No terminal groups found")
+    except Exception as e:
+        logger.error(f"Failed to get terminal groups for api_key {api_key}: {e}")
+        raise
 
 
+def extract_digits_from_end(input_string):
+    """Извлечение цифр из конца строки."""
+    if not input_string:
+        return None
+    match = re.search(r'\d+$', input_string)
+    return match.group() if match else None
 
-
-def get_menu():
+def get_menu(api_key):
+    """Получение меню из iiko."""
     url = 'https://api-ru.iiko.services/api/2/menu'
-    headers = {"Authorization": f"Bearer {token()}"}
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
     response = requests.post(url, headers=headers)
-        
-
+    print(response.json())
     return response.json()
 
-# get_menu()
 
-# organization()
 
-def load_menu(clean, product_clean, area=None):
-    # Получаем все PickupAreas, связанные с api_key, если area передано
-    if area:
-        pickup_areas = PickupAreas.objects.filter(api_key=area.api_key)
-    else:
-        pickup_areas = PickupAreas.objects.all()  # Или оставьте None, если не нужно привязывать без area
+def generate_unique_slug(base_slug, model_class, exclude_id=None):
+    """Генерация уникального slug с добавлением числового суффикса при необходимости."""
+    slug = base_slug
+    counter = 1
+    while model_class.objects.filter(slug=slug).exclude(id=exclude_id).exists():
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+    return slug
 
-    headers = {"Authorization": f"Bearer {token()}"}
+def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
+    """Синхронизация меню из iiko с учетом PickupAreas."""
+    api_key = pickup_area.api_key if pickup_area else Integrations.objects.get(name='iiko').api_key
+    show_in_site = pickup_area.show_in_site if pickup_area else True
+    area_id = str(pickup_area.id) if pickup_area else 'global'
 
-    if product_clean:
+    # Очистка данных, если требуется
+    if clean_products and pickup_area:
+        Product.objects.filter(pickup_areas=pickup_area).delete()
+    elif clean_products:
         Product.objects.all().delete()
-
-    if clean:
+    if clean_categories and pickup_area:
+        Category.objects.filter(pickup_areas=pickup_area).delete()
+    elif clean_categories:
         Category.objects.all().delete()
 
-    get_menu_response = get_menu()
-    menu = get_menu_response['externalMenus'][0]['id']
-
+    # Получаем меню
+    menu_data = get_menu(api_key)
+    menu_id = menu_data['externalMenus'][0]['id']
     try:
-        priceCategoryId = get_menu_response['priceCategories'][0]['id']
+        price_category_id = menu_data.get('priceCategories', [{}])[0].get('id')
     except:
-        priceCategoryId = None
+        price_category_id = None
 
+    # Запрос детального меню
     url_menu_id = 'https://api-ru.iiko.services/api/2/menu/by_id'
-    orgs = organization()
-
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+    orgs = organization(api_key)
     data = {
-        "externalMenuId": str(menu),
+        "externalMenuId": menu_id,
         "organizationIds": orgs,
     }
-
-    if priceCategoryId:
-        data['priceCategoryId'] = priceCategoryId
+    if price_category_id:
+        data['priceCategoryId'] = price_category_id
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
+    menu_json = menu_response.json()
 
-    with open('menu.json', 'w', encoding='utf-8') as f:
-        json.dump(menu_response.json(), f, ensure_ascii=False, indent=4)
+    # Сохранение меню для отладки
+    with open(f'menu_{area_id}.json', 'w', encoding='utf-8') as f:
+        json.dump(menu_json, f, ensure_ascii=False, indent=4)
 
-    for cat in menu_response.json()['itemCategories']:
+    # Обработка категорий
+    for cat in menu_json['itemCategories']:
         cat_name = cat['name']
-        cat_slug = slugify(cat_name)
+        print(cat_name)
         cat_id = cat['id']
+        # Генерируем базовый slug
+        cat_slug_base = slugify(cat_name)
+        # При show_in_site=False добавляем external_id для уникальности
+        cat_slug = f"{cat_slug_base}-{cat_id}" if not show_in_site else cat_slug_base
+        # Обеспечиваем уникальность slug
+        cat_slug = generate_unique_slug(cat_slug, Category)
 
-        try:
+        # Проверяем, существует ли категория для этого pickup_area
+        cat_query = Category.objects.filter(external_id=cat_id)
+        if pickup_area:
+            cat_query = cat_query.filter(pickup_areas=pickup_area)
+
+        if cat_query.exists():
+            cat_save = cat_query.first()
+            cat_save.name = cat_name
+            cat_save.slug = generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
+            cat_save.show_in_site = show_in_site
+            cat_save.save()
+        else:
             cat_save = Category.objects.create(
                 external_id=cat_id,
                 name=cat_name,
                 slug=cat_slug,
-                top=True
+                top=True,
+                show_in_site=show_in_site
             )
-        except:
-            cat_save = Category.objects.get(external_id=cat_id)
+            if pickup_area:
+                cat_save.pickup_areas.add(pickup_area)
 
-        i = 0
-        for product in cat['items']:
+        # Обработка товаров
+        for idx, product in enumerate(cat['items']):
             product_name = product['name']
-            product_slug = slugify(product_name)
             product_id = product['itemId']
             product_description = product['description']
-
             item_options = product['itemSizes']
 
             try:
-                weight = int(item_options[0]['portionWeightGrams'])
+                weight = int(item_options[0].get('portionWeightGrams', 0)) or None
+                price = Decimal(item_options[0]['prices'][0]['price']) or Decimal('0')
+                image_url = item_options[0].get('buttonImageUrl')
             except (IndexError, KeyError, TypeError):
-                weight = None
-
-            if weight == 0:
-                weight = None
-
-            try:
-                price = item_options[0]['prices'][0]['price']
-            except (IndexError, KeyError, TypeError):
-                price = 0
-
-            if price is None:
-                print(f"Warning: Skipping product {product_name} due to missing price.")
+                print(f"Skipping product {product_name} due to missing data.")
                 continue
 
-            try:
-                image = item_options[0]['buttonImageUrl']
-            except (IndexError, KeyError, TypeError):
-                image = None
+            # Генерируем базовый slug
+            product_slug_base = slugify(product_name)
+            # При show_in_site=False добавляем external_id для уникальности
+            product_slug = f"{product_slug_base}-{product_id}" if not show_in_site else product_slug_base
+            # Обеспечиваем уникальность slug
+            product_slug = generate_unique_slug(product_slug, Product)
 
-            # Проверяем, существует ли продукт
-            try:
-                product_save = Product.objects.get(external_id=product_id)
-                product_save.weight = weight
+            # Проверяем, существует ли продукт для этого pickup_area
+            product_query = Product.objects.filter(external_id=product_id)
+            if pickup_area:
+                product_query = product_query.filter(pickup_areas=pickup_area)
+
+            if product_query.exists():
+                product_save = product_query.first()
                 product_save.name = product_name
-                product_save.slug = product_slug
+                product_save.slug = generate_unique_slug(product_slug, Product, exclude_id=product_save.id)
                 product_save.price = price
                 product_save.short_description = product_description
-                product_save.iiko_type = product['orderItemType']
+                product_save.weight = weight
+                product_save.show_in_site = show_in_site
                 product_save.save()
-            except:
+            else:
+                product_save = Product.objects.create(
+                    external_id=product_id,
+                    name=product_name,
+                    slug=product_slug,
+                    price=price,
+                    parent=cat_save,
+                    short_description=product_description,
+                    iiko_type=product['orderItemType'],
+                    weight=weight,
+                    show_in_site=show_in_site
+                )
+                if pickup_area:
+                    product_save.pickup_areas.add(pickup_area)
+
+            # Загрузка изображения
+            if image_url:
                 try:
-                    product_save = Product.objects.create(
-                        external_id=product_id,
-                        name=product_name,
-                        slug=product_slug,
-                        price=price,
-                        parent=cat_save,
-                        short_description=product_description,
-                        iiko_type=product['orderItemType'],
-                        weight=weight
-                    )
-                except:
-                    product_save = Product.objects.create(
-                        external_id=product_id,
-                        name=product_name,
-                        slug=product_slug + str(i),
-                        price=price,
-                        parent=cat_save,
-                        short_description=product_description,
-                        iiko_type=product['orderItemType'],
-                        weight=weight
-                    )
+                    response = requests.get(image_url)
+                    if response.status_code == 200:
+                        image_name = image_url.split('/')[-1]
+                        product_save.thumb.save(image_name, ContentFile(response.content), save=True)
+                except Exception as e:
+                    print(f"Failed to load image for {product_name}: {e}")
 
-            # Привязываем PickupAreas через ManyToMany
-            if pickup_areas:
-                product_save.pickup_areas.set(pickup_areas)  # Привязываем все подходящие PickupAreas
-
-            # Обработка изображения
-            try:
-                response_pr_img = requests.get(image)
-                image_name = image.split('/')[-1]
-                if response_pr_img.status_code == 200:
-                    product_save.thumb.save(image_name, ContentFile(response_pr_img.content), save=True)
-            except:
-                pass
-
-            item_count = len(item_options)
-
-            if item_count > 1:
-                options_old = product_save.options.all()
-                options_old.delete()
+            # Обработка опций (размеры)
+            if len(item_options) > 1:
+                product_save.options.all().delete()
+                option_type, _ = OptionType.objects.get_or_create(option_class='select', name='Размер')
 
                 for option in item_options:
-                    option_id = option['sizeId']
-                    option_name = option['sizeName']
-                    option_price = option['prices'][0]['price']
-                    option_weight = option['portionWeightGrams']
-                    option_image = option['buttonImageUrl']
-
-                    if option_price == price:
-                        option_price = 0
-                    else:
-                        option_price = int(option_price) - int(price)
-
-                    try:
-                        option_type = OptionType.objects.get(option_class='select', name='Размер')
-                    except:
-                        option_type = OptionType.objects.create(option_class='select', name='Размер')
+                    option_name = option.get('sizeName')
+                    option_price = Decimal(option['prices'][0]['price']) - price if option['prices'][0]['price'] != price else 0
+                    option_weight = option.get('portionWeightGrams')
+                    option_image_url = option.get('buttonImageUrl')
 
                     option_save = ProductOption.objects.create(
                         parent=product_save,
@@ -236,112 +258,39 @@ def load_menu(clean, product_clean, area=None):
                         type=option_type
                     )
 
-                    try:
-                        op_image = OptionImage.objects.filter(parent=option_save)
-                        op_image.delete()
-
-                        response_op_image = requests.get(option_image)
-                        op_image_name = image.split('/')[-1]
-
-                        if response_op_image.status_code == 200:
-                            op_image = OptionImage.objects.create(parent=option_save)
-                            op_image.src.save(op_image_name, ContentFile(response_op_image.content), save=True)
-                    except Exception as e:
-                        print(e)
-
-            i += 1
-            
-
+                    if option_image_url:
+                        try:
+                            response = requests.get(option_image_url)
+                            if response.status_code == 200:
+                                image_name = option_image_url.split('/')[-1]
+                                op_image = OptionImage.objects.create(parent=option_save)
+                                op_image.src.save(image_name, ContentFile(response.content), save=True)
+                        except Exception as e:
+                            print(f"Failed to load option image for {option_name}: {e}")
 
 # load_menu(False)
 
 
-def get_order_types():
-
-    url = "https://api-ru.iiko.services/api/1/deliveries/order_types"
-
-    headers = {"Authorization": f"Bearer {token()}"}
-
-    orgs = organization()
-
-    data = {
-        "organizationIds": orgs
-    }
-
-    response = requests.post(url, json=data, headers=headers)
-
-    # print(response.json())
-    
-    return response.json()
 
 
-
-# get_order_types()
-
-
-def get_terminal_groups():
-
-    url = 'https://api-ru.iiko.services/api/1/terminal_groups'
-
-    headers = {"Authorization": f"Bearer {token()}"}
-
-    orgs = organization()
-
-    data = {
-        "organizationIds": orgs
-    }
-
-    response = requests.post(url, json=data, headers=headers)
-
-
-    # print(response.json())
-
-    return response.json()['terminalGroups'][0]['items'][0]['id']
-
-
-
-# get_terminal_groups()
-
-
-import re
-
-def extract_digits_from_end(input_string):
-    match = re.search(r'\d+$', input_string)
-    if match:
-        return match.group()
-    return None
-
-
-
-
-
-
-
-
-
-
-def create_iiko_order(order, attempt=1):
-
+def create_iiko_order(order, attempt=1, pickup_area=None):
+    """Создание заказа в iiko с учетом PickupAreas."""
     try:
-
-        try:
-            integrations = Integrations.objects.get(name='iiko')
-        except:
-            integrations = None
-
-        if not integrations:
+        # Получаем api_key
+        api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+        if not api_key:
+            logger.error("No iiko integration found")
             return
 
         if attempt > 12:
-            print(f"Max attempts reached for order {order.id}. Giving up.")
+            logger.error(f"Max attempts reached for order {order.id}. Giving up.")
             return
 
         url = 'https://api-ru.iiko.services/api/1/deliveries/create'
-        headers = {"Authorization": f"Bearer {token()}"}
-        orgs = organization()[0]
-        
-        
+        headers = {"Authorization": f"Bearer {token(api_key)}"}
+        org_id = organization(api_key)[0]
 
+        # Формируем элементы заказа
         items = [
             {
                 "productId": item.product.external_id,
@@ -352,17 +301,18 @@ def create_iiko_order(order, attempt=1):
             for item in order.items.all()
         ]
 
+        # Генерируем и сохраняем UUID заказа
         order_uuid = str(uuid.uuid4())
         order.external_id = order_uuid
         order.save()
 
-        order_types = get_order_types()
+        # Получаем тип заказа
+        order_types = get_order_types(pickup_area)
         delivery_method_map = {
             "Доставка": "Доставка курьером",
             "Самовывоз": "Доставка самовывоз"
         }
-
-        orderTypeId = next(
+        order_type_id = next(
             (
                 item['id']
                 for order_type in order_types['orderTypes']
@@ -371,102 +321,107 @@ def create_iiko_order(order, attempt=1):
             ),
             None
         )
+        if not order_type_id:
+            logger.error(f"No matching order type found for delivery method {order.delivery_method}")
+            return
 
-        deliveryPoint = {
-            "address": {
-                "street": {"name": order.address},
-                "house": extract_digits_from_end(order.address),
-                "flat": order.flat,
-                "entrance": order.entrance,
-                "floor": order.floor,
-                "type": "legacy",
-            },
-        }
+        # Формируем данные доставки
+        delivery_point = None
+        if order.delivery_method == "Доставка":
+            delivery_point = {
+                "address": {
+                    "street": {"name": order.address or ""},
+                    "house": extract_digits_from_end(order.address) or "",
+                    "flat": order.flat or "",
+                    "entrance": order.entrance or "",
+                    "floor": order.floor or "",
+                    "type": "legacy",
+                },
+            }
 
+        # Формируем данные заказа
         data = {
-            "organizationId": orgs,
+            "organizationId": org_id,
             "order": {
                 "id": order_uuid,
                 "customer": {
-                    "name": order.name,
-                    "phone": order.phone,
+                    "name": order.name or "Unknown",
+                    "phone": order.phone or "+79999999999",
                     "type": "regular"
                 },
-                "phone": order.phone,
+                "phone": order.phone or "",
                 "fulfillmentType": "delivery",
                 "deliveryFee": float(order.delivery_price) if order.delivery_price else 0.0,
                 "textOrderContent": "Заказ: " + ", ".join([f"{item.product.name} x{item.quantity}" for item in order.items.all()]),
                 "items": items,
-                "orderTypeId": orderTypeId,
-                "comment": f"{order.time} / {order.comment}" if hasattr(order, 'comment') else "",
+                "orderTypeId": order_type_id,
+                "comment": f"{order.time} / {order.order_conmment or ''}",
             }
         }
 
+        # Добавляем группу терминалов, если доступна
         try:
-            terminal_group = get_terminal_groups()
+            terminal_group = get_terminal_groups(pickup_area)
             data['terminalGroupId'] = terminal_group
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f"Failed to get terminal group: {e}")
 
+        # Добавляем точку доставки, если это доставка
+        if delivery_point:
+            data['order']['deliveryPoint'] = delivery_point
 
-        if order.delivery_method == "Доставка":
-            data['order']['deliveryPoint'] = deliveryPoint
-
-        # print(data)
-
+        # Отправляем запрос
         response = requests.post(url, json=data, headers=headers)
-
         if response.status_code == 200:
-            print("Order created successfully")
-            # print(response.json())
-            # Запускаем проверку статуса заказа в отдельном потоке
-            threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt)).start()
+            logger.info(f"Order {order.id} created successfully in iiko")
+            threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt, pickup_area)).start()
         else:
-            print(f"Failed to create order: {response.status_code}")
-            # print(response.json())
-
+            logger.error(f"Failed to create order {order.id}: {response.status_code} {response.text}")
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        logger.error(f"Error creating order {order.id}: {e}")
 
-def check_order_status(order_id):
+
+
+def check_order_status(order_id, pickup_area=None):
+    """Проверка статуса заказа в iiko."""
+    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
     url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
-    headers = {"Authorization": f"Bearer {token()}"}
-    orgs = organization()[0]
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+    org_id = organization(api_key)[0]
 
     data = {
-        "organizationId": orgs,
+        "organizationId": org_id,
         "orderIds": [order_id]
     }
 
-    response = requests.post(url, json=data, headers=headers)
-    if response.status_code == 200:
-        # print(response.json())
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        print(response.json())
         return response.json()
-    else:
-        print(f"Failed to check order status: {response.status_code}")
-        # print(response.json())
+    except Exception as e:
+        logger.error(f"Failed to check order status for order {order_id}: {e}")
         return None
 
-
-def background_order_status_check(order, order_id, attempt):
-    max_duration = 3600  # Максимальное время проверки (в секундах)
-    delay = 30  # Задержка между проверками (в секундах)
+def background_order_status_check(order, order_id, attempt, pickup_area=None):
+    """Фоновая проверка статуса заказа."""
+    max_duration = 3600  # 1 час
+    delay = 30  # 30 секунд
     start_time = time.time()
 
     while time.time() - start_time < max_duration:
-        status_response = check_order_status(order_id)
+        status_response = check_order_status(order_id, pickup_area)
         if status_response and 'orders' in status_response and any(order['id'] == order_id for order in status_response['orders']):
-            print(f"Order {order_id} has been processed.")
-            return  # Завершаем проверку при успешном статусе
+            logger.info(f"Order {order_id} has been processed")
+            return
         time.sleep(delay)
 
-    print(f"Order {order_id} status check timed out. Retrying order creation (Attempt {attempt + 1})...")
-    # Повторно отправляем заказ, увеличивая счетчик попыток
-    create_iiko_order(order, attempt + 1)
+    logger.warning(f"Order {order_id} status check timed out. Retrying (Attempt {attempt + 1})")
+    create_iiko_order(order, attempt + 1, pickup_area)
 
 
 
-# check_order_status("22ec8049-6564-4bd1-a707-b4f45e808860")
+# check_order_status("bc44671a-07df-4883-93a1-2a2004289306", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
 # create_iiko_order(Order.objects.get(id=641))
