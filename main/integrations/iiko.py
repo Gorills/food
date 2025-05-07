@@ -88,6 +88,7 @@ def get_menu(api_key):
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     response = requests.post(url, headers=headers)
+    print(response.json())
     
     return response.json()
 
@@ -102,21 +103,33 @@ def generate_unique_slug(base_slug, model_class, exclude_id=None):
         counter += 1
     return slug
 
+
+
 def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
     """Синхронизация меню из iiko с учетом PickupAreas."""
-    api_key = pickup_area.api_key if pickup_area else Integrations.objects.get(name='iiko').api_key
-    show_in_site = pickup_area.show_in_site if pickup_area else True
+    # Определяем api_key и связанные PickupAreas
+    if pickup_area:
+        api_key = pickup_area.api_key
+        show_in_site = pickup_area.show_in_site
+        related_pickup_areas = PickupAreas.objects.filter(api_key=api_key)
+    else:
+        api_key = Integrations.objects.get(name='iiko').api_key
+        show_in_site = True
+        related_pickup_areas = []
+
     area_id = str(pickup_area.id) if pickup_area else 'global'
 
     # Очистка данных, если требуется
-    if clean_products and pickup_area:
-        Product.objects.filter(pickup_areas=pickup_area).delete()
-    elif clean_products:
-        Product.objects.all().delete()
-    if clean_categories and pickup_area:
-        Category.objects.filter(pickup_areas=pickup_area).delete()
-    elif clean_categories:
-        Category.objects.all().delete()
+    if clean_products:
+        if related_pickup_areas:
+            Product.objects.filter(pickup_areas__in=related_pickup_areas).delete()
+        else:
+            Product.objects.all().delete()
+    if clean_categories:
+        if related_pickup_areas:
+            Category.objects.filter(pickup_areas__in=related_pickup_areas).delete()
+        else:
+            Category.objects.all().delete()
 
     # Получаем меню
     menu_data = get_menu(api_key)
@@ -147,7 +160,6 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
     # Обработка категорий
     for cat in menu_json['itemCategories']:
         cat_name = cat['name']
-    
         cat_id = cat['id']
         # Генерируем базовый slug
         cat_slug_base = slugify(cat_name)
@@ -156,10 +168,11 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
         # Обеспечиваем уникальность slug
         cat_slug = generate_unique_slug(cat_slug, Category)
 
-        # Проверяем, существует ли категория для этого pickup_area
+        # Проверяем, существует ли категория с таким external_id
         cat_query = Category.objects.filter(external_id=cat_id)
-        if pickup_area:
-            cat_query = cat_query.filter(pickup_areas=pickup_area)
+        if related_pickup_areas:
+            # Фильтруем по одной из related_pickup_areas, чтобы найти существующую категорию
+            cat_query = cat_query.filter(pickup_areas__in=related_pickup_areas)
 
         if cat_query.exists():
             cat_save = cat_query.first()
@@ -167,6 +180,11 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             cat_save.slug = generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
             cat_save.show_in_site = show_in_site
             cat_save.save()
+            # Обновляем связи с PickupAreas
+            if related_pickup_areas:
+                for area in related_pickup_areas:
+                    if area not in cat_save.pickup_areas.all():
+                        cat_save.pickup_areas.add(area)
         else:
             cat_save = Category.objects.create(
                 external_id=cat_id,
@@ -175,8 +193,9 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 top=True,
                 show_in_site=show_in_site
             )
-            if pickup_area:
-                cat_save.pickup_areas.add(pickup_area)
+            # Привязываем ко всем related_pickup_areas
+            if related_pickup_areas:
+                cat_save.pickup_areas.set(related_pickup_areas)
 
         # Обработка товаров
         for idx, product in enumerate(cat['items']):
@@ -200,10 +219,11 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             # Обеспечиваем уникальность slug
             product_slug = generate_unique_slug(product_slug, Product)
 
-            # Проверяем, существует ли продукт для этого pickup_area
+            # Проверяем, существует ли продукт с таким external_id
             product_query = Product.objects.filter(external_id=product_id)
-            if pickup_area:
-                product_query = product_query.filter(pickup_areas=pickup_area)
+            if related_pickup_areas:
+                # Фильтруем по одной из related_pickup_areas
+                product_query = product_query.filter(pickup_areas__in=related_pickup_areas)
 
             if product_query.exists():
                 product_save = product_query.first()
@@ -214,6 +234,11 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 product_save.weight = weight
                 product_save.show_in_site = show_in_site
                 product_save.save()
+                # Обновляем связи с PickupAreas
+                if related_pickup_areas:
+                    for area in related_pickup_areas:
+                        if area not in product_save.pickup_areas.all():
+                            product_save.pickup_areas.add(area)
             else:
                 product_save = Product.objects.create(
                     external_id=product_id,
@@ -226,8 +251,9 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     weight=weight,
                     show_in_site=show_in_site
                 )
-                if pickup_area:
-                    product_save.pickup_areas.add(pickup_area)
+                # Привязываем ко всем related_pickup_areas
+                if related_pickup_areas:
+                    product_save.pickup_areas.set(related_pickup_areas)
 
             # Загрузка изображения
             if image_url:
