@@ -43,6 +43,7 @@ input::-webkit-inner-spin-button {
 ::-webkit-scrollbar {
   width: 6px;
   background-color: var(--color-body);
+  height: 6px;
 }
 
 textarea {
@@ -5247,6 +5248,7 @@ td.product-thumbnail img {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  white-space: nowrap;
   width: 100%;
 }
 

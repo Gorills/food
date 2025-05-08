@@ -46,7 +46,7 @@ input::-webkit-inner-spin-button {
 
 
 ::-webkit-scrollbar-thumb{background-color:var(--color-primary)}
-::-webkit-scrollbar{width:6px;background-color:var(--color-body)}
+::-webkit-scrollbar{width:6px;background-color:var(--color-body);height:6px;}
 
 textarea {
 

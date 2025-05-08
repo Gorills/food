@@ -1,4 +1,5 @@
 from decimal import Decimal
+import re
 import requests
 import uuid
 import threading
@@ -88,7 +89,7 @@ def get_menu(api_key):
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     response = requests.post(url, headers=headers)
-    print(response.json())
+    # print(response.json())
     
     return response.json()
 

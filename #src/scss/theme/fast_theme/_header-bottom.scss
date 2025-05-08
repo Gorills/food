@@ -28,6 +28,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        white-space: nowrap;
+        
         width: 100%;
         
         .header__logo {

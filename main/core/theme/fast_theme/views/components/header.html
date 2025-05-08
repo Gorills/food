@@ -339,7 +339,7 @@
         
         <div class="container">
             <nav class="header-bottom__inner" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
-                <ul class="header-bottom__list" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
+                <ul class="header-bottom__list" style="{% if categorys.count > 11 %}overflow-x: scroll;{% endif %}" itemprop="about" itemscope="" itemtype="http://schema.org/ItemList">
 
                     {% if request.path == '/' %}
                         {% if setup.logo_dark %}
