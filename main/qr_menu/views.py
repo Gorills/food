@@ -9,7 +9,7 @@ import qrcode
 from io import BytesIO
 from django.core.files import File
 from orders.telegram import order_telegram, send_message
-
+from pytils.translit import slugify
 
 try:
     telegram_bot = BaseSettings.objects.get().telegram_bot
@@ -27,7 +27,11 @@ def generate_qr_code(model, instance, domain=None):
         domain = "example.com"  # Можно заменить на значение по умолчанию
     
     # Формируем URL
-    qr_data = f"https://{domain}/qr_menu/area/{model.id}/"
+    if instance == "area":
+        qr_data = f"https://{domain}/qr_menu/area/{model.id}/"
+
+    elif instance == "table":
+        qr_data = f"https://{domain}/qr_menu/table/{model.id}/"
     
     # Создаем QR-код
     qr = qrcode.QRCode(
@@ -46,9 +50,9 @@ def generate_qr_code(model, instance, domain=None):
     buffer = BytesIO()
     qr_img.save(buffer, format="PNG")
     buffer.seek(0)
-    
+    slug = slugify(model.name)
     # Создаем имя файла
-    filename = f"qr_table_{model.id}.png"
+    filename = f"qr_{instance}_{slug}.png"
     
     # Сохраняем QR-код в поле модели
     model.qr_code.save(filename, File(buffer), save=False)
