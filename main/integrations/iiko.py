@@ -70,22 +70,7 @@ def get_terminal_groups(pickup_area=None):
         response.raise_for_status()
         terminal_groups = response.json()['terminalGroups']
 
-        print(terminal_groups)
-
-        if pickup_area and terminal_groups and terminal_groups[0]['items']:
-            # Search for the terminal with matching name
-            for item in terminal_groups[0]['items']:
-                if item['name'] == pickup_area.terminal_group:
-                    print(item['id'])
-                    return item['id']
-            # If no match is found, return the first available ID
-            return terminal_groups[0]['items'][0]['id']
-
-        else:
-            # Return the first available ID
-            print(terminal_groups[0]['items'][0]['id'])
-
-            return terminal_groups[0]['items'][0]['id']
+        return terminal_groups[0]['items'][0]['id']
         
         
     except Exception as e:
@@ -406,12 +391,17 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
             }
         }
 
-        # Добавляем группу терминалов, если доступна
-        try:
-            terminal_group = get_terminal_groups(pickup_area)
+        if pickup_area and pickup_area.terminal_group:
+            terminal_group = pickup_area.terminal_group
             data['terminalGroupId'] = terminal_group
-        except Exception as e:
-            logger.warning(f"Failed to get terminal group: {e}")
+        else:
+            try:
+                terminal_group = get_terminal_groups()
+                data['terminalGroupId'] = terminal_group
+
+            except Exception as e:
+                logger.warning(f"Failed to get terminal group: {e}")
+
 
         # Добавляем точку доставки, если это доставка
         if delivery_point:
@@ -419,7 +409,10 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 
         # Отправляем запрос
         response = requests.post(url, json=data, headers=headers)
+
+
         print(response.json())
+
         if response.status_code == 200:
             logger.info(f"Order {order.id} created successfully in iiko")
             threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt, pickup_area)).start()
@@ -445,7 +438,7 @@ def check_order_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        
+        # print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
@@ -469,7 +462,8 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 
 
 
-# check_order_status("bc44671a-07df-4883-93a1-2a2004289306", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+# check_order_status("0b0f940b-a28c-445d-9735-2e672444e0c5", pickup_area=PickupAreas.objects.get(name="Балашиха"))
+
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
 # pickup_area=PickupAreas.objects.get(terminal_group="Чайхана Мадина Мещерино")
