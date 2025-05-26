@@ -69,12 +69,32 @@ def get_terminal_groups(pickup_area=None):
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
         terminal_groups = response.json()['terminalGroups']
-        if terminal_groups and terminal_groups[0]['items']:
+
+        print(terminal_groups)
+
+        if pickup_area and terminal_groups and terminal_groups[0]['items']:
+            # Search for the terminal with matching name
+            for item in terminal_groups[0]['items']:
+                if item['name'] == pickup_area.terminal_group:
+                    print(item['id'])
+                    return item['id']
+            # If no match is found, return the first available ID
             return terminal_groups[0]['items'][0]['id']
-        raise ValueError("No terminal groups found")
+
+        else:
+            # Return the first available ID
+            print(terminal_groups[0]['items'][0]['id'])
+
+            return terminal_groups[0]['items'][0]['id']
+        
+        
     except Exception as e:
         logger.error(f"Failed to get terminal groups for api_key {api_key}: {e}")
         raise
+
+
+# pickup_area=PickupAreas.objects.get(terminal_group="Чайхана Мадина Мещерино")
+# get_terminal_groups(pickup_area)
 
 
 def extract_digits_from_end(input_string):
@@ -295,7 +315,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                         except Exception as e:
                             print(f"Failed to load option image for {option_name}: {e}")
 
-# load_menu(False)
+# load_menu(True, True, None)
 
 
 
@@ -399,6 +419,7 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 
         # Отправляем запрос
         response = requests.post(url, json=data, headers=headers)
+        print(response.json())
         if response.status_code == 200:
             logger.info(f"Order {order.id} created successfully in iiko")
             threading.Thread(target=background_order_status_check, args=(order, order_uuid, attempt, pickup_area)).start()
@@ -451,4 +472,5 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 # check_order_status("bc44671a-07df-4883-93a1-2a2004289306", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
-# create_iiko_order(Order.objects.get(id=641))
+# pickup_area=PickupAreas.objects.get(terminal_group="Чайхана Мадина Мещерино")
+# create_iiko_order(Order.objects.get(id=672), pickup_area=pickup_area)

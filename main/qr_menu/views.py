@@ -27,11 +27,8 @@ def generate_qr_code(model, instance, domain=None):
         domain = "example.com"  # Можно заменить на значение по умолчанию
     
     # Формируем URL
-    if instance == "area":
-        qr_data = f"https://{domain}/qr_menu/area/{model.id}/"
-
-    elif instance == "table":
-        qr_data = f"https://{domain}/qr_menu/table/{model.id}/"
+  
+    qr_data = f"https://{domain}/qr_menu/{instance}/{model.id}/"
     
     # Создаем QR-код
     qr = qrcode.QRCode(

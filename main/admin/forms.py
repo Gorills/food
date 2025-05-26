@@ -777,6 +777,9 @@ class PickupAreasForm(forms.ModelForm):
             'api_key': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'terminal_group': forms.TextInput(attrs={
+                'class': 'input',
+            }),
             'webhook_uri': forms.TextInput(attrs={
                 'class': 'input',
             }),

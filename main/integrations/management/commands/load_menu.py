@@ -5,4 +5,4 @@ from integrations.iiko import load_menu
 class Command(BaseCommand):
     help = 'Синхронизация каталогов с IIKO'
     def handle(self, *args, **kwargs):
-        load_menu(False, False)
+        load_menu(True, True, None)

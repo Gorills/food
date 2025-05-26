@@ -146,8 +146,10 @@ class PickupAreas(models.Model):
     city = models.ForeignKey(Subdomain, on_delete=models.CASCADE, verbose_name='Город', null=True, blank=True)
 
     api_key = models.CharField(max_length=50, verbose_name='Ключ API (iiko)', null=True, blank=True)
+    terminal_group = models.CharField(max_length=50, null=True, blank=True, verbose_name='Группа терминалов (не обязательно)')
     webhook_uri = models.CharField(max_length=50, null=True, blank=True, verbose_name='Хендлер (не обязательно)')
     webhook_token = models.CharField(max_length=64, null=True, blank=True, verbose_name='Токен (не обязательно)')
+
 
     telegram_group = models.CharField(max_length=50, null=True, blank=True, verbose_name='Группа в Telegram (не обязательно)')
 
