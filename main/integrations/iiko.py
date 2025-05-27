@@ -432,7 +432,12 @@ def check_order_status(order_id, pickup_area=None):
     api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
     url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
-    org_id = organization(api_key)[0]
+
+
+    if pickup_area and pickup_area.organization_id:
+        org_id = pickup_area.organization_id
+    else:
+        org_id = Integrations.objects.get(name='iiko').organization_id
 
     data = {
         "organizationId": org_id,
@@ -466,7 +471,7 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 
 
 
-# check_order_status("6727460f-1182-46d6-b989-0885041e9314", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+check_order_status("989b200e-5b23-4b2d-bf55-bc8aff670284")
 
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
