@@ -466,7 +466,7 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 
 
 
-check_order_status("6727460f-1182-46d6-b989-0885041e9314", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+# check_order_status("6727460f-1182-46d6-b989-0885041e9314", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
