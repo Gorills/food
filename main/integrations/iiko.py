@@ -324,7 +324,7 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
         if pickup_area and pickup_area.organization_id:
             org_id = pickup_area.organization_id
         else:
-            org_id = organization(api_key)[0]
+            org_id = Integrations.objects.get(name='iiko').organization_id
 
         # Формируем элементы заказа
         items = [
@@ -400,7 +400,7 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
             data['terminalGroupId'] = terminal_group
         else:
             try:
-                terminal_group = get_terminal_groups()
+                terminal_group = Integrations.objects.get(name='iiko').terminal_group
                 data['terminalGroupId'] = terminal_group
 
             except Exception as e:

@@ -386,6 +386,12 @@ class IntegrationsForm(forms.ModelForm):
             }),
             'webhook_token': forms.TextInput(attrs={
                 'class': 'input',
+            }),
+            'terminal_group': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'organization_id': forms.TextInput(attrs={
+                'class': 'input',
             })
 
         }
