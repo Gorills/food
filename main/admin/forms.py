@@ -780,6 +780,9 @@ class PickupAreasForm(forms.ModelForm):
             'terminal_group': forms.TextInput(attrs={
                 'class': 'input',
             }),
+            'organization_id': forms.TextInput(attrs={
+                'class': 'input',
+            }),
             'webhook_uri': forms.TextInput(attrs={
                 'class': 'input',
             }),

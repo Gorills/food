@@ -320,7 +320,11 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 
         url = 'https://api-ru.iiko.services/api/1/deliveries/create'
         headers = {"Authorization": f"Bearer {token(api_key)}"}
-        org_id = organization(api_key)[0]
+
+        if pickup_area and pickup_area.organization_id:
+            org_id = pickup_area.organization_id
+        else:
+            org_id = organization(api_key)[0]
 
         # Формируем элементы заказа
         items = [
@@ -438,7 +442,7 @@ def check_order_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        # print(response.json())
+        print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
@@ -462,7 +466,7 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 
 
 
-# check_order_status("0b0f940b-a28c-445d-9735-2e672444e0c5", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+check_order_status("6727460f-1182-46d6-b989-0885041e9314", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
