@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from integrations.iiko import create_iiko_order
+from integrations.iiko import create_iiko_order, create_iiko_table
 from orders.models import Order, OrderItem
 from setup.models import BaseSettings
 from shop.models import Category, PickupAreas, Product, Table
@@ -247,7 +247,7 @@ def order(request, pk):
 
 
             pickup_area = order.table_object.area if order.table_object else None
-            create_iiko_order(order, pickup_area=pickup_area)
+            create_iiko_table(order, pickup_area=pickup_area)
 
             # Формируем сообщение для Telegram
             message = f"**Заказ из QR-меню для стола No{table.name}**\n\n"

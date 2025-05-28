@@ -52,6 +52,7 @@ def get_order_types(pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
+        # print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to get order types for api_key {api_key}: {e}")
@@ -427,10 +428,105 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 
 
 
+
+
+
+def create_iiko_table(order, attempt=1, pickup_area=None):
+    """Создание заказа в iiko с учетом PickupAreas."""
+    try:
+        # Получаем api_key
+        api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+        if not api_key:
+            logger.error("No iiko integration found")
+            return
+
+        if attempt > 12:
+            logger.error(f"Max attempts reached for order {order.id}. Giving up.")
+            return
+
+        url = 'https://api-ru.iiko.services/api/1/order/create'
+        headers = {"Authorization": f"Bearer {token(api_key)}"}
+
+        if pickup_area and pickup_area.organization_id:
+            org_id = pickup_area.organization_id
+        else:
+            org_id = Integrations.objects.get(name='iiko').organization_id
+
+        # Формируем элементы заказа
+        items = [
+            {
+                "productId": item.product.external_id,
+                "price": float(item.product.price) if isinstance(item.product.price, Decimal) else item.product.price,
+                "type": item.product.iiko_type,
+                "amount": item.quantity
+            }
+            for item in order.items.all()
+        ]
+
+        # Генерируем и сохраняем UUID заказа
+        order_uuid = str(uuid.uuid4())
+        order.external_id = order_uuid
+        order.save()
+
+        # Получаем тип заказа
+        order_types = get_order_types(pickup_area)
+        order_type_id = next(
+        (
+            item['id']
+            for order_type in order_types['orderTypes']
+            for item in order_type['items']
+            if item['name'] == 'Обычный заказ'
+        ),
+        None
+    )
+        if not order_type_id:
+            logger.error(f"No matching order type found for delivery method {order.delivery_method}")
+            return
+
+        # Формируем данные заказа
+        data = {
+            "organizationId": org_id,
+            "order": {
+                "id": order_uuid,
+                "items": items,
+                "orderTypeId": order_type_id,
+                "comment": f"{order.time} / {order.order_conmment or ''}",
+            }
+        }
+
+        if pickup_area and pickup_area.terminal_group:
+            terminal_group = pickup_area.terminal_group
+            data['terminalGroupId'] = terminal_group
+        else:
+            try:
+                terminal_group = Integrations.objects.get(name='iiko').terminal_group
+                data['terminalGroupId'] = terminal_group
+
+            except Exception as e:
+                logger.warning(f"Failed to get terminal group: {e}")
+
+
+        # Отправляем запрос
+        response = requests.post(url, json=data, headers=headers)
+
+
+        print(response.json())
+
+        if response.status_code == 200:
+            logger.info(f"Order {order.id} created successfully in iiko")
+            threading.Thread(target=background_order_table_status_check, args=(order, order_uuid, attempt, pickup_area)).start()
+        else:
+            logger.error(f"Failed to create order {order.id}: {response.status_code} {response.text}")
+    except Exception as e:
+        logger.error(f"Error creating order {order.id}: {e}")
+
+
 def check_order_status(order_id, pickup_area=None):
     """Проверка статуса заказа в iiko."""
     api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
     url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
+    # url = 'https://api-ru.iiko.services/api/1/order/by_id'
+
     headers = {"Authorization": f"Bearer {token(api_key)}"}
 
 
@@ -453,6 +549,64 @@ def check_order_status(order_id, pickup_area=None):
         logger.error(f"Failed to check order status for order {order_id}: {e}")
         return None
 
+
+def check_order_table_status(order_id, pickup_area=None):
+    """Проверка статуса заказа в iiko."""
+    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+   
+    url = 'https://api-ru.iiko.services/api/1/order/by_id'
+
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+
+
+    if pickup_area and pickup_area.organization_id:
+        org_id = pickup_area.organization_id
+    else:
+        org_id = Integrations.objects.get(name='iiko').organization_id
+
+    data = {
+        "organizationIds": [org_id],
+        "orderIds": [order_id]
+    }
+
+    # print(data)
+    # print(headers)
+
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        # print(response.json())
+        return response.json()
+    except Exception as e:
+        logger.error(f"Failed to check order status for order {order_id}: {e}")
+        return None
+    
+
+
+# check_order_table_status("d34ee1c7-9a8e-4fc0-b5c7-e3ebf84f63a0", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+
+# check_order_status("a89183bc-3264-48ae-9da3-012bd48d12fe", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+
+
+
+def background_order_table_status_check(order, order_id, attempt, pickup_area=None):
+    """Фоновая проверка статуса заказа."""
+    max_duration = 3600  # 1 час
+    delay = 30  # 30 секунд
+    start_time = time.time()
+
+    while time.time() - start_time < max_duration:
+        status_response = check_order_table_status(order_id, pickup_area)
+        if status_response and 'orders' in status_response and any(order['id'] == order_id for order in status_response['orders']):
+            logger.info(f"Order {order_id} has been processed")
+            return
+        time.sleep(delay)
+
+    logger.warning(f"Order {order_id} status check timed out. Retrying (Attempt {attempt + 1})")
+    create_iiko_table(order, attempt + 1, pickup_area)
+
+
+
 def background_order_status_check(order, order_id, attempt, pickup_area=None):
     """Фоновая проверка статуса заказа."""
     max_duration = 3600  # 1 час
@@ -471,7 +625,6 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
 
 
 
-check_order_status("989b200e-5b23-4b2d-bf55-bc8aff670284")
 
 
 # threading.Thread(target=background_order_status_check, args=(Order.objects.get(id=641), "5ea54446-b2dc-453f-8c4a-d9fb09b591f6", 1)).start()
