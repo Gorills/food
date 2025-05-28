@@ -511,7 +511,7 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
         response = requests.post(url, json=data, headers=headers)
 
 
-        print(response.json())
+        # print(response.json())
 
         if response.status_code == 200:
             logger.info(f"Order {order.id} created successfully in iiko")
@@ -544,7 +544,7 @@ def check_order_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        print(response.json())
+        # print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
@@ -586,7 +586,7 @@ def check_order_table_status(order_id, pickup_area=None):
 
 # check_order_table_status("d34ee1c7-9a8e-4fc0-b5c7-e3ebf84f63a0", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
-check_order_status("55e30173-9421-4096-af57-0eb4abd9254a", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+# check_order_status("55e30173-9421-4096-af57-0eb4abd9254a", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 
 
