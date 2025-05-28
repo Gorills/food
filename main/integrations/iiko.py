@@ -620,9 +620,9 @@ def background_order_status_check(order, order_id, attempt, pickup_area=None):
         if status_response and 'orders' in status_response and any(order['id'] == order_id for order in status_response['orders']):
             logger.info(f"Order {order_id} has been processed")
 
-            telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
-            telegram_group = '-1002079435900'
-            send_message(telegram_bot, telegram_group, f'Номер заказа в iiko: {order_id}')
+            # telegram_bot = '5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE'
+            # telegram_group = '-1002079435900'
+            # send_message(telegram_bot, telegram_group, f'Номер заказа в iiko: {order_id}')
             
             return
         time.sleep(delay)
