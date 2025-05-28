@@ -198,7 +198,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 external_id=cat_id,
                 name=cat_name,
                 slug=cat_slug,
-                top=True,
+                top=False,
                 show_in_site=show_in_site
             )
             # Привязываем ко всем related_pickup_areas
@@ -550,6 +550,8 @@ def check_order_status(order_id, pickup_area=None):
         logger.error(f"Failed to check order status for order {order_id}: {e}")
         return None
 
+# check_order_status("04b61b66-d463-4bf2-b9bb-fd7ce33fe2ed")
+
 
 def check_order_table_status(order_id, pickup_area=None):
     """Проверка статуса заказа в iiko."""
@@ -584,9 +586,9 @@ def check_order_table_status(order_id, pickup_area=None):
     
 
 
-# check_order_table_status("d34ee1c7-9a8e-4fc0-b5c7-e3ebf84f63a0", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+# check_order_table_status("e7c515b3-a0ea-4450-a20c-08d816735c7e", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
-# check_order_status("55e30173-9421-4096-af57-0eb4abd9254a", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+
 
 
 
