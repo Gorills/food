@@ -941,6 +941,12 @@
 
 
     .required_checkbox--error {
+
+        input::after {
+            border: 2px solid #E90C4E!important;
+        }
+
+
         span {
             color: #E90C4E;
             text-decoration: underline;
@@ -1233,18 +1239,17 @@
 
     
 }
+
+
+
 .form__acceptance {
 
-    input {
-        margin-right: 10px;
-        position: absolute;
-        
-    }
+    
     a {
         color: rgb(233, 12, 78);
     }
     span {
-        margin-left: 35px;
+        margin-left: 10px;
     }
 }
 

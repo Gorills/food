@@ -3637,6 +3637,12 @@ def catalogs_synch(request):
 
         # Получаем уникальные api_key и соответствующие PickupAreas
         unique_api_keys = PickupAreas.objects.filter(api_key__isnull=False).values_list('api_key', flat=True).distinct()
+
+
+        if not unique_api_keys:
+            load_menu(clean_categories, clean_products, None)
+
+
         for api_key in unique_api_keys:
             area = PickupAreas.objects.filter(api_key=api_key).order_by('id').first()
             if area:

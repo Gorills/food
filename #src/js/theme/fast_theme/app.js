@@ -2848,17 +2848,17 @@ $(document).on('click', '.order__back', function(e) {
 })
 
 // Убираем возможность снять выбор с обязательных чекбоксов
-$(document).ready(function() {
-    // Обработчик события click для чекбоксов с классом "no-uncheck"
-    $('.required_checkbox').on('click', function(e) {
-        e.preventDefault(); // Отменяем действие по умолчанию
+// $(document).ready(function() {
+//     // Обработчик события click для чекбоксов с классом "no-uncheck"
+//     $('.required_checkbox').on('click', function(e) {
+//         e.preventDefault(); // Отменяем действие по умолчанию
 
-        // Проверяем, был ли чекбокс отмечен
-        if (!$(this).is(':checked')) {
-            $(this).prop('checked', true); // Если не был, отмечаем его
-        }
-    });
-});
+//         // Проверяем, был ли чекбокс отмечен
+//         if (!$(this).is(':checked')) {
+//             $(this).prop('checked', true); // Если не был, отмечаем его
+//         }
+//     });
+// });
 
 
 // Изменение способа оплаты

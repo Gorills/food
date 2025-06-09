@@ -6641,6 +6641,10 @@ td.product-thumbnail img {
   text-decoration: underline;
 }
 
+.order .required_checkbox--error input::after {
+  border: 2px solid #E90C4E !important;
+}
+
 .order .required_checkbox--error span {
   color: #E90C4E;
   text-decoration: underline;
@@ -6858,17 +6862,12 @@ td.product-thumbnail img {
   flex-wrap: wrap;
 }
 
-.form__acceptance input {
-  margin-right: 10px;
-  position: absolute;
-}
-
 .form__acceptance a {
   color: rgb(233, 12, 78);
 }
 
 .form__acceptance span {
-  margin-left: 35px;
+  margin-left: 10px;
 }
 
 .form__acceptance label {
