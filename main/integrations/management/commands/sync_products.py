@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from integrations.iiko import load_menu
+from integrations.iiko import sync_products
 from shop.models import PickupAreas
 
 class Command(BaseCommand):
@@ -10,10 +10,10 @@ class Command(BaseCommand):
         
 
         if not unique_api_keys:
-            load_menu(True, True, None)
+            sync_products(None)
 
 
         for api_key in unique_api_keys:
             area = PickupAreas.objects.filter(api_key=api_key).order_by('id').first()
             if area:
-                load_menu(False, True, area)
+                sync_products(area)
