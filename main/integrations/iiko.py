@@ -278,7 +278,7 @@ def sync_products(pickup_area=None):
                     product_save.pickup_areas.set(related_pickup_areas)
 
             # Загрузка изображения
-            if image_url and product_save.thumb is None:
+            if image_url:
                 try:
                     response = requests.get(image_url)
                     if response.status_code == 200:
