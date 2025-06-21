@@ -96,7 +96,7 @@ def get_menu(api_key):
     url = 'https://api-ru.iiko.services/api/2/menu'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     response = requests.post(url, headers=headers)
-    # print(response.json())
+    print(response.json())
     
     return response.json()
 
@@ -145,6 +145,11 @@ def sync_products(pickup_area=None):
 
     menu_response = requests.post(url_menu_id, json=data, headers=headers)
     menu_json = menu_response.json()
+
+
+    # Сохранение меню для отладки
+    with open(f'menu_{pickup_area.api_key}.json', 'w', encoding='utf-8') as f:
+        json.dump(menu_json, f, ensure_ascii=False, indent=4)
 
     # Собираем все product_id из меню
     menu_product_ids = set()
@@ -247,6 +252,9 @@ def sync_products(pickup_area=None):
             # Генерируем slug
             product_slug = generate_unique_slug(slugify(product_name), Product)
 
+
+            product_name_exists = Product.objects.filter(name=product_name, pickup_areas__in=related_pickup_areas)
+
             # Проверяем существующий товар
             product_query = Product.objects.filter(external_id=product_id)
             if related_pickup_areas:
@@ -308,7 +316,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 
     area_id = str(pickup_area.id) if pickup_area else 'global'
 
-    # Category.objects.all().delete()
+    Category.objects.all().delete()
 
     # Очистка данных, если требуется
     if clean_products:
@@ -755,7 +763,7 @@ def check_order_status(order_id, pickup_area=None):
         logger.error(f"Failed to check order status for order {order_id}: {e}")
         return None
 
-# check_order_status("04b61b66-d463-4bf2-b9bb-fd7ce33fe2ed")
+# check_order_status("4e9fe535-ae4d-4d56-b81d-42c6c719161c")
 
 
 def check_order_table_status(order_id, pickup_area=None):
@@ -783,7 +791,7 @@ def check_order_table_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        # print(response.json())
+        print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
@@ -791,7 +799,7 @@ def check_order_table_status(order_id, pickup_area=None):
     
 
 
-# check_order_table_status("e7c515b3-a0ea-4450-a20c-08d816735c7e", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+# check_order_status("", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
 
 
 
