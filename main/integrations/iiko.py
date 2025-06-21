@@ -316,7 +316,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 
     area_id = str(pickup_area.id) if pickup_area else 'global'
 
-    Category.objects.all().delete()
+    # Category.objects.all().delete()
 
     # Очистка данных, если требуется
     if clean_products:
