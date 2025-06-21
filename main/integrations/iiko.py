@@ -763,7 +763,7 @@ def check_order_status(order_id, pickup_area=None):
         logger.error(f"Failed to check order status for order {order_id}: {e}")
         return None
 
-check_order_status("be256fe7-d180-4721-8ea8-d6b9f7c48d9a")
+# check_order_status("be256fe7-d180-4721-8ea8-d6b9f7c48d9a")
 
 
 def check_order_table_status(order_id, pickup_area=None):
