@@ -757,7 +757,7 @@ def check_order_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        print(response.json())
+        # print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
@@ -791,7 +791,7 @@ def check_order_table_status(order_id, pickup_area=None):
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        print(response.json())
+        # print(response.json())
         return response.json()
     except Exception as e:
         logger.error(f"Failed to check order status for order {order_id}: {e}")
