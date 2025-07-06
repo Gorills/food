@@ -62,7 +62,7 @@
         </div>
     </div>
     
-    {% if category.all_active_products or category.constructors %}
+    {% if category.all_active_products and not category.children or category.constructors %}
     <div class="catalog">
         
         <div class="container">
