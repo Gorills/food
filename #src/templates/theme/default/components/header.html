@@ -88,8 +88,8 @@
                     
                     {% endif %}
                     
-                    {% for cat in categorys %}
-                        {% if cat.top == True and not cat.parent %}
+                    {% for cat in categorys_top %}
+                        {% if cat.top == True %}
                         <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
                             <a class="header-bottom__link" itemprop="url" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a>
                             <meta itemprop="name" content="{{ cat.name }}" />
