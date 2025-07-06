@@ -771,6 +771,9 @@
             color: #E90C4E;
             text-decoration: underline;
         }
+        input::after {
+            border: 2px solid #E90C4E!important;
+        }
     }
 
 

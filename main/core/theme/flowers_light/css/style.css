@@ -6078,6 +6078,10 @@ td.product-thumbnail img {
   text-decoration: underline;
 }
 
+.order .required_checkbox--error input::after {
+  border: 2px solid #E90C4E !important;
+}
+
 .order .cart__min {
   font-weight: 400 !important;
   text-align: center;
