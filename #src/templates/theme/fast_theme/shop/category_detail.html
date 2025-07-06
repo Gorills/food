@@ -62,7 +62,7 @@
         </div>
     </div>
     
-    {% if category.all_active_products and not category.children or category.constructors %}
+    {% if category.all_products or category.constructors %}
     <div class="catalog">
         
         <div class="container">
@@ -74,7 +74,7 @@
                 <div class="catalog__list">
                     <div class="catalog__refresh">
                         {% comment %} {% include 'components/sort.html'  %} {% endcomment %}
-                        {% include 'components/product_list.html' with category=category products=category.all_active_products big='' size=image_size %}
+                        {% include 'components/product_list.html' with category=category products=category.all_products big='' size=image_size %}
                         {% comment %} {% include 'global/pagination.html'  %} {% endcomment %}
                     </div>
 
