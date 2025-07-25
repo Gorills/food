@@ -2499,11 +2499,16 @@ a {
   margin-left: 30px;
 }
 
+.cart__related-info {
+  color: #0F2034;
+}
+
 .cart__related-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 50px;
+  color: #0F2034;
 }
 
 .cart__related-plusminus {
