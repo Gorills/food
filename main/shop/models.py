@@ -218,6 +218,7 @@ class Category(models.Model):
         return f"{folder}{transliterate_file(instance, filename)}"
     
     image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
+    image_qr = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение для QR-меню')
     top = models.BooleanField()
     home = models.BooleanField(default=False, verbose_name='Отображать на главной странице')
     resize = models.BooleanField(default=False, verbose_name='Растянуть фон')

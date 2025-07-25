@@ -2,9 +2,9 @@ from django import template
 register = template.Library()
 from setup.models import ThemeSettings
 try:
-    theme_address = ThemeSettings.objects.get().name
+    theme_address = 'fast_theme'
 except:
-    theme_address = 'sushi'
+    theme_address = 'fast_theme'
 
 @register.simple_tag()
 def get_static(file):

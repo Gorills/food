@@ -1,5 +1,6 @@
 {% extends 'qr_menu/qr_base.html' %}
 {% load thumbnail %}
+{% load lookup_tag %}
 {% block title %}{% endblock %}
 {% block description %}{% endblock %}
 {% block keywords %}{% endblock %}
@@ -24,9 +25,18 @@
 <div class="qr-products">
     <div class="container">
         <div class="qr-products__inner">
-            <div class="qr-products__top">
+            <div class="qr-products__top {% if categories_with_products|lookup:'image_qr' %}qr-products__top--grid{% endif %}">
                 {% for cat in categories_with_products.keys %}
-                    <a href="#{{ cat.id }}" class="qr-products__cat {% if forloop.counter == 1 %}qr-products__cat--active{% endif %}">{{ cat.name }}</a>
+                    <a href="#{{ cat.id }}" class="qr-products__cat {% if forloop.counter == 1 %}qr-products__cat--active{% endif %} {% if cat.image_qr %}qr-products__cat--noborder{% endif %}">
+                        {% if cat.image_qr %}
+                            {% thumbnail cat.image_qr "250x150" format="WEBP" crop="center" as im %}
+                                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="qr-products__cat-image">
+                            {% endthumbnail %}
+                            <p class="qr-products__cat-title">{{ cat.name }}</p>
+                        {% else %}
+                            {{ cat.name }}
+                        {% endif %}
+                    </a>
                 {% endfor %}
             </div>
             

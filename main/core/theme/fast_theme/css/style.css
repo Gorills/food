@@ -1683,6 +1683,19 @@ a {
   flex-wrap: wrap;
 }
 
+.qr-products__top--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 20px;
+}
+
+.qr-products__cat-image {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  overflow: hidden;
+}
+
 .qr-products__cat {
   display: block;
   font-size: 14px;
@@ -1696,10 +1709,22 @@ a {
   text-decoration: none;
   color: #000;
   white-space: nowrap;
+  position: relative;
 }
 
 .qr-products__cat--active {
   box-shadow: 0 0 0 2px #000;
+}
+
+.qr-products__cat--noborder {
+  padding: 0;
+}
+
+.qr-products__cat-title {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-weight: 700;
 }
 
 .qr-products__list {

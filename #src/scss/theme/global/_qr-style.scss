@@ -136,10 +136,26 @@
         display: flex;
         flex-wrap: wrap;
 
-
+        &--grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-gap: 20px;
+        }
     }
 
+    // .qr-products__cat-image
+
+    &__cat-image {
+        width: 100%;
+        border-radius: 16px;
+        object-fit: cover;
+        overflow: hidden;
+    }
+    
+    
     // .qr-products__cat
+
+    
 
     &__cat {
         display: block;
@@ -154,10 +170,26 @@
         text-decoration: none;
         color: #000;
         white-space: nowrap;
+        position: relative;
 
         &--active {
             box-shadow: 0 0 0 2px #000;
         }
+
+        &--noborder {
+            // border: none!important;
+            // box-shadow: none;
+            padding: 0;
+        }
+    }
+
+    // .qr-products__cat-title
+
+    &__cat-title {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        font-weight: 700;
     }
 
     // .qr-products__list

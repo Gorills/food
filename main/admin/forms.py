@@ -1992,6 +1992,7 @@ class CategoryForm(forms.ModelForm):
             'meta_description',
             'meta_keywords',
             'image',
+            'image_qr',
             'top',
             'home',
             
@@ -2018,6 +2019,7 @@ class CategoryForm(forms.ModelForm):
             'meta_keywords': 'Ключевые слова',
             
             'image': 'Изображение категории',
+            'image_qr': 'Изображение для QR-меню',
             'top': 'Отображать в меню',
             'column': 'Количество колонок',
             'sort_order': 'Порядок сортировки',
