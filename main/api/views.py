@@ -453,105 +453,73 @@ def get_user(request):
 
 
 
-
-
 from django.utils import timezone
 from datetime import datetime, time
 import pytz
 from main.local_settings import TIME_ZONE
 
 current_time = timezone.now()
-# Определяем временную зону для сравнения
-time_zone = pytz.timezone(TIME_ZONE)  # Замените 'Europe/Moscow' на вашу временную зону
-# Конвертируем текущее время в нужную временную зону
+time_zone = pytz.timezone(TIME_ZONE)
 current_time = current_time.astimezone(time_zone)
-
 
 @api_view(['GET'])
 def get_work_active(request, day):
-
-    
-
     try:
         delivery_full = ShopSetup.objects.get().delivery_full
     except:
         delivery_full = False
 
-
     try:
-        start_delivery = WorkDay.objects.get(day=day, active=True).start_delivery
-        end_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
+        workday = WorkDay.objects.get(day=day, active=True)
+        start_delivery = workday.start_delivery
+        end_delivery = workday.end_delivery
 
         if end_delivery < start_delivery:
-
-            end_delivery = '23:59:59'
-            start_second_delivery = '00:00:00'
-            end_second_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
-
-
+            # Интервал переходит через полночь
+            end_delivery_first = time(23, 59, 59)
+            start_second_delivery = time(0, 0)
+            end_second_delivery = end_delivery
         else:
-            start_delivery = WorkDay.objects.get(day=day, active=True).start_delivery
-            end_delivery = WorkDay.objects.get(day=day, active=True).end_delivery
-
+            end_delivery_first = end_delivery
             start_second_delivery = None
             end_second_delivery = None
-
     except:
-
-        start_delivery = ShopSetup.objects.get().start_delivery
-        end_delivery = ShopSetup.objects.get().end_delivery
-        
-
+        # Fallback на настройки магазина
+        shop_setup = ShopSetup.objects.get()
+        start_delivery = shop_setup.start_delivery
+        end_delivery = shop_setup.end_delivery
 
         if end_delivery < start_delivery:
-
-            end_delivery = '23:59:59'
-            start_second_delivery = '00:00:00'
-            end_second_delivery = ShopSetup.objects.get().end_delivery
+            end_delivery_first = time(23, 59, 59)
+            start_second_delivery = time(0, 0)
+            end_second_delivery = end_delivery
         else:
-
+            end_delivery_first = end_delivery
             start_second_delivery = None
             end_second_delivery = None
 
-
-        
-
-    day = datetime.now().weekday()
-    
-
-    # Проверяем, попадает ли текущее время в любой из интервалов доставки
+    # Проверяем, попадает ли текущее время в интервал доставки
     server_time = current_time.time()
-    is_active = False  # По умолчанию считаем, что время не попадает в интервал
+    is_active = False
 
-    try:
-        if start_delivery <= server_time <= end_delivery:
+    if start_delivery <= server_time <= end_delivery_first:
+        is_active = True
+    elif start_second_delivery is not None and end_second_delivery is not None:
+        if start_second_delivery <= server_time <= end_second_delivery:
             is_active = True
-        elif start_second_delivery and end_second_delivery and start_second_delivery <= server_time <= end_second_delivery:
-            is_active = True
-            
-    except:
-        is_active = False
 
+    # Проверка рабочего дня
     work_day = False
-
-    try: 
-        WorkDay.objects.get(day=day, active=True).active
-        work_day = True
+    try:
+        workday = WorkDay.objects.get(day=day)
+        work_day = workday.active
     except:
-        work_day = False
-     
-    try: 
-        WorkDay.objects.get(day=day, active=False).active
-        work_day = False
-    except:
-        work_day = True
-
+        work_day = True  # По умолчанию считаем день рабочим, если нет записи
 
     data = {
         'delivery_full': delivery_full,
         'start_delivery': start_delivery,
         'end_delivery': end_delivery,
-
         'start_second_delivery': start_second_delivery,
         'end_second_delivery': end_second_delivery,
         'day': day,
@@ -559,7 +527,6 @@ def get_work_active(request, day):
         'is_active': is_active,
         'work_day': work_day
     }
-
 
     return Response(data, status=status.HTTP_200_OK)
 
