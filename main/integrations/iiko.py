@@ -404,7 +404,6 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     external_id=cat_id,
                     name=cat_name,
                     slug=cat_slug,
-                    top=False,
                     show_in_site=show_in_site,
                     top = show_in_site
                 )
