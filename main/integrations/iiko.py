@@ -392,6 +392,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 cat_save.name = cat_name
                 cat_save.slug = generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
                 cat_save.show_in_site = show_in_site
+                cat_save.top = show_in_site
                 cat_save.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
@@ -404,7 +405,8 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     name=cat_name,
                     slug=cat_slug,
                     top=False,
-                    show_in_site=show_in_site
+                    show_in_site=show_in_site,
+                    top = show_in_site
                 )
                 # Привязываем ко всем related_pickup_areas
                 if related_pickup_areas:
@@ -454,7 +456,6 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 product_save.short_description = product_description
                 product_save.weight = weight
                 product_save.show_in_site = show_in_site
-                product_save.top = show_in_site
                 product_save.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
