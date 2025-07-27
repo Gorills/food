@@ -454,6 +454,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 product_save.short_description = product_description
                 product_save.weight = weight
                 product_save.show_in_site = show_in_site
+                product_save.top = show_in_site
                 product_save.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
