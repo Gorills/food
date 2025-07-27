@@ -34,7 +34,7 @@
                             {% endthumbnail %}
                             <p class="qr-products__cat-title">{{ cat.name }}</p>
                         {% else %}
-                            {{ cat.name }}
+                        <p class="qr-products__cat-title qr-products__cat-title--black">{{ cat.name }}</p>
                         {% endif %}
                     </a>
                 {% endfor %}

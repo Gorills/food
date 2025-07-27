@@ -1691,9 +1691,11 @@ a {
 
 .qr-products__cat-image {
   width: 100%;
+  height: 100%;
   border-radius: 16px;
   object-fit: cover;
   overflow: hidden;
+  opacity: 0.7;
 }
 
 .qr-products__cat {
@@ -1710,6 +1712,7 @@ a {
   color: #000;
   white-space: nowrap;
   position: relative;
+  background: #000;
 }
 
 .qr-products__cat--active {
@@ -1725,6 +1728,12 @@ a {
   left: 20px;
   bottom: 20px;
   font-weight: 700;
+  color: #fff;
+  font-size: 16px;
+}
+
+.qr-products__cat-title--black {
+  color: #000;
 }
 
 .qr-products__list {
