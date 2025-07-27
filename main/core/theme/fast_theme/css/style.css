@@ -1713,6 +1713,8 @@ a {
   white-space: nowrap;
   position: relative;
   background: #000;
+  width: 250px;
+  height: 250px;
 }
 
 .qr-products__cat--active {
