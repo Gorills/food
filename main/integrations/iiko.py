@@ -421,7 +421,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             try:
                 price = Decimal(item_options[0]['prices'][0]['price']) or Decimal('0')
             except (IndexError, KeyError, TypeError):
-                print(f"Skipping product {product_name} due to missing data.")
+                # print(f"Skipping product {product_name} due to missing data.")
                 continue
 
             try:
