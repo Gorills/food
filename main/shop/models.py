@@ -299,6 +299,18 @@ class Category(models.Model):
         return reverse("category_detail", kwargs={"slug": self.slug})
     
 
+    def get_category_setup(self):
+        
+        category_setup = None
+        if self.external_id:
+            category_setup = CategorySetup.objects.filter(category_external_id=self.external_id).first()
+        else:
+            category_setup = CategorySetup.objects.filter(category_id=self.id).first()
+        
+        
+        return category_setup
+    
+
     class Meta:
       
         verbose_name = 'Категория'
@@ -308,6 +320,51 @@ class Category(models.Model):
             models.Index(fields=['external_id', 'slug']),
         ]
     
+
+
+class CategorySetup(models.Model):
+
+    category_external_id = models.CharField(max_length=250, null=True, blank=True)
+    category_id = models.CharField(max_length=250, null=True, blank=True)
+    name = models.CharField(max_length=250, null=True, blank=True)
+    slug = models.CharField(max_length=250, null=True, blank=True)
+    top = models.BooleanField(default=True)
+    home = models.BooleanField(default=True, verbose_name='Отображать на главной странице')
+
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'categories/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+    image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
+    image_qr = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True, verbose_name='Изображение для QR-меню')
+    resize = models.BooleanField(default=False, verbose_name='Растянуть фон')
+    font_color = models.CharField(max_length=250, null=True, blank=True, verbose_name='Цвет шрифта')
+    bg_color = models.CharField(max_length=250, default='#ffffff', null=True, blank=True, verbose_name='Цвет фона')
+    opacity = models.PositiveIntegerField(default=100, verbose_name='Прозрачность изображения')
+
+    sort_order = models.PositiveIntegerField(default=0)
+    status = models.BooleanField(default=True)
+
+    create_at = models.DateField(auto_now_add=True)
+    update_at = models.DateField(auto_now=True)
+
+
+    def get_category(self):
+
+        if self.category_external_id:
+            category = Category.objects.filter(external_id=self.category_external_id).first()
+            return category
+        
+        category = Category.objects.filter(id=self.category_id).first()
+        return category
+
+
+    def __str__(self):
+       
+        return self.category_id
 
 
 class Manufacturer(models.Model):

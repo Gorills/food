@@ -19,7 +19,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order, OrderStatus, OrderView
-from shop.models import AutoFieldOptions, Category, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, Table, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, CategorySetup, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, Table, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, SoundSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -1593,21 +1593,47 @@ def admin_category(request):
     return render(request, 'shop/category/category.html', context)
 
 
+
 # Добавление категорий
 @check_user_rights(['add_categorys'])
 def category_add(request):
     if request.method == 'POST':
         form_new = CategoryForm(request.POST, request.FILES)
         if form_new.is_valid():
-            form_new.save()
+            # Сохранение экземпляра формы (создание объекта Category)
+            category = form_new.save()
+
+            # Получение или создание объекта CategorySetup
+            category_setup, created = CategorySetup.objects.get_or_create(category_id=category.id)
+            
+            # Извлечение конкретных полей из формы и сохранение их в CategorySetup
+            category_setup.category_external_id = form_new.cleaned_data.get('external_id')  
+            # category_setup.category_id уже установлено в get_or_create, поэтому убираем
+            category_setup.name = form_new.cleaned_data.get('name')
+            category_setup.slug = form_new.cleaned_data.get('slug')
+            category_setup.top = form_new.cleaned_data.get('top')
+            category_setup.home = form_new.cleaned_data.get('home')
+            category_setup.image = form_new.cleaned_data.get('image')
+            category_setup.image_qr = form_new.cleaned_data.get('image_qr')
+            category_setup.font_color = form_new.cleaned_data.get('font_color')
+            category_setup.bg_color = form_new.cleaned_data.get('bg_color')
+            category_setup.opacity = form_new.cleaned_data.get('opacity')
+            category_setup.resize = form_new.cleaned_data.get('resize')
+            category_setup.sort_order = form_new.cleaned_data.get('sort_order')
+            category_setup.status = form_new.cleaned_data.get('status')
+            
+            category_setup.save()
+
             return redirect('admin_category')
         else:
             return render(request, 'shop/category/category_add.html', {'form': form_new})
+    
     context = {
         'form': CategoryForm(),
-        'categorys': Category.objects.filter()
+        'categorys': Category.objects.all()
     }
     return render(request, 'shop/category/category_add.html', context)
+
 
 
 # Удаление категорий
@@ -1629,31 +1655,79 @@ def cat_orderby_edit(request, pk):
         order_by = request.POST['order']
         category.sort_order = order_by
         category.save()
+
+
+        category_external_id = category.external_id
+
+        if category_external_id:
+            category_setup = CategorySetup.objects.filter(category_external_id=category_external_id).first()
+            category_setup.sort_order = order_by
+            category_setup.save()
+        else:
+            category_setup = CategorySetup.objects.filter(category_id=category.id).first()
+            category_setup.sort_order = order_by
+            category_setup.save()
+
+
     
     
         return redirect('admin_category')
 
 
-# Редкатирование категорий
+# Редактирование категорий
 @check_user_rights(['add_categorys'])
 def category_edit(request, pk):
     cat = Category.objects.get(id=pk)
+    
     if request.method == 'POST':
         form = CategoryForm(request.POST, request.FILES, instance=cat)
         if form.is_valid():
-            form.save()
+            # Сохранение обновленного объекта Category
+            category = form.save()
+
+            # Поиск или создание объекта CategorySetup
+            # Сначала ищем по category_external_id, если указано
+            category_external_id = form.cleaned_data.get('external_id')
+            if category_external_id:
+                category_setup, created = CategorySetup.objects.get_or_create(
+                    category_external_id=category_external_id,
+                    defaults={'category_id': category.id}
+                )
+            else:
+                # Если external_id не указан, ищем по category_id
+                category_setup, created = CategorySetup.objects.get_or_create(
+                    category_id=category.id
+                )
+
+            # Обновление полей CategorySetup
+            category_setup.name = form.cleaned_data.get('name')
+            category_setup.slug = form.cleaned_data.get('slug')
+            category_setup.category_external_id = form.cleaned_data.get('external_id')
+            category_setup.top = form.cleaned_data.get('top')
+            category_setup.home = form.cleaned_data.get('home')
+            category_setup.image = form.cleaned_data.get('image')
+            category_setup.image_qr = form.cleaned_data.get('image_qr')
+            category_setup.font_color = form.cleaned_data.get('font_color')
+            category_setup.bg_color = form.cleaned_data.get('bg_color')
+            category_setup.opacity = form.cleaned_data.get('opacity')
+            category_setup.resize = form.cleaned_data.get('resize')
+            category_setup.sort_order = form.cleaned_data.get('sort_order')
+            category_setup.status = form.cleaned_data.get('status')
+
+            category_setup.save()
+
+            # print(category_setup)
+
             return redirect('admin_category')
         else:
             return render(request, 'shop/category/category_edit.html', {'form': form})
-
-
     
     context = {
         'form': CategoryForm(instance=cat),
         'category': cat,
         'categorys': Category.objects.filter().exclude(id=pk)
     }
-
+    
     return render(request, 'shop/category/category_edit.html', context)
 
 

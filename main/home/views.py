@@ -5,7 +5,7 @@ from sorl.thumbnail import get_thumbnail
 from django.http import HttpResponse
 from accounts.models import LoyaltyCardSettings
 from orders.models import Order
-from shop.models import Category, Manufacturer, PickupAreas, ProductSale, ShopSetup, Product
+from shop.models import Category, CategorySetup, Manufacturer, PickupAreas, ProductSale, ShopSetup, Product
 from setup.models import BaseSettings, Colors, EmailSettings
 from .models import SliderSetup, Slider, Page, PlaceImages, Reviews
 from blog.models import BlogSetup, Post
@@ -213,7 +213,19 @@ def home(request):
 
 
     order_get = request.GET.getlist('order')
-    home_cats = Category.objects.filter(home=True, show_in_site=True, status=True).order_by('sort_order')
+
+    
+    
+    home_cats_setup = CategorySetup.objects.filter(home=True).order_by('sort_order')
+
+    # Собираем список ID категорий
+    category_ids = [cat.get_category().id for cat in home_cats_setup if cat.get_category()]
+
+    if home_cats_setup.count() > 0:
+        # Преобразуем список ID в QuerySet
+        home_cats = Category.objects.filter(id__in=category_ids).order_by('sort_order')
+    else:
+        home_cats = Category.objects.filter(home=True, show_in_site=True, status=True).order_by('sort_order')
 
 
 

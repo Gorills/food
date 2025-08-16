@@ -2004,7 +2004,8 @@ class CategoryForm(forms.ModelForm):
             'status',
             'slug',
             'exclude_actions',
-            'show_in_site'
+            'show_in_site',
+            'external_id',
 
         ]
         labels = {
@@ -2026,6 +2027,7 @@ class CategoryForm(forms.ModelForm):
             'status': 'Активная',
             'slug': 'SEO URL',
             'exclude_actions': 'Исключить из скидок и бонусов',
+            'external_id': 'Внешний идентификатор',
             
             
         }
@@ -2080,6 +2082,10 @@ class CategoryForm(forms.ModelForm):
             'slug': forms.TextInput(attrs={
                 'class': 'input',
                 'placeholder': 'SEO URL',
+            }),
+            'external_id': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'Внешний идентификатор',
             }),
         }
 

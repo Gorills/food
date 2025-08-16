@@ -14,7 +14,7 @@ from .models import Integrations
 
 from pytils.translit import slugify
 from django.core.files.base import ContentFile
-from shop.models import Category, OptionImage, OptionType, Product, ProductOption, PickupAreas
+from shop.models import Category, CategorySetup, OptionImage, OptionType, Product, ProductOption, PickupAreas
 import json
 
 
@@ -162,9 +162,9 @@ def sync_products(pickup_area=None):
 
     # Получаем существующие товары в базе
     if related_pickup_areas:
-        existing_products = Product.objects.filter(pickup_areas__in=related_pickup_areas)
+        existing_products = Product.objects.filter(pickup_areas__in=related_pickup_areas).exclude(external_id__isnull=True)
     else:
-        existing_products = Product.objects.all()
+        existing_products = Product.objects.all().exclude(external_id__isnull=True)
 
     # Удаляем товары, которых нет в меню
     for product in existing_products:
@@ -321,9 +321,9 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
     # Очистка данных, если требуется
     if clean_products:
         if related_pickup_areas:
-            Product.objects.filter(pickup_areas__in=related_pickup_areas).delete()
+            Product.objects.filter(pickup_areas__in=related_pickup_areas).exclude(external_id__isnull=True).delete()
         else:
-            Product.objects.all().delete()
+            Product.objects.all().exclude(external_id__isnull=True).delete()
     if clean_categories:
         
         if related_pickup_areas:
@@ -376,23 +376,44 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 
         cat_exists = Category.objects.filter(pickup_areas__in=related_pickup_areas, name=cat_name).exists()
         if cat_exists:
-
+            
             cat_query = Category.objects.filter(pickup_areas__in=related_pickup_areas, name=cat_name)
             cat_save = cat_query.first()
 
         else:
             # Проверяем, существует ли категория с таким external_id
             cat_query = Category.objects.filter(external_id=cat_id)
+
+            cat_setup = CategorySetup.objects.filter(category_external_id=cat_id).first()
+
+            if not cat_setup:
+                cat_setup, created = CategorySetup.objects.get_or_create(category_external_id=cat_id)
+
+            slug = cat_setup.slug if cat_setup else generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
+            home = cat_setup.home if cat_setup else None
+
+
             if related_pickup_areas:
                 # Фильтруем по одной из related_pickup_areas, чтобы найти существующую категорию
                 cat_query = cat_query.filter(pickup_areas__in=related_pickup_areas)
 
             if cat_query.exists():
+
+                
                 cat_save = cat_query.first()
                 cat_save.name = cat_name
-                cat_save.slug = generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
+                cat_save.slug = slug
                 cat_save.show_in_site = show_in_site
                 cat_save.top = show_in_site
+                cat_save.home = home
+                cat_save.image = cat_setup.image if cat_setup else None
+                cat_save.resize = cat_setup.resize if cat_setup else None
+                cat_save.font_color = cat_setup.font_color if cat_setup else None
+                cat_save.bg_color = cat_setup.bg_color if cat_setup else None
+                cat_save.opacity = cat_setup.opacity if cat_setup else None
+                cat_save.sort_order = cat_setup.sort_order if cat_setup else None
+
+
                 cat_save.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
@@ -405,7 +426,14 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     name=cat_name,
                     slug=cat_slug,
                     show_in_site=show_in_site,
-                    top = show_in_site
+                    top = show_in_site,
+                    home = home,
+                    image = cat_setup.image if cat_setup else None,
+                    resize = cat_setup.resize if cat_setup else None,
+                    font_color = cat_setup.font_color if cat_setup else None,
+                    bg_color = cat_setup.bg_color if cat_setup else None,
+                    opacity = cat_setup.opacity if cat_setup else None,
+                    sort_order = cat_setup.sort_order if cat_setup else None
                 )
                 # Привязываем ко всем related_pickup_areas
                 if related_pickup_areas:

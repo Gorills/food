@@ -399,12 +399,24 @@
                     
                     {% endif %}
                     {% for cat in categorys %}
-                        {% if cat.top == True %}
-                        <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
-                            <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
-                            <meta itemprop="name" content="{{ cat.name }}" />
-                        </li>
+
+                        {% if cat.get_category_setup %}
+                            {% if cat.get_category_setup.top == True %}
+                            <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
+                                <meta itemprop="name" content="{{ cat.name }}" />
+                            </li>
+                            {% endif %}
+                        {% else %}
+                            {% if cat.top == True %}
+                            <li class="header-bottom__dropdown-item" itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ItemList">
+                                <a class="header-bottom__link" {% if colors.font_size != "16px" %}style="font-size: {{ colors.font_size }}"{% endif %} itemprop="url" href="{% if shop_setup.all_menus %}{% url 'home' %}#{{ cat.id }}{% else %}{{ cat.get_absolute_url }}{% endif %}">{{ cat.name }}</a>
+                                <meta itemprop="name" content="{{ cat.name }}" />
+                            </li>
+                            {% endif %}
                         {% endif %}
+
+
                     {% endfor %}
                     
         
