@@ -19,7 +19,7 @@ from subdomains.models import Subdomain
 from delivery.models import Delivery
 
 from orders.models import Order, OrderStatus, OrderView
-from shop.models import AutoFieldOptions, Category, CategorySetup, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ShopSetup, Table, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
+from shop.models import AutoFieldOptions, Category, CategorySetup, CharGroup, CharName, DeliveryTimePrice, DopItems, Manufacturer, OptionImage, PayMethod, PickupAreas, Product, OptionType, ProductChar, ProductImage, ProductOption, ProductSale, ProductSetup, ShopSetup, Table, WorkDay, FoodConstructor, ConstructorCategory, Ingridients
 from setup.models import BaseSettings, Colors, CustomCode, EmailSettings, Fonts, RecaptchaSettings, SoundSettings, ThemeSettings
 from pay.models import PayKeeper, PaymentSet, Tinkoff, Yookassa, AlfaBank
 from blog.models import BlogCategory, BlogSetup, Post, PostBlock
@@ -2454,12 +2454,23 @@ def stop_list(request, pk):
 def change_new(request, pk):
     if request.method == 'GET':
         product = Product.objects.get(id=pk)
+
+        if product.external_id:
+            product_setup, created = ProductSetup.objects.get_or_create(product_external_id=product.external_id)
+        else:
+            product_setup, created = ProductSetup.objects.get_or_create(product_id=product.id)
+
+
         if product.new == True:
             product.new = False
             product.save()
+            product_setup.new = False
+            product_setup.save()
         else:
             product.new = True
             product.save()
+            product_setup.new = True
+            product_setup.save()
 
         return JsonResponse({'status': 'success', 'active': product.new})
 
@@ -2469,12 +2480,22 @@ def change_new(request, pk):
 def change_hit(request, pk):
     if request.method == 'GET':
         product = Product.objects.get(id=pk)
+        if product.external_id:
+            product_setup, created = ProductSetup.objects.get_or_create(product_external_id=product.external_id)
+        else:
+            product_setup, created = ProductSetup.objects.get_or_create(product_id=product.id)
+
         if product.bestseller == True:
             product.bestseller = False
             product.save()
+            product_setup.bestseller = False
+            product_setup.save()
+
         else:
             product.bestseller = True
             product.save()
+            product_setup.bestseller = True
+            product_setup.save()
 
         return JsonResponse({'status': 'success', 'active': product.bestseller})
 
@@ -2485,12 +2506,21 @@ def change_hit(request, pk):
 def product_in_cart(request, pk):
     if request.method == 'GET':
         product = Product.objects.get(id=pk)
+        if product.external_id:
+            product_setup, created = ProductSetup.objects.get_or_create(product_external_id=product.external_id)
+        else:
+            product_setup, created = ProductSetup.objects.get_or_create(product_id=product.id)
+
         if product.in_cart == True:
             product.in_cart = False
             product.save()
+            product_setup.in_cart = False
+            product_setup.save()
         else:
             product.in_cart = True
             product.save()
+            product_setup.in_cart = True
+            product_setup.save()
 
         return JsonResponse({'status': 'success', 'active': product.in_cart})
 

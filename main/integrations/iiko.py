@@ -14,7 +14,7 @@ from .models import Integrations
 
 from pytils.translit import slugify
 from django.core.files.base import ContentFile
-from shop.models import Category, CategorySetup, OptionImage, OptionType, Product, ProductOption, PickupAreas
+from shop.models import Category, CategorySetup, OptionImage, OptionType, Product, ProductOption, PickupAreas, ProductSetup
 import json
 
 
@@ -446,6 +446,14 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             product_description = product['description']
             item_options = product['itemSizes']
 
+
+            product_setup = ProductSetup.objects.filter(product_external_id=product_id).first()
+
+            if not product_setup:
+                product_setup, created = ProductSetup.objects.get_or_create(product_external_id=product_id)
+
+
+
             try:
                 price = Decimal(item_options[0]['prices'][0]['price']) or Decimal('0')
             except (IndexError, KeyError, TypeError):
@@ -478,12 +486,25 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             if product_query.exists():
                 product_save = product_query.first()
                 product_save.name = product_name
-                product_save.slug = generate_unique_slug(product_slug, Product, exclude_id=product_save.id)
+                product_save.slug = product_setup.slug if product_setup else generate_unique_slug(product_slug, Product, exclude_id=product_save.id)
                 product_save.price = price
                 product_save.short_description = product_description
                 product_save.weight = weight
                 product_save.show_in_site = show_in_site
+
+                product_save.new = product_setup.new if product_setup else None
+                product_save.bestseller = product_setup.bestseller if product_setup else None
+                product_save.related = product_setup.related if product_setup else None
+                product_save.all_cats = product_setup.all_cats if product_setup else None
+                product_save.free = product_setup.free if product_setup else None
+                product_save.minimum = product_setup.minimum if product_setup else None
+                product_save.in_cart = product_setup.in_cart if product_setup else None
+                
+            
+
                 product_save.save()
+                product_setup.product_id = product_save.id
+                product_setup.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
                     for area in related_pickup_areas:
@@ -499,11 +520,21 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     short_description=product_description,
                     iiko_type=product['orderItemType'],
                     weight=weight,
-                    show_in_site=show_in_site
+                    show_in_site=show_in_site,
+                    new = product_setup.new if product_setup else None,
+                    bestseller = product_setup.bestseller if product_setup else None,
+                    related = product_setup.related if product_setup else None,
+                    all_cats = product_setup.all_cats if product_setup else None,
+                    free = product_setup.free if product_setup else None,
+                    minimum = product_setup.minimum if product_setup else None,
+                    in_cart = product_setup.in_cart if product_setup else None
                 )
                 # Привязываем ко всем related_pickup_areas
                 if related_pickup_areas:
                     product_save.pickup_areas.set(related_pickup_areas)
+
+                product_setup.product_id = product_save.id
+                product_setup.save()
 
             # Загрузка изображения
             if image_url:

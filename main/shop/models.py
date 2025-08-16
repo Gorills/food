@@ -830,6 +830,38 @@ class Product(models.Model):
         ]
 
 
+
+
+class ProductSetup(models.Model):
+    product_external_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
+    product_id = models.CharField(max_length=250, null=True, blank=True, unique=True)
+
+    # Новинка
+    new = models.BooleanField(default=False)
+    # Бестселлер
+    bestseller = models.BooleanField(default=False) 
+    related = models.BooleanField(default=False, verbose_name='Сделать сопутствующим')
+    all_cats = models.BooleanField(default=True, verbose_name='Отображать во всех категориях')
+    free = models.PositiveIntegerField(default=0, verbose_name='Бесплатно в заказе')
+    minimum = models.PositiveIntegerField(default=1, verbose_name='Минимальное количество')
+    in_cart = models.BooleanField(default=False, verbose_name='В подборку рекомендованных товаров в корзине')
+    show_in_site = models.BooleanField(default=True, verbose_name="Показать товар на сайте")
+    slug = models.SlugField(unique=True, max_length=250, null=True)
+
+    def get_image_upload_path(instance, filename):
+        """
+        Function to specify the upload path for the image
+        """
+        folder = 'products/thumb/'  # Fixed folder name
+        return f"{folder}{transliterate_file(instance, filename)}"
+    
+
+    thumb = models.FileField(upload_to=get_image_upload_path, verbose_name='Основное изображение', null=True, blank=True)
+    
+
+
+
+
 class ProductImage(models.Model):
     parent = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     def get_image_upload_path(instance, filename):
