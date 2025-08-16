@@ -1732,6 +1732,8 @@ a {
   font-weight: 700;
   color: #fff;
   font-size: 16px;
+  max-width: 100%;
+  white-space: normal;
 }
 
 .qr-products__list {

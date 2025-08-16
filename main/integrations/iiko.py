@@ -80,8 +80,44 @@ def get_terminal_groups(pickup_area=None):
         raise
 
 
-# pickup_area=PickupAreas.objects.get(terminal_group="Чайхана Мадина Мещерино")
-# get_terminal_groups(pickup_area)
+
+def get_tables(pickup_area, table_num):
+    terminal_group = pickup_area.terminal_group
+    api_key = pickup_area.api_key
+
+    url = 'https://api-ru.iiko.services/api/1/reserve/available_restaurant_sections'
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
+
+    data = {
+        "terminalGroupIds": [
+            terminal_group
+        ]
+    }
+
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        
+        # Получаем JSON-ответ
+        response_data = response.json()
+        
+        # Ищем стол с указанным номером
+        for section in response_data.get('restaurantSections', []):
+            for table in section.get('tables', []):
+                if table.get('number') == table_num:
+                    # print(table.get('posId'))
+                    return table.get('posId')
+        
+        # Если стол не найден, возвращаем None
+        logger.warning(f"Table number {table_num} not found")
+        return None
+
+    except Exception as e:
+        logger.error(f"Failed to get tables: {e}")
+        return None
+
+# pickup_area=PickupAreas.objects.get(terminal_group="24cdd250-8686-4b95-a1d0-23dc45612fc8")
+# get_tables(pickup_area, 1)
 
 
 def extract_digits_from_end(input_string):
@@ -236,7 +272,7 @@ def sync_products(pickup_area=None):
             try:
                 price = Decimal(item_options[0]['prices'][0]['price']) or Decimal('0')
             except (IndexError, KeyError, TypeError):
-                print(f"Skipping product {product_name} due to missing data.")
+                # print(f"Skipping product {product_name} due to missing data.")
                 continue
 
             try:
@@ -293,7 +329,7 @@ def sync_products(pickup_area=None):
                         image_name = image_url.split('/')[-1]
                         product_save.thumb.save(image_name, ContentFile(response.content), save=True)
                 except Exception as e:
-                    print(f"Failed to load image for {product_name}: {e}")
+                    logger.error(f"Failed to load image for {product_name}: {e}")
 
     return {"status": "success", "message": "Products synchronized successfully"}
 
@@ -303,6 +339,11 @@ def sync_products(pickup_area=None):
 
 
 def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
+
+    clean_categories = True
+    clean_products = True
+    Category.objects.all().delete()
+
     """Синхронизация меню из iiko с учетом PickupAreas."""
     # Определяем api_key и связанные PickupAreas
     if pickup_area:
@@ -407,6 +448,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 cat_save.top = show_in_site
                 cat_save.home = home
                 cat_save.image = cat_setup.image if cat_setup else None
+                cat_save.image_qr = cat_setup.image_qr if cat_setup else None
                 cat_save.resize = cat_setup.resize if cat_setup else None
                 cat_save.font_color = cat_setup.font_color if cat_setup else None
                 cat_save.bg_color = cat_setup.bg_color if cat_setup else None
@@ -429,6 +471,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                     top = show_in_site,
                     home = home,
                     image = cat_setup.image if cat_setup else None,
+                    image_qr = cat_setup.image_qr if cat_setup else None,
                     resize = cat_setup.resize if cat_setup else None,
                     font_color = cat_setup.font_color if cat_setup else None,
                     bg_color = cat_setup.bg_color if cat_setup else None,
@@ -544,7 +587,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                         image_name = image_url.split('/')[-1]
                         product_save.thumb.save(image_name, ContentFile(response.content), save=True)
                 except Exception as e:
-                    print(f"Failed to load image for {product_name}: {e}")
+                    logger.error(f"Failed to load image for {product_name}: {e}")
 
             # Обработка опций (размеры)
             if len(item_options) > 1:
@@ -573,9 +616,11 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                                 op_image = OptionImage.objects.create(parent=option_save)
                                 op_image.src.save(image_name, ContentFile(response.content), save=True)
                         except Exception as e:
-                            print(f"Failed to load option image for {option_name}: {e}")
+                            logger.error(f"Failed to load option image for {option_name}: {e}")
 
 # load_menu(True, True, None)
+
+
 
 
 
@@ -756,18 +801,27 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
         if not order_type_id:
             logger.error(f"No matching order type found for delivery method {order.delivery_method}")
             return
-
+        
         # Формируем данные заказа
+        
         data = {
             "organizationId": org_id,
             "order": {
                 "id": order_uuid,
                 "items": items,
                 "orderTypeId": order_type_id,
-                "comment": f"{order.time} / {order.order_conmment or ''}",
+                "tableIds": [
+                    get_tables(pickup_area, int(order.table_object.name))
+                ],
+                "comment": f"{order.time} / {order.order_conmment or ''} / Заказ для стола {order.table_object.name}",
             }
         }
 
+        # Удаляем tableIds, если get_tables вернул None
+        if data['order']['tableIds'] == [None]:
+            del data['order']['tableIds']
+
+        # Добавляем terminalGroupId
         if pickup_area and pickup_area.terminal_group:
             terminal_group = pickup_area.terminal_group
             data['terminalGroupId'] = terminal_group
@@ -775,13 +829,35 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
             try:
                 terminal_group = Integrations.objects.get(name='iiko').terminal_group
                 data['terminalGroupId'] = terminal_group
-
             except Exception as e:
                 logger.warning(f"Failed to get terminal group: {e}")
+                return None
 
+        try:
+            # Первая попытка отправки заказа с tableIds (если они есть)
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()
+            return response.json()
 
-        # Отправляем запрос
-        response = requests.post(url, json=data, headers=headers)
+        except requests.exceptions.HTTPError as e:
+            # Проверяем, является ли ошибка TABLE_NOT_FOUND
+            if response.status_code == 400:
+                try:
+                    error_data = response.json()
+                    if error_data.get('error') == 'TABLE_NOT_FOUND':
+                        logger.warning(f"Table not found, retrying without tableIds: {error_data}")
+                        # Удаляем tableIds и повторяем запрос
+                        if 'tableIds' in data['order']:
+                            del data['order']['tableIds']
+                        response = requests.post(url, json=data, headers=headers)
+                        response.raise_for_status()
+                        return response.json()
+                except json.JSONDecodeError:
+                    logger.error(f"Failed to parse error response: {e}")
+                    return None
+            else:
+                logger.error(f"Failed to create order: {e}")
+                return None
 
 
         # print(response.json())
@@ -860,6 +936,11 @@ def check_order_table_status(order_id, pickup_area=None):
 
 
 # check_order_status("", pickup_area=PickupAreas.objects.get(name="Посёлок Мещерино, 6"))
+
+# /api/1/reserve/available_restaurant_sections
+
+
+
 
 
 
