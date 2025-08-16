@@ -342,7 +342,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 
     clean_categories = True
     clean_products = True
-    Category.objects.all().delete()
+    # Category.objects.all().delete()
 
     """Синхронизация меню из iiko с учетом PickupAreas."""
     # Определяем api_key и связанные PickupAreas
