@@ -810,9 +810,9 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
                 "id": order_uuid,
                 "items": items,
                 "orderTypeId": order_type_id,
-                "tableIds": [
-                    get_tables(pickup_area, int(order.table_object.name))
-                ],
+                # "tableIds": [
+                #     get_tables(pickup_area, int(order.table_object.name))
+                # ],
                 "comment": f"{order.time} / {order.order_conmment or ''} / Заказ для стола {order.table_object.name}",
             }
         }
@@ -842,19 +842,20 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
         except requests.exceptions.HTTPError as e:
             # Проверяем, является ли ошибка TABLE_NOT_FOUND
             if response.status_code == 400:
-                try:
-                    error_data = response.json()
-                    if error_data.get('error') == 'TABLE_NOT_FOUND':
-                        logger.warning(f"Table not found, retrying without tableIds: {error_data}")
-                        # Удаляем tableIds и повторяем запрос
-                        if 'tableIds' in data['order']:
-                            del data['order']['tableIds']
-                        response = requests.post(url, json=data, headers=headers)
-                        response.raise_for_status()
-                        return response.json()
-                except json.JSONDecodeError:
-                    logger.error(f"Failed to parse error response: {e}")
-                    return None
+                # try:
+                #     error_data = response.json()
+                #     if error_data.get('error') == 'TABLE_NOT_FOUND':
+                #         logger.warning(f"Table not found, retrying without tableIds: {error_data}")
+                #         # Удаляем tableIds и повторяем запрос
+                #         if 'tableIds' in data['order']:
+                #             del data['order']['tableIds']
+                #         response = requests.post(url, json=data, headers=headers)
+                #         response.raise_for_status()
+                #         return response.json()
+                # except json.JSONDecodeError:
+                #     logger.error(f"Failed to parse error response: {e}")
+                #     return None
+                return None
             else:
                 logger.error(f"Failed to create order: {e}")
                 return None
