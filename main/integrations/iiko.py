@@ -790,14 +790,14 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
         # Получаем тип заказа
         order_types = get_order_types(pickup_area)
         order_type_id = next(
-        (
-            item['id']
-            for order_type in order_types['orderTypes']
-            for item in order_type['items']
-            if item['name'] == 'Обычный заказ'
-        ),
-        None
-    )
+            (
+                item['id']
+                for order_type in order_types['orderTypes']
+                for item in order_type['items']
+                if item['name'] == 'Обычный заказ'
+            ),
+            None
+        )
         if not order_type_id:
             logger.error(f"No matching order type found for delivery method {order.delivery_method}")
             return
@@ -817,11 +817,8 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
             }
         }
 
-        # Удаляем tableIds, если get_tables вернул None
-        if data['order']['tableIds'] == [None]:
-            del data['order']['tableIds']
+       
 
-        # Добавляем terminalGroupId
         if pickup_area and pickup_area.terminal_group:
             terminal_group = pickup_area.terminal_group
             data['terminalGroupId'] = terminal_group
@@ -829,37 +826,13 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
             try:
                 terminal_group = Integrations.objects.get(name='iiko').terminal_group
                 data['terminalGroupId'] = terminal_group
+
             except Exception as e:
                 logger.warning(f"Failed to get terminal group: {e}")
-                return None
 
-        try:
-            # Первая попытка отправки заказа с tableIds (если они есть)
-            response = requests.post(url, json=data, headers=headers)
-            response.raise_for_status()
-            return response.json()
 
-        except requests.exceptions.HTTPError as e:
-            # Проверяем, является ли ошибка TABLE_NOT_FOUND
-            if response.status_code == 400:
-                # try:
-                #     error_data = response.json()
-                #     if error_data.get('error') == 'TABLE_NOT_FOUND':
-                #         logger.warning(f"Table not found, retrying without tableIds: {error_data}")
-                #         # Удаляем tableIds и повторяем запрос
-                #         if 'tableIds' in data['order']:
-                #             del data['order']['tableIds']
-                #         response = requests.post(url, json=data, headers=headers)
-                #         response.raise_for_status()
-                #         return response.json()
-                # except json.JSONDecodeError:
-                #     logger.error(f"Failed to parse error response: {e}")
-                #     return None
-                return None
-            else:
-                logger.error(f"Failed to create order: {e}")
-                return None
-
+        # Отправляем запрос
+        response = requests.post(url, json=data, headers=headers)
 
         # print(response.json())
 
