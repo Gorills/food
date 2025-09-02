@@ -180,7 +180,7 @@ def get_exclude_actions(request, pk):
     try:
         exclude_actions = product.exclude_actions
     except:
-        exclude_actions = None
+        exclude_actions = False
     
 
     data = {

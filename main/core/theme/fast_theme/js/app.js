@@ -1364,8 +1364,6 @@ function getDopItems() {
             return 0; // Возвращаем 0 в случае ошибки
         });
 }
-
-
 async function getPromoDiscount() {
     let order = JSON.parse(localStorage.getItem('order'));
     let deliveryType = localStorage.getItem("deliveryType"); 
@@ -1377,14 +1375,44 @@ async function getPromoDiscount() {
     let promo_discount = order.promo_discount;
     let discount = 0;
 
-    if ((promo_discount != 0 && promo_type == 'all') || (promo_discount != 0 && promo_type == 'delivery' && deliveryType == '1') || (promo_discount != 0 && promo_type == 'pickup' && deliveryType == '0')) {
+    if (
+        promo_discount > 0 && // Проверяем, что promo_discount положительный
+        (
+            (promo_type === 'all') ||
+            (promo_type === 'delivery' && deliveryType === '1') ||
+            (promo_type === 'pickup' && deliveryType === '0')
+        )
+    ) {
         let order_summ = await getDiscountableTotalPrice(cart) - await getExcludedTotal(cartItems);
-        discount = promo_discount * order_summ / 100;
-        discount = Math.round(discount);
 
-        $('#coupon_info').show();
-        $('#coupon').html(`${promo} <small>(Скидка ${discount}₽</small>)`);
-        $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${discount}₽</small>)`);
+
+        console.log('order:', order);
+        console.log('promo_discount:', promo_discount);
+        console.log('promo_type:', promo_type);
+        console.log('deliveryType:', deliveryType);
+        console.log('getDiscountableTotalPrice:', await getDiscountableTotalPrice(cart));
+        console.log('getExcludedTotal:', await getExcludedTotal(cartItems));
+        console.log('order_summ:', order_summ);
+        console.log('discount:', discount);
+        
+        // Проверяем, что order_summ положительный
+        if (order_summ > 0) {
+            discount = promo_discount * order_summ / 100;
+            discount = Math.round(discount);
+            
+            // Дополнительная проверка на положительность скидки
+            if (discount > 0) {
+                $('#coupon_info').show();
+                $('#coupon').html(`${promo} <small>(Скидка ${discount}₽</small>)`);
+                $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${discount}₽</small>)`);
+            } else {
+                $('#coupon_info').hide();
+                discount = 0; // Сбрасываем скидку, если она отрицательная
+            }
+        } else {
+            $('#coupon_info').hide();
+            discount = 0; // Сбрасываем скидку, если order_summ неположительный
+        }
     } else {
         $('#coupon_info').hide();
     }
