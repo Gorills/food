@@ -177,8 +177,14 @@ def get_exclude_actions(request, pk):
 
     product = Product.objects.get(id=pk)
 
+    try:
+        exclude_actions = product.exclude_actions
+    except:
+        exclude_actions = None
+    
+
     data = {
-        'exclude': product.parent.exclude_actions
+        'exclude': exclude_actions
     }
 
     return Response(data, status=status.HTTP_200_OK)
