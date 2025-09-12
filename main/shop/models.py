@@ -265,11 +265,11 @@ class Category(models.Model):
 
         # в админке
 
-        products = self.products.all()
+        products = self.products.filter(stock__gt=0, status=True, related=False)
         childrens = Category.objects.filter(parent=self)
         
 
-        products_add = self.products_add.filter(stock__gt=0)
+        products_add = self.products_add.filter(stock__gt=0, status=True, related=False)
         
 
         products = products | products_add 
