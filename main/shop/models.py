@@ -277,6 +277,22 @@ class Category(models.Model):
         unique_products = products.distinct()
         return unique_products
     
+    def all_admin_products(self):
+
+        # в админке
+
+        products = self.products.filter(stock__gt=0, related=False)
+        childrens = Category.objects.filter(parent=self)
+        
+
+        products_add = self.products_add.filter(stock__gt=0, status=True, related=False)
+        
+
+        products = products | products_add 
+
+        unique_products = products.distinct()
+        return unique_products
+    
 
     # def get_parent_path(self, list=None):
     #     parenturl = []

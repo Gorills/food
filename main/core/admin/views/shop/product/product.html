@@ -178,7 +178,7 @@
                             </a>
                         </h2>
                         <br>
-                        {% for product in cat.all_products %}
+                        {% for product in cat.all_admin_products %}
                             <li class="table-row">
                                 <div class="col col-2">
                                     <a data-id="{{ product.id }}" data-action="stop_list" data-type="product" id="product-{{ product.id }}-stop_list" href="{% url 'stop_list' product.id %}" class="change-product {% if product.status == False %}change-product--stop{% endif %}">
