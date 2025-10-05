@@ -47,47 +47,59 @@ def areaCoordsParser(search):
     if depth <= 2:
         result = [result]  # Обернуть массив в []
 
+    print(result)
+
     return result
 
 
-# areaCoordsParser('Советский район, Красноярск')
+# areaCoordsParser('Санкт-Петербург Кировский район')
 
 from setup.models import BaseSettings
 
+import random
+
+def get_random_color(used_colors):
+    # Предопределенная палитра цветов
+    color_palette = [
+        '#FF6F61', '#6B5B95', '#88B04B', '#F7CAC9', '#92A8D1',
+        '#955251', '#B565A7', '#009B77', '#DD4124', '#45B8AC',
+        '#EFC050', '#1F3A93', '#FF8C69', '#5E2D79', '#D94F70',
+        '#7BC4C4', '#E3B23C', '#6A5ACD', '#E6A9EC', '#2E8B57'
+    ]
+    
+    # Удаляем уже использованные цвета
+    available_colors = [color for color in color_palette if color not in used_colors]
+    
+    # Если закончились цвета, генерируем случайный HEX
+    if not available_colors:
+        r = random.randint(0, 255)
+        g = random.randint(0, 255)
+        b = random.randint(0, 255)
+        return f'#{r:02x}{g:02x}{b:02x}'
+    
+    # Выбираем случайный цвет из доступных
+    return random.choice(available_colors)
 
 def get_file(data_rions):
     city = BaseSettings.objects.get().city
     site = BaseSettings.objects.get().name
 
-    colors = {
-        
-
-        'five': '#595959',
-        'four': '#b51eff',
-        'three': '#ed4543',
-        'two': '#1e98ff',
-        'one': '#1bad03',
-    }
-
     rions = data_rions.split(';')
-
     features = []
     counter = 0
-    # sorted_rions = sorted(rions, key=lambda x: int(x.split(',')[1]))
-
-    # Бердск,500,999999;Советский район Новосибирск,300,999999;Первомайский район Новосибирск,500,999999;Октябрьский район Новосибирск,900,999999;
+    used_colors = set()  # Множество для отслеживания использованных цветов
 
     for region in rions:
         str_list = region.split(',')
         try:
-            result = areaCoordsParser(f'{str_list[0]}, Россия')
-            color_index = min(int(str_list[1]), len(colors) - 1)
-            fill_color = list(colors.values())[color_index]
-            stroke_color = list(colors.values())[color_index]
+            result = areaCoordsParser(f'{str_list[0]}')
+            # Получаем случайный цвет, которого еще не было
+            color = get_random_color(used_colors)
+            used_colors.add(color)  # Добавляем цвет в использованные
 
             try:
                 str_list_3 = str_list[3]
-            except:
+            except IndexError:
                 str_list_3 = ''
             features.append({
                 "type": "Feature",
@@ -98,15 +110,16 @@ def get_file(data_rions):
                 },
                 "properties": {
                     "description": f"{str_list[1]}:{str_list[2].replace(' ', '')}:{str_list_3.replace(' ', '')}",
-                    "fill": fill_color,
+                    "fill": color,
                     "fill-opacity": 0.4,
-                    "stroke": stroke_color,
+                    "stroke": color,
                     "stroke-width": "1",
                     "stroke-opacity": 0.4
                 }
             })
             counter += 1
-        except:
+        except Exception as e:
+            print(f"Ошибка обработки региона {str_list[0]}: {e}")
             pass
 
     geojson = {
@@ -124,10 +137,7 @@ def get_file(data_rions):
     except:
         with open('core/result.geojson', 'w', encoding='utf-8') as f:
             json.dump(geojson, f)
-
-
-
     
 
 
-# get_file('result.geojson')
+# get_file('Санкт-Петербург Кировский район, 0, 999999; Санкт-Петербург Красносельский район, 0, 5000; Санкт-Петербург Московский район, 0, 999999; Санкт-Петербург Невский район, 0, 999999; Санкт-Петербург Центральный район, 0, 10000; Санкт-Петербург Фрунзенский район, 0, Фрунзенский; Санкт-Петербург Приморский район, 0, 10000; Санкт-Петербург Адмиралтейский район, 0, 10000; Санкт-Петербург Василеостровский район, 0, 10000; Санкт-Петербург Петроградский район, 0, 999999; Санкт-Петербург Петродворцовый район, 0, 999999;')

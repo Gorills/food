@@ -1226,7 +1226,7 @@ def zone_file(request):
                 balloonContent = 'Платная доставка'
                 balloonContentHeader = 'Зона платной доставки'
                 try:
-                    balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'].split(':')[0] + ' рублей'
+                    balloonContentBody = 'Стоимость доставки - ' + d['properties']['description'].split(':')[0] + ' рублей' if int(d['properties']['description'].split(':')[0]) != 0 else '0 (рассчитывается службой доставки)'
 
                     try:
                         min_delivery = d['properties']['description'].split(':')[2]
