@@ -411,9 +411,9 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 
         if "*" in cat_name:
             continue 
-        cat_name = re.sub(r'\d+', '', cat_name)
-        cat_name = cat_name.replace('.', '')
-        cat_name = cat_name.replace('. ', '')
+        # cat_name = re.sub(r'\d+', '', cat_name)
+        # cat_name = cat_name.replace('.', '')
+        # cat_name = cat_name.replace('. ', '')
 
         cat_exists = Category.objects.filter(pickup_areas__in=related_pickup_areas, name=cat_name).exists()
         if cat_exists:
