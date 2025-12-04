@@ -145,8 +145,7 @@ def get_delivery_hours():
     # Параметры доставки
     default_start = shop_setup.start_delivery if shop_setup.start_delivery else time(10, 0)
     default_end = shop_setup.end_delivery if shop_setup.end_delivery else time(22, 0)
-    delay_hours = shop_setup.delay if shop_setup.delay else 1
-    delay_minutes = delay_hours * 60  # Конвертируем часы в минуты
+    delay_minutes = shop_setup.delay if shop_setup.delay else 60  # delay уже в минутах!
     interval_minutes = shop_setup.interval if shop_setup.interval else 60
     delivery_full = shop_setup.delivery_full if hasattr(shop_setup, 'delivery_full') else False
     
@@ -193,28 +192,27 @@ def get_delivery_hours():
         if day_offset == 0:
             # Для сегодняшнего дня проверяем, можно ли заказать на сегодня
             
-            # Если текущее время + задержка еще в пределах рабочего дня
-            # ИЛИ рабочий день еще не начался - показываем "Сегодня"
-            
             if current_time < start_delivery_dt:
-                # Рабочий день еще не начался - показываем все интервалы с начала
-                time_intervals = generate_time_intervals(
-                    start_delivery_dt,
-                    end_delivery_dt,
-                    interval_minutes
-                )
-                # Не добавляем "Как можно скорее" если до начала работы > 2 часов
-                hours_until_start = (start_delivery_dt - current_time).total_seconds() / 3600
-                if hours_until_start <= 2:
-                    days.append({
-                        'while': 'Сегодня',
-                        'times': ['Как можно скорее'] + time_intervals
-                    })
-                else:
-                    days.append({
-                        'while': 'Сегодня',
-                        'times': time_intervals
-                    })
+                # Рабочий день еще не начался
+                # ВАЖНО: Добавляем задержку к началу рабочего дня!
+                # Если рабочий день с 10:00 и задержка 60 минут, 
+                # то первый доступный интервал - 11:00
+                start_with_delay = start_delivery_dt + timedelta(minutes=delay_minutes)
+                
+                # Проверяем, что после добавления задержки еще есть время для доставки
+                if start_with_delay < end_delivery_dt:
+                    time_intervals = generate_time_intervals(
+                        start_with_delay,
+                        end_delivery_dt,
+                        interval_minutes
+                    )
+                    
+                    if time_intervals:
+                        # Добавляем "Как можно скорее" для сегодня
+                        days.append({
+                            'while': 'Сегодня',
+                            'times': ['Как можно скорее'] + time_intervals
+                        })
             else:
                 # Рабочий день уже идет - генерируем от текущего времени
                 time_intervals = generate_now_intervals(
@@ -233,30 +231,31 @@ def get_delivery_hours():
                     })
         else:
             # Для будущих дней генерируем все интервалы
-            time_intervals = generate_time_intervals(
-                start_delivery_dt, 
-                end_delivery_dt, 
-                interval_minutes
-            )
+            # ВАЖНО: Также учитываем задержку для будущих дней
+            start_with_delay = start_delivery_dt + timedelta(minutes=delay_minutes)
             
-            # Формируем название дня
-            day_num = target_date.day
-            month_name = MONTHS[target_date.month]
-            
-            if day_offset == 1:
-                day_label = f'Завтра, {day_num} {month_name}'
-                # Для завтра тоже добавляем "Как можно скорее"
+            # Проверяем что после задержки есть время для доставки
+            if start_with_delay < end_delivery_dt:
+                time_intervals = generate_time_intervals(
+                    start_with_delay, 
+                    end_delivery_dt, 
+                    interval_minutes
+                )
+                
+                # Формируем название дня
+                day_num = target_date.day
+                month_name = MONTHS[target_date.month]
+                
+                if day_offset == 1:
+                    day_label = f'Завтра, {day_num} {month_name}'
+                else:
+                    day_label = f'{day_num} {month_name}'
+                
+                # Добавляем "Как можно скорее" для ВСЕХ дней
                 if time_intervals:
                     days.append({
                         'while': day_label,
                         'times': ['Как можно скорее'] + time_intervals
-                    })
-            else:
-                day_label = f'{day_num} {month_name}'
-                if time_intervals:
-                    days.append({
-                        'while': day_label,
-                        'times': time_intervals
                     })
     
     return days
