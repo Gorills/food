@@ -88,18 +88,30 @@ def generate_now_intervals(current_dt, delay_minutes, start_delivery_dt, end_del
     Returns:
         list: список доступных интервалов
     """
-    # Определяем стартовое время
-    if start_delivery_dt.time() > current_dt.time():
-        # Если рабочий день еще не начался, берем время начала
+    # ВАЖНО: Сравниваем полные datetime, а не только time()
+    # чтобы корректно работать с доставкой через полночь
+    
+    if current_dt < start_delivery_dt:
+        # Рабочий день еще не начался, начинаем с начала рабочего времени
         start_time_dt = start_delivery_dt
     else:
+        # Рабочий день уже идет, начинаем с текущего времени
         # Округляем текущее время вверх до ближайшего интервала
         rounded_time = custom_round_time(current_dt.time(), interval_minutes)
         start_time_dt = datetime.combine(current_dt.date(), rounded_time)
         
-        # Если после округления получилось время на следующий день
-        if start_time_dt.time() < current_dt.time():
+        # Если после округления время меньше текущего, значит перешли на следующий час/день
+        if rounded_time < current_dt.time():
             start_time_dt += timedelta(days=1)
+        
+        # Если start_time_dt получился раньше current_dt (из-за особенностей округления)
+        # то устанавливаем следующий интервал
+        if start_time_dt < current_dt:
+            start_time_dt = current_dt.replace(second=0, microsecond=0)
+            rounded_time = custom_round_time(start_time_dt.time(), interval_minutes)
+            start_time_dt = datetime.combine(start_time_dt.date(), rounded_time)
+            if start_time_dt < current_dt:
+                start_time_dt += timedelta(minutes=interval_minutes)
     
     # Добавляем задержку доставки
     start_time_dt += timedelta(minutes=delay_minutes)
@@ -169,9 +181,9 @@ def get_delivery_hours():
             start_time = default_start
             end_time = default_end
         
-        # Создаем datetime для начала и конца рабочего времени
-        start_delivery_dt = datetime.combine(target_date, start_time)
-        end_delivery_dt = datetime.combine(target_date, end_time)
+        # Создаем timezone-aware datetime для начала и конца рабочего времени
+        start_delivery_dt = timezone.make_aware(datetime.combine(target_date, start_time))
+        end_delivery_dt = timezone.make_aware(datetime.combine(target_date, end_time))
         
         # Если конец доставки раньше начала (например, 22:00 - 02:00)
         if end_time < start_time:
@@ -179,21 +191,46 @@ def get_delivery_hours():
         
         # Генерируем интервалы
         if day_offset == 0:
-            # Для сегодняшнего дня учитываем текущее время
-            time_intervals = generate_now_intervals(
-                current_time, 
-                delay_minutes, 
-                start_delivery_dt, 
-                end_delivery_dt, 
-                interval_minutes
-            )
+            # Для сегодняшнего дня проверяем, можно ли заказать на сегодня
             
-            # Добавляем "Сегодня" только если есть доступные интервалы
-            if time_intervals:
-                days.append({
-                    'while': 'Сегодня',
-                    'times': ['Как можно скорее'] + time_intervals
-                })
+            # Если текущее время + задержка еще в пределах рабочего дня
+            # ИЛИ рабочий день еще не начался - показываем "Сегодня"
+            
+            if current_time < start_delivery_dt:
+                # Рабочий день еще не начался - показываем все интервалы с начала
+                time_intervals = generate_time_intervals(
+                    start_delivery_dt,
+                    end_delivery_dt,
+                    interval_minutes
+                )
+                # Не добавляем "Как можно скорее" если до начала работы > 2 часов
+                hours_until_start = (start_delivery_dt - current_time).total_seconds() / 3600
+                if hours_until_start <= 2:
+                    days.append({
+                        'while': 'Сегодня',
+                        'times': ['Как можно скорее'] + time_intervals
+                    })
+                else:
+                    days.append({
+                        'while': 'Сегодня',
+                        'times': time_intervals
+                    })
+            else:
+                # Рабочий день уже идет - генерируем от текущего времени
+                time_intervals = generate_now_intervals(
+                    current_time, 
+                    delay_minutes, 
+                    start_delivery_dt, 
+                    end_delivery_dt, 
+                    interval_minutes
+                )
+                
+                # Добавляем "Сегодня" только если есть доступные интервалы
+                if time_intervals:
+                    days.append({
+                        'while': 'Сегодня',
+                        'times': ['Как можно скорее'] + time_intervals
+                    })
         else:
             # Для будущих дней генерируем все интервалы
             time_intervals = generate_time_intervals(

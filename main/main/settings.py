@@ -250,6 +250,7 @@ TEMPLATES = [
                 'shop.context_processors.cart_products',
                 'shop.context_processors.pay_method',
                 'shop.context_processors.delivery_today_available',
+                'shop.context_processors.format_delivery_time',
                 'home.context_processors.get_work_active',
                 'home.context_processors.pages',
                 'home.context_processors.odrer_form',

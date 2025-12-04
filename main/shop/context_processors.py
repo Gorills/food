@@ -1,5 +1,6 @@
 from django.utils import timezone  # Импортируем timezone из django.utils
 import datetime
+from datetime import time
 from main.local_settings import TIME_ZONE
 import pytz
 from .models import Category, Product, ShopSetup, PickupAreas, PayMethod, Combo, WorkDay
@@ -62,3 +63,40 @@ def delivery_today_available(request):
             return {'delivery_today_available': True}
     
     return {'delivery_today_available': False}
+
+
+def format_delivery_time(request):
+    """
+    Возвращает отформатированное время работы доставки.
+    Корректно обрабатывает случаи когда доставка идет через полночь.
+    """
+    try:
+        shop_setup = ShopSetup.objects.get()
+        start_time = shop_setup.start_delivery
+        end_time = shop_setup.end_delivery
+        
+        # Форматируем время в читаемый вид (убираем секунды)
+        start_str = start_time.strftime('%H:%M')
+        end_str = end_time.strftime('%H:%M')
+        
+        # Проверяем, идет ли доставка через полночь
+        if end_time < start_time:
+            # Доставка через полночь (например, с 10:00 до 02:00)
+            delivery_time_formatted = f"{start_str} - {end_str} (следующего дня)"
+        else:
+            # Обычная доставка в пределах одного дня
+            delivery_time_formatted = f"{start_str} - {end_str}"
+        
+        return {
+            'delivery_time_formatted': delivery_time_formatted,
+            'delivery_start': start_str,
+            'delivery_end': end_str,
+            'delivery_crosses_midnight': end_time < start_time
+        }
+    except:
+        return {
+            'delivery_time_formatted': '',
+            'delivery_start': '',
+            'delivery_end': '',
+            'delivery_crosses_midnight': False
+        }
