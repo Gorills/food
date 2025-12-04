@@ -4163,84 +4163,176 @@ $(document).on('submit', '.coupon-form', async function(e) {
     e.preventDefault();
 
     let $form = $(this);
-    let promoCode = $form.find('input[name="promo"]').val(); // Получаем значение промокода из формы
+    let $input = $form.find('input[name="promo"]');
+    let $submitBtn = $form.find('button[type="submit"]');
+    let promoCode = $input.val().trim();
 
-    let order = JSON.parse(localStorage.getItem('order'));
+    // Валидация: промокод не пустой
+    if (!promoCode) {
+        showPromoError($input, 'Введите промокод');
+        return;
+    }
 
-    
+    // Валидация: длина промокода
+    if (promoCode.length > 50) {
+        showPromoError($input, 'Промокод слишком длинный');
+        return;
+    }
 
+    // Промокоды могут быть на любом языке (русский, английский и т.д.)
+    // Убрана валидация по символам для поддержки мультиязычности
+
+    let order = JSON.parse(localStorage.getItem('order')) || {};
     let actionRestrictions = JSON.parse(localStorage.getItem('actionRestrictions')) || {};
 
-
-    if (actionRestrictions.block_discount == true) {
-
-        $('.coupon-form__input').addClass('order__input--error');
-        $('.coupon-form__input').val('').attr('placeholder', 'Скидка временно заблокирована');
-
+    // Проверка ограничений
+    if (actionRestrictions.block_discount === true) {
+        showPromoError($input, 'Скидка временно заблокирована');
         order.promo = '';
         order.promo_discount = 0;
         localStorage.setItem('order', JSON.stringify(order));
         updateAll();
-
         return;
     }
+
     if (order.bonuses_pay > 0) {
-
-        $('.coupon-form__input').addClass('order__input--error');
-        $('.coupon-form__input').val('').attr('placeholder', 'В заказе уже используются баллы');
+        showPromoError($input, 'В заказе уже используются баллы');
         order.promo = '';
         order.promo_discount = 0;
         localStorage.setItem('order', JSON.stringify(order));
         updateAll();
-
         return;
     }
+
+    // Показываем индикатор загрузки
+    $submitBtn.prop('disabled', true).text('Проверка...');
+    $input.prop('disabled', true);
 
     try {
-        // GET-запрос с параметром промокода в строке запроса
-        let response = await $.ajax({
-            type: "GET",
-            url: `/api/v1/check_promo/?promo=${encodeURIComponent(promoCode)}`, // Добавляем промокод в строку запроса
-        });
+        // GET-запрос с улучшенной обработкой ошибок
+        const response = await checkPromoCodeWithRetry(promoCode, 3);
 
-        let order = JSON.parse(localStorage.getItem('order')) || {};
-        let promo = response['promo'];
-        let coupon = response['coupon'];
-        let promo_type = response['type'];
-
-        if (promo) {
-            order.promo = promo;
-            order.promo_discount = coupon;
-            order.promo_type = promo_type;
+        // Успешный ответ
+        if (response && response.status === true && response.promo) {
+            // Промокод найден
+            order.promo = response.promo;
+            order.promo_discount = response.coupon;
+            order.promo_type = response.type;
             localStorage.setItem('order', JSON.stringify(order));
 
-            $('.coupon-info').html(`Ваш промокод ${promo} <small>(Скидка ${coupon}₽</small>)`);
+            // Показываем успех
+            showPromoSuccess($input, `Промокод ${response.promo} применен! (Скидка ${response.coupon}%)`);
+            $('.coupon-info').html(`Ваш промокод <strong>${response.promo}</strong> <small>(Скидка ${response.coupon}%)</small>`);
+
+            // Обновляем скидку
+            await getPromoDiscount();
+            updateAll();
+
         } else {
+            // Промокод не найден
             order.promo = '';
             order.promo_discount = 0;
             localStorage.setItem('order', JSON.stringify(order));
 
             $('.coupon-info').html('');
-            $('.coupon-form__input').addClass('order__input--error');
-            $('.coupon-form__input').val('').attr('placeholder', 'Неверный промокод');
-
-            setTimeout(function() {
-                $('.coupon-form__input').removeClass('order__input--error');
-                $('.coupon-form__input').val('').attr('placeholder', '');
-            }, 3000);
-
+            showPromoError($input, response?.message || 'Неверный промокод');
+            updateAll();
         }
-
-        // Теперь обновляем скидку
-        await getPromoDiscount();
-
-        // После обновления скидки вызываем updateAll
-        updateAll();
 
     } catch (error) {
         console.error('Ошибка при проверке промокода:', error);
+        
+        // Определяем тип ошибки
+        let errorMessage = 'Ошибка при проверке промокода';
+        
+        if (error.statusText === 'timeout') {
+            errorMessage = 'Превышено время ожидания';
+        } else if (error.status === 0) {
+            errorMessage = 'Нет соединения с сервером';
+        } else if (error.status >= 500) {
+            errorMessage = 'Ошибка сервера';
+        } else if (error.responseJSON && error.responseJSON.message) {
+            errorMessage = error.responseJSON.message;
+        }
+
+        showPromoError($input, errorMessage);
+
+        // Сбрасываем промокод при ошибке
+        order.promo = '';
+        order.promo_discount = 0;
+        localStorage.setItem('order', JSON.stringify(order));
+        updateAll();
+
+    } finally {
+        // Восстанавливаем состояние кнопки
+        $submitBtn.prop('disabled', false).text('Применить');
+        $input.prop('disabled', false);
     }
 });
+
+/**
+ * Проверка промокода с повторными попытками
+ */
+async function checkPromoCodeWithRetry(promoCode, maxRetries = 3, timeout = 10000) {
+    let lastError;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await $.ajax({
+                type: "GET",
+                url: `/api/v1/check_promo/?promo=${encodeURIComponent(promoCode)}`,
+                timeout: timeout,
+                dataType: 'json'
+            });
+            
+            return response;
+            
+        } catch (error) {
+            lastError = error;
+            console.warn(`Попытка ${attempt}/${maxRetries} не удалась:`, error);
+            
+            // Не повторяем для клиентских ошибок (400, 404)
+            if (error.status >= 400 && error.status < 500) {
+                throw error;
+            }
+            
+            // Если это не последняя попытка, ждем перед retry
+            if (attempt < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            }
+        }
+    }
+    
+    // Все попытки исчерпаны
+    throw lastError;
+}
+
+/**
+ * Показать ошибку промокода
+ */
+function showPromoError($input, message) {
+    $input.addClass('order__input--error');
+    $input.val('').attr('placeholder', message);
+    
+    setTimeout(function() {
+        $input.removeClass('order__input--error');
+        $input.attr('placeholder', 'Введите промокод');
+    }, 3000);
+}
+
+/**
+ * Показать успех применения промокода
+ */
+function showPromoSuccess($input, message) {
+    $input.removeClass('order__input--error');
+    $input.addClass('order__input--success');
+    $input.val('').attr('placeholder', message);
+    
+    setTimeout(function() {
+        $input.removeClass('order__input--success');
+        $input.attr('placeholder', '');
+    }, 3000);
+}
 
 
 

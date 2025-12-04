@@ -579,47 +579,119 @@ def dop_items(request):
 
 @api_view(['GET'])
 def check_promo(request):
-    # Извлечение параметра 'promo' из строки запроса
-    promo = request.query_params.get('promo')
+    """
+    Проверка промокода с улучшенной обработкой ошибок и валидацией.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
     
+    # Извлечение параметра 'promo' из строки запроса
+    promo = request.query_params.get('promo', '').strip()
+    
+    # Валидация: промокод обязателен
     if not promo:
-        return Response({'message': 'Необходимо указать промокод'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Обработка промокода с помощью slugify
-    try:
-        slug = slugify(promo)
-    except Exception as e:
-        return Response({'message': 'Ошибка при обработке промокода', 'details': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        logger.warning('Попытка проверки промокода без указания кода')
+        return Response({
+            'message': 'Необходимо указать промокод',
+            'status': False,
+            'coupon': 0
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Валидация: длина промокода
+    if len(promo) > 50:
+        logger.warning(f'Промокод слишком длинный: {len(promo)} символов')
+        return Response({
+            'message': 'Промокод слишком длинный',
+            'status': False,
+            'coupon': 0
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Валидация: промокод не должен содержать только пробелы
+    if not promo.strip():
+        logger.warning('Промокод состоит только из пробелов')
+        return Response({
+            'message': 'Некорректный промокод',
+            'status': False,
+            'coupon': 0
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     now = timezone.now()
 
     try:
-        coupon = Coupon.objects.get(
-            slug=slug,
+        # Поиск купона напрямую по коду (поддержка любых языков)
+        # Используем Lower() для надежного case-insensitive поиска
+        # Это работает с любыми языками (кириллица, латиница, и т.д.)
+        from django.db.models.functions import Lower
+        
+        promo_lower = promo.lower()
+        
+        coupon = Coupon.objects.annotate(
+            code_lower=Lower('code')
+        ).filter(
+            code_lower=promo_lower,
             valid_from__lte=now,
             valid_to__gte=now,
             active=True
-        )
-    except Coupon.DoesNotExist:
-        # Отправка сообщения в Telegram, если купон не найден
-        coupon = None
-
-    if coupon:
+        ).first()
+        
+        if not coupon:
+            raise Coupon.DoesNotExist
+        
+        # Купон найден
+        logger.info(f'Купон найден: {coupon.code} (скидка {coupon.discount}%)')
+        
+        # Проверяем лимит использований (если установлен)
+        if coupon.max_uses and coupon.current_uses >= coupon.max_uses:
+            logger.warning(f'Превышен лимит использований для купона: {coupon.code}')
+            data = {
+                'message': 'Промокод больше недоступен',
+                'status': False,
+                'coupon': 0
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        
         data = {
             'message': 'Купон найден',
             'promo': coupon.code,
             'status': True,
             'coupon': coupon.discount,
-            'type': coupon.promo_type
+            'type': coupon.promo_type,
+            'valid_to': coupon.valid_to.strftime('%Y-%m-%d')  # Дата окончания
         }
-    else:
+        return Response(data, status=status.HTTP_200_OK)
+        
+    except Coupon.DoesNotExist:
+        # Купон не найден
+        logger.info(f'Купон не найден: {promo}')
+        
         data = {
-            'message': 'Купон не найден',
+            'message': 'Купон не найден или недействителен',
             'status': False,
             'coupon': 0
         }
-
-    return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
+        
+    except Coupon.MultipleObjectsReturned:
+        # Найдено несколько купонов (не должно быть из-за unique)
+        logger.error(f'Найдено несколько активных купонов: {promo}')
+        
+        data = {
+            'message': 'Ошибка в базе данных промокодов',
+            'status': False,
+            'coupon': 0
+        }
+        return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    except Exception as e:
+        # Непредвиденная ошибка
+        logger.error(f'Непредвиденная ошибка при проверке промокода {promo}: {str(e)}')
+        
+        data = {
+            'message': 'Ошибка сервера при проверке промокода',
+            'status': False,
+            'coupon': 0
+        }
+        return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
