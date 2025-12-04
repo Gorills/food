@@ -98,7 +98,7 @@ def generate_now_intervals(current_dt, delay_minutes, start_delivery_dt, end_del
         # Рабочий день уже идет, начинаем с текущего времени
         # Округляем текущее время вверх до ближайшего интервала
         rounded_time = custom_round_time(current_dt.time(), interval_minutes)
-        start_time_dt = datetime.combine(current_dt.date(), rounded_time)
+        start_time_dt = timezone.make_aware(datetime.combine(current_dt.date(), rounded_time))
         
         # Если после округления время меньше текущего, значит перешли на следующий час/день
         if rounded_time < current_dt.time():
@@ -109,7 +109,7 @@ def generate_now_intervals(current_dt, delay_minutes, start_delivery_dt, end_del
         if start_time_dt < current_dt:
             start_time_dt = current_dt.replace(second=0, microsecond=0)
             rounded_time = custom_round_time(start_time_dt.time(), interval_minutes)
-            start_time_dt = datetime.combine(start_time_dt.date(), rounded_time)
+            start_time_dt = timezone.make_aware(datetime.combine(start_time_dt.date(), rounded_time))
             if start_time_dt < current_dt:
                 start_time_dt += timedelta(minutes=interval_minutes)
     
