@@ -107,6 +107,10 @@ def odrer_form(request):
 
 
 from datetime import datetime, timedelta
+
+# Импортируем улучшенную версию для генерации временных интервалов
+from api.delivery_time import get_delivery_hours as get_delivery_hours_improved
+
 def custom_round_time(current_time, interval):
     current_datetime = datetime.strptime(current_time, "%H:%M")
     minutes = current_datetime.minute
@@ -221,7 +225,15 @@ def generate_dop_intervals(start_datetime, end_datetime, interval):
 
 
 def get_hours(request):
-
+    """
+    Получает временные интервалы доставки для отображения в шаблонах.
+    ОБНОВЛЕНО: теперь использует улучшенную версию с корректной работой timezone.
+    """
+    # Используем улучшенную версию
+    return get_delivery_hours_improved()
+    
+    # Старый код закомментирован (оставлен для справки)
+    """
     workdays = WorkDay.objects.all()
 
 
@@ -376,6 +388,7 @@ def get_hours(request):
         'get_days': days,
         'get_sec': get_sec
     }
+    """
 
 
 

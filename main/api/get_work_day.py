@@ -1,8 +1,14 @@
+"""
+Модуль для работы с временными интервалами доставки (устаревший).
+Рекомендуется использовать delivery_time.py
+"""
 from django.utils import timezone
 from datetime import datetime, time, timedelta
 import pytz
 from shop.models import ShopSetup, WorkDay
-from main.local_settings import TIME_ZONE
+
+# Импортируем улучшенную версию
+from .delivery_time import get_delivery_hours as get_delivery_hours_improved
 
 months = {
     1: 'Января',
@@ -91,6 +97,15 @@ def generate_now_intervals(current_time, delay, start_datetime, end_datetime, in
     return round_time_intervals(time_intervals_now, interval)
 
 def get_hours(request):
+    """
+    Получает временные интервалы доставки.
+    УСТАРЕВШАЯ ВЕРСИЯ - используется улучшенная версия из delivery_time.py
+    """
+    # Используем улучшенную версию
+    return get_delivery_hours_improved()
+    
+    # Старый код оставлен для справки
+    """
     workdays = WorkDay.objects.all()
     current_time = timezone.localtime()
 
@@ -198,3 +213,4 @@ def get_hours(request):
         count += 1
 
     return days
+    """
