@@ -67,8 +67,8 @@ sensitive_post_parameters_m = method_decorator(
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 
 

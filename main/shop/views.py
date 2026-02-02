@@ -7,8 +7,8 @@ import os
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 
 from .sort import func_sort

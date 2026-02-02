@@ -13,8 +13,8 @@ from setup.models import ThemeSettings
 from accounts.models import UserProfile
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 
 @require_POST

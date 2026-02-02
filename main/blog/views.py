@@ -6,8 +6,8 @@ from .models import Post, BlogCategory, BlogSetup
 from setup.models import ThemeSettings
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 
 # Create your views here.

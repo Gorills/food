@@ -14,8 +14,8 @@ from django.http import JsonResponse
 import json
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 from django.views.generic import TemplateView, ListView
 

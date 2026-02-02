@@ -18,8 +18,8 @@ from decimal import Decimal
 
 try:
     theme_address = ThemeSettings.objects.get().name
-except:
-    theme_address = 'sushi'
+except Exception:
+    theme_address = 'fast_theme'
 
 
 
