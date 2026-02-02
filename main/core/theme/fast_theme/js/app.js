@@ -2313,14 +2313,12 @@ $(document).on('click', '.order_create', function(e) {
 // проверка последнего заказа
 jQuery(document).ready(function () {
     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
+    if (!last_order) return;
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
-    
-    
-    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
+    let order_id = last_order.order_id;
+    if (order_id == null || order_id === undefined || order_id === false || order_id === '') return;
 
-    if (order_id != "") {
-    
-        if (last_order && last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings.check_order_status ) {
+    if (last_order.status != 'Выполнен' && last_order.status != 'Отказ' && shopSettings && shopSettings.check_order_status) {
 
             
             let intervalId; // переменная для хранения идентификатора интервала
@@ -2331,10 +2329,10 @@ jQuery(document).ready(function () {
             
 
             function updateOrderStatus() {
-
                     let last_order = JSON.parse(localStorage.getItem('lastOrder'));
-                    let order_id = last_order.order_id; // предположим, что id заказа доступен в last_order
-                
+                    if (!last_order) return;
+                    let order_id = last_order.order_id;
+                    if (order_id == null || order_id === undefined || order_id === false || order_id === '') return;
                     $.ajax({
                         url: '/api/v1/get_order_status/' + order_id + '/',
                         method: 'GET',
@@ -2481,7 +2479,6 @@ jQuery(document).ready(function () {
             updateOrderStatus();
             intervalId = setInterval(updateOrderStatus, 2000);
 
-        }
     }
 
     
@@ -2499,14 +2496,14 @@ async function getLastOrder() {
 
     let last_order = JSON.parse(localStorage.getItem('lastOrder')) || null;
     if (!last_order) {
-        console.error('Нет данных о последнем заказе');
         return;
     }
-
+    var orderId = last_order.order_id;
+    if (orderId == null || orderId === undefined || orderId === false || orderId === '') {
+        return;
+    }
     let show_order_set = last_order.show;
-    
-
-    let url = `/api/v1/get_order_status/${last_order.order_id}/`;
+    let url = '/api/v1/get_order_status/' + orderId + '/';
 
     try {
         const response = await fetch(url);

@@ -14,9 +14,23 @@ import traceback
 
 
 
-def send_message(telegram_bot, telegram_group, message):
+def send_message(telegram_bot, telegram_group, message, parse_mode="Markdown", silent_fail=False):
+    """Отправка в Telegram. При silent_fail=True не бросает исключение при ошибке."""
     telegramBot = telepot.Bot(telegram_bot)
-    telegramBot.sendMessage(telegram_group, message, parse_mode="Markdown")
+    try:
+        telegramBot.sendMessage(telegram_group, message, parse_mode=parse_mode)
+    except Exception as e:
+        err_str = str(e).lower()
+        if 'parse' in err_str or 'entities' in err_str:
+            try:
+                telegramBot.sendMessage(telegram_group, message, parse_mode=None)
+            except Exception:
+                if not silent_fail:
+                    raise
+        elif silent_fail:
+            pass
+        else:
+            raise
 
 
 telegram_bot_work = '5922674089:AAFxcjyYfti0ypSINOSP9jMz74RloWpmPPs'
@@ -29,11 +43,22 @@ import re
 
 def escape_markdown(text):
     """
-    Экранирует специальные символы Markdown.
+    Экранирует специальные символы Markdown для Telegram.
     """
-    
+    if text is None:
+        return ''
+    s = str(text).strip()
+    if not s:
+        return ''
     escape_chars = r'_*[]()~`>#+-=|{}.!'
-    return re.sub(f"[{re.escape(escape_chars)}]", r"\\\g<0>", text)
+    return re.sub(r'([' + re.escape(escape_chars) + r'])', r'\\\1', s)
+
+
+def safe_md(value):
+    """Безопасная строка для подстановки в Markdown-сообщение."""
+    if value is None:
+        return ''
+    return escape_markdown(str(value))
 
 
 def escape_markdown_url(url):
@@ -68,7 +93,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
                 pr_summ = (pr_quantity - item.free) * item.price
 
                 pr_dict = {
-                    'Название': pr_name.replace('*', ''),
+                    'Название': safe_md(pr_name),
                     'Количество': pr_quantity,
                     'Цена': pr_price,
                     'Итого': str(pr_summ),
@@ -87,7 +112,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
                     pr_dict = {key: pr_dict[key] for key in ['Название', 'Категория', 'Количество', 'Цена', 'Итого'] if key in pr_dict}
 
                 if pr_opt is not None:
-                    pr_dict['Опции'] = pr_opt
+                    pr_dict['Опции'] = safe_md(pr_opt)
 
                 pr_weight = item.weight
                 if pr_weight is not None:
@@ -105,12 +130,11 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
                 
 
                 pr.append({
-                    
-                    'Название':pr_name,
+                    'Название': safe_md(pr_name),
                     'Категория': 'Комбо',
-                    'Состав':pr_sost.replace('*', ''),
-                    'Количество':pr_quantity,
-                    'Цена':pr_price,
+                    'Состав': safe_md(pr_sost),
+                    'Количество': pr_quantity,
+                    'Цена': pr_price,
                     'Итого': str(pr_summ),
                 })
             elif item.constructor:
@@ -123,12 +147,11 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
                 
 
                 pr.append({
-                    
-                    'Название':pr_name.replace('*', ''),
+                    'Название': safe_md(pr_name),
                     'Категория': 'Конструктор блюд',
-                    'Состав':pr_sost.replace('*', ''),
-                    'Количество':pr_quantity,
-                    'Цена':pr_price,
+                    'Состав': safe_md(pr_sost),
+                    'Количество': pr_quantity,
+                    'Цена': pr_price,
                     'Итого': str(pr_summ),
                 })
 
@@ -136,7 +159,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
 
         order_custom_fields = order.custom_fields.all()
         if order_custom_fields:
-            custom_str = "\n".join([f"{field.name}: {field.value}" for field in order_custom_fields])
+            custom_str = "\n".join([f"{safe_md(field.name)}: {safe_md(field.value)}" for field in order_custom_fields])
         else:
             custom_str = ''
 
@@ -145,50 +168,50 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
         # res = re.sub(r"[#%!@*{}]", "\n", str(pr))
         # res = re.sub(r"[',]", "", res)
                 
-        # Преобразование списка товаров в текст с переносами строк
-        res = "\n\n".join(["\n".join([f"{key}: {value}" for key, value in product.items()]) for product in pr])
+        # Преобразование списка товаров в текст с переносами строк (значения уже экранированы в pr)
+        res = safe_md("\n\n".join(["\n".join([f"{key}: {value}" for key, value in product.items()]) for product in pr]))
 
         
 
         if order.address_comment:
-            address_comment = "\n" + "Комментарий к адресу: " + str(order.address_comment) 
+            address_comment = "\n" + "Комментарий к адресу: " + safe_md(order.address_comment)
         else:
             address_comment = ''
 
         if order.order_conmment:
-            order_conmment = "\n" + "Комментарий к заказу: " + str(order.order_conmment)
+            order_conmment = "\n" + "Комментарий к заказу: " + safe_md(order.order_conmment)
         else:
             order_conmment = ''
 
-        time = order.time
+        time = safe_md(order.time)
 
         if order.discount:
-            coupon_comment = "\n" + "Купон/скидка: " + str(order.discount) + "% ("+str(order.coupon.code)+")"
+            coupon_comment = "\n" + "Купон/скидка: " + safe_md(str(order.discount)) + "% (" + safe_md(order.coupon.code) + ")"
         else:
             coupon_comment = ''
 
         if order.bonuses_pay:
-            bonuses_pay = f"\nОплачено баллами: { order.bonuses_pay }"
+            bonuses_pay = "\nОплачено баллами: " + safe_md(str(order.bonuses_pay))
         else:
             bonuses_pay = ''
 
         if order.entrance:
-            entrance = "\n" + "Подъезд: " + str(order.entrance)
+            entrance = "\n" + "Подъезд: " + safe_md(order.entrance)
         else:
             entrance = ''
 
         if order.floor:
-            floor = "\n" + "Этаж: " + str(order.floor)
+            floor = "\n" + "Этаж: " + safe_md(order.floor)
         else:
             floor = ''
 
         if order.flat:
-            flat = "\n" + "Квартира: " + str(order.flat)
+            flat = "\n" + "Квартира: " + safe_md(order.flat)
         else:
             flat = ''
 
         if order.pay_change:
-            pay_change = "\n" + "Сдача c: " + str(order.pay_change)
+            pay_change = "\n" + "Сдача c: " + safe_md(str(order.pay_change))
         else:
             pay_change = ''
 
@@ -204,8 +227,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
         else:
             not_pay = ""
 
-        phone = order.phone
-        phone = str(phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', '')
+        phone = safe_md(str(order.phone).replace('(', '').replace(')', '').replace(' ', '').replace('-', ''))
 
         # Предполагается, что order.created уже является объектом datetime.datetime
         order_created_utc = order.created
@@ -226,7 +248,7 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
             domain = str(domain).replace('www.', '').replace('https://', '').replace('http://', '')
 
             safe_url = quote(f"https://{domain}/admin/order_detail/{order.id}/", safe=':/')
-            referer_url = f'Ссылка на заказ: [Перейти в админ-панель сайта]({safe_url})'
+            referer_url = 'Ссылка на заказ: [Перейти в админ-панель](' + safe_url + ')'
 
 
             
@@ -239,28 +261,33 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
         # print(referer_url)
         
 
+        order_name_safe = safe_md(order.name)
+        order_address_safe = safe_md(order.address)
+        delivery_method_safe = safe_md(order.delivery_method)
+        pay_method_safe = safe_md(order.pay_method)
+
         if order.delivery_method == 'Доставка':
             message = f'''
 *ЗАКАЗ №: {order.id}*
 
 Дата: {formatted_date}
 Сумма заказа: *{order.summ}* р. 
-Тип: {order.delivery_method}
-Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+Тип: {delivery_method_safe}
+Способ оплаты: {pay_method_safe}{pay_change}{bonuses_pay}{order_conmment}
 Стоимость доставки: {order.delivery_price}
 {coupon_comment}
 {custom_str}
 
 *Товары:*
-{str(res)} 
+{res} 
 
 *Контактные данные:*
-Имя: {order.name}
+Имя: {order_name_safe}
 Телефон: {phone}
 
 *Адрес:*
 Время доставки: {time}
-Улица: {order.address}{entrance}{floor}{flat}{address_comment}
+Улица: {order_address_safe}{entrance}{floor}{flat}{address_comment}
 
 {referer_url}
 
@@ -271,39 +298,43 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
 
 Дата: {formatted_date}
 Сумма заказа: *{order.summ}* р. 
-Тип: {order.delivery_method}
-Способ оплаты: {order.pay_method}{pay_change}{bonuses_pay}{order_conmment}
+Тип: {delivery_method_safe}
+Способ оплаты: {pay_method_safe}{pay_change}{bonuses_pay}{order_conmment}
 {coupon_comment}
 {custom_str}
 
 *Товары:*
-{str(res)} 
+{res} 
 
 *Контактные данные:*
-Имя: {order.name}
+Имя: {order_name_safe}
 Телефон: {phone}
 
 *Адрес:*
 Время самовывоза: {time}
-Адрес точки самовывоза: {order.address}{entrance}{floor}{flat}{address_comment}
+Адрес точки самовывоза: {order_address_safe}{entrance}{floor}{flat}{address_comment}
 
 {referer_url}
 
 '''
 
+        send_status = False
         try:
             send_message(telegram_bot, telegram_group, message)
             send_status = True
             order.order_send_status = True
             order.save()
-
-            message_work = f'Статус отправки сообщения: {send_status}'
-            send_message(telegram_bot_work, telegram_group_work, message_work)
             print('Telegram message sent')
-            
-
         except Exception as e:
-            error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
-            send_message(telegram_bot_work, telegram_bot_work, error_message)
+            send_status = False
+            order.order_send_status = False
+            order.save()
+            logger = __import__('logging').getLogger(__name__)
+            logger.warning('Telegram send failed: %s', e)
+        try:
+            message_work = f'Статус отправки сообщения: {send_status}'
+            send_message(telegram_bot_work, telegram_group_work, message_work, silent_fail=True)
+        except Exception:
+            pass
 
         

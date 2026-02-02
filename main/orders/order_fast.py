@@ -429,7 +429,19 @@ def order_create(request):
 
                     return JsonResponse(data, status=status.HTTP_200_OK)
 
-
+                # Оплата онлайн не настроена (paykeeper и др.) — создаём заказ как обычный
+                order_telegram(telegram_bot, telegram_group, order, request)
+                try:
+                    send_order_email(order)
+                except Exception as e:
+                    pass
+                send_sms(sms_text(order.id, order.summ), order.phone)
+                try:
+                    create_iiko_order(order)
+                except Exception as e:
+                    pass
+                data = {'order_id': order.id, 'confirmation_url': f'/?order=True'}
+                return JsonResponse(data, status=status.HTTP_200_OK)
 
             else:
                 order_telegram(telegram_bot, telegram_group, order, request)
@@ -491,3 +503,7 @@ def order_create(request):
         logger.info(e)
         error_message = f'Ошибка оформления заказа: {traceback.format_exc()}'
         send_message(wo_elegram_bot, wo_telegram_group, error_message)
+        return JsonResponse(
+            {'error': 'Ошибка оформления заказа', 'detail': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
