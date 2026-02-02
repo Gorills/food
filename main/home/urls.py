@@ -17,6 +17,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('privacy/', views.privacy, name='privacy'),
     path('user-agreement/', views.user_agreement, name='user_agreement'),
+    path('consent/', views.consent, name='consent'),
     path('search/', views.SearchResultsView.as_view(), name='search_results'),
     path('info/', views.info, name='info'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.index'),

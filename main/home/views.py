@@ -36,52 +36,47 @@ def decimal_encoder(obj):
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 def manifest_json(request):
-    # Получите данные из базы данных (здесь пример для одной записи)
-    data_from_db = BaseSettings.objects.get()
-    theme_setup = Colors.objects.get()
+    try:
+        data_from_db = BaseSettings.objects.get()
+        theme_setup = Colors.objects.get()
+    except Exception:
+        manifest_data = {
+            "name": "Site",
+            "short_name": "Site",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#333333",
+            "icons": []
+        }
+        response_data = json.dumps(manifest_data, ensure_ascii=False, default=decimal_encoder)
+        return HttpResponse(response_data, content_type='application/json')
 
-    # Сгенерируйте словарь с данными для манифеста
+    name = str(data_from_db.name).strip() if getattr(data_from_db, 'name', None) else "Site"
+    theme_color = getattr(theme_setup, 'primary', None) or '#333333'
+    theme_color = str(theme_color).strip() if theme_color else '#333333'
     manifest_data = {
-        "name": data_from_db.name,
-        "short_name": data_from_db.name,
+        "name": name or "Site",
+        "short_name": name or "Site",
         "start_url": ".",
         "display": "standalone",
-        "background_color": theme_setup.body_bg,
-        "theme_color": theme_setup.primary,
-        "icons": [
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'48x48', format="PNG", crop='center', quality=100)),
-                "sizes": "48x48",
-                "type": "image/png"
-            },
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'72x72', format="PNG", crop='center', quality=100)),
-                "sizes": "72x72",
-                "type": "image/png"
-            },
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'96x96', format="PNG", crop='center', quality=100)),
-                "sizes": "96x96",
-                "type": "image/png"
-            },
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'144x144', format="PNG", crop='center', quality=100)),
-                "sizes": "144x144",
-                "type": "image/png"
-            },
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'192x192', format="PNG", crop='center', quality=100)),
-                "sizes": "192x192",
-                "type": "image/png"
-            },
-            {
-                "src": '/main/media/' + str(get_thumbnail(data_from_db.icon_png, f'512x512', format="PNG", crop='center', quality=100)),
-                "sizes": "512x512",
-                "type": "image/png"
-            }
-        ]
-        # Добавьте другие поля, которые нужны в вашем манифесте
+        "background_color": str(getattr(theme_setup, 'body_bg', '#ffffff') or '#ffffff'),
+        "theme_color": theme_color,
+        "icons": []
     }
+
+    if data_from_db.icon_png:
+        try:
+            for size in ['48x48', '72x72', '96x96', '144x144', '192x192', '512x512']:
+                thumb = get_thumbnail(data_from_db.icon_png, size, format="PNG", crop='center', quality=100)
+                if thumb:
+                    manifest_data["icons"].append({
+                        "src": '/main/media/' + str(thumb),
+                        "sizes": size,
+                        "type": "image/png"
+                    })
+        except Exception:
+            pass
 
     response_data = json.dumps(manifest_data, ensure_ascii=False, default=decimal_encoder)
     return HttpResponse(response_data, content_type='application/json')
@@ -403,3 +398,22 @@ def user_agreement(request):
 
 
     return render(request, 'home/user_agreement.html', context)
+
+
+def consent(request):
+
+    domain = f'{request.META["HTTP_HOST"]}'
+    try:
+        decoded_domain = idna.decode(domain)
+    except:
+        decoded_domain = domain
+
+    site = f'{get_protocol(request)}://{decoded_domain}'
+    privacy_email = f'privacy@{decoded_domain}'
+
+    context = {
+        'site': site,
+        'privacy_email': privacy_email,
+    }
+
+    return render(request, 'home/consent.html', context)

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}Публичная оферта{% endblock %}
+{% block description %}Публичная оферта{% endblock %}
+{% block keywords %}{{ setup.meta_keywords }}{% endblock %}
+{% block canonical %}{% url "user_agreement" %}{% endblock %}
+{% block og:title %}Публичная оферта{% endblock %}
+{% block og:description %}Публичная оферта{% endblock %}
+{% block og:url %}{% url "user_agreement" %}{% endblock %}
+{% block twitter:title %}Публичная оферта{% endblock %}
+{% block twitter:description %}Публичная оферта{% endblock %}
+
+{% block og:image %}{% endblock %}
+{% block og:image:secure_url %}{% endblock %}
+{% block twitter:image %}{% endblock %}
+
+{% block body %}
+{% load static %}
+{% load theme_static %}
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="breadcrumbs__inner">
+            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ site }}" title="Главная" itemprop="item">
+                        <span itemprop="name">Главная</span>
+                        <meta itemprop="position" content="0">
+                    </a>
+                </li>
+                
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url "user_agreement" %}" title="Публичная оферта" itemprop="item">
+                        <span itemprop="name">Публичная оферта</span>
+                        <meta itemprop="position" content="1">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="inputResult" style="padding: 40px 0;">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 style="margin-bottom: 30px; color: #444;">Публичная оферта</h1>
+                <p style="margin-bottom: 20px; font-weight: bold;">Настоящий документ является публичной офертой в адрес физических и юридических лиц (далее – Покупатель) о заключении договора купли-продажи товаров дистанционным способом на условиях, указанных ниже.</p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">1. ОБЩИЕ ПОЛОЖЕНИЯ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    1.1. Настоящая публичная оферта (далее – Оферта) является официальным предложением Интернет-магазина «{{ setup.name }}», расположенного по адресу <a href="{{ site }}">{{ site }}</a> (далее – Продавец), заключить с Покупателем договор купли-продажи товаров дистанционным способом (далее – Договор) на условиях, изложенных в настоящей Оферте.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    1.2. В соответствии со статьей 437 Гражданского кодекса РФ (далее – ГК РФ) данный документ является публичной офертой, и в случае принятия изложенных ниже условий лицо, производящее акцепт этой оферты, становится Покупателем.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    1.3. Акцептом настоящей оферты является оформление Покупателем заказа на товары, представленные на сайте Интернет-магазина, в соответствии с условиями настоящей Оферты.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    1.4. Продавец: {{ setup.ur_name }}
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">2. ОПРЕДЕЛЕНИЯ ТЕРМИНОВ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    2.1. В настоящей Оферте нижеприведенные термины имеют следующие значения:
+                </p>
+                <ul style="padding-left: 40px; list-style-type: disc; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px; line-height: 1.6;"><strong>«Интернет-магазин»</strong> – сайт, расположенный в сети Интернет по адресу <a href="{{ site }}">{{ site }}</a>, где представлены товары, предлагаемые Продавцом для приобретения, а также условия оплаты и доставки товаров Покупателям.</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;"><strong>«Товар»</strong> – объект купли-продажи, представленный к продаже на сайте Интернет-магазина.</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;"><strong>«Покупатель»</strong> – физическое или юридическое лицо, заключившее с Продавцом договор на условиях, изложенных в настоящей Оферте.</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;"><strong>«Заказ»</strong> – должным образом оформленный запрос Покупателя на приобретение и доставку по указанному адресу выбранных на сайте Интернет-магазина товаров.</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;"><strong>«Акцепт»</strong> – полное и безоговорочное принятие Покупателем условий настоящей Оферты.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">3. ПРЕДМЕТ ДОГОВОРА</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    3.1. Продавец обязуется передать в собственность Покупателю товар, а Покупатель обязуется оплатить и принять товар на условиях настоящей Оферты.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    3.2. Наименование, ассортимент, артикул, цена товара указаны на страницах Интернет-магазина.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    3.3. Договор считается заключенным с момента оформления Покупателем заказа на сайте Интернет-магазина и получения Продавцом сообщения о намерении Покупателя приобрести товар.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">4. ПРАВА И ОБЯЗАННОСТИ СТОРОН</h2>
+                <h3 style="font-size: 18px; margin-top: 20px; margin-bottom: 10px; color: #444;">4.1. Права и обязанности Продавца</h3>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.1.1. Продавец обязуется передать Покупателю товар надлежащего качества, в количестве и ассортименте, соответствующих заказу Покупателя.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.1.2. Продавец вправе изменять условия настоящей Оферты, а также цены на товары, представленные на сайте Интернет-магазина, в одностороннем порядке без уведомления Покупателя.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.1.3. Продавец вправе отказать Покупателю в заключении договора при отсутствии товара на складе.
+                </p>
+                <h3 style="font-size: 18px; margin-top: 20px; margin-bottom: 10px; color: #444;">4.2. Права и обязанности Покупателя</h3>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.2.1. Покупатель обязуется оплатить товар в порядке и в сроки, установленные настоящей Офертой.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.2.2. Покупатель обязуется принять заказанный товар, за исключением случаев, когда право Покупателя на отказ от товара предусмотрено законодательством РФ.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.2.3. Покупатель вправе отказаться от товара в порядке и сроки, установленные законодательством РФ.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">5. ЦЕНА ТОВАРА И ПОРЯДОК РАСЧЕТОВ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    5.1. Цена товара указывается на страницах Интернет-магазина в рублях Российской Федерации.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    5.2. Цена товара может быть изменена Продавцом в одностороннем порядке. При этом цена на заказанный Покупателем товар изменению не подлежит.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    5.3. Оплата товара производится способами, указанными на сайте Интернет-магазина.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">6. ДОСТАВКА ТОВАРА</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    6.1. Доставка товара Покупателю осуществляется по адресу и в сроки, согласованные Покупателем и Продавцом при оформлении заказа, либо Покупатель вправе самостоятельно забрать товар со склада Продавца (самовывоз).
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    6.2. Стоимость доставки товара указывается на сайте Интернет-магазина и оплачивается Покупателем дополнительно.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">7. ОТВЕТСТВЕННОСТЬ СТОРОН</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.1. Продавец не несет ответственности за ущерб, причиненный Покупателю вследствие ненадлежащего использования товаров, заказанных в Интернет-магазине.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.2. Продавец не несет ответственности за частичное или полное неисполнение обязательств по доставке товара, если они являются следствием форс-мажорных обстоятельств.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">8. РАЗРЕШЕНИЕ СПОРОВ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    8.1. Все споры и разногласия, возникающие при исполнении Сторонами обязательств по настоящему Договору, решаются путем переговоров.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    8.2. В случае невозможности разрешения споров путем переговоров, споры подлежат рассмотрению в суде по месту нахождения Продавца в соответствии с действующим законодательством Российской Федерации.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">9. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    9.1. Настоящая Оферта вступает в силу с момента размещения на сайте Интернет-магазина и действует до момента отзыва ее Продавцом.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    9.2. Продавец оставляет за собой право внести изменения в настоящую Оферту без уведомления Покупателя.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    9.3. К отношениям между Покупателем и Продавцом применяется законодательство Российской Федерации.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    9.4. Оформляя заказ на сайте Интернет-магазина, Покупатель подтверждает, что ознакомился и согласен со всеми условиями настоящей Оферты.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,77 +1,81 @@
 
 // Отображаем лоадер при использовании кэша
 window.onpageshow = function(event) {
-    if (event.persisted) { // Проверяем, используется ли кэш
-        const loader = document.getElementById("windowLoader");
-        const content = document.getElementById("content");
-
-        // Показываем лоадер
-        loader.style.display = "flex";
-        content.style.display = "none";
-
-        // Устанавливаем короткую задержку перед перезагрузкой страницы
-        setTimeout(() => {
-            loader.style.display = "flex";
-            getTotalPriceAfterDiscount();
-            window.location.reload(); // Принудительная перезагрузка страницы
-        }, 1000); // Задержка 1 секунда для отображения лоадера перед перезагрузкой
+    if (event.persisted) {
+        var loader = document.getElementById("windowLoader");
+        var content = document.getElementById("content");
+        if (loader) loader.style.display = "flex";
+        if (content) content.style.display = "none";
+        setTimeout(function() {
+            if (loader) loader.style.display = "flex";
+            if (typeof getTotalPriceAfterDiscount === "function") getTotalPriceAfterDiscount();
+            window.location.reload();
+        }, 1000);
     }
 };
 
-
 // Отображаем лоадер при первой загрузке
 document.addEventListener("DOMContentLoaded", function () {
-    const loader = document.getElementById("windowLoader");
-    const content = document.getElementById("content");
-
-    // Показываем лоадер
-    loader.style.display = "flex";
-    content.style.display = "none";
-
-    // Убираем лоадер через небольшую задержку
-    setTimeout(() => {
-        loader.style.display = "none";
-        content.style.display = "block";
-    }, 1000); // Задержка 1 секунда, можно изменить
+    var loader = document.getElementById("windowLoader");
+    var content = document.getElementById("content");
+    if (loader) loader.style.display = "flex";
+    if (content) content.style.display = "none";
+    setTimeout(function() {
+        if (loader) loader.style.display = "none";
+        if (content) content.style.display = "block";
+    }, 1000);
 });
 
-
 function checkPriceCart() {
-    let cart = JSON.parse(localStorage.getItem('cart')) || {};
-
-    if (!cart) {
+    var cart;
+    try {
+        var raw = localStorage.getItem("cart");
+        if (raw == null || raw === "") return;
+        cart = JSON.parse(raw);
+        if (typeof cart !== "object" || cart === null || Array.isArray(cart)) return;
+    } catch (e) {
         return;
     }
-
-    for (let itemId in cart) {
-        let item = cart[itemId];
-        let url = `/api/v1/products/${item.itemId}/`;
-
-        
-
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.price !== item.price && (!item.options || item.options.length === 0)) {
-                    item.price = data.price;
-                    cart[itemId] = item;
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                delete cart[itemId];
-                localStorage.setItem('cart', JSON.stringify(cart));
-            });
+    for (var itemId in cart) {
+        if (!cart.hasOwnProperty(itemId)) continue;
+        try {
+            var item = cart[itemId];
+            if (item == null || typeof item !== "object") continue;
+            var productId = item.itemId;
+            if (productId == null || productId === undefined) continue;
+            var url = "/api/v1/products/" + productId + "/";
+            fetch(url)
+                .then(function(response) {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then(function(data) {
+                    try {
+                        if (data.price !== item.price && (!item.options || item.options.length === 0)) {
+                            item.price = data.price;
+                            cart[itemId] = item;
+                            localStorage.setItem("cart", JSON.stringify(cart));
+                        }
+                    } catch (e) {}
+                })
+                .catch(function(error) {
+                    console.error("Ошибка:", error);
+                    try { delete cart[itemId]; localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {}
+                });
+        } catch (e) {
+            try { localStorage.setItem("cart", JSON.stringify(cart)); } catch (e2) {}
         }
+    }
 }
 
-checkPriceCart();
+function runOnLoad() {
+    try { checkPriceCart(); } catch (e) { console.error("checkPriceCart:", e); }
+}
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runOnLoad);
+} else {
+    runOnLoad();
+}
 
 
 
@@ -110,10 +114,8 @@ function fetchAndSaveSettings() {
               
             
 
-            setDeliveryPrice()
-            setPickupPoints()
-            
-            
+            try { setDeliveryPrice(); } catch (e) {}
+            try { setPickupPoints(); } catch (e) {}
             deliveryUpdate()
             deliveryTimeUpdate();
             getDeliverySumm()
@@ -676,17 +678,19 @@ function payMethodUpdate() {
 
 // Заполнение точек самовывоза
 function setPickupPoints() {
-    var storedSettingsJson = JSON.parse(localStorage.getItem('shopSettings'));
-
-    var order = JSON.parse(localStorage.getItem('order'));
-
-    
-
-    var pickup_areas = storedSettingsJson.pickup_areas;
-    var areaWrap = document.querySelector('.order__pickup-areas');
-
-    // Очищаем содержимое .order__pickup-areas
-    areaWrap.innerHTML = '';
+    try {
+        var raw = localStorage.getItem('shopSettings');
+        if (!raw) return;
+        var storedSettingsJson = JSON.parse(raw);
+        var pickup_areas = storedSettingsJson && storedSettingsJson.pickup_areas;
+        if (!pickup_areas || !Array.isArray(pickup_areas)) return;
+        var areaWrap = document.querySelector('.order__pickup-areas');
+        if (!areaWrap) return;
+        areaWrap.innerHTML = '';
+    } catch (e) {
+        return;
+    }
+    var order = JSON.parse(localStorage.getItem('order')) || {};
     var count = 0;
     pickup_areas.forEach(function(area) {
         var label = document.createElement('label');
@@ -708,24 +712,24 @@ function setPickupPoints() {
 
         if (count === 0) {
             input.classList.add('order__input');
-
             order.address_pickup = area.name;
             localStorage.setItem('order', JSON.stringify(order));
-
-            document.querySelector('.order__pickup-areas-input').value = area.name;
+            var areasInput = document.querySelector('.order__pickup-areas-input');
+            if (areasInput) areasInput.value = area.name;
         }
 
         count++;
     });
 
     if (count == 1) {
-        var areaWrap = document.querySelector('.order__pickup-areas');
+        var areaWrap2 = document.querySelector('.order__pickup-areas');
         var svgItem = document.querySelector('.order__pickup-row svg');
-
-        areaWrap.innerHTML = '';
-        areaWrap.style.display = 'none';
-        svgItem.style.display = 'none';
-        areaWrap.remove()
+        if (areaWrap2) {
+            areaWrap2.innerHTML = '';
+            areaWrap2.style.display = 'none';
+            areaWrap2.remove();
+        }
+        if (svgItem) svgItem.style.display = 'none';
     }
 
     
@@ -4790,21 +4794,23 @@ function checkCurrentTime() {
                 localStorage.setItem('workTime', JSON.stringify(workTime));
 
                 // If work hours have changed, show the popup
-                showPopupWithCooldown();
+                // showPopupWithCooldown(); // Отключено - попап не показывается
             }
 
             // Show popup if the current time is not within delivery times
-            if (!work_day || !is_active) {
-                showPopupWithCooldown();
-            } else {
-                // Otherwise, hide the popup
-                $('.delivery-popup').removeClass('delivery-popup--active');
-            }
+            // if (!work_day || !is_active) {
+            //     showPopupWithCooldown(); // Отключено - попап не показывается
+            // } else {
+            //     // Otherwise, hide the popup
+            //     $('.delivery-popup').removeClass('delivery-popup--active');
+            // }
         })
         .catch(error => console.error('Ошибка загрузки рабочего времени:', error));
 }
 
 // Show popup with a cooldown of 60 seconds
+// Отключено - попап не показывается
+/*
 function showPopupWithCooldown() {
     const lastPopupTime = localStorage.getItem('lastPopupTime');
     const currentTime = new Date().getTime();
@@ -4815,6 +4821,7 @@ function showPopupWithCooldown() {
         localStorage.setItem('lastPopupTime', currentTime);
     }
 }
+*/
 
 // Set initial state on document ready
 $(document).ready(function() {
@@ -4825,7 +4832,7 @@ $(document).ready(function() {
     }
 
     // Initial time check on load
-    checkCurrentTime();
+    // checkCurrentTime(); // Отключено - попап не показывается
 
     // Set default workTime if not set
     let workTime = JSON.parse(localStorage.getItem('workTime'));
@@ -4834,10 +4841,12 @@ $(document).ready(function() {
     }
 
     // Periodic re-check every minute for real-time updates
-    setInterval(checkCurrentTime, 300000); // Re-check every 60 seconds
+    // setInterval(checkCurrentTime, 300000); // Отключено - попап не показывается
 });
 
 // User interaction: hide popup and update localStorage on button click
+// Отключено - попап не показывается
+/*
 $('.delivery-popup__btn').click(function() {
     let workTime = JSON.parse(localStorage.getItem('workTime'));
     if (workTime) {
@@ -4846,6 +4855,7 @@ $('.delivery-popup__btn').click(function() {
     }
     $('.delivery-popup').removeClass('delivery-popup--active');
 });
+*/
 
 
 

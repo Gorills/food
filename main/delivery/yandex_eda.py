@@ -12,19 +12,29 @@ from subdomains.utilites import get_protocol
 from cart.cart import Cart
 
 
+yandex = None
+api_key = None
+city = None
+address = None
+emergency_phone = None
+emergency_name = None
+emergency_email = None
+delay = 0
+auto_accept = False
+yandex_active = False
+
 try:
     yandex = Delivery.objects.filter().first()
-    api_key = yandex.api_key
-
-    city = yandex.city
-    address = yandex.address
-    emergency_phone = yandex.phone
-    emergency_name = yandex.name
-    emergency_email = yandex.email
-    delay = yandex.delay
-    auto_accept = yandex.auto_accept
-
-    yandex_active = True
+    if yandex and getattr(yandex, 'api_key', None):
+        api_key = yandex.api_key
+        city = yandex.city
+        address = yandex.address
+        emergency_phone = yandex.phone
+        emergency_name = yandex.name
+        emergency_email = yandex.email
+        delay = yandex.delay or 0
+        auto_accept = getattr(yandex, 'auto_accept', False)
+        yandex_active = True
 except Exception as e:
     print(e)
     yandex_active = False
@@ -75,6 +85,8 @@ def get_geo(query):
 
 
 def delivery_methods():
+    if not yandex_active or not api_key or yandex is None:
+        return None
     url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/delivery-methods'
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -100,7 +112,8 @@ def delivery_methods():
     
 
 def calculate():
-    
+    if not yandex_active or not api_key:
+        return None
     url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/offers/calculate'
 
     headers = {
@@ -141,13 +154,14 @@ def get_due():
 # get_due()
 
 def check_price(request):
-    # Получить текущее время
-    
-
+    if not yandex_active or not api_key or yandex is None:
+        return HttpResponse(
+            '{"error": "Yandex delivery is not configured or api_key is missing"}',
+            status=503,
+            content_type='application/json',
+        )
     if request.method == 'POST':
-        dotaddress = request.POST['dotaddress']
-    
-
+        dotaddress = request.POST.get('dotaddress', '')
         url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/check-price'
 
         headers = {
@@ -190,15 +204,16 @@ def check_price(request):
         
         # print(response.json())
         
-        return HttpResponse(response, content_type='application/json') 
+        return HttpResponse(response, content_type='application/json')
+    return HttpResponse(status=400) 
 
 
 # check_price('Ростов-на-Дону, улица Мадояна, 32')
     
 
 def check_yandex_status(order):
-
-
+    if not yandex_active or not api_key:
+        return None
     url = 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/claims/info'
 
     headers = {
@@ -218,7 +233,7 @@ def check_yandex_status(order):
     try:
         order.external_delivery_status = response.json()['status']
         order.save()
-    except:
+    except Exception:
         pass
 
 
@@ -234,7 +249,8 @@ def check_yandex_status(order):
 
 from orders.telegram import send_message
 def yandex_create_order(order):
-
+    if not yandex_active or not api_key or yandex is None:
+        return
     try:
     
         items = order.items.all()

@@ -217,8 +217,8 @@ from pathlib import Path
 from .settings_loader import get_theme_name
 
 # Получаем название темы
-theme_name = 'core/theme/fast_theme/views'
-# theme_name = 'core/theme/flowers_light/views'
+# theme_name = 'core/theme/fast_theme/views'
+theme_name = 'core/theme/flowers_light/views'
 
 
 TEMPLATES = [

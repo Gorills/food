@@ -1780,6 +1780,8 @@ $(document).on('click','.content',function(){
 
   
 
+  // Отключено - попап не показывается
+  /*
   $(document).ready(function() {
     var isHidden = getCookie('isHidden');
   
@@ -1799,6 +1801,7 @@ $(document).on('click','.content',function(){
         setCookie('isHidden', 'true', 1/24); // Устанавливаем куку на 1 день (время указано в днях)
     });
   });
+  */
   
   // Функция для установки куки
   function setCookie(name, value, days) {

@@ -1,40 +1,72 @@
-
+/* flowers_light app.js - checkPriceCart/updateDeliveryType hardened */
 function checkPriceCart() {
-    let cart = JSON.parse(localStorage.getItem('cart')) || {};
-
-    if (!cart) {
+    var cart;
+    try {
+        var raw = localStorage.getItem('cart');
+        if (raw == null || raw === '') return;
+        cart = JSON.parse(raw);
+        if (typeof cart !== 'object' || cart === null || Array.isArray(cart)) {
+            if (typeof clearCart === 'function') clearCart();
+            else localStorage.setItem('cart', '{}');
+            return;
+        }
+    } catch (e) {
+        if (typeof clearCart === 'function') clearCart();
+        else localStorage.setItem('cart', '{}');
         return;
     }
-
-    for (let itemId in cart) {
-        let item = cart[itemId];
-        let url = `/api/v1/products/${item.itemId}/`;
-
-        
-
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.price !== item.price && (!item.options || item.options.length === 0)) {
-                    item.price = data.price;
-                    cart[itemId] = item;
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                delete cart[itemId];
-                localStorage.setItem('cart', JSON.stringify(cart));
-            });
+    for (var itemId in cart) {
+        if (!cart.hasOwnProperty(itemId)) continue;
+        try {
+            var item = cart[itemId];
+            if (item == null || typeof item !== 'object') {
+                if (typeof clearCart === 'function') clearCart();
+                else localStorage.setItem('cart', '{}');
+                return;
+            }
+            var productId = item.itemId;
+            if (productId == null || productId === undefined) {
+                if (typeof clearCart === 'function') clearCart();
+                else localStorage.setItem('cart', '{}');
+                return;
+            }
+            var url = '/api/v1/products/' + productId + '/';
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    try {
+                        if (data.price !== item.price && (!item.options || item.options.length === 0)) {
+                            item.price = data.price;
+                            cart[itemId] = item;
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                        }
+                    } catch (e) {}
+                })
+                .catch(error => {
+                    console.error('Ошибка товара в корзине:', error);
+                    if (typeof clearCart === 'function') clearCart();
+                    else { try { delete cart[itemId]; localStorage.setItem('cart', JSON.stringify(cart)); } catch (e) {} }
+                });
+        } catch (e) {
+            if (typeof clearCart === 'function') clearCart();
+            else { try { localStorage.setItem('cart', '{}'); } catch (e2) {} }
+            return;
         }
+    }
 }
 
-checkPriceCart();
+function runOnLoad() {
+    try { checkPriceCart(); } catch (e) { console.error('checkPriceCart:', e); }
+    try { updateDeliveryType(); } catch (e) { console.error('updateDeliveryType:', e); }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runOnLoad);
+} else {
+    runOnLoad();
+}
 
 
 
@@ -310,11 +342,11 @@ function setOrder() {
         if (order.data_time == 0) {
             document.getElementById('checkout__radio-bytime').checked = false;
             document.getElementById('checkout__radio-now').checked = true;
-            document.getElementById('order__times-row').style.display = 'none';
+            var orderTimesRow = document.getElementById('order__times-row'); if (orderTimesRow) orderTimesRow.style.display = 'none';
         } else {
             document.getElementById('checkout__radio-bytime').checked = true;
             document.getElementById('checkout__radio-now').checked = false;
-            document.getElementById('order__times-row').style.display = 'block';
+            var orderTimesRow = document.getElementById('order__times-row'); if (orderTimesRow) orderTimesRow.style.display = 'block';
         }
     }
 
@@ -447,21 +479,21 @@ setOrder();
 
 // Проверяем наличие типа доставки в localStorage
 function updateDeliveryType() {
-    var deliveryType = localStorage.getItem("deliveryType");
-  //   console.log(deliveryType)
-    if (deliveryType) {
-        document.getElementById("check-delivery").style.display = 'none';
-        document.getElementById("setup-address").style.display = 'none';
-    } else {
-        document.getElementById("check-delivery").style.display = 'flex';
-        
+    try {
+        var deliveryType = localStorage.getItem("deliveryType");
+        if (deliveryType) {
+            var checkDelivery = document.getElementById("check-delivery"); if (checkDelivery) checkDelivery.style.display = 'none';
+            var setupAddress = document.getElementById("setup-address"); if (setupAddress) setupAddress.style.display = 'none';
+        } else {
+            var checkDelivery = document.getElementById("check-delivery"); if (checkDelivery) checkDelivery.style.display = 'flex';
+        }
+        retrieveFromLocalStorage();
+    } catch (e) {
+        console.error('updateDeliveryType:', e);
     }
-    retrieveFromLocalStorage()
-    
-  }
+}
 
 
-  updateDeliveryType()
   
       
   function saveToLocalStorage(deliveryType) {
@@ -516,8 +548,8 @@ function updateDeliveryType() {
           document.querySelector('.order-delivery').classList.add('order__delivery-check-item--active');
           document.querySelector('.order-pickup').classList.remove('order__delivery-check-item--active');
   
-          document.getElementById("order_delivery").style.display = 'block';
-          document.getElementById("order_pickup").style.display = 'none';
+          var orderDelivery = document.getElementById("order_delivery"); if (orderDelivery) orderDelivery.style.display = 'block';
+          var orderPickup = document.getElementById("order_pickup"); if (orderPickup) orderPickup.style.display = 'none';
 
           $('.order__next').addClass('order__next--delivery');
           $('.order__next').removeClass('order__next--pickup');
@@ -530,23 +562,22 @@ function updateDeliveryType() {
           let order = JSON.parse(localStorage.getItem('order'));
           // console.log(shopSetup)
   
-          let street = document.getElementById("street")
-
-          $('#street').addClass('required')
-          // .attr('readonly', 'readonly')
-
-          if (shopSetup.zones_delivery) {
-              street.value = order.address;
-              street.readOnly = true;
-              street.style.cursor = 'pointer';
-              street.classList.add('show-map');
+          var street = document.getElementById("street");
+          if (street) {
+              $('#street').addClass('required');
+              if (shopSetup.zones_delivery) {
+                  street.value = order.address;
+                  street.readOnly = true;
+                  street.style.cursor = 'pointer';
+                  street.classList.add('show-map');
+              } else {
+                  street.value = order.address;
+                  street.readOnly = false;
+                  street.style.cursor = 'auto';
+              }
           } else {
-              street.value = order.address;
-              street.readOnly = false;
-              street.style.cursor = 'auto';
-              
+              $('#street').addClass('required');
           }
-         
           
   
   
@@ -557,8 +588,8 @@ function updateDeliveryType() {
           document.querySelector('.order-delivery').classList.remove('order__delivery-check-item--active');
           document.querySelector('.order-pickup').classList.add('order__delivery-check-item--active');
   
-          document.getElementById("order_delivery").style.display = 'none';
-          document.getElementById("order_pickup").style.display = 'block';
+          var orderDelivery2 = document.getElementById("order_delivery"); if (orderDelivery2) orderDelivery2.style.display = 'none';
+          var orderPickup2 = document.getElementById("order_pickup"); if (orderPickup2) orderPickup2.style.display = 'block';
 
           $('.order__next').removeClass('order__next--delivery');
           $('.order__next').addClass('order__next--pickup');
@@ -684,11 +715,12 @@ function setPickupPoints() {
     if (count == 1) {
         var areaWrap = document.querySelector('.order__pickup-areas');
         var svgItem = document.querySelector('.order__pickup-row svg');
-
-        areaWrap.innerHTML = '';
-        areaWrap.style.display = 'none';
-        svgItem.style.display = 'none';
-        areaWrap.remove()
+        if (areaWrap) {
+            areaWrap.innerHTML = '';
+            areaWrap.style.display = 'none';
+            areaWrap.remove();
+        }
+        if (svgItem) svgItem.style.display = 'none';
     }
 
     
@@ -1109,7 +1141,16 @@ function getAllDiscount() {
     let shopSettings = JSON.parse(localStorage.getItem('shopSettings'));
     let discountOnPickup = shopSettings.discount_on_pickup;
 
-    let discountOnFirstDelivery = JSON.parse(localStorage.getItem('deliveryPrice')).first_delivery;
+    let deliveryPriceData = localStorage.getItem('deliveryPrice');
+    let discountOnFirstDelivery = 0;
+    if (deliveryPriceData) {
+        try {
+            let deliveryPrice = JSON.parse(deliveryPriceData);
+            discountOnFirstDelivery = deliveryPrice.first_delivery || 0;
+        } catch (e) {
+            discountOnFirstDelivery = 0;
+        }
+    }
 
     let first_delivery_summ = getTotalPrice() * discountOnFirstDelivery / 100;
 
@@ -1124,13 +1165,14 @@ function getAllDiscount() {
         first_delivery_summ = 0;
     }
 
-    if (first_delivery_summ != 0) {
-        document.getElementById("discountOnFirstDelivery").innerText = `${first_delivery_summ}₽ (${discountOnFirstDelivery}%)`;
-        document.getElementById("first_delivery_discount_info").style.display = 'flex';
+    // Проверяем, что значения валидны и не являются NaN или undefined
+    if (first_delivery_summ != 0 && !isNaN(first_delivery_summ) && discountOnFirstDelivery != undefined && !isNaN(discountOnFirstDelivery)) {
+        var discountEl = document.getElementById("discountOnFirstDelivery"); if (discountEl) discountEl.innerText = `${first_delivery_summ}₽ (${discountOnFirstDelivery}%)`;
+        var firstDeliveryInfo = document.getElementById("first_delivery_discount_info"); if (firstDeliveryInfo) firstDeliveryInfo.style.display = 'flex';
         sale_persent = sale_persent + discountOnFirstDelivery;
     } else {
-        document.getElementById("discountOnFirstDelivery").innerText = '';
-        document.getElementById("first_delivery_discount_info").style.display = 'none';
+        var discountEl = document.getElementById("discountOnFirstDelivery"); if (discountEl) discountEl.innerText = '';
+        var firstDeliveryInfo = document.getElementById("first_delivery_discount_info"); if (firstDeliveryInfo) firstDeliveryInfo.style.display = 'none';
     }
     
     let summ = 0;
@@ -1141,15 +1183,18 @@ function getAllDiscount() {
         pickup_discount = Math.floor(pickup_discount);
         summ = summ + pickup_discount;
 
-        document.getElementById("discountOnPickup").innerText = `${pickup_discount}₽ (${discountOnPickup}%)`;
-        document.getElementById("pickup_discount_info").style.display = 'flex';
+        var pickupDiscountEl = document.getElementById("discountOnPickup"); if (pickupDiscountEl) pickupDiscountEl.innerText = `${pickup_discount}₽ (${discountOnPickup}%)`;
+        var pickupInfo = document.getElementById("pickup_discount_info"); if (pickupInfo) pickupInfo.style.display = 'flex';
         sale_persent = sale_persent + discountOnPickup;
     } else {
-        document.getElementById("discountOnPickup").innerText = '';
-        document.getElementById("pickup_discount_info").style.display = 'none';
+        var pickupDiscountEl = document.getElementById("discountOnPickup"); if (pickupDiscountEl) pickupDiscountEl.innerText = '';
+        var pickupInfo = document.getElementById("pickup_discount_info"); if (pickupInfo) pickupInfo.style.display = 'none';
     }
 
-    summ = summ + first_delivery_summ;
+    // Убеждаемся, что first_delivery_summ валиден перед добавлением
+    if (!isNaN(first_delivery_summ)) {
+        summ = summ + first_delivery_summ;
+    }
 
 
     let order = JSON.parse(localStorage.getItem('order'));
@@ -1162,9 +1207,17 @@ function getAllDiscount() {
 
     // добавляем к сумме скидок заказа активные баллы
     
-    let active_balls = order.bonuses_pay
+    let active_balls = order.bonuses_pay || 0;
+    
+    // Убеждаемся, что active_balls валиден
+    if (!isNaN(active_balls) && active_balls != undefined) {
+        summ = summ + active_balls;
+    }
 
-    summ = summ + active_balls
+    // Проверяем итоговую сумму на валидность
+    if (isNaN(summ) || summ == undefined) {
+        summ = 0;
+    }
 
     // console.log(summ)
 
@@ -1189,8 +1242,7 @@ function getTotalPrice() {
     }
 
     
-    document.getElementById("total_price").innerText = totalPrice;
-    
+    var totalPriceEl = document.getElementById("total_price"); if (totalPriceEl) totalPriceEl.innerText = totalPrice;
     return totalPrice
 }
 getTotalPrice()
@@ -1361,15 +1413,12 @@ function getDeliverySumm() {
     
     
     if (summ == 0 | delivery.free_delivery == 999999) {
-
-        document.getElementById("free_delivery_info").style.display = 'none';
+        var freeDeliveryInfo = document.getElementById("free_delivery_info"); if (freeDeliveryInfo) freeDeliveryInfo.style.display = 'none';
     } else {
-
-        document.getElementById("free_delivery_info").style.display = 'flex';
+        var freeDeliveryInfo = document.getElementById("free_delivery_info"); if (freeDeliveryInfo) freeDeliveryInfo.style.display = 'flex';
     }
 
-
-    document.getElementById("total_delivery").innerText = summ + '₽';
+    var totalDeliveryEl = document.getElementById("total_delivery"); if (totalDeliveryEl) totalDeliveryEl.innerText = summ + '₽';
 
 
     let order = JSON.parse(localStorage.getItem('order'));
@@ -1439,12 +1488,11 @@ $(document).on('submit','.save-delivery',function(e){
 
 $(document).on('click','.check-delivery__item--delivery',function(e){
   e.preventDefault();
-  document.getElementById("setup-address").style.display = 'flex';
+  var setupAddress = document.getElementById("setup-address"); if (setupAddress) setupAddress.style.display = 'flex';
 })
 
 $(document).on('click','.setup-address__close, .setup-address__overlay',function(){
-    document.getElementById("setup-address").style.display = 'none';
-
+    var setupAddress = document.getElementById("setup-address"); if (setupAddress) setupAddress.style.display = 'none';
 })
 
 
@@ -1452,7 +1500,7 @@ document.addEventListener('click', function(event) {
     let target = event.target;
     let setupAddress = document.getElementById("set_delivery");
     if (target === setupAddress) {
-        document.getElementById("check-delivery").style.display = 'flex';
+        var checkDelivery = document.getElementById("check-delivery"); if (checkDelivery) checkDelivery.style.display = 'flex';
     }
 });
 
@@ -2988,7 +3036,7 @@ function displayCart() {
         
         `;
         cartItems.style.height = 'fit-content;';
-        document.getElementById('cart-bottom').style.display = 'none';
+        var cartBottom = document.getElementById('cart-bottom'); if (cartBottom) cartBottom.style.display = 'none';
     } else {
         $('.cart__maby').show()
         
@@ -3098,7 +3146,7 @@ function displayCart() {
                 `;
                 
                 cartItems.appendChild(cartItem);
-                document.getElementById('cart-bottom').style.display = 'block';
+                var cartBottom = document.getElementById('cart-bottom'); if (cartBottom) cartBottom.style.display = 'block';
 
             } else {
                 let cartRelated = document.createElement('li');
@@ -3138,8 +3186,7 @@ function displayCart() {
                 `;
                 
                 cartRelateds.appendChild(cartRelated);
-                document.getElementById('cart__related-row').style.display = 'block';
-                
+                var relatedRow = document.getElementById('cart__related-row'); if (relatedRow) relatedRow.style.display = 'block';
             }
             
 
@@ -3154,8 +3201,8 @@ function displayCart() {
     // Отображаем общую стоимость и количество товаров
     let totalInfo = document.createElement('li');
 
-    document.getElementById("cart_summ").innerText = getTotalPrice();
-    document.getElementById("cart_num").innerText = totalCount;
+    var cartSummEl = document.getElementById("cart_summ"); if (cartSummEl) cartSummEl.innerText = getTotalPrice();
+    var cartNumEl = document.getElementById("cart_num"); if (cartNumEl) cartNumEl.innerText = totalCount;
 
     // totalInfo.textContent = `Общая стоимость: ${getTotalPrice()}`;
 
@@ -3192,9 +3239,9 @@ function minusFromCart(itemId) {
 
     }
 
-    document.getElementById('cart__related-row').style.display = 'none';
+    var relatedRow = document.getElementById('cart__related-row'); if (relatedRow) relatedRow.style.display = 'none';
     localStorage.setItem('cart', JSON.stringify(cart));
-    document.getElementById('cart__related-row').style.display = 'none';
+    var relatedRow2 = document.getElementById('cart__related-row'); if (relatedRow2) relatedRow2.style.display = 'none';
     updateAll()
     refreshBalls();
     checkProducts()
@@ -3205,7 +3252,7 @@ function plusFromCart(itemId) {
     
     cart[itemId].quantity++;
     localStorage.setItem('cart', JSON.stringify(cart));
-    document.getElementById('cart__related-row').style.display = 'none';
+    var relatedRow = document.getElementById('cart__related-row'); if (relatedRow) relatedRow.style.display = 'none';
     updateAll()
     refreshBalls();
     checkProducts()
@@ -3229,7 +3276,7 @@ function removeFromCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
-    document.getElementById('cart__related-row').style.display = 'none';
+    var relatedRow = document.getElementById('cart__related-row'); if (relatedRow) relatedRow.style.display = 'none';
     updateAll();
     refreshBalls();
     
@@ -3245,7 +3292,7 @@ $(document).on('click','.cart__remove', function(e) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     delete cart[itemId];
     localStorage.setItem('cart', JSON.stringify(cart));
-    document.getElementById('cart__related-row').style.display = 'none';
+    var relatedRow = document.getElementById('cart__related-row'); if (relatedRow) relatedRow.style.display = 'none';
     updateAll()
     refreshBalls();
     checkProducts();
@@ -4034,11 +4081,14 @@ function checkCurrentTime() {
 
                 
 
+                // Отключено - попап не показывается
+                /*
                 if (!workTime.is_open) {
                     $('.delivery-popup').removeClass('delivery-popup--active')
                 } else {
                     $('.delivery-popup').addClass('delivery-popup--active')
                 }
+                */
 
                 
                 
@@ -4050,7 +4100,7 @@ function checkCurrentTime() {
 }
 
 $(document).ready(function() {
-    checkCurrentTime();
+    // checkCurrentTime(); // Отключено - попап не показывается
     let workTime = JSON.parse(localStorage.getItem('workTime'));
     if (!workTime) {
         localStorage.setItem('workTime', JSON.stringify({is_open: true}));
@@ -4060,10 +4110,13 @@ $(document).ready(function() {
 
 });
 
+// Отключено - попап не показывается
+/*
 $('.delivery-popup__btn').click(function() {
     localStorage.setItem('workTime', JSON.stringify({is_open: false}));
     $('.delivery-popup').removeClass('delivery-popup--active')
 })
+*/
 
 
 

@@ -14,20 +14,50 @@ from .models import Integrations
 
 from pytils.translit import slugify
 from django.core.files.base import ContentFile
-from shop.models import Category, CategorySetup, OptionImage, OptionType, Product, ProductOption, PickupAreas, ProductSetup
+from shop.models import Category, OptionImage, OptionType, Product, ProductOption, PickupAreas
 import json
 
 
 logger = logging.getLogger(__name__)
 
 
+def get_iiko_integration():
+    """Возвращает запись интеграции iiko или None, если её нет."""
+    try:
+        return Integrations.objects.get(name='iiko')
+    except Integrations.DoesNotExist:
+        return None
+
+
+def get_iiko_api_key(pickup_area=None):
+    """
+    Возвращает api_key для iiko: из pickup_area или из глобальной интеграции.
+    Возвращает None, если интеграция не настроена или api_key пустой.
+    """
+    if pickup_area and getattr(pickup_area, 'api_key', None):
+        key = pickup_area.api_key
+        return key.strip() or None
+    integration = get_iiko_integration()
+    if integration:
+        key = getattr(integration, 'api_key', None)
+        return key.strip() if key else None
+    return None
+
+
 def token(api_key):
     """Получение токена авторизации для iiko API."""
+    if not api_key or not str(api_key).strip():
+        raise ValueError("iiko api_key is empty")
     url = 'https://api-ru.iiko.services/api/1/access_token'
     data = {'apiLogin': api_key}
     response = requests.post(url, json=data)
-    return response.json()['token']
-    
+    response.raise_for_status()
+    data_response = response.json()
+    if 'token' not in data_response:
+        logger.error("iiko token response missing 'token': %s", data_response)
+        raise ValueError("Invalid iiko token response")
+    return data_response['token']
+
 
 def organization(api_key):
     """Получение списка организаций из iiko."""
@@ -44,7 +74,10 @@ def organization(api_key):
 
 def get_order_types(pickup_area=None):
     """Получение типов заказов из iiko с учетом PickupAreas."""
-    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for get_order_types")
+        return None
     url = "https://api-ru.iiko.services/api/1/deliveries/order_types"
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     orgs = organization(api_key)
@@ -61,7 +94,10 @@ def get_order_types(pickup_area=None):
 
 def get_terminal_groups(pickup_area=None):
     """Получение ID группы терминалов из iiko с учетом PickupAreas."""
-    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for get_terminal_groups")
+        return None
     url = 'https://api-ru.iiko.services/api/1/terminal_groups'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
     orgs = organization(api_key)
@@ -82,8 +118,13 @@ def get_terminal_groups(pickup_area=None):
 
 
 def get_tables(pickup_area, table_num):
+    if not pickup_area:
+        return None
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for get_tables")
+        return None
     terminal_group = pickup_area.terminal_group
-    api_key = pickup_area.api_key
 
     url = 'https://api-ru.iiko.services/api/1/reserve/available_restaurant_sections'
     headers = {"Authorization": f"Bearer {token(api_key)}"}
@@ -150,13 +191,14 @@ def generate_unique_slug(base_slug, model_class, exclude_id=None):
 
 def sync_products(pickup_area=None):
     """Синхронизация товаров из iiko для конкретной точки или глобально."""
-    # Определяем api_key и связанные PickupAreas
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for sync_products")
+        return
     if pickup_area:
-        api_key = pickup_area.api_key
         show_in_site = pickup_area.show_in_site
         related_pickup_areas = PickupAreas.objects.filter(api_key=api_key)
     else:
-        api_key = Integrations.objects.get(name='iiko').api_key
         show_in_site = True
         related_pickup_areas = []
 
@@ -184,7 +226,7 @@ def sync_products(pickup_area=None):
 
 
     # Сохранение меню для отладки
-    with open(f'menu_{pickup_area.api_key}.json', 'w', encoding='utf-8') as f:
+    with open(f'menu_{api_key}.json', 'w', encoding='utf-8') as f:
         json.dump(menu_json, f, ensure_ascii=False, indent=4)
 
     # Собираем все product_id из меню
@@ -345,13 +387,14 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
     # Category.objects.all().delete()
 
     """Синхронизация меню из iiko с учетом PickupAreas."""
-    # Определяем api_key и связанные PickupAreas
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for load_menu")
+        return
     if pickup_area:
-        api_key = pickup_area.api_key
         show_in_site = pickup_area.show_in_site
         related_pickup_areas = PickupAreas.objects.filter(api_key=api_key)
     else:
-        api_key = Integrations.objects.get(name='iiko').api_key
         show_in_site = True
         related_pickup_areas = []
 
@@ -425,12 +468,18 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             # Проверяем, существует ли категория с таким external_id
             cat_query = Category.objects.filter(external_id=cat_id)
 
-            cat_setup = CategorySetup.objects.filter(category_external_id=cat_id).first()
+            try:
+                from shop.models import CategorySetup
+            except ImportError:
+                CategorySetup = None
 
-            if not cat_setup:
-                cat_setup, created = CategorySetup.objects.get_or_create(category_external_id=cat_id)
+            cat_setup = None
+            if CategorySetup is not None:
+                cat_setup = CategorySetup.objects.filter(category_external_id=cat_id).first()
+                if not cat_setup:
+                    cat_setup, _ = CategorySetup.objects.get_or_create(category_external_id=cat_id)
 
-            slug = cat_setup.slug if cat_setup else generate_unique_slug(cat_slug, Category, exclude_id=cat_save.id)
+            slug = cat_setup.slug if cat_setup else generate_unique_slug(cat_slug, Category)
             home = cat_setup.home if cat_setup else None
 
 
@@ -466,7 +515,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
                 cat_save = Category.objects.create(
                     external_id=cat_id,
                     name=cat_name,
-                    slug=cat_slug,
+                    slug=slug,
                     show_in_site=show_in_site,
                     top = show_in_site,
                     home = home,
@@ -489,11 +538,16 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             product_description = product['description']
             item_options = product['itemSizes']
 
+            try:
+                from shop.models import ProductSetup
+            except ImportError:
+                ProductSetup = None
 
-            product_setup = ProductSetup.objects.filter(product_external_id=product_id).first()
-
-            if not product_setup:
-                product_setup, created = ProductSetup.objects.get_or_create(product_external_id=product_id)
+            product_setup = None
+            if ProductSetup is not None:
+                product_setup = ProductSetup.objects.filter(product_external_id=product_id).first()
+                if not product_setup:
+                    product_setup, _ = ProductSetup.objects.get_or_create(product_external_id=product_id)
 
 
 
@@ -546,8 +600,9 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
             
 
                 product_save.save()
-                product_setup.product_id = product_save.id
-                product_setup.save()
+                if product_setup is not None:
+                    product_setup.product_id = product_save.id
+                    product_setup.save()
                 # Обновляем связи с PickupAreas
                 if related_pickup_areas:
                     for area in related_pickup_areas:
@@ -628,8 +683,7 @@ def load_menu(clean_categories=False, clean_products=False, pickup_area=None):
 def create_iiko_order(order, attempt=1, pickup_area=None):
     """Создание заказа в iiko с учетом PickupAreas."""
     try:
-        # Получаем api_key
-        api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+        api_key = get_iiko_api_key(pickup_area)
         if not api_key:
             logger.error("No iiko integration found")
             return
@@ -641,10 +695,16 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
         url = 'https://api-ru.iiko.services/api/1/deliveries/create'
         headers = {"Authorization": f"Bearer {token(api_key)}"}
 
-        if pickup_area and pickup_area.organization_id:
+        integration = get_iiko_integration()
+        if pickup_area and getattr(pickup_area, 'organization_id', None):
             org_id = pickup_area.organization_id
+        elif integration:
+            org_id = getattr(integration, 'organization_id', None)
         else:
-            org_id = Integrations.objects.get(name='iiko').organization_id
+            org_id = None
+        if not org_id:
+            logger.error("No iiko organization_id configured")
+            return
 
         # Формируем элементы заказа
         items = [
@@ -664,6 +724,9 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 
         # Получаем тип заказа
         order_types = get_order_types(pickup_area)
+        if not order_types:
+            logger.error("Could not get order types from iiko")
+            return
         delivery_method_map = {
             "Доставка": "Доставка курьером",
             "Самовывоз": "Доставка самовывоз"
@@ -715,17 +778,12 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
             }
         }
 
-        if pickup_area and pickup_area.terminal_group:
-            terminal_group = pickup_area.terminal_group
-            data['terminalGroupId'] = terminal_group
+        if pickup_area and getattr(pickup_area, 'terminal_group', None):
+            data['terminalGroupId'] = pickup_area.terminal_group
+        elif integration and getattr(integration, 'terminal_group', None):
+            data['terminalGroupId'] = integration.terminal_group
         else:
-            try:
-                terminal_group = Integrations.objects.get(name='iiko').terminal_group
-                data['terminalGroupId'] = terminal_group
-
-            except Exception as e:
-                logger.warning(f"Failed to get terminal group: {e}")
-
+            logger.warning("No iiko terminal_group configured")
 
         # Добавляем точку доставки, если это доставка
         if delivery_point:
@@ -753,8 +811,7 @@ def create_iiko_order(order, attempt=1, pickup_area=None):
 def create_iiko_table(order, attempt=1, pickup_area=None):
     """Создание заказа в iiko с учетом PickupAreas."""
     try:
-        # Получаем api_key
-        api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
+        api_key = get_iiko_api_key(pickup_area)
         if not api_key:
             logger.error("No iiko integration found")
             return
@@ -766,10 +823,16 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
         url = 'https://api-ru.iiko.services/api/1/order/create'
         headers = {"Authorization": f"Bearer {token(api_key)}"}
 
-        if pickup_area and pickup_area.organization_id:
+        integration = get_iiko_integration()
+        if pickup_area and getattr(pickup_area, 'organization_id', None):
             org_id = pickup_area.organization_id
+        elif integration:
+            org_id = getattr(integration, 'organization_id', None)
         else:
-            org_id = Integrations.objects.get(name='iiko').organization_id
+            org_id = None
+        if not org_id:
+            logger.error("No iiko organization_id configured")
+            return
 
         # Формируем элементы заказа
         items = [
@@ -789,6 +852,9 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
 
         # Получаем тип заказа
         order_types = get_order_types(pickup_area)
+        if not order_types:
+            logger.error("Could not get order types from iiko")
+            return
         order_type_id = next(
             (
                 item['id']
@@ -817,19 +883,12 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
             }
         }
 
-       
-
-        if pickup_area and pickup_area.terminal_group:
-            terminal_group = pickup_area.terminal_group
-            data['terminalGroupId'] = terminal_group
+        if pickup_area and getattr(pickup_area, 'terminal_group', None):
+            data['terminalGroupId'] = pickup_area.terminal_group
+        elif integration and getattr(integration, 'terminal_group', None):
+            data['terminalGroupId'] = integration.terminal_group
         else:
-            try:
-                terminal_group = Integrations.objects.get(name='iiko').terminal_group
-                data['terminalGroupId'] = terminal_group
-
-            except Exception as e:
-                logger.warning(f"Failed to get terminal group: {e}")
-
+            logger.warning("No iiko terminal_group configured")
 
         # Отправляем запрос
         response = requests.post(url, json=data, headers=headers)
@@ -847,17 +906,22 @@ def create_iiko_table(order, attempt=1, pickup_area=None):
 
 def check_order_status(order_id, pickup_area=None):
     """Проверка статуса заказа в iiko."""
-    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
-    url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
-    # url = 'https://api-ru.iiko.services/api/1/order/by_id'
-
-    headers = {"Authorization": f"Bearer {token(api_key)}"}
-
-
-    if pickup_area and pickup_area.organization_id:
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for check_order_status")
+        return None
+    integration = get_iiko_integration()
+    if pickup_area and getattr(pickup_area, 'organization_id', None):
         org_id = pickup_area.organization_id
+    elif integration:
+        org_id = getattr(integration, 'organization_id', None)
     else:
-        org_id = Integrations.objects.get(name='iiko').organization_id
+        org_id = None
+    if not org_id:
+        logger.error("No iiko organization_id for check_order_status")
+        return None
+    url = 'https://api-ru.iiko.services/api/1/deliveries/by_id'
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
 
     data = {
         "organizationId": org_id,
@@ -878,17 +942,22 @@ def check_order_status(order_id, pickup_area=None):
 
 def check_order_table_status(order_id, pickup_area=None):
     """Проверка статуса заказа в iiko."""
-    api_key = pickup_area.api_key if pickup_area and pickup_area.api_key else Integrations.objects.get(name='iiko').api_key
-   
-    url = 'https://api-ru.iiko.services/api/1/order/by_id'
-
-    headers = {"Authorization": f"Bearer {token(api_key)}"}
-
-
-    if pickup_area and pickup_area.organization_id:
+    api_key = get_iiko_api_key(pickup_area)
+    if not api_key:
+        logger.error("No iiko api_key for check_order_table_status")
+        return None
+    integration = get_iiko_integration()
+    if pickup_area and getattr(pickup_area, 'organization_id', None):
         org_id = pickup_area.organization_id
+    elif integration:
+        org_id = getattr(integration, 'organization_id', None)
     else:
-        org_id = Integrations.objects.get(name='iiko').organization_id
+        org_id = None
+    if not org_id:
+        logger.error("No iiko organization_id for check_order_table_status")
+        return None
+    url = 'https://api-ru.iiko.services/api/1/order/by_id'
+    headers = {"Authorization": f"Bearer {token(api_key)}"}
 
     data = {
         "organizationIds": [org_id],

@@ -168,7 +168,7 @@
 
    
     {% if request.path != '/accounts/login/' %}
-    {% include 'global/popup.html' %}
+    {% comment %} {% include 'global/popup.html' %} {% endcomment %}
     {% include 'global/minimum_bar.html' %}
     {% include 'global/map.html' %}
     {% include 'global/blocked.html' %}

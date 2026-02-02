@@ -211,7 +211,7 @@
     
 
     {% if request.path != '/accounts/login/' %}
-    {% include 'components/popup.html' %}
+    {% comment %} {% include 'components/popup.html' %} {% endcomment %}
     {% comment %} {% include 'components/minimum_bar.html' %} {% endcomment %}
     {% include 'components/map.html' %}
     {% include 'components/blocked.html' %}
