@@ -149,9 +149,9 @@ def order_create(request):
                     
             #         loyalty_card.save()
 
-            order_conmment = json_order['order_conmment']
+            order_conmment = json_order.get('order_conmment', '') or ''
 
-            order_actions = json_order['actions']
+            order_actions = json_order.get('actions') or []
 
             if order_actions:
                 action_str = "Товары в подарок: "
