@@ -43,14 +43,16 @@ import re
 
 def escape_markdown(text):
     """
-    Экранирует специальные символы Markdown для Telegram.
+    Экранирует только символы разметки Telegram Markdown v1:
+    * _ ` [ ] ( ) — чтобы не ломать жирный/курсив/ссылки.
+    Остальные символы (точка, минус, плюс и т.д.) не трогаем.
     """
     if text is None:
         return ''
     s = str(text).strip()
     if not s:
         return ''
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    escape_chars = r'_*`[]()'
     return re.sub(r'([' + re.escape(escape_chars) + r'])', r'\\\1', s)
 
 

@@ -1667,6 +1667,9 @@ $(document).on('click','.order__closer, .order__owerlay',function(e){
 
 $(document).on('click','.show-map',function(e){
     $('#setup-address').css('display', 'flex');
+    if (typeof window.restoreSavedAddressOnMap === 'function') {
+        window.restoreSavedAddressOnMap();
+    }
 })
 
 
@@ -4454,6 +4457,17 @@ function init() {
         $(document).on('click touchend', '.ymaps-2-1-79-suggest-item', () => {
             $('#finaladress').val(suggestElement.val());
         });
+        window.restoreSavedAddressOnMap = function () {
+            try {
+                const order = JSON.parse(localStorage.getItem('order') || '{}');
+                const address = order.address || '';
+                if (!address || typeof address !== 'string') return;
+                $('#suggest').val(address);
+                $('#finaladress').val(address);
+            } catch (e) {
+                console.error('Ошибка восстановления адреса:', e);
+            }
+        };
     } else {
         $(document).on('keyup', '#suggest', () => {
             suggestElement.css('border-color', 'red');
@@ -4472,24 +4486,102 @@ function init() {
                 geocode();
                 getZones();
             });
+
+            /**
+             * Восстанавливает сохранённый адрес из localStorage при открытии модального окна карты:
+             * заполняет поле адреса и центрирует карту по координатам адреса.
+             * Вызывается при клике на .show-map.
+             */
+            function restoreSavedAddressOnMap() {
+                try {
+                    const order = JSON.parse(localStorage.getItem('order') || '{}');
+                    const address = order.address || '';
+                    if (!address || typeof address !== 'string') return;
+
+                    suggestElement.val(address);
+                    $('#finaladress').val(address);
+                    suggestElement.removeClass('suggest-error').css('border-color', '');
+
+                    if (myMap) {
+                        getZones(() => {
+                            geocode();
+                        });
+                    }
+                } catch (e) {
+                    console.error('Ошибка восстановления адреса на карте:', e);
+                }
+            }
+            window.restoreSavedAddressOnMap = restoreSavedAddressOnMap;
         });
     }
 
-    function getZones() {
+    function getZones(callback) {
+        // Очищаем существующие полигоны перед загрузкой новых
+        if (myMap && myMap.geoObjects) {
+            myMap.geoObjects.each(item => {
+                if (item.geometry && item.geometry.getType() === "Polygon") {
+                    myMap.geoObjects.remove(item);
+                }
+            });
+        }
+
+        if (!flickerAPI) {
+            console.error("URL файла зон доставки не указан");
+            if (typeof callback === 'function') callback();
+            return;
+        }
+
         $.getJSON(flickerAPI, { tags: "mount rainier", tagmode: "any", format: "json" })
             .done(data => {
-                data.deliverys.forEach(val => {
-                    // Проверка наличия значений, которые важны для зоны
+                // Проверка валидности структуры данных
+                if (!data || typeof data !== 'object') {
+                    console.error("Некорректная структура данных файла зон доставки");
+                    if (typeof callback === 'function') callback();
+                    return;
+                }
+
+                if (!Array.isArray(data.deliverys)) {
+                    console.error("Поле 'deliverys' отсутствует или не является массивом");
+                    if (typeof callback === 'function') callback();
+                    return;
+                }
+
+                if (data.deliverys.length === 0) {
+                    console.warn("Файл зон доставки не содержит зон");
+                    if (typeof callback === 'function') callback();
+                    return;
+                }
+
+                // Обработка каждой зоны доставки
+                data.deliverys.forEach((val, index) => {
+                    // Проверка наличия координат
                     if (!val.coords) {
-                        console.warn("Отсутствуют координаты для зоны:", val);
+                        console.warn(`Отсутствуют координаты для зоны ${index + 1}:`, val);
+                        return;
+                    }
+
+                    // Проверка валидности координат (должен быть массив массивов)
+                    if (!Array.isArray(val.coords) || val.coords.length === 0) {
+                        console.warn(`Некорректные координаты для зоны ${index + 1}:`, val.coords);
+                        return;
+                    }
+
+                    // Проверка формата координат (каждая координата должна быть массивом из 2 элементов)
+                    const isValidCoords = val.coords.every(coord => 
+                        Array.isArray(coord) && coord.length === 2 && 
+                        typeof coord[0] === 'string' && typeof coord[1] === 'string'
+                    );
+
+                    if (!isValidCoords) {
+                        console.warn(`Некорректный формат координат для зоны ${index + 1}`);
                         return;
                     }
     
                     // Создаем объект с параметрами стиля полигона для каждого отдельного полигона
                     const areaStyleOptions = {
-                        fillColor: val.fillColor || '#00FF00', // Устанавливаем цвет заливки или значение по умолчанию
-                        strokeColor: val.strokeColor || '#0000FF', // Устанавливаем цвет границы или значение по умолчанию
-                        opacity: val.opacity || 0.5 // Устанавливаем прозрачность или значение по умолчанию
+                        fillColor: val.fillColor || '#00FF00',
+                        strokeColor: val.strokeColor || '#0000FF',
+                        opacity: val.opacity !== undefined ? parseFloat(val.opacity) : 0.5
                     };
     
                     // Создаем объект с информацией, отображаемой в балуне
@@ -4501,16 +4593,24 @@ function init() {
                         balloonContentBody: val.balloonContentBody || 'Стоимость доставки не указана'
                     };
     
-                    // Логируем, чтобы убедиться в наличии необходимых данных
-                    // console.log("Создание зоны с параметрами:", areaOptions);
-    
-                    // Создаем новый полигон с индивидуальными параметрами стиля
-                    const freeArea = new ymaps.Polygon([val.coords], areaOptions, areaStyleOptions);
-                    myMap.geoObjects.add(freeArea);
+                    try {
+                        // Создаем новый полигон с индивидуальными параметрами стиля
+                        const freeArea = new ymaps.Polygon([val.coords], areaOptions, areaStyleOptions);
+                        myMap.geoObjects.add(freeArea);
+                    } catch (error) {
+                        console.error(`Ошибка создания полигона для зоны ${index + 1}:`, error, val);
+                    }
                 });
+                if (typeof callback === 'function') callback();
             })
-            .fail(() => {
-                console.error("Ошибка загрузки данных для зон доставки. Проверьте ссылку на API или данные.");
+            .fail((jqXHR, textStatus, errorThrown) => {
+                console.error("Ошибка загрузки данных для зон доставки:", {
+                    status: jqXHR.status,
+                    statusText: textStatus,
+                    error: errorThrown,
+                    url: flickerAPI
+                });
+                if (typeof callback === 'function') callback();
             });
     }
     
@@ -4521,7 +4621,14 @@ function init() {
     }
 
     function geocode() {
-        myMap.geoObjects.removeAll();
+        // Удаляем только маркер (точку «Я тут»), не трогая полигоны зон доставки
+        if (myMap && myMap.geoObjects) {
+            myMap.geoObjects.each(item => {
+                if (item.geometry && item.geometry.getType() === 'Point') {
+                    myMap.geoObjects.remove(item);
+                }
+            });
+        }
         const request = suggestElement.val();
 
         ymaps.geocode(request).then(res => {
@@ -4594,138 +4701,391 @@ function init() {
         }
     }
 
-    function processDelivery(item) {
-    // Извлечение информации о стоимости доставки
-    const deliveryPriceText = item.properties._data.balloonContentBody;
+    /**
+     * Извлекает стоимость доставки из balloonContentBody
+     * Форматы: "Стоимость доставки - X рублей", "Стоимость доставки", "0 (рассчитывается службой доставки)"
+     */
+    function parseDeliveryPrice(balloonContentBody) {
+        if (!balloonContentBody || typeof balloonContentBody !== 'string') {
+            return 0;
+        }
 
-    let sd = 0; // Стоимость доставки по умолчанию
-    if (typeof deliveryPriceText === 'string') {
-        const priceMatch = deliveryPriceText.match(/\d+/);
+        // Если содержит "рассчитывается службой доставки", возвращаем 0
+        if (balloonContentBody.includes('рассчитывается службой доставки')) {
+            return 0;
+        }
+
+        // Ищем число перед словом "рублей" или "руб"
+        const priceMatch = balloonContentBody.match(/(\d+)\s*(?:рублей|руб)/i);
         if (priceMatch) {
-            sd = parseInt(priceMatch[0]);
-        } else {
-            console.warn("Не удалось извлечь стоимость доставки из balloonContentBody.");
+            const price = parseInt(priceMatch[1], 10);
+            return isNaN(price) ? 0 : price;
         }
-    } else {
-        console.warn("balloonContentBody отсутствует или не является строкой.");
+
+        // Если просто "Стоимость доставки" без числа, возвращаем 0
+        if (balloonContentBody.trim() === 'Стоимость доставки') {
+            return 0;
+        }
+
+        // Пытаемся найти любое число в строке как последний вариант
+        const fallbackMatch = balloonContentBody.match(/\d+/);
+        if (fallbackMatch) {
+            const price = parseInt(fallbackMatch[0], 10);
+            return isNaN(price) ? 0 : price;
+        }
+
+        return 0;
     }
 
-    // Извлечение информации о бесплатной доставке
-    const deliveryFreeText = item.properties._data.balloonContentFooter;
-    let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
-    let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
+    /**
+     * Извлекает данные о бесплатной доставке и минимальной сумме из balloonContentFooter
+     * Возвращает объект { freeDelivery: number, minDelivery: number }
+     * 
+     * Поддерживаемые форматы:
+     * - "0 рублей" - бесплатная доставка
+     * - "Бесплатная доставка от - X рублей, минимальная сумма для заказа - Y рублей"
+     * - "Бесплатная доставка - НЕТ, минимальная сумма для заказа - X рублей"
+     * - "Бесплатная доставка от - X рублей"
+     * - "Бесплатная доставка - НЕТ"
+     */
+    function parseDeliveryFooter(balloonContentFooter) {
+        const result = {
+            freeDelivery: 999999, // Значение по умолчанию для отсутствующей бесплатной доставки
+            minDelivery: 0        // Значение по умолчанию для минимальной суммы заказа
+        };
 
-    if (typeof deliveryFreeText === 'string') {
-        // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
-        if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
-            const matches = deliveryFreeText.match(/\d+/g);
-            if (matches && matches.length > 0) {
-                minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
-            } else {
-                console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
-            }
-        } else {
-            // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
-            const matches = deliveryFreeText.match(/\d+/g);
-            if (matches && matches.length > 0) {
-                fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
-                if (matches.length > 1) {
-                    minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
+        if (!balloonContentFooter || typeof balloonContentFooter !== 'string') {
+            return result;
+        }
+
+        // Нормализуем текст: убираем лишние пробелы, переносы строк, табуляции
+        const text = balloonContentFooter.replace(/\s+/g, ' ').trim();
+
+        // Случай 1: "0 рублей" или "0 руб" - бесплатная доставка
+        const zeroMatch = text.match(/^0\s*(?:рублей|руб)/i);
+        if (zeroMatch) {
+            result.freeDelivery = 0;
+            result.minDelivery = 0;
+            return result;
+        }
+
+        // Случай 2: "Бесплатная доставка от - X рублей, минимальная сумма для заказа - Y рублей"
+        // Или: "Бесплатная доставка от - X рублей" (без минимальной суммы)
+        if (text.includes('Бесплатная доставка от')) {
+            // Извлекаем порог бесплатной доставки
+            // Паттерн: "Бесплатная доставка от" + возможные пробелы/дефисы/запятые + число
+            // Примеры: "Бесплатная доставка от - 500 рублей" или "Бесплатная доставка от - 500 рублей,"
+            const freeMatch = text.match(/Бесплатная\s+доставка\s+от[^\d]*?(\d+)/i);
+            if (freeMatch && freeMatch[1]) {
+                const freeValue = parseInt(freeMatch[1], 10);
+                if (!isNaN(freeValue) && freeValue >= 0) {
+                    result.freeDelivery = freeValue;
                 }
-            } else {
-                console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
+            }
+
+            // Извлекаем минимальную сумму заказа (может быть, а может и не быть)
+            // Паттерн: "минимальная сумма" + возможные слова/пробелы/дефисы + число
+            // Примеры: "минимальная сумма для заказа - 1000 рублей" или "минимальная сумма - 1000"
+            const minMatch = text.match(/минимальная\s+сумма[^\d]*?(\d+)/i);
+            if (minMatch && minMatch[1]) {
+                const minValue = parseInt(minMatch[1], 10);
+                if (!isNaN(minValue) && minValue >= 0) {
+                    result.minDelivery = minValue;
+                }
+            }
+            
+            return result;
+        }
+
+        // Случай 3: "Бесплатная доставка - НЕТ, минимальная сумма для заказа - X рублей"
+        // Или: "Бесплатная доставка - НЕТ" (без минимальной суммы)
+        // Обрабатываем различные варианты написания: с пробелами, без пробелов, с дефисами
+        if (text.includes('Бесплатная доставка') && (text.includes('НЕТ') || text.includes('нет'))) {
+            result.freeDelivery = 999999;
+            
+            // Извлекаем минимальную сумму заказа (может быть, а может и не быть)
+            // Паттерн: "минимальная сумма" + возможные слова/пробелы/дефисы + число
+            const minMatch = text.match(/минимальная\s+сумма[^\d]*?(\d+)/i);
+            if (minMatch && minMatch[1]) {
+                const minValue = parseInt(minMatch[1], 10);
+                if (!isNaN(minValue) && minValue >= 0) {
+                    result.minDelivery = minValue;
+                }
+            }
+            
+            return result;
+        }
+
+        // Fallback: пытаемся найти любые числа в тексте как последний вариант
+        // Это может помочь, если формат немного отличается
+        const allNumbers = text.match(/\d+/g);
+        if (allNumbers && allNumbers.length > 0) {
+            // Если найдено только одно число, считаем его минимальной суммой
+            if (allNumbers.length === 1) {
+                const value = parseInt(allNumbers[0], 10);
+                if (!isNaN(value) && value >= 0) {
+                    result.minDelivery = value;
+                }
+            }
+            // Если найдено два числа, первое - порог бесплатной доставки, второе - минимальная сумма
+            else if (allNumbers.length >= 2) {
+                const firstValue = parseInt(allNumbers[0], 10);
+                const secondValue = parseInt(allNumbers[1], 10);
+                if (!isNaN(firstValue) && firstValue >= 0) {
+                    result.freeDelivery = firstValue;
+                }
+                if (!isNaN(secondValue) && secondValue >= 0) {
+                    result.minDelivery = secondValue;
+                }
             }
         }
-    } else {
-        console.warn("balloonContentFooter отсутствует или не является строкой.");
+
+        return result;
     }
 
-    // Обновление данных в localStorage
-    const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
-    const order = JSON.parse(localStorage.getItem('order')) || {};
+    function processDelivery(item) {
+        // Проверка наличия необходимых данных
+        if (!item || !item.properties || !item.properties._data) {
+            console.error("Некорректные данные полигона доставки");
+            return;
+        }
 
-    data.price_delivery = sd;       // Установка стоимости доставки
-    data.free_delivery = fd;        // Установка порога для бесплатной доставки
-    data.min_delivery = minDelivery; // Установка минимальной суммы для заказа
+        const props = item.properties._data;
+        const deliveryPriceText = props.balloonContentBody;
+        const deliveryFreeText = props.balloonContentFooter;
 
-    order.address = suggestElement.val();
-    order.delivery_price = sd;
+        // Извлечение стоимости доставки
+        const sd = parseDeliveryPrice(deliveryPriceText);
 
-    // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
-    suggestElement.attr('data-min', minDelivery);
+        // Извлечение данных о бесплатной доставке и минимальной сумме
+        const deliveryData = parseDeliveryFooter(deliveryFreeText);
+        const fd = deliveryData.freeDelivery;
+        const minDelivery = deliveryData.minDelivery;
 
-    localStorage.setItem('deliveryPrice', JSON.stringify(data));
-    localStorage.setItem('order', JSON.stringify(order));
+        // Логирование для отладки (можно убрать после проверки)
+        console.log("Данные зоны доставки:", {
+            balloonContentBody: deliveryPriceText,
+            balloonContentFooter: deliveryFreeText,
+            parsedPrice: sd,
+            parsedFreeDelivery: fd,
+            parsedMinDelivery: minDelivery
+        });
 
-    deliveryUpdate();
-    $('.show-map').removeClass('order__input--error');
-}
+        // Валидация данных перед сохранением
+        // free_delivery: 0 = бесплатная доставка всегда, > 0 = порог для бесплатной доставки, 999999 = нет бесплатной доставки
+        const validatedData = {
+            price_delivery: (typeof sd === 'number' && !isNaN(sd) && sd >= 0) ? sd : 0,
+            free_delivery: (typeof fd === 'number' && !isNaN(fd) && fd >= 0) ? fd : 999999,
+            min_delivery: (typeof minDelivery === 'number' && !isNaN(minDelivery) && minDelivery >= 0) ? minDelivery : 0
+        };
+
+        // Дополнительная проверка: если free_delivery = 0, это означает бесплатную доставку всегда
+        // Если free_delivery = 999999, это означает отсутствие бесплатной доставки
+        // Все остальные значения > 0 - это порог для бесплатной доставки
+
+        // Обновление данных в localStorage
+        let data;
+        try {
+            const storedData = localStorage.getItem('deliveryPrice');
+            data = storedData ? JSON.parse(storedData) : {};
+        } catch (e) {
+            console.error("Ошибка чтения deliveryPrice из localStorage:", e);
+            data = {};
+        }
+
+        let order;
+        try {
+            const storedOrder = localStorage.getItem('order');
+            order = storedOrder ? JSON.parse(storedOrder) : {};
+        } catch (e) {
+            console.error("Ошибка чтения order из localStorage:", e);
+            order = {};
+        }
+
+        // Обновление данных
+        Object.assign(data, validatedData);
+        order.address = suggestElement.val() || '';
+        order.delivery_price = validatedData.price_delivery;
+
+        // Сохранение в localStorage
+        try {
+            localStorage.setItem('deliveryPrice', JSON.stringify(data));
+            localStorage.setItem('order', JSON.stringify(order));
+        } catch (e) {
+            console.error("Ошибка сохранения в localStorage:", e);
+            return;
+        }
+
+        // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
+        suggestElement.attr('data-min', validatedData.min_delivery);
+
+        deliveryUpdate();
+        $('.show-map').removeClass('order__input--error');
+    }
 
     
     
 
     function processThirdPartyDelivery(item) {
+        // Проверка наличия необходимых данных
+        if (!item || !item.properties || !item.properties._data) {
+            console.error("Некорректные данные полигона доставки");
+            return;
+        }
+
         const dataDel = {
-            dotaddress: suggestElement.val(),
+            dotaddress: suggestElement.val() || '',
             csrfmiddlewaretoken: csrf
         };
     
         $.post("/delivery/check_price/", dataDel)
             .done(response => {
-                const price = parseInt(response.price);
+                // Логирование для отладки (можно убрать после отладки)
+                console.log("Ответ сервера при проверке цены доставки:", response);
+
+                // Обработка случая, когда ответ может быть строкой
+                let responseData = response;
+                if (typeof response === 'string') {
+                    try {
+                        responseData = JSON.parse(response);
+                    } catch (e) {
+                        console.error("Ошибка парсинга JSON ответа от сервера:", e, response);
+                        return;
+                    }
+                }
+
+                // Проверка на наличие ошибки в ответе
+                if (responseData && responseData.error) {
+                    console.error("Ошибка от сервера доставки:", responseData.error);
+                    return;
+                }
+
+                // Проверка валидности ответа
+                if (!responseData || typeof responseData !== 'object') {
+                    console.error("Некорректный формат ответа от сервера:", responseData);
+                    return;
+                }
+
+                // Извлечение цены из различных возможных полей ответа
+                let priceValue = null;
+                
+                // Проверяем различные возможные поля с ценой
+                if (responseData.price !== undefined) {
+                    priceValue = responseData.price;
+                } else if (responseData.price_delivery !== undefined) {
+                    priceValue = responseData.price_delivery;
+                } else if (responseData.price_info && typeof responseData.price_info === 'object') {
+                    // Возможно цена вложена в объект price_info
+                    priceValue = responseData.price_info.price || responseData.price_info.total_price;
+                } else if (responseData.currency_rules && Array.isArray(responseData.currency_rules) && responseData.currency_rules.length > 0) {
+                    // Возможно цена в массиве currency_rules
+                    priceValue = responseData.currency_rules[0].price;
+                }
+
+                // Если цена не найдена, выводим предупреждение
+                if (priceValue === null || priceValue === undefined) {
+                    console.warn("Поле с ценой не найдено в ответе сервера. Структура ответа:", responseData);
+                    // Пытаемся найти любое числовое значение как fallback
+                    const allNumbers = JSON.stringify(responseData).match(/"price":\s*(\d+)/i);
+                    if (allNumbers && allNumbers[1]) {
+                        priceValue = allNumbers[1];
+                        console.warn("Использовано значение цены из fallback:", priceValue);
+                    } else {
+                        console.error("Не удалось извлечь цену доставки из ответа сервера");
+                        return;
+                    }
+                }
+
+                // Преобразование цены в число
+                const price = typeof priceValue === 'number' ? priceValue : parseInt(priceValue, 10);
+                
+                if (isNaN(price) || price < 0) {
+                    console.error("Некорректная цена доставки в ответе сервера:", priceValue, "тип:", typeof priceValue);
+                    return;
+                }
+
                 updateLocalStorage(price, item);
                 deliveryUpdate();
                 $('.show-map').removeClass('order__input--error');
+            })
+            .fail((jqXHR, textStatus, errorThrown) => {
+                console.error("Ошибка при проверке цены доставки:", {
+                    status: jqXHR.status,
+                    statusText: textStatus,
+                    error: errorThrown,
+                    responseText: jqXHR.responseText
+                });
             });
     }
     
     function updateLocalStorage(price, item) {
-        const deliveryFreeText = item.properties._data.balloonContentFooter;
-        
-        let fd = 999999; // Значение по умолчанию для отсутствующей бесплатной доставки
-        let minDelivery = 0; // Значение по умолчанию для минимальной суммы заказа для доставки
-    
-        if (typeof deliveryFreeText === 'string') {
-            // Проверка на наличие фразы "Бесплатная доставка - НЕТ"
-            if (deliveryFreeText.includes("Бесплатная доставка - НЕТ")) {
-                const matches = deliveryFreeText.match(/\d+/g);
-                if (matches && matches.length > 0) {
-                    minDelivery = parseInt(matches[0]); // Устанавливаем minDelivery из первого числа
-                } else {
-                    console.warn("Не удалось извлечь минимальную сумму заказа из balloonContentFooter.");
-                }
-            } else {
-                // Извлечение числовых значений для порога бесплатной доставки и минимальной суммы заказа
-                const matches = deliveryFreeText.match(/\d+/g);
-                if (matches && matches.length > 0) {
-                    fd = parseInt(matches[0]); // Устанавливаем порог для бесплатной доставки
-                    if (matches.length > 1) {
-                        minDelivery = parseInt(matches[1]); // Устанавливаем минимальную сумму заказа для доставки
-                    }
-                } else {
-                    console.warn("Не удалось извлечь информацию о бесплатной доставке из balloonContentFooter.");
-                }
-            }
-        } else {
-            console.warn("balloonContentFooter отсутствует или не является строкой.");
+        // Проверка наличия необходимых данных
+        if (!item || !item.properties || !item.properties._data) {
+            console.error("Некорректные данные полигона доставки");
+            return;
         }
-    
-        const data = JSON.parse(localStorage.getItem('deliveryPrice')) || {};
-        const order = JSON.parse(localStorage.getItem('order')) || {};
-    
-        data.price_delivery = price;       // Устанавливаем стоимость доставки
-        data.free_delivery = fd;           // Устанавливаем порог для бесплатной доставки
-        data.min_delivery = minDelivery;   // Устанавливаем минимальную сумму для заказа
-    
-        order.address = suggestElement.val();
-        order.delivery_price = price;
-    
+
+        const props = item.properties._data;
+        const deliveryFreeText = props.balloonContentFooter;
+
+        // Извлечение данных о бесплатной доставке и минимальной сумме
+        const deliveryData = parseDeliveryFooter(deliveryFreeText);
+        const fd = deliveryData.freeDelivery;
+        const minDelivery = deliveryData.minDelivery;
+
+        // Логирование для отладки (можно убрать после проверки)
+        console.log("Данные зоны доставки (сторонняя доставка):", {
+            balloonContentFooter: deliveryFreeText,
+            parsedFreeDelivery: fd,
+            parsedMinDelivery: minDelivery,
+            priceFromServer: price
+        });
+
+        // Валидация данных перед сохранением
+        // free_delivery: 0 = бесплатная доставка всегда, > 0 = порог для бесплатной доставки, 999999 = нет бесплатной доставки
+        const validatedPrice = (typeof price === 'number' && !isNaN(price) && price >= 0) ? price : 0;
+        const validatedData = {
+            price_delivery: validatedPrice,
+            free_delivery: (typeof fd === 'number' && !isNaN(fd) && fd >= 0) ? fd : 999999,
+            min_delivery: (typeof minDelivery === 'number' && !isNaN(minDelivery) && minDelivery >= 0) ? minDelivery : 0
+        };
+
+        // Чтение данных из localStorage с обработкой ошибок
+        let data;
+        try {
+            const storedData = localStorage.getItem('deliveryPrice');
+            data = storedData ? JSON.parse(storedData) : {};
+        } catch (e) {
+            console.error("Ошибка чтения deliveryPrice из localStorage:", e);
+            data = {};
+        }
+
+        let order;
+        try {
+            const storedOrder = localStorage.getItem('order');
+            order = storedOrder ? JSON.parse(storedOrder) : {};
+        } catch (e) {
+            console.error("Ошибка чтения order из localStorage:", e);
+            order = {};
+        }
+
+        // Обновление данных
+        Object.assign(data, validatedData);
+        order.address = suggestElement.val() || '';
+        order.delivery_price = validatedData.price_delivery;
+
+        // Сохранение в localStorage с обработкой ошибок
+        try {
+            localStorage.setItem('deliveryPrice', JSON.stringify(data));
+            localStorage.setItem('order', JSON.stringify(order));
+        } catch (e) {
+            console.error("Ошибка сохранения в localStorage:", e);
+            return;
+        }
+
         // Устанавливаем атрибут `data-min` для отображения минимальной суммы в интерфейсе
-        suggestElement.attr('data-min', minDelivery);
-    
-        localStorage.setItem('deliveryPrice', JSON.stringify(data));
-        localStorage.setItem('order', JSON.stringify(order));
-    
+        suggestElement.attr('data-min', validatedData.min_delivery);
+
         deliveryUpdate();
         $('.show-map').removeClass('order__input--error');
     }
@@ -4988,5 +5348,3 @@ function clearAll() {
 }
 
 // clearAll()
-
-
