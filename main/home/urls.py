@@ -2,7 +2,6 @@
 from django.urls import path
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import *
-from setup.models import BaseSettings
 from . import views
 
 sitemaps = {
@@ -27,13 +26,9 @@ urlpatterns = [
 ]
 
 
-try:
-    sms = BaseSettings.objects.get().sms
-except:
-    sms = ''
+# Всегда регистрируем: шаблоны ссылаются на home_login / home_logout;
+# сами view не завязаны на SMS (раньше пути открывались только при sms в BaseSettings).
+urlpatterns.append(path('login/', views.home_login, name='home_login'))
+urlpatterns.append(path('logout/', views.home_logout, name='home_logout'))
 
-if sms:
-    urlpatterns.append(path('login/', views.home_login, name='home_login')) 
-    urlpatterns.append(path('logout/', views.home_logout, name='home_logout')) 
-
-urlpatterns.append(path('<slug:slug>/', views.page_detail, name='page_detail')) 
+urlpatterns.append(path('<slug:slug>/', views.page_detail, name='page_detail'))
