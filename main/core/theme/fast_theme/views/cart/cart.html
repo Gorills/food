@@ -466,7 +466,13 @@
                         <div class="form__acceptance">
                             <label>
                                 <input type="checkbox" class="required_checkbox" name="pd_consent" value="1">
-                                <span>Я согласен с <a href="{% url "privacy" %}" target="_blank">обработкой персональных данных</a> *</span>
+                                <span>Я согласен с <a href="{% url "consent" %}" target="_blank">обработкой персональных данных</a> *</span>
+                            </label>
+                        </div>
+                        <div class="form__acceptance">
+                            <label>
+                                <input type="checkbox" class="required_checkbox" name="policy_consent" value="1">
+                                <span>Я согласен с <a href="{% url "privacy" %}" target="_blank">политикой в отношении обработки персональных данных</a> *</span>
                             </label>
                         </div>
                         

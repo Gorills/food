@@ -4395,7 +4395,8 @@ function getCookieConsentConfig() {
 
 function buildCookieBannerHtml() {
     var cfg = getCookieConsentConfig();
-    var u = cfg.privacyUrl;
+    var consentHref = cfg.consentUrl;
+    var privacyHref = cfg.privacyUrl;
     var esc = cookieConsentEscapeHtml;
     var op = (cfg.operator || '').trim();
     var inn = (cfg.inn || '').trim();
@@ -4407,13 +4408,13 @@ function buildCookieBannerHtml() {
         if (inn) {
             who += ' (ИНН ' + esc(inn) + ')';
         }
-        html += ' Продолжая использовать сайт, Вы даёте ' + who + ' <a href="' + u + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
+        html += ' Продолжая использовать сайт, Вы даёте ' + who + ' <a href="' + consentHref + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
     } else {
-        html += ' Продолжая использовать сайт, Вы даёте <a href="' + u + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
+        html += ' Продолжая использовать сайт, Вы даёте <a href="' + consentHref + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
     }
 
     html += ' Если Вы не хотите, чтобы Ваши данные обрабатывались, просим отключить обработку файлов cookies и сбор пользовательских данных в настройках Вашего браузера или покинуть сайт.';
-    html += ' Нажимая «Принять», я согласен с <a href="' + u + '">обработкой персональных данных</a>.';
+    html += ' Нажимая «Принять», я согласен с <a href="' + privacyHref + '">обработкой персональных данных</a>.';
 
     return '<div class="cookies"><div class="cookies__text">' + html + '</div><a href="#" class="cookies__button">Принять</a></div>';
 }

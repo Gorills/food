@@ -354,23 +354,30 @@ from urllib.parse import unquote
 import idna
 
 
+def _privacy_page_context(request):
+    """
+    Для IDNA нужно имя хоста без порта: HTTP_HOST вида 127.0.0.1:8000 ломает
+    idna.decode() (InvalidCodepoint на ':'). URL сайта собираем с полным host:port.
+    """
+    host_header = (request.META.get('HTTP_HOST') or '').strip()
+    host_only = host_header
+    if host_header.startswith('['):
+        end = host_header.find(']')
+        if end != -1:
+            host_only = host_header[1:end]
+    elif ':' in host_header and host_header.count(':') == 1:
+        host_only = host_header.split(':', 1)[0]
+    try:
+        decoded_domain = idna.decode(host_only)
+    except Exception:
+        decoded_domain = host_only
+    site = f'{get_protocol(request)}://{host_header}'
+    privacy_email = f'privacy@{decoded_domain}'
+    return {'site': site, 'privacy_email': privacy_email}
 
 
 def privacy(request):
-
-    domain = f'{request.META["HTTP_HOST"]}'
-
-    decoded_domain = idna.decode(domain)
-
-    site = f'{get_protocol(request)}://{decoded_domain}'
-    privacy_email = f'privacy@{decoded_domain}'
-
-    context = {
-        'site': site,
-        'privacy_email': privacy_email,
-    }
-
-    return render(request, 'home/privacy.html', context)
+    return render(request, 'home/privacy.html', _privacy_page_context(request))
 
 
 
@@ -381,39 +388,8 @@ def info(request):
 
 
 def user_agreement(request):
-
-    domain = f'{request.META["HTTP_HOST"]}'
-    try:
-        decoded_domain = idna.decode(domain)
-    except:
-        decoded_domain = domain
-
-    site = f'{get_protocol(request)}://{decoded_domain}'
-    privacy_email = f'privacy@{decoded_domain}'
-
-    context = {
-        'site': site,
-        'privacy_email': privacy_email,
-    }
-
-
-    return render(request, 'home/user_agreement.html', context)
+    return render(request, 'home/user_agreement.html', _privacy_page_context(request))
 
 
 def consent(request):
-
-    domain = f'{request.META["HTTP_HOST"]}'
-    try:
-        decoded_domain = idna.decode(domain)
-    except:
-        decoded_domain = domain
-
-    site = f'{get_protocol(request)}://{decoded_domain}'
-    privacy_email = f'privacy@{decoded_domain}'
-
-    context = {
-        'site': site,
-        'privacy_email': privacy_email,
-    }
-
-    return render(request, 'home/consent.html', context)
+    return render(request, 'home/consent.html', _privacy_page_context(request))
