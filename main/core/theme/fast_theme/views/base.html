@@ -240,6 +240,13 @@
     
 
     {% endif %}
+
+    <div id="cookie-consent-config" hidden
+         data-privacy-url="{% url 'privacy' %}"
+         data-consent-url="{% url 'consent' %}"
+         data-operator="{{ setup.ur_name|default:setup.name|default:'' }}"
+         data-inn="{{ setup.inn|default:'' }}"
+    ></div>
     
     <div class="container">
         <div id="for-cookies">

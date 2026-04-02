@@ -533,7 +533,12 @@
                     
 
 
-                    <p class="cart__form-politic">Вы принимаете условия <a href="/politic/">пользовательского соглашения</a></p>
+                    <div class="form__acceptance cart__form-politic-wrap">
+                        <label>
+                            <input type="checkbox" class="required_checkbox" name="pd_consent" value="1">
+                            <span>Я согласен с <a href="{% url 'privacy' %}" target="_blank">обработкой персональных данных</a> *</span>
+                        </label>
+                    </div>
                     
         
                     

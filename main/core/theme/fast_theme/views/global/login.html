@@ -35,11 +35,16 @@
                
                 
             </div>
-            <p class="cart__form-politic">Указывая номер телефона, Вы принимаете условия <a href="{% url "privacy" %}">пользовательского соглашения</a></p>
+            <div class="form__acceptance user-login__pd-wrap">
+                <label>
+                    <input type="checkbox" class="user-login__pd-checkbox" name="pd_consent" value="1">
+                    <span>Я согласен с <a href="{% url 'privacy' %}" target="_blank">обработкой персональных данных</a> *</span>
+                </label>
+            </div>
             <div class="cart__form-success">
-                <label for="">
+                <label>
                     Согласие на смс-рассылки информационного и рекламного характера
-                    <input type="checkbox" class="cart__form-success-sms" name="sms" checked>
+                    <input type="checkbox" class="cart__form-success-sms" name="sms">
                 </label>
             </div>
 

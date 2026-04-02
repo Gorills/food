@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}Согласие на обработку персональных данных{% endblock %}
+{% block description %}Согласие на обработку персональных данных{% endblock %}
+{% block keywords %}Согласие, персональные данные{% endblock %}
+{% block canonical %}{% url "consent" %}{% endblock %}
+{% block og:title %}Согласие на обработку персональных данных{% endblock %}
+{% block og:description %}Согласие на обработку персональных данных{% endblock %}
+{% block og:url %}{% url "consent" %}{% endblock %}
+{% block twitter:title %}Согласие на обработку персональных данных{% endblock %}
+{% block twitter:description %}Согласие на обработку персональных данных{% endblock %}
+
+{% block og:image %}{% endblock %}
+{% block og:image:secure_url %}{% endblock %}
+{% block twitter:image %}{% endblock %}
+
+{% block body %}
+{% load static %}
+{% load theme_static %}
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="breadcrumbs__inner">
+            <ul class="breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{{ site }}" title="Главная" itemprop="item">
+                        <span itemprop="name">Главная</span>
+                        <meta itemprop="position" content="0">
+                    </a>
+                </li>
+                
+                <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a class="breadcrumbs__link" href="{% url "consent" %}" title="Согласие на обработку персональных данных" itemprop="item">
+                        <span itemprop="name">Согласие на обработку персональных данных</span>
+                        <meta itemprop="position" content="1">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="inputResult" style="padding: 40px 0;">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 style="margin-bottom: 30px; color: #444;">Согласие на обработку персональных данных</h1>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <p style="margin-bottom: 20px; line-height: 1.6; font-weight: bold;">
+                    Настоящим я, действуя своей волей и в своем интересе, при размещении (вводе) своих персональных данных на интернет-сайте <a href="{{ site }}">{{ site }}</a> (далее – Сайт), принадлежащем {{ setup.ur_name }} (далее – Оператор), подтверждаю свое согласие на обработку Оператором моих персональных данных на условиях и для целей, определенных в настоящем Согласии.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">1. ПЕРСОНАЛЬНЫЕ ДАННЫЕ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    1.1. Под персональными данными в настоящем Согласии понимается любая информация, относящаяся ко мне как к субъекту персональных данных, в том числе:
+                </p>
+                <ul style="padding-left: 40px; list-style-type: disc; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px; line-height: 1.6;">фамилия, имя, отчество;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">дата рождения;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">адрес электронной почты;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">номер телефона;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">адрес доставки товара;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">иные данные, предоставленные мной Оператору при использовании Сайта.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">2. ЦЕЛИ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    2.1. Оператор обрабатывает мои персональные данные в следующих целях:
+                </p>
+                <ul style="padding-left: 40px; list-style-type: disc; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px; line-height: 1.6;">обработка и доставка заказов;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">предоставление мне доступа к персонализированным ресурсам Сайта;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">установление со мной обратной связи, включая направление уведомлений, запросов, касающихся использования Сайта, оказания услуг, обработку запросов и заявок от меня;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">улучшение качества работы Сайта, удобства его использования, разработка новых сервисов и услуг;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">проведение статистических и иных исследований на основе обезличенных данных;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">информирование меня о новых товарах и услугах, специальных предложениях и различных событиях.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">3. СПОСОБЫ ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    3.1. Обработка моих персональных данных осуществляется Оператором с использованием средств автоматизации и без использования таких средств, включая сбор, запись, систематизацию, накопление, хранение, уточнение (обновление, изменение), извлечение, использование, передачу (распространение, предоставление, доступ), обезличивание, блокирование, удаление, уничтожение персональных данных.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">4. СРОК ДЕЙСТВИЯ СОГЛАСИЯ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.1. Настоящее Согласие действует с момента предоставления мной персональных данных на Сайте и до момента отзыва мной согласия на обработку персональных данных путем направления письменного уведомления Оператору по адресу электронной почты: <span class="link mark owner-email-field" data-scroll-to="#owner-email-field">{{ privacy_email }}</span>.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    4.2. Оператор прекращает обработку моих персональных данных в течение 30 (тридцати) дней с момента получения Оператором отзыва моего согласия на обработку персональных данных.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">5. ПРАВА СУБЪЕКТА ПЕРСОНАЛЬНЫХ ДАННЫХ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    5.1. Я понимаю и соглашаюсь с тем, что в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных» я имею право:
+                </p>
+                <ul style="padding-left: 40px; list-style-type: disc; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px; line-height: 1.6;">требовать уточнения моих персональных данных, их блокирования или уничтожения, если персональные данные являются неполными, устаревшими, неточными, незаконно полученными или не являются необходимыми для заявленной цели обработки;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">отозвать согласие на обработку персональных данных;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">требовать уведомления всех лиц, которым ранее были сообщены неточные или неполные мои персональные данные, обо всех произведенных в них изменениях, исключениях или дополнениях;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">обжаловать в уполномоченный орган по защите прав субъектов персональных данных или в судебном порядке неправомерные действия или бездействие Оператора при обработке моих персональных данных.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">6. ПЕРЕДАЧА ПЕРСОНАЛЬНЫХ ДАННЫХ ТРЕТЬИМ ЛИЦАМ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    6.1. Оператор вправе передавать мои персональные данные третьим лицам в следующих случаях:
+                </p>
+                <ul style="padding-left: 40px; list-style-type: disc; margin-bottom: 15px;">
+                    <li style="margin-bottom: 10px; line-height: 1.6;">я выразил свое согласие на такие действия;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">передача необходима для исполнения договора, стороной которого я являюсь;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">передача необходима для функционирования Сайта и предоставления мне услуг;</li>
+                    <li style="margin-bottom: 10px; line-height: 1.6;">передача предусмотрена российским или иным применимым законодательством в рамках установленной законодательством процедуры.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h2 style="font-size: 20px; margin-top: 30px; margin-bottom: 15px; color: #444;">7. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ</h2>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.1. Настоящее Согласие составлено в соответствии с требованиями Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных».
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.2. Я подтверждаю, что, размещая (вводя) свои персональные данные на Сайте, я действую своей волей и в своем интересе.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.3. Я подтверждаю, что ознакомился с <a href="{% url "privacy" %}" target="_blank">Политикой в отношении обработки персональных данных</a>, размещенной на Сайте, и согласен с ее условиями.
+                </p>
+                <p style="text-indent: 20px; margin-bottom: 15px; line-height: 1.6;">
+                    7.4. Настоящее Согласие может быть отозвано мной в любое время путем направления письменного уведомления Оператору по адресу электронной почты: <span class="link mark owner-email-field" data-scroll-to="#owner-email-field">{{ privacy_email }}</span>.
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <p style="margin-top: 30px; padding: 20px; background-color: #f5f5f5; border-radius: 5px; line-height: 1.6;">
+                    <strong>Примечание:</strong> Размещая (вводя) свои персональные данные на Сайте и оформляя заказ, я подтверждаю, что ознакомился с условиями настоящего Согласия и даю свое согласие на обработку персональных данных в соответствии с указанными условиями.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1216,6 +1216,14 @@ $(document).on('click', '.cart__input-phone-btn' ,function(e){
 // Регистрация
 $(document).on('click', '.user-login__btn' ,function(e){
 
+    var $pd = $('.user-login__pd-checkbox');
+    if ($pd.length && !$pd.is(':checked')) {
+        e.preventDefault();
+        $pd.closest('label').addClass('required_checkbox--error');
+        return false;
+    }
+    $pd.closest('label').removeClass('required_checkbox--error');
+
     var csrf = $(this).parent().attr('data-token')
     var phone = $('.user-login__input-phone').val()
    
@@ -2013,3 +2021,13 @@ $(document).on('submit', '.like-form', function (e) {
         console.log('fail');
     });
 })
+
+$(document).on('submit', '#form-delivery', function (e) {
+    var $cb = $(this).find('.required_checkbox');
+    if ($cb.length && !$cb.is(':checked')) {
+        e.preventDefault();
+        $cb.closest('label').addClass('required_checkbox--error');
+        return false;
+    }
+    $cb.closest('label').removeClass('required_checkbox--error');
+});

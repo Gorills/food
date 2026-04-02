@@ -6919,6 +6919,11 @@ td.product-thumbnail img {
   margin-bottom: 1em;
 }
 
+.form__acceptance .required_checkbox--error span,
+.user-login__pd-wrap .required_checkbox--error span {
+  color: #c62828;
+}
+
 /* Стили для overlay, покрывающего весь контейнер */
 
 .order__register-overlay {

@@ -4371,15 +4371,60 @@ function updateAll() {
 
 
 // обработка согласия о принятии Cookies
+function cookieConsentEscapeHtml(text) {
+    if (!text) {
+        return '';
+    }
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookieConsentConfig() {
+    var el = document.getElementById('cookie-consent-config');
+    if (!el) {
+        return { privacyUrl: '/privacy/', consentUrl: '/consent/', operator: '', inn: '' };
+    }
+    return {
+        privacyUrl: el.getAttribute('data-privacy-url') || '/privacy/',
+        consentUrl: el.getAttribute('data-consent-url') || '/consent/',
+        operator: el.getAttribute('data-operator') || '',
+        inn: el.getAttribute('data-inn') || ''
+    };
+}
+
+function buildCookieBannerHtml() {
+    var cfg = getCookieConsentConfig();
+    var u = cfg.privacyUrl;
+    var esc = cookieConsentEscapeHtml;
+    var op = (cfg.operator || '').trim();
+    var inn = (cfg.inn || '').trim();
+
+    var html = 'Сайт использует файлы cookie и Яндекс.Метрика с целью аналитики и повышения удобства пользования сайтом.';
+
+    if (op) {
+        var who = esc(op);
+        if (inn) {
+            who += ' (ИНН ' + esc(inn) + ')';
+        }
+        html += ' Продолжая использовать сайт, Вы даёте ' + who + ' <a href="' + u + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
+    } else {
+        html += ' Продолжая использовать сайт, Вы даёте <a href="' + u + '">согласие на обработку файлов cookies и пользовательских данных</a>.';
+    }
+
+    html += ' Если Вы не хотите, чтобы Ваши данные обрабатывались, просим отключить обработку файлов cookies и сбор пользовательских данных в настройках Вашего браузера или покинуть сайт.';
+    html += ' Нажимая «Принять», я согласен с <a href="' + u + '">обработкой персональных данных</a>.';
+
+    return '<div class="cookies"><div class="cookies__text">' + html + '</div><a href="#" class="cookies__button">Принять</a></div>';
+}
+
 function setCookiesAccept() {
     let cookies = localStorage.getItem('cookiesAccept');
-
-    
 
     if (!cookies) {
         let data = {
             'accept_cookies': false
-        }
+        };
         localStorage.setItem('cookiesAccept', JSON.stringify(data));
     }
 }
@@ -4390,21 +4435,13 @@ function checkCooliesAccept() {
     let cookies = localStorage.getItem('cookiesAccept');
 
     if (!cookies) {
-        return; // Ничего не делаем, если запись о согласии на куки отсутствует
+        return;
     }
 
     let cookiesData = JSON.parse(cookies);
 
     if (cookiesData.accept_cookies !== true) {
-        let innerHTML = `
-        <div class="cookies">
-            <div class="cookies__text">
-                Наш сайт использует куки. Продолжая им пользоваться, вы соглашаетесь на обработку 
-                персональных данных в соответствии с <a href="/privacy/">политикой конфиденциальности</a>.
-            </div>
-            <a href="#" class="cookies__button">Согласен</a>
-        </div>`;
-        $('#for-cookies').html(innerHTML);
+        $('#for-cookies').html(buildCookieBannerHtml());
     }
 }
 
@@ -4419,6 +4456,10 @@ $(document).on('click', '.cookies__button', function(e) {
 
     localStorage.setItem('cookiesAccept', JSON.stringify(data));
     $('.cookies').remove();
+});
+
+$(document).on('change', '.required_checkbox, .user-login__pd-checkbox', function () {
+    $(this).closest('label').removeClass('required_checkbox--error');
 });
 
 
