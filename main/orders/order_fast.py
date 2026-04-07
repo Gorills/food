@@ -430,7 +430,7 @@ def order_create(request):
                     return JsonResponse(data, status=status.HTTP_200_OK)
 
                 # Оплата онлайн не настроена (paykeeper и др.) — создаём заказ как обычный
-                order_telegram(telegram_bot, telegram_group, order, request)
+                order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
                 try:
                     send_order_email(order)
                 except Exception as e:
@@ -444,7 +444,7 @@ def order_create(request):
                 return JsonResponse(data, status=status.HTTP_200_OK)
 
             else:
-                order_telegram(telegram_bot, telegram_group, order, request)
+                order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
 
                 try:
                     send_order_email(order)

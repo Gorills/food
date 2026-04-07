@@ -51,6 +51,7 @@ except Exception as e:
 
 
 from .telegram import order_telegram, send_message
+from .max_client import send_max_if_configured, resolve_max_chat_id
 from sms.views import send_sms
 from .send_email import send_order_email
 from pay.alfabank_pay import start_background_task
@@ -249,7 +250,7 @@ def order_create(request):
                     info_to_order_anyway = ShopSetup.objects.get().info_to_order_anyway
                     
                     if info_to_order_anyway:
-                        order_telegram(telegram_bot, telegram_group, order, request)
+                        order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
 
 
                     if pay_name == 'yookassa':
@@ -306,7 +307,7 @@ def order_create(request):
 
 
                 else:
-                    order_telegram(telegram_bot, telegram_group, order, request)
+                    order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
 
                     try:
                         send_order_email(order)
@@ -390,9 +391,9 @@ def order_callback(request):
         message = "Заказ обратного звонка:" + "\n" + "*ИМЯ*: " +str(name) + "\n" + "*ТЕЛЕФОН*: " + str(tel) + "\n" + "*СООБЩЕНИЕ*: " +str(messages)
         
         if form.is_valid():
-            send_message(telegram_bot, telegram_group, message)
+            send_message(telegram_bot, telegram_group, message, silent_fail=True)
+            send_max_if_configured(resolve_max_chat_id(None), message)
 
-            
             return redirect('orders:thank')
 
 def thank(request):
@@ -455,7 +456,7 @@ def order_confirm(request, pk):
                 order.paid = True
                 order.save()
 
-                order_telegram(telegram_bot, telegram_group, order, request)
+                order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
                 
                 # send_sms(sms_text(order.id, order.summ), order.phone)
 
@@ -518,7 +519,7 @@ def order_webhook(request):
                 order.paid = True
                 order.save()
 
-                order_telegram(telegram_bot, telegram_group, order, request)
+                order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
                 
                 send_sms(sms_text(order.id, order.summ), order.phone)
                 # create_iiko_order(order)
@@ -581,7 +582,7 @@ def alpha_check(request, pk):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order, request)
+        order_telegram(telegram_bot, telegram_group, order, request, subdomain=get_subdomain(request))
 
     return redirect('admin_order')
 
@@ -633,7 +634,7 @@ def alfabank_callback(request):
                 order.save()
                 
 
-                order_telegram(telegram_bot, telegram_group, order)
+                order_telegram(telegram_bot, telegram_group, order, subdomain=get_subdomain(request))
 
                 return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
 
@@ -665,7 +666,7 @@ def alfabank_callback(request):
                 order.paid = True
                 order.save()
 
-                order_telegram(telegram_bot, telegram_group, order)
+                order_telegram(telegram_bot, telegram_group, order, subdomain=get_subdomain(request))
                 return JsonResponse({'success': True, 'message': 'Callback processed successfully'})
 
         except Order.DoesNotExist:
@@ -750,7 +751,7 @@ def paykeeper_success(request):
         
         order.save()
 
-        order_telegram(telegram_bot, telegram_group, order, request)
+        order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
         
         send_sms(sms_text(order.id, order.summ), order.phone)
 
@@ -782,7 +783,7 @@ def tinkoff_success(request, pk):
     order = Order.objects.get(id=pk)
     order.paid = True
     order.save()
-    order_telegram(telegram_bot, telegram_group, order, request)
+    order_telegram(telegram_bot, telegram_group, order, request, subdomain=subdomain)
     
     send_sms(sms_text(order.id, order.summ), order.phone)
     

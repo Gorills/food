@@ -11,6 +11,7 @@ class Subdomain(models.Model):
 
     
     telegram_group = models.CharField(blank=True, null=True, max_length=350, verbose_name="Группа телеграм")
+    max_chat_id = models.BigIntegerField(blank=True, null=True, verbose_name="MAX: id чата")
 
     city = models.CharField(max_length=350, blank=True, null=True, verbose_name="Город")
     address = models.CharField(max_length=500, blank=True, null=True, verbose_name="Адрес")
@@ -47,4 +48,3 @@ class Subdomain(models.Model):
             res = '899999999'
         return res
     
-

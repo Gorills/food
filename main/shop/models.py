@@ -153,6 +153,7 @@ class PickupAreas(models.Model):
 
 
     telegram_group = models.CharField(max_length=50, null=True, blank=True, verbose_name='Группа в Telegram (не обязательно)')
+    max_chat_id = models.BigIntegerField(null=True, blank=True, verbose_name='MAX: id чата (зона/QR)')
 
     qr_code = models.ImageField(upload_to='qrcodes', verbose_name='QR-код', null=True, blank=True)
     show_in_site = models.BooleanField(default=True, verbose_name='Показывать на сайте')

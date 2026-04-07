@@ -9,6 +9,7 @@ import qrcode
 from io import BytesIO
 from django.core.files import File
 from orders.telegram import order_telegram, send_message
+from orders.max_client import resolve_max_chat_id_for_pickup_area, send_max_if_configured
 from pytils.translit import slugify
 
 try:
@@ -169,7 +170,9 @@ def oficiant_call(request, pk):
         tg_group = telegram_group
 
 
-    send_message(telegram_bot, tg_group, f'Вызов официанта от стола {table.name} / {table.area.name}')
+    msg = f'Вызов официанта от стола {table.name} / {table.area.name}'
+    send_message(telegram_bot, tg_group, msg, silent_fail=True)
+    send_max_if_configured(resolve_max_chat_id_for_pickup_area(table.area), msg)
 
 
     return redirect('table_menu', pk=table.id)
@@ -249,21 +252,20 @@ def order(request, pk):
             pickup_area = order.table_object.area if order.table_object else None
             create_iiko_table(order, pickup_area=pickup_area)
 
-            # Формируем сообщение для Telegram
-            message = f"**Заказ из QR-меню для стола No{table.name}**\n\n"
+            # Текст в стиле Telegram Markdown v1 (*жирный*); для MAX конвертация в max_client
+            message = f"*Заказ из QR-меню для стола No{table.name}*\n\n"
             for item in order_items:
-                message += f"**{item.product.name}** - {item.quantity} шт.\n"
-            # logger.debug(f"Сообщение для Telegram: {message}")
+                message += f"*{item.product.name}* - {item.quantity} шт.\n"
 
-            # Отправка сообщения в Telegram
             if table.area.telegram_group:
-                telegram_group = table.area.telegram_group
-                logger.info(f"Отправка сообщения в группу: {telegram_group}")
-                
+                tg_group = table.area.telegram_group
+                logger.info(f"Отправка сообщения в группу: {tg_group}")
             else:
+                tg_group = telegram_group
                 logger.warning("Telegram-группа не указана для этой зоны самовывоза")
 
-            send_message(telegram_bot, telegram_group, message)
+            send_message(telegram_bot, tg_group, message, silent_fail=True)
+            send_max_if_configured(resolve_max_chat_id_for_pickup_area(table.area), message)
 
             # Успешный ответ
             return JsonResponse({

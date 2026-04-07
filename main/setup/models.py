@@ -25,6 +25,11 @@ class BaseSettings(SingletonModel):
     telegram_bot = models.CharField(blank=True, null=True, max_length=350, default="5953442472:AAHsgzGdcVrnuJnb0FnDWJ4nrPdDT59YNOE")
     telegram_group = models.CharField(blank=True, null=True, max_length=350)
 
+    max_access_token = models.CharField(
+        blank=True, null=True, max_length=500, verbose_name='MAX: токен API (Authorization)'
+    )
+    max_chat_id = models.BigIntegerField(blank=True, null=True, verbose_name='MAX: id чата по умолчанию')
+
     api_geo = models.CharField(max_length=350, blank=True, null=True, verbose_name="JavaScript API и HTTP Геокодер")
     api_geocoder = models.CharField(max_length=350, blank=True, null=True, verbose_name="API Геосаджеста")
 

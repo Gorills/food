@@ -1,9 +1,13 @@
 
+import logging
 import re
 
 import telepot
 
+logger = logging.getLogger(__name__)
+
 from setup.models import BaseSettings
+from .max_client import resolve_max_chat_id, send_max_if_configured
 from shop.models import ShopSetup
 from datetime import datetime
 from urllib.parse import urlparse
@@ -15,7 +19,11 @@ import traceback
 
 
 def send_message(telegram_bot, telegram_group, message, parse_mode="Markdown", silent_fail=False):
-    """Отправка в Telegram. При silent_fail=True не бросает исключение при ошибке."""
+    """Только Telegram Bot API. MAX — отдельно через orders.max_client.send_max_if_configured."""
+    if not telegram_bot or not telegram_group:
+        if silent_fail:
+            return
+        raise ValueError('Не заданы telegram_bot или telegram_group')
     telegramBot = telepot.Bot(telegram_bot)
     try:
         telegramBot.sendMessage(telegram_group, message, parse_mode=parse_mode)
@@ -72,7 +80,7 @@ def escape_markdown_url(url):
 
 
 
-def order_telegram(telegram_bot, telegram_group, order, request=None):
+def order_telegram(telegram_bot, telegram_group, order, request=None, subdomain=None):
 
    
 
@@ -320,19 +328,23 @@ def order_telegram(telegram_bot, telegram_group, order, request=None):
 
 '''
 
-        send_status = False
+        tg_ok = False
         try:
-            send_message(telegram_bot, telegram_group, message)
-            send_status = True
-            order.order_send_status = True
-            order.save()
-            print('Telegram message sent')
+            if telegram_bot and telegram_group:
+                send_message(telegram_bot, telegram_group, message)
+                tg_ok = True
+                print('Telegram message sent')
         except Exception as e:
-            send_status = False
-            order.order_send_status = False
-            order.save()
-            logger = __import__('logging').getLogger(__name__)
             logger.warning('Telegram send failed: %s', e)
+
+        max_ok = send_max_if_configured(resolve_max_chat_id(subdomain), message, silent_fail=True)
+
+        send_status = tg_ok or max_ok
+        try:
+            order.order_send_status = bool(send_status)
+            order.save()
+        except Exception:
+            pass
         try:
             message_work = f'Статус отправки сообщения: {send_status}'
             send_message(telegram_bot_work, telegram_group_work, message_work, silent_fail=True)

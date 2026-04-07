@@ -445,6 +445,7 @@ class SubdomainsForm(forms.ModelForm):
             'subdomain',
             
             'telegram_group',
+            'max_chat_id',
 
             'phone',
             'email',
@@ -496,6 +497,10 @@ class SubdomainsForm(forms.ModelForm):
            }),
            'telegram_group': forms.TextInput(attrs={
                'class': 'input',
+           }),
+           'max_chat_id': forms.TextInput(attrs={
+               'class': 'input',
+               'placeholder': 'MAX chat_id (число)',
            }),
            'viber': forms.TextInput(attrs={
                'class': 'input',
@@ -797,7 +802,11 @@ class PickupAreasForm(forms.ModelForm):
             }),
             'telegram_group': forms.TextInput(attrs={
                 'class': 'input',
-            })
+            }),
+            'max_chat_id': forms.TextInput(attrs={
+                'class': 'input',
+                'placeholder': 'MAX chat_id (число)',
+            }),
 
         }
 
@@ -2416,6 +2425,7 @@ class SetupForm(forms.ModelForm):
         fields = [
             'name', 'ur_name', 'ur_address', 'inn', 'kpp', 'ogrn', 'okpo',
             'phone', 'phone_desc', 'email', 'email_for_order', 'telegram_bot', 'telegram_group',
+            'max_access_token', 'max_chat_id',
             'sms_pilot_apikey', 'sms_text', 'api_geo', 'api_geocoder',
             'order_done_title', 'order_done_text', 'city', 'address', 'site_link', 'site_desc',
             'vk', 'vk_desc', 'whatsapp', 'whatsapp_desc', 'telegram', 'telegram_desc',
@@ -2439,6 +2449,8 @@ class SetupForm(forms.ModelForm):
             "email_for_order": "Email для заявок",
             "telegram_bot": "Телеграм-бот (TOKEN)",
             "telegram_group": "Группа в Телеграме",
+            "max_access_token": "MAX: токен API (Authorization)",
+            "max_chat_id": "MAX: id чата по умолчанию (число)",
             "sms_pilot_apikey": "API ключ SMS Pilot",
             "sms_text": "Текст SMS при заказе",
             
@@ -2501,7 +2513,10 @@ class SetupForm(forms.ModelForm):
         # Группируем поля по секциям
         self.grouped_fields = {
             "company_info": ["name", "ur_name", "ur_address", "inn", "kpp", "ogrn", "okpo"],
-            "contact_info": ["phone", "phone_desc", "email", "email_for_order", "telegram_bot", "telegram_group"],
+            "contact_info": [
+                "phone", "phone_desc", "email", "email_for_order",
+                "telegram_bot", "telegram_group", "max_access_token", "max_chat_id",
+            ],
             "sms_settings": ["sms_pilot_apikey", "sms_text"],
             "geo_settings": ["api_geo", "api_geocoder"],
             "order_settings": ["order_done_title", "order_done_text"],
