@@ -52,3 +52,4 @@ main/csv_upload
 **/menu_**.json
 main/core/rest_framework
 core/rest_framework
+.cursor

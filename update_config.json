@@ -1,0 +1,15 @@
+{
+    "git_repo": "https://github.com/Gorills/food.git",
+    "git_branch": "main",
+    "docker_port": 222,
+    "sites": {
+      "example-site": {
+        "host": "server.beget.tech",
+        "username": "login",
+        "password": "YOUR_SSH_PASSWORD",
+        "path": "/home/l/login/domain.com/public_html",
+        "domain": "domain.com"
+      }
+    }
+  }
+  

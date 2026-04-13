@@ -1,0 +1,50 @@
+# База: см. .gitignore в корне репозитория
+# Дополнительно для AI: уменьшить контекст и шум
+
+.git/
+.gitignore
+
+# Зависимости и сборка
+node_modules/
+**/node_modules/
+dist/
+build/
+.cache/
+*.egg-info/
+.eggs/
+venv/
+venv*/
+.env
+.env.*
+
+# Блокировки и кэши пакетных менеджеров
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Pipfile.lock
+
+# Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Медиа и тяжёлые артефакты
+media/
+**/media/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Логи и локальные дампы
+*.log
+debug.log
+*.sqlite3
+db.sqlite3
