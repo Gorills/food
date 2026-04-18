@@ -344,8 +344,39 @@ class Cart(object):
             product = str(em)
             self.remove(product)
 
-        
+        self.sync_product_prices()
+
         # self.combo_clear()
+
+    def sync_product_prices(self):
+        """
+        Подтягивает актуальные цены из каталога (get_price_after_sale).
+        Сессия корзины не обновлялась при смене цены в админке — без этого
+        в заказ могла уходить устаревшая цена.
+        """
+        if not self.cart:
+            return
+        ids = [int(k) for k in self.cart.keys() if str(k).isdigit()]
+        if not ids:
+            return
+        products = Product.objects.filter(id__in=ids)
+        by_id = {str(p.id): p for p in products}
+        changed = False
+        for pid in list(self.cart.keys()):
+            p = by_id.get(str(pid))
+            if not p:
+                continue
+            new_dec = Decimal(str(p.get_price_after_sale()))
+            old = self.cart[pid].get('price')
+            try:
+                old_dec = Decimal(str(old)) if old is not None else None
+            except Exception:
+                old_dec = None
+            if old_dec is None or old_dec != new_dec:
+                self.cart[pid]['price'] = str(new_dec)
+                changed = True
+        if changed:
+            self.save()
 
     def clear_likes(self):
         """
@@ -628,7 +659,7 @@ class Cart(object):
             if rel_id not in self.cart:
                 self.cart[rel_id] = {'quantity': rel.minimum,
                                      'free': rel.free,
-                                    'price': str(rel.price),
+                                    'price': str(rel.get_price_after_sale()),
                                     }
         
         cat = Category.objects.get(id=product.parent.id)
@@ -639,7 +670,7 @@ class Cart(object):
             if rel_id not in self.cart:
                 self.cart[rel_id] = {'quantity': rel.minimum,
                                      'free': rel.free,
-                                    'price': str(rel.price),
+                                    'price': str(rel.get_price_after_sale()),
                                     }
         self.save()
 

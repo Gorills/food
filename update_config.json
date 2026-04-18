@@ -4,11 +4,11 @@
     "docker_port": 222,
     "sites": {
       "example-site": {
-        "host": "server.beget.tech",
-        "username": "login",
-        "password": "YOUR_SSH_PASSWORD",
-        "path": "/home/l/login/domain.com/public_html",
-        "domain": "domain.com"
+        "host": "kris06f8.beget.tech",
+        "username": "kris06f8",
+        "password": "Ak6GmA79rNde",
+        "path": "/home/k/kris06f8/kris06f8.beget.tech/public_html",
+        "domain": "xn--80akodg1b8acb5af.xn--p1ai"
       }
     }
   }

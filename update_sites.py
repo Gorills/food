@@ -2,7 +2,7 @@
 """
 Скрипт массового обновления Django-сайтов (food) на серверах Beget.
 
-Для каждого сайта из конфигурации:
+Для каждого сайта из конфигурации (полный режим по умолчанию):
 1. Инициализирует git и подтягивает origin/main
 2. Устанавливает/обновляет зависимости (pip install)
 3. Генерирует и применяет Django-миграции (makemigrations + migrate)
@@ -10,6 +10,9 @@
 5. Перезапускает Passenger
 6. Проверяет HTTP-доступность (код 200)
 7. Проверяет актуальность кода (HEAD == origin/main)
+
+Режим --quick: как полный, но без pip и collectstatic — git, makemigrations + migrate,
+рестарт; миграции на сервере генерируются (не в git); после git правится passenger_wsgi.
 
 Django-команды выполняются через ssh localhost -p222 (Docker-окружение Beget).
 Git-операции — через обычный SSH.
@@ -20,8 +23,9 @@ Git-операции — через обычный SSH.
 - git на серверах
 
 Использование:
-  python3 update_sites.py --config update_config.json          # обновить все
-  python3 update_sites.py --config update_config.json -s site1 # обновить один
+  python3 update_sites.py --config update_config.json          # полное обновление
+  python3 update_sites.py --config update_config.json -s site1 # один сайт
+  python3 update_sites.py --config update_config.json --quick  # git + миграции + рестарт (без pip/static)
   python3 update_sites.py --config update_config.json --check  # только проверка
   python3 update_sites.py --config update_config.json --list   # список сайтов
   python3 update_sites.py --config update_config.json --dry-run # тестовый прогон
@@ -40,10 +44,17 @@ import time
 
 
 class SiteUpdater:
-    def __init__(self, config_path, dry_run=False):
+    def __init__(self, config_path, dry_run=False, quick_mode=False):
         self.config = self._load_config(config_path)
         self.dry_run = dry_run
-        self.log_file = f"update_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        self.quick_mode = quick_mode
+        _root = os.path.dirname(os.path.abspath(__file__))
+        self.log_dir = os.path.join(_root, 'logs')
+        os.makedirs(self.log_dir, exist_ok=True)
+        self.log_file = os.path.join(
+            self.log_dir,
+            f"update_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+        )
         self.git_repo = self.config.get('git_repo', 'https://github.com/Gorills/food.git')
         self.git_branch = self.config.get('git_branch', 'main')
         self.docker_port = self.config.get('docker_port', 222)
@@ -120,11 +131,77 @@ class SiteUpdater:
 
     def _ssh_docker(self, host, username, password, command, timeout=600):
         """Выполнение команды через ssh localhost -p<docker_port> (Docker Beget).
-        Скрипт кодируется в base64 для надёжной передачи через вложенный SSH."""
+        Скрипт кодируется в base64 для надёжной передачи через вложенный SSH.
+        Метод доступа определяется _setup_docker_access (key / sshpass / direct)."""
         port = self.docker_port
         b64 = base64.b64encode(command.encode('utf-8')).decode('utf-8')
-        wrapper = f'echo "{b64}" | base64 -d | ssh localhost -p{port} bash'
+        method = getattr(self, '_docker_method', 'key')
+
+        if method == 'key':
+            wrapper = (
+                f'echo "{b64}" | base64 -d | '
+                f'ssh -o StrictHostKeyChecking=no -o BatchMode=yes localhost -p{port} bash'
+            )
+        elif method == 'sshpass':
+            pwd_b64 = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+            wrapper = (
+                f'export SSHPASS=$(echo "{pwd_b64}" | base64 -d) && '
+                f'echo "{b64}" | base64 -d | '
+                f'sshpass -e ssh -o StrictHostKeyChecking=no localhost -p{port} bash'
+            )
+        else:
+            wrapper = f'echo "{b64}" | base64 -d | bash'
+
         return self._ssh(host, username, password, wrapper, timeout=timeout)
+
+    def _setup_docker_access(self, host, username, password):
+        """Настройка доступа к Docker-контейнеру через ssh localhost -p<port>.
+        Пробует: 1) SSH-ключ, 2) sshpass на сервере, 3) прямое выполнение."""
+        port = self.docker_port
+        self.log("── Настройка доступа к Docker SSH ──")
+
+        if self.dry_run:
+            self._docker_method = 'key'
+            return
+
+        setup_key = (
+            'mkdir -p ~/.ssh && chmod 700 ~/.ssh; '
+            'test -f ~/.ssh/id_rsa || ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa -q 2>/dev/null; '
+            'grep -qF "$(cat ~/.ssh/id_rsa.pub 2>/dev/null)" ~/.ssh/authorized_keys 2>/dev/null || '
+            'cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys 2>/dev/null; '
+            'chmod 600 ~/.ssh/authorized_keys 2>/dev/null; '
+            f'ssh -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=5 '
+            f'localhost -p{port} echo "KEY_OK" 2>/dev/null || echo "KEY_FAIL"'
+        )
+        try:
+            res = self._ssh(host, username, password, setup_key)
+            if 'KEY_OK' in res:
+                self.log("  Docker SSH: доступ по ключу настроен")
+                self._docker_method = 'key'
+                return
+        except Exception:
+            pass
+
+        check_sshpass = 'which sshpass >/dev/null 2>&1 && echo "HAS" || echo "NO"'
+        try:
+            res = self._ssh(host, username, password, check_sshpass)
+            if 'HAS' in res:
+                pwd_b64 = base64.b64encode(password.encode('utf-8')).decode('utf-8')
+                test_cmd = (
+                    f'export SSHPASS=$(echo "{pwd_b64}" | base64 -d) && '
+                    f'sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 '
+                    f'localhost -p{port} echo "SSHPASS_OK" 2>/dev/null || echo "SSHPASS_FAIL"'
+                )
+                res = self._ssh(host, username, password, test_cmd)
+                if 'SSHPASS_OK' in res:
+                    self.log("  Docker SSH: доступ через sshpass")
+                    self._docker_method = 'sshpass'
+                    return
+        except Exception:
+            pass
+
+        self.log("  Docker SSH недоступен — команды выполняются напрямую (без контейнера)")
+        self._docker_method = 'direct'
 
     # ── Шаги обновления ─────────────────────────────────────────
 
@@ -138,6 +215,21 @@ class SiteUpdater:
         check = 'which git >/dev/null 2>&1 && echo "ok" || echo "no_git"'
         if 'no_git' in self._ssh(host, username, password, check):
             raise RuntimeError("git не установлен на сервере")
+
+        path_check = (
+            f'test -d {site_path} && echo "ok" || '
+            f'echo "NOT_FOUND home=$(eval echo ~) ls=$(ls -d ~/*/public_html 2>/dev/null | head -5)"'
+        )
+        res = self._ssh(host, username, password, path_check)
+        if 'NOT_FOUND' in res:
+            self.log(f"  Путь не существует: {site_path}")
+            self.log(f"  Подсказка: {res}")
+            raise RuntimeError(
+                f"Путь {site_path} не найден. Проверьте path в конфиге. "
+                f"На Beget структура: /home/<буква>/<логин>/...")
+
+        safe_dir_cmd = f'git config --global --add safe.directory {site_path} 2>/dev/null; echo "ok"'
+        self._ssh(host, username, password, safe_dir_cmd)
 
         init_cmd = (
             f'cd {site_path} && '
@@ -199,6 +291,51 @@ class SiteUpdater:
         except Exception as e:
             self.log(f"  Предупреждение (deps): {e}")
 
+        self._ensure_pymysql(host, username, password, site_path)
+
+    def _ensure_pymysql(self, host, username, password, site_path):
+        """Beget не имеет gcc — mysqlclient не компилируется.
+        Гарантируем, что main/main/__init__.py содержит pymysql.install_as_MySQLdb()."""
+        init_file = f"{site_path}/main/main/__init__.py"
+        cmd = (
+            f'grep -q "pymysql.install_as_MySQLdb" {init_file} 2>/dev/null || '
+            f'{{'
+            f' echo "" >> {init_file};'
+            f' echo "import pymysql" >> {init_file};'
+            f' echo "pymysql.install_as_MySQLdb()" >> {init_file};'
+            f' echo "PyMySQL patched";'
+            f'}}'
+        )
+        try:
+            res = self._ssh(host, username, password, cmd)
+            if 'patched' in (res or ''):
+                self.log("  PyMySQL: настроен как замена MySQLdb")
+        except Exception as e:
+            self.log(f"  Предупреждение (pymysql): {e}")
+
+        self._fix_passenger_wsgi_python(host, username, password, site_path)
+
+    def _fix_passenger_wsgi_python(self, host, username, password, site_path):
+        """Исправление версии Python в passenger_wsgi.py.
+        Git checkout восстанавливает файл с устаревшим путём (python3.6),
+        но на сервере может быть другая версия (3.10, 3.11 и т.д.)."""
+        cmd = (
+            f'REAL=$(ls -d {site_path}/venv/lib/python3.*/site-packages 2>/dev/null | head -1) && '
+            f'if [ -n "$REAL" ]; then '
+            f'  PYVER=$(echo "$REAL" | grep -oP "python3\\.\\d+") && '
+            f'  for f in {site_path}/main/passenger_wsgi.py {site_path}/main/main/passenger_wsgi.py; do '
+            f'    test -f "$f" && sed -i "s|python3\\.[0-9]*|$PYVER|g" "$f" 2>/dev/null; '
+            f'  done && echo "wsgi_fixed:$PYVER"; '
+            f'fi'
+        )
+        try:
+            res = self._ssh(host, username, password, cmd)
+            if 'wsgi_fixed' in (res or ''):
+                ver = res.split('wsgi_fixed:')[-1].strip()
+                self.log(f"  passenger_wsgi.py: исправлен путь Python → {ver}")
+        except Exception as e:
+            self.log(f"  Предупреждение (passenger_wsgi): {e}")
+
     def _step_migrations(self, host, username, password, site_path):
         """makemigrations + migrate через Docker-окружение.
         Миграции не хранятся в git — генерируются на каждом сервере."""
@@ -236,15 +373,22 @@ class SiteUpdater:
             self.log(f"  Предупреждение (static): {e}")
 
     def _step_restart(self, host, username, password, site_path):
-        """Перезапуск Passenger (touch tmp/restart.txt)."""
+        """Перезапуск Passenger: очистка __pycache__, kill старых процессов, touch restart.txt.
+        На Beget touch restart.txt часто не убивает старые процессы —
+        поэтому убиваем wsgi-loader вручную."""
         self.log("── Перезапуск Passenger ──")
 
         cmd = (
+            f'find {site_path}/main/ -type d -name __pycache__ -exec rm -rf {{}} + 2>/dev/null; '
+            f'pids=$(ps aux 2>/dev/null | grep "wsgi-loader" | grep -v grep | awk "{{print \\$2}}"); '
+            f'if [ -n "$pids" ]; then kill $pids 2>/dev/null; echo "killed:$pids"; fi; '
             f'mkdir -p {site_path}/main/main/tmp && '
             f'touch {site_path}/main/main/tmp/restart.txt && echo "ok"'
         )
         res = self._ssh(host, username, password, cmd)
         if 'ok' in res:
+            if 'killed' in res:
+                self.log("  Старые процессы Passenger убиты, __pycache__ очищен")
             self.log("  Passenger перезапущен")
         else:
             self.log("  Предупреждение: не удалось перезапустить Passenger")
@@ -315,10 +459,16 @@ class SiteUpdater:
         self.log(f"\n{'=' * 60}")
         self.log(f"Сайт: {site_name} ({domain})")
         self.log(f"Сервер: {user}@{host}:{path}")
+        if self.quick_mode:
+            self.log(
+                "Режим: --quick (git + makemigrations + migrate + рестарт; "
+                "без pip и collectstatic)"
+            )
         self.log(f"{'=' * 60}")
 
         r = {
             'domain': domain,
+            'quick': self.quick_mode,
             'git': False, 'deps': False, 'migrations': False,
             'static': False, 'code_ok': False, 'http_ok': False,
             'commit': '', 'errors': []
@@ -332,12 +482,20 @@ class SiteUpdater:
             self.log(f"  ОШИБКА git: {e}")
 
         if r['git']:
-            try:
-                self._step_deps(host, user, pwd, path)
-                r['deps'] = True
-            except Exception as e:
-                r['errors'].append(f"deps: {e}")
-                self.log(f"  ОШИБКА deps: {e}")
+            self._setup_docker_access(host, user, pwd)
+
+            if self.quick_mode:
+                try:
+                    self._fix_passenger_wsgi_python(host, user, pwd, path)
+                except Exception as e:
+                    self.log(f"  Предупреждение (passenger_wsgi): {e}")
+            else:
+                try:
+                    self._step_deps(host, user, pwd, path)
+                    r['deps'] = True
+                except Exception as e:
+                    r['errors'].append(f"deps: {e}")
+                    self.log(f"  ОШИБКА deps: {e}")
 
             try:
                 self._step_migrations(host, user, pwd, path)
@@ -346,12 +504,13 @@ class SiteUpdater:
                 r['errors'].append(f"migrations: {e}")
                 self.log(f"  ОШИБКА migrations: {e}")
 
-            try:
-                self._step_static(host, user, pwd, path)
-                r['static'] = True
-            except Exception as e:
-                r['errors'].append(f"static: {e}")
-                self.log(f"  ОШИБКА static: {e}")
+            if not self.quick_mode:
+                try:
+                    self._step_static(host, user, pwd, path)
+                    r['static'] = True
+                except Exception as e:
+                    r['errors'].append(f"static: {e}")
+                    self.log(f"  ОШИБКА static: {e}")
 
             try:
                 self._step_restart(host, user, pwd, path)
@@ -376,7 +535,13 @@ class SiteUpdater:
         """Обновление всех сайтов из конфигурации."""
         sites = list(self.config['sites'].keys())
         total = len(sites)
-        self.log(f"Обновление {total} сайтов\n")
+        if self.quick_mode:
+            self.log(
+                f"Быстрое обновление (--quick) {total} сайтов: "
+                f"git, makemigrations + migrate, рестарт\n"
+            )
+        else:
+            self.log(f"Обновление {total} сайтов\n")
 
         for i, name in enumerate(sites, 1):
             self.log(f"[{i}/{total}]")
@@ -456,9 +621,14 @@ class SiteUpdater:
 
             self.log(f"\n  {name} ({r['domain']}): {status}")
             self.log(f"    Git:        {'✓' if r['git'] else '✗'}")
-            self.log(f"    Зависимости:{'✓' if r['deps'] else '✗'}")
-            self.log(f"    Миграции:   {'✓' if r['migrations'] else '✗'}")
-            self.log(f"    Статика:    {'✓' if r['static'] else '✗'}")
+            if r.get('quick'):
+                self.log(f"    Зависимости: — (пропуск, --quick)")
+                self.log(f"    Миграции:   {'✓' if r['migrations'] else '✗'} (makemigrations + migrate)")
+                self.log(f"    Статика:    — (пропуск, --quick)")
+            else:
+                self.log(f"    Зависимости:{'✓' if r['deps'] else '✗'}")
+                self.log(f"    Миграции:   {'✓' if r['migrations'] else '✗'}")
+                self.log(f"    Статика:    {'✓' if r['static'] else '✗'}")
             self.log(f"    Код:        {'✓ актуален' if r['code_ok'] else '✗ расходится'}")
             self.log(f"    HTTP:       {'✓ отвечает' if r['http_ok'] else '✗ не отвечает'}")
             if r.get('commit'):
@@ -496,9 +666,14 @@ def main():
     parser.add_argument(
         '--dry-run', '-d', action='store_true',
         help='Тестовый запуск — команды выводятся, но не выполняются')
+    parser.add_argument(
+        '--quick', '-q', action='store_true',
+        help='Быстрое обновление: git, makemigrations + migrate, рестарт Passenger; '
+             'без pip и collectstatic (миграции на сервере, не в git)')
 
     args = parser.parse_args()
-    updater = SiteUpdater(args.config, dry_run=args.dry_run)
+    updater = SiteUpdater(
+        args.config, dry_run=args.dry_run, quick_mode=args.quick)
 
     if args.dry_run:
         print(">>> РЕЖИМ DRY RUN — операции не выполняются <<<\n")

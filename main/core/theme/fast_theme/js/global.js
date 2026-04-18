@@ -19,8 +19,16 @@ $(document).ready(function() {
 
 
 
+function refreshCartPricesFromServer() {
+    if (typeof checkPriceCart === 'function') {
+        checkPriceCart().catch(function (e) { console.warn('checkPriceCart', e); });
+    }
+}
+
 jQuery(document).ready(function () {
-    $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+    $('#headerCart').load('/cart/ .header__cart-wrap', function() {
+        refreshCartPricesFromServer();
+    });
 });
 
 
@@ -91,6 +99,8 @@ function loadCartData() {
             $(this).find('#map').show()
             
         } 
+
+        refreshCartPricesFromServer();
 
         grecaptcha.ready(function() {
             var grecaptcha_execute = function() {
@@ -377,7 +387,9 @@ $(function() {
   
       function refreshElements() {
         
-        $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
+        $('#headerCart').load('/cart/ .header__cart-wrap', function() {
+            refreshCartPricesFromServer();
+        });
         updateMinDelivery()
         
       }
@@ -406,7 +418,8 @@ $(function() {
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-        updateMinDelivery()
+        updateMinDelivery();
+        refreshCartPricesFromServer();
         
        
         
@@ -458,7 +471,8 @@ $(function() {
 
         $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         $('#headerCart').load('/cart/ .header__cart-wrap', function() {});
-        updateMinDelivery()
+        updateMinDelivery();
+        refreshCartPricesFromServer();
         
         
         
@@ -488,9 +502,8 @@ $(document).on('click','.cart__remove, .product-remove a',function(e){
         $('.cart__order-create-wrapper').load('/cart/ .cart__order-create-wrapper-inner', function() {});
         $('.cart__deliv-method-wrap').load('/cart/ .cart__deliv-method', function() {});
         $('.cart-detail-wrap').load('/cart/ .cart-detail-wrap__refresh', function() {});
-        updateMinDelivery()
-
-
+        updateMinDelivery();
+        refreshCartPricesFromServer();
 
         // $('.cart__form-refresh').load('/cart/ .cart__form', function() {});
         removeCart(id, name, price, category, quantity) 

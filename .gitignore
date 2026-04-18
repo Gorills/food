@@ -53,3 +53,8 @@ main/csv_upload
 main/core/rest_framework
 core/rest_framework
 .cursor
+
+# Auto Claude data directory
+.auto-claude/
+update_config.json
+logs/

@@ -26,50 +26,89 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
 });
 
-function checkPriceCart() {
+/**
+ * Актуальная цена товара с API (как в админке Django: get_price_after_sale + опции).
+ */
+async function getServerProductPrice(productId, optionsIdArray) {
+    const response = await fetch("/api/v1/products/" + productId + "/");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const productData = await response.json();
+    let serverPrice = parseFloat(productData.price);
+    if (isNaN(serverPrice)) {
+        throw new Error("Invalid price");
+    }
+    const optIds = optionsIdArray && optionsIdArray.length ? optionsIdArray : [];
+    if (productData.options && productData.options.length > 0 && optIds.length > 0) {
+        productData.options.forEach(function (option) {
+            if (optIds.indexOf(option.id) !== -1 && option.active) {
+                serverPrice += parseFloat(option.option_price || 0);
+            }
+        });
+    }
+    return serverPrice;
+}
+
+/**
+ * Синхронизирует цены в localStorage-корзине fast_theme с сервером.
+ * Раньше сравнение было строгим (===) и ломалось на число/строка; плюс не вызывался пересчёт UI.
+ */
+async function checkPriceCart() {
+    var raw = localStorage.getItem("cart");
+    if (raw == null || raw === "") return;
     var cart;
     try {
-        var raw = localStorage.getItem("cart");
-        if (raw == null || raw === "") return;
         cart = JSON.parse(raw);
-        if (typeof cart !== "object" || cart === null || Array.isArray(cart)) return;
     } catch (e) {
         return;
     }
-    for (var itemId in cart) {
-        if (!cart.hasOwnProperty(itemId)) continue;
+    if (typeof cart !== "object" || cart === null || Array.isArray(cart)) return;
+
+    var changed = false;
+    var keys = Object.keys(cart);
+    for (var i = 0; i < keys.length; i++) {
+        var storageKey = keys[i];
+        var item = cart[storageKey];
+        if (item == null || typeof item !== "object") continue;
+
+        var t = item.type;
+        if (t === "combo" || t === "constructor") {
+            continue;
+        }
+        var productId = item.itemId;
+        if (productId == null || productId === undefined) continue;
+
         try {
-            var item = cart[itemId];
-            if (item == null || typeof item !== "object") continue;
-            var productId = item.itemId;
-            if (productId == null || productId === undefined) continue;
-            var url = "/api/v1/products/" + productId + "/";
-            fetch(url)
-                .then(function(response) {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.json();
-                })
-                .then(function(data) {
-                    try {
-                        if (data.price !== item.price && (!item.options || item.options.length === 0)) {
-                            item.price = data.price;
-                            cart[itemId] = item;
-                            localStorage.setItem("cart", JSON.stringify(cart));
-                        }
-                    } catch (e) {}
-                })
-                .catch(function(error) {
-                    console.error("Ошибка:", error);
-                    try { delete cart[itemId]; localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {}
-                });
-        } catch (e) {
-            try { localStorage.setItem("cart", JSON.stringify(cart)); } catch (e2) {}
+            var opts = item.options && item.options.length ? item.options : [];
+            var serverPrice = await getServerProductPrice(productId, opts);
+            var localPrice = parseFloat(item.price);
+            if (isNaN(localPrice)) localPrice = 0;
+            if (Math.abs(serverPrice - localPrice) > 0.009) {
+                item.price = serverPrice;
+                cart[storageKey] = item;
+                changed = true;
+            }
+        } catch (err) {
+            console.warn("checkPriceCart:", storageKey, err);
+        }
+    }
+
+    if (changed) {
+        try {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        } catch (e2) {
+            console.error("checkPriceCart save:", e2);
         }
     }
 }
 
 function runOnLoad() {
-    try { checkPriceCart(); } catch (e) { console.error("checkPriceCart:", e); }
+    try {
+        updateAll();
+    } catch (e) {
+        console.error("runOnLoad:", e);
+    }
 }
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", runOnLoad);
@@ -1649,11 +1688,16 @@ document.addEventListener('click', function(event) {
 
 $(document).on('click','.order__checkup',function(e){
     e.preventDefault();
-    $('.order').addClass('order--active');
-    $('body').addClass('body');
-    $('.cart').removeClass('cart--active');
-
-    
+    function openOrderOverlay() {
+        $('.order').addClass('order--active');
+        $('body').addClass('body');
+        $('.cart').removeClass('cart--active');
+    }
+    if (typeof updateAll === 'function') {
+        updateAll().then(openOrderOverlay).catch(openOrderOverlay);
+    } else {
+        openOrderOverlay();
+    }
 })
 
 $(document).on('click','.order__closer, .order__owerlay',function(e){
@@ -2173,29 +2217,22 @@ $(document).ready(function() {
 
 $(document).on('click', '.order_create', function(e) {
     e.preventDefault();
-    let order = localStorage.getItem('order') || {}; // Проверка на null
-    let cart = localStorage.getItem('cart') || {}; // Проверка на null
 
+    $('.order__load').addClass('order__load--active');
 
+    function submitFastOrder() {
+        var order = localStorage.getItem('order') || {};
+        var cart = localStorage.getItem('cart') || {};
 
-    $('.order__load').addClass('order__load--active')
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
-    updateAll()
+        var data = {
+            csrfmiddlewaretoken: csrfToken,
+            'order': order,
+            'cart': cart
+        };
 
-    // console.log(order)
-
-    let csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-
-    data = {
-        csrfmiddlewaretoken: csrfToken,
-        'order': order,
-        'cart': cart
-    }
-
-    
-
-
-    $.ajax({
+        $.ajax({
         method: "POST",
         url: "/orders/create/fast/",
         data: data,
@@ -2308,10 +2345,13 @@ $(document).on('click', '.order_create', function(e) {
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText); // Выводим сообщение об ошибке в консоль
+            $('.order__load').removeClass('order__load--active');
         }
     });
+    }
 
-})
+    updateAll().then(submitFastOrder).catch(submitFastOrder);
+});
 
 // проверка последнего заказа
 jQuery(document).ready(function () {
@@ -3052,23 +3092,8 @@ async function getConstructioOptionsId(constructioId, optionsIdArray) {
 // Функция для добавления товара в корзину
 async function verifyProductPrice(itemId, userPrice, optionsIdArray) {
     try {
-        const response = await fetch(`/api/v1/products/${itemId}/`);
-        if (!response.ok) {
-            throw new Error('Не удалось получить данные о товаре');
-        }
-        const productData = await response.json();
-        let serverPrice = parseFloat(productData.price);
-
-        // Учитываем только активные опции из списка optionsIdArray
-        if (productData.options && productData.options.length > 0) {
-            productData.options.forEach(option => {
-                if (optionsIdArray.includes(option.id) && option.active) {
-                    serverPrice += parseFloat(option.option_price);
-                }
-            });
-        }
-
-        return serverPrice === parseFloat(userPrice);
+        const serverPrice = await getServerProductPrice(itemId, optionsIdArray || []);
+        return Math.abs(serverPrice - parseFloat(userPrice)) < 0.01;
     } catch (error) {
         console.error('Ошибка проверки стоимости товара:', error);
         return false;
@@ -4341,25 +4366,38 @@ function showPromoSuccess($input, message) {
 
 
 
-// Обновление всех значений при изменении корзины
-function updateAll() {
-    
+// Перерисовка корзины и сумм (без запроса актуальных цен с API).
+function refreshCartUI() {
     displayCart();
     getDeliverySumm();
     getTotalPrice();
     getTotalPriceAfterDiscount();
     getTotalCount();
 
-    
-    deliveryUpdate()
+    deliveryUpdate();
 
-    
-    setLoyalCart()
-    getMinimalDelivery()
-    getAllDiscount()
-    payMethodUpdate()
-    maxBallsPay()
-    
+    setLoyalCart();
+    getMinimalDelivery();
+    getAllDiscount();
+    payMethodUpdate();
+    maxBallsPay();
+}
+
+// Обновление при изменении корзины: сначала подтягиваем цены с сервера в localStorage, затем UI.
+// Возвращает Promise — нужно для оформления заказа после актуализации цен в localStorage.
+function updateAll() {
+    if (typeof checkPriceCart !== "function") {
+        refreshCartUI();
+        return Promise.resolve();
+    }
+    return checkPriceCart()
+        .then(function () {
+            refreshCartUI();
+        })
+        .catch(function (e) {
+            console.warn("checkPriceCart:", e);
+            refreshCartUI();
+        });
 }
 
 
