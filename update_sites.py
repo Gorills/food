@@ -11,8 +11,10 @@
 6. Проверяет HTTP-доступность (код 200)
 7. Проверяет актуальность кода (HEAD == origin/main)
 
-Режим --quick: как полный, но без pip и collectstatic — git, makemigrations + migrate,
-рестарт; миграции на сервере генерируются (не в git); после git правится passenger_wsgi.
+Режим --quick: для сайтов, уже развёрнутых полным прогоном скрипта (venv, PyMySQL и т.д.).
+Только git, при необходимости makemigrations + migrate, рестарт; без pip и collectstatic.
+После git выставляется патч PyMySQL в main/main/__init__.py и passenger_wsgi — иначе миграции
+в Docker падают (mysqlclient на Beget не собирается).
 
 Django-команды выполняются через ssh localhost -p222 (Docker-окружение Beget).
 Git-операции — через обычный SSH.
@@ -25,7 +27,7 @@ Git-операции — через обычный SSH.
 Использование:
   python3 update_sites.py --config update_config.json          # полное обновление
   python3 update_sites.py --config update_config.json -s site1 # один сайт
-  python3 update_sites.py --config update_config.json --quick  # git + миграции + рестарт (без pip/static)
+  python3 update_sites.py --config update_config.json --quick  # уже настроенные сайты: git + миграции + рестарт
   python3 update_sites.py --config update_config.json --check  # только проверка
   python3 update_sites.py --config update_config.json --list   # список сайтов
   python3 update_sites.py --config update_config.json --dry-run # тестовый прогон
@@ -461,7 +463,7 @@ class SiteUpdater:
         self.log(f"Сервер: {user}@{host}:{path}")
         if self.quick_mode:
             self.log(
-                "Режим: --quick (git + makemigrations + migrate + рестарт; "
+                "Режим: --quick (сайт уже с полным деплоем; git + миграции + рестарт; "
                 "без pip и collectstatic)"
             )
         self.log(f"{'=' * 60}")
@@ -485,10 +487,11 @@ class SiteUpdater:
             self._setup_docker_access(host, user, pwd)
 
             if self.quick_mode:
+                self.log("── Быстрый режим: PyMySQL в __init__.py + passenger_wsgi (без pip) ──")
                 try:
-                    self._fix_passenger_wsgi_python(host, user, pwd, path)
+                    self._ensure_pymysql(host, user, pwd, path)
                 except Exception as e:
-                    self.log(f"  Предупреждение (passenger_wsgi): {e}")
+                    self.log(f"  Предупреждение (PyMySQL/passenger): {e}")
             else:
                 try:
                     self._step_deps(host, user, pwd, path)
@@ -537,8 +540,8 @@ class SiteUpdater:
         total = len(sites)
         if self.quick_mode:
             self.log(
-                f"Быстрое обновление (--quick) {total} сайтов: "
-                f"git, makemigrations + migrate, рестарт\n"
+                f"Быстрое обновление (--quick) {total} сайтов "
+                f"(уже настроенные): git, миграции, рестарт\n"
             )
         else:
             self.log(f"Обновление {total} сайтов\n")
@@ -668,8 +671,8 @@ def main():
         help='Тестовый запуск — команды выводятся, но не выполняются')
     parser.add_argument(
         '--quick', '-q', action='store_true',
-        help='Быстрое обновление: git, makemigrations + migrate, рестарт Passenger; '
-             'без pip и collectstatic (миграции на сервере, не в git)')
+        help='Для уже развёрнутых полным скриптом сайтов: git pull, makemigrations+migrate '
+             'при необходимости, рестарт; без pip/collectstatic; патч PyMySQL после git')
 
     args = parser.parse_args()
     updater = SiteUpdater(
